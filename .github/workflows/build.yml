@@ -21,7 +21,6 @@ jobs:
 
       - name: Fix Missing Repositories in Settings
         run: |
-          # التأكد من وجود ملف settings.gradle.kts وفيه google() و mavenCentral()
           cat << 'EOF' > settings.gradle.kts
           pluginManagement {
               repositories {
@@ -50,11 +49,11 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: '8.7'
+          gradle-version: '8.9'
 
       - name: Generate Wrapper and Permissions
         run: |
-          gradle wrapper
+          gradle wrapper --gradle-version 8.9
           chmod +x gradlew
 
       - name: Build Debug APK
