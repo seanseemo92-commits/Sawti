@@ -19,8 +19,9 @@ jobs:
             cp -r MyWords/* .
           fi
 
-      - name: Fix Missing Repositories in Settings
+      - name: Fix Missing Repositories and Properties
         run: |
+          # إضافة مستودعات التنزيل المطلوبة
           cat << 'EOF' > settings.gradle.kts
           pluginManagement {
               repositories {
@@ -38,6 +39,13 @@ jobs:
           }
           rootProject.name = "MyWords"
           include(":app")
+          EOF
+
+          # تفعيل خاصية AndroidX المطلوبة لحزم Jetpack Compose
+          cat << 'EOF' > gradle.properties
+          android.useAndroidX=true
+          android.nonTransitiveRClass=true
+          org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
           EOF
 
       - name: Set up JDK 17
@@ -64,3 +72,4 @@ jobs:
         with:
           name: MyWords-App
           path: app/build/outputs/apk/debug/*.apk
+ 
