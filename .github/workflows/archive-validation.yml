@@ -1,0 +1,16 @@
+name: Source archive validation
+on:
+  push:
+    branches: [improve/android-stability-arabic]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify source archive
+        run: python3 -m unittest discover -s tests -v
