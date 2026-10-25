@@ -72,6 +72,14 @@ jobs:
       - name: Compile and run unit tests
         working-directory: extracted/MyWords
         run: gradle --no-daemon :app:assembleDebug :app:testDebugUnitTest
+      - name: Upload debug APK
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MyWords-debug-apk
+          path: extracted/MyWords/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 14
       - name: Enforce data safety
         if: always()
         env:
