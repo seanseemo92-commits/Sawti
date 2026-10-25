@@ -1,0 +1,50 @@
+name: Preserve legacy data in archived project
+on:
+  workflow_dispatch:
+  push:
+    branches: [improve/android-stability-arabic]
+    paths:
+      - '.github/workflows/fix-legacy-migration.yml'
+permissions:
+  contents: write
+jobs:
+  preserve:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: improve/android-stability-arabic
+          persist-credentials: true
+      - name: Remove destructive legacy table operations from archived source
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import zipfile, os
+          archive = "MyWords.zip"
+          target = "MyWords/app/src/main/java/com/mywords/data/db/AppDatabase.kt"
+          tmp = archive + ".tmp"
+          with zipfile.ZipFile(archive) as src, zipfile.ZipFile(tmp, "w") as dst:
+              for info in src.infolist():
+                  data = src.read(info.filename)
+                  if info.filename == target:
+                      code = data.decode("utf-8")
+                      for table in ("family_members", "voice_recordings", "pain_reports"):
+                          statement = '                db.execSQL("DROP TABLE IF EXISTS ' + table + '")'
+                          code = code.replace(statement + "\n", "")
+                      data = code.encode("utf-8")
+                  dst.writestr(info, data)
+          os.replace(tmp, archive)
+          with zipfile.ZipFile(archive) as z:
+              code = z.read(target).decode()
+              assert "DROP TABLE" not in code
+              assert "Migration(1, 2)" in code and "Migration(2, 3)" in code
+          PY
+      - name: Commit repaired archive
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add MyWords.zip
+          if ! git diff --cached --quiet; then
+            git commit -m "fix: preserve legacy Room tables during migration"
+            git push origin HEAD:improve/android-stability-arabic
+          fi
