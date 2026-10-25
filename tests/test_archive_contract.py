@@ -22,15 +22,15 @@ class ArchiveContractTest(unittest.TestCase):
         self.assertNotIn("fallbackToDestructiveMigration(", self.database)
 
     def test_required_migrations(self):
-        self.assertRegex(self.database, r"Migration\\(1,\\s*2\\)")
-        self.assertRegex(self.database, r"Migration\\(2,\\s*3\\)")
+        self.assertRegex(self.database, r"Migration\(1,\s*2\)")
+        self.assertRegex(self.database, r"Migration\(2,\s*3\)")
 
     def test_preserve_legacy_tables(self):
         # Deliberately fails on an unsafe source ZIP; migration should be reviewed.
         for name in ("family_members", "voice_recordings", "pain_reports"):
             self.assertNotRegex(
                 self.database,
-                rf"(?i)DROP\\s+TABLE\\s+(?:IF\\s+EXISTS\\s+)?{name}\\b",
+                rf"(?i)DROP\s+TABLE\s+(?:IF\s+EXISTS\s+)?{name}\b",
                 f"Legacy table {name} must not be dropped without verified preservation",
             )
 
