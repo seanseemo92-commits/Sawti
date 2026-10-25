@@ -35,6 +35,8 @@ jobs:
           test -f MyWords.zip
           unzip -q MyWords.zip -d extracted
           test -f extracted/MyWords/settings.gradle.kts
+      - name: Check archive data safety contracts
+        run: python3 -m unittest discover -s tests -v
       - name: Compile and run unit tests
         working-directory: extracted/MyWords
         run: gradle --no-daemon :app:assembleDebug :app:testDebugUnitTest
