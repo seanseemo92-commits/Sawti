@@ -65,6 +65,11 @@ jobs:
           test -f MyWords.zip
           unzip -q MyWords.zip -d extracted
           test -f extracted/MyWords/settings.gradle.kts
+      - name: Include Arabic speech unit tests
+        shell: bash
+        run: |
+          mkdir -p extracted/MyWords/app/src/test/java/com/mywords/domain/model
+          cp tests/android/PhonemicCueArabicTest.kt extracted/MyWords/app/src/test/java/com/mywords/domain/model/
       - name: Check archive data safety contracts
         id: safety
         continue-on-error: true
