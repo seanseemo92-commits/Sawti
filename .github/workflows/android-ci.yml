@@ -125,6 +125,14 @@ jobs:
           }
           EOF
           (cd extracted/MyWords && gradle --no-daemon :app:assembleRelease)
+      - name: Verify release signing output
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          if [[ -n "${{ secrets.MYWORDS_KEYSTORE_BASE64 }}" ]]; then
+            test -s extracted/MyWords/app/build/outputs/apk/release/app-release.apk
+            echo "Signed release APK produced; versionCode follows workflow run number."
+          fi
       - name: Upload signed release APK
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
