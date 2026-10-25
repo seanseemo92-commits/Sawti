@@ -65,6 +65,19 @@ jobs:
           test -f MyWords.zip
           unzip -q MyWords.zip -d extracted
           test -f extracted/MyWords/settings.gradle.kts
+      - name: Install JUnit dependency for added speech tests
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path("extracted/MyWords/app/build.gradle.kts")
+          s=p.read_text()
+          if 'testImplementation("junit:junit:4.13.2")' not in s:
+              s += '\\n' if not s.endswith('\\n') else ''
+              s += '\\ndependencies { testImplementation("junit:junit:4.13.2") }\\n'
+              s=s.replace('\\n', '\n')
+              p.write_text(s)
+          PY
       - name: Include Arabic speech unit tests
         shell: bash
         run: |
