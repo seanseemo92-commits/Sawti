@@ -90,6 +90,49 @@ jobs:
       - name: Compile and run unit tests
         working-directory: extracted/MyWords
         run: gradle --no-daemon :app:assembleDebug :app:testDebugUnitTest
+      - name: Configure stable release signing
+        if: github.event_name != 'pull_request'
+        env:
+          KEYSTORE_B64: ${{ secrets.MYWORDS_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.MYWORDS_KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.MYWORDS_KEY_PASSWORD }}
+        shell: bash
+        run: |
+          if [[ -z "$KEYSTORE_B64" || -z "$STORE_PASSWORD" || -z "$KEY_PASSWORD" ]]; then
+            echo "Release signing secrets are not configured; skipping release build."
+            exit 0
+          fi
+          printf '%s' "$KEYSTORE_B64" | base64 --decode > extracted/MyWords/app/mywords-release.jks
+          cat >> extracted/MyWords/app/build.gradle.kts <<'EOF'
+
+          android {
+              signingConfigs {
+                  create("ciRelease") {
+                      storeFile = file("mywords-release.jks")
+                      storePassword = System.getenv("STORE_PASSWORD")
+                      keyAlias = "mywords"
+                      keyPassword = System.getenv("KEY_PASSWORD")
+                  }
+              }
+              buildTypes {
+                  getByName("release") {
+                      signingConfig = signingConfigs.getByName("ciRelease")
+                  }
+              }
+              defaultConfig {
+                  versionCode = 10000 + (System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 1)
+              }
+          }
+          EOF
+          (cd extracted/MyWords && gradle --no-daemon :app:assembleRelease)
+      - name: Upload signed release APK
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: MyWords-release-apk
+          path: extracted/MyWords/app/build/outputs/apk/release/*.apk
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Upload debug APK
         if: success()
         uses: actions/upload-artifact@v4
