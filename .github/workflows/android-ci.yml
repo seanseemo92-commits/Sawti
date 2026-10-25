@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   android:
@@ -31,6 +31,33 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
+      - name: Repair legacy migration inside ZIP and commit on branch push
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import zipfile, os
+          archive = "MyWords.zip"
+          tmp = archive + ".tmp"
+          with zipfile.ZipFile(archive) as src, zipfile.ZipFile(tmp, "w") as dst:
+              for info in src.infolist():
+                  data = src.read(info.filename)
+                  if info.filename.endswith("/data/db/AppDatabase.kt"):
+                      code = data.decode("utf-8")
+                      for table in ("family_members", "voice_recordings", "pain_reports"):
+                          code = code.replace('db.execSQL("DROP TABLE IF EXISTS ' + table + '")', '// Legacy table retained: ' + table)
+                      data = code.encode("utf-8")
+                  dst.writestr(info, data)
+          os.replace(tmp, archive)
+          PY
+          if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/improve/android-stability-arabic" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add MyWords.zip
+            if ! git diff --cached --quiet; then
+              git commit -m "fix: retain legacy tables during Room migration"
+              git push origin HEAD:improve/android-stability-arabic
+            fi
+          fi
       - name: Extract archived Android project
         shell: bash
         run: |
