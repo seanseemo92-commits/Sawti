@@ -1,0 +1,54 @@
+name: Publish audited MyWords 4.2 release
+on:
+  push:
+    branches: [release/publish-v4-2]
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Retrieve the exact already-tested signed APK (never rebuild/re-sign)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p package
+          gh run download 40346497322 -R "$GITHUB_REPOSITORY" -n MyWords-v4-2-Signed-Release-APK -D package
+          test -s package/app-release.apk
+          mv package/app-release.apk package/MyWords-v4.2-Release.apk
+          printf '%s  %s\n' 'c164147473e7e7e82b37150f842be68ffb2c9977c9f5b1d65ac1afcb1d04fba4' 'package/MyWords-v4.2-Release.apk' | sha256sum -c -
+          (cd package && sha256sum MyWords-v4.2-Release.apk > SHA256SUMS.txt)
+          test "$(find package -maxdepth 1 -type f | wc -l)" -eq 2
+      - name: Publish one GitHub Release with APK and checksum only
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view v4.2 -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo 'Refusing to overwrite an existing v4.2 release.'
+            exit 1
+          fi
+          cat > /tmp/mywords-release-notes.md <<'EOF'
+          ## MyWords 4.2 — Signed Android release
+
+          This release contains the publicly distributable APK, with historical personal-family examples removed from compiled application strings and publicly usable relative-label cards retained.
+
+          ### Verification
+          - Signed APK from the successful, single CI run #40346497322 (commit 2389825f2451f41defa1d93fd4a788bb4c7cf05d).
+          - Android Release build, unit tests, Android Lint, and APK v2 signature verification passed.
+          - Backup database schema support updated for Room v4, safer media deletion, disabled automatic OS cloud backup.
+          - SHA256 checksum included as a separate file.
+
+          ### Important
+          - No release signing key or password is attached to this release.
+          - Install/update compatibility depends on the previous APK's signing certificate. Back up existing data before changing installed app versions.
+          - Automated tests do **not** guarantee that the app has no vulnerabilities. On-device acceptance, restore tests and accessibility checks should be completed before wide deployment.
+          - Repository remains **private** because historical commits/source archives may retain personal examples. Do not make this existing history public.
+          EOF
+          gh release create v4.2             package/MyWords-v4.2-Release.apk             package/SHA256SUMS.txt             --repo "$GITHUB_REPOSITORY"             --target 2389825f2451f41defa1d93fd4a788bb4c7cf05d             --title 'MyWords v4.2 | Signed Android APK'             --notes-file /tmp/mywords-release-notes.md
+          gh release view v4.2 --repo "$GITHUB_REPOSITORY" --json url,assets,tagName --jq '{url,tagName,asset_names:(.assets|map(.name))}'
