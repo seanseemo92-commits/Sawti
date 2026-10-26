@@ -65,6 +65,14 @@ jobs:
           test -f MyWords.zip
           unzip -q MyWords.zip -d extracted
           test -f extracted/MyWords/settings.gradle.kts
+      - name: Apply hardened backup and recovery sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          base64 -d ci/secure-backup-sources.tar.gz.b64 | tar -xz -C extracted/MyWords/app/src/main/java/com/mywords
+          test -f extracted/MyWords/app/src/main/java/com/mywords/data/BackupManager.kt
+          grep -q 'recoverIfInterrupted(this)' extracted/MyWords/app/src/main/java/com/mywords/MyWordsApp.kt
+          grep -q 'PRAGMA integrity_check' extracted/MyWords/app/src/main/java/com/mywords/data/BackupManager.kt
       - name: Install JUnit dependency for added speech tests
         shell: bash
         run: |
