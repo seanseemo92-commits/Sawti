@@ -12,6 +12,13 @@ interface WordRepository {
     /** Categories in display order, each with its items. */
     fun observeCategories(): Flow<List<Category>>
 
+    /** Existing v4 tables also store custom categories; never drop their cards on delete. */
+    suspend fun addCustomCategory(title: String, palette: Int, sortOrder: Int): String
+    suspend fun editCustomCategory(id: String, title: String, palette: Int, sortOrder: Int)
+    suspend fun deleteEmptyCustomCategory(id: String)
+    suspend fun addCustomCard(categoryId: String, displayText: String, spokenText: String): Long
+    suspend fun moveCardToCustomCategory(itemId: Long, destinationId: String)
+
     /** Inserts the built-in vocabulary on first run and tops it up when the vocabulary version changes. */
     suspend fun seedOrUpdateDefaults()
 
