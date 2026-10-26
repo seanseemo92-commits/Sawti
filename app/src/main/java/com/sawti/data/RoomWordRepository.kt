@@ -41,6 +41,7 @@ class RoomWordRepository(
                     title = DialectCatalog.text(c.title, settings.dialect),
                     palette = c.palette,
                     previewOnTap = c.previewOnTap,
+                    sortOrder = c.sortOrder,
                     items = byCategory[c.id].orEmpty().map { DialectCatalog.localize(it.toDomain(), settings.dialect) },
                 )
             }
