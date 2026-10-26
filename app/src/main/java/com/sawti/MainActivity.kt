@@ -24,6 +24,12 @@ class MainActivity : ComponentActivity() {
     private val progressVm: ProgressViewModel by viewModels { ProgressViewModel.Factory(application) }
     private val settingsVm: SettingsViewModel by viewModels { SettingsViewModel.Factory(application) }
 
+    override fun onStop() {
+        // Leaving Sawti must never leave a caregiver's microphone recording in background.
+        libraryVm.onAppBackgrounded()
+        super.onStop()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Light status-bar icons on top of the blue app bar.

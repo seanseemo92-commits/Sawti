@@ -133,16 +133,16 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
-                    Button(
+                    if (state.caregiverMode) Button(
                         onClick = { actions.openAddFamilyMember(subgroup) },
                         modifier = Modifier.size(104.dp),
                         shape = CircleShape,
                     ) { Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.family_add),
                         modifier = Modifier.size(48.dp)) }
-                    Spacer(Modifier.height(18.dp))
+                    if (state.caregiverMode) Spacer(Modifier.height(18.dp))
                     Text(stringResource(R.string.family_empty_title, subgroup), fontSize = 23.sp,
                         fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
-                    Text(stringResource(R.string.family_empty_caregiver), fontSize = 16.sp,
+                    Text(stringResource(if (state.caregiverMode) R.string.family_empty_caregiver else R.string.family_empty_patient), fontSize = 16.sp,
                         textAlign = TextAlign.Center)
                 }
             } else when (mode) {
@@ -152,7 +152,7 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
                 }
             }
         }
-        if (isPeopleGroup && items.isNotEmpty()) {
+        if (isPeopleGroup && items.isNotEmpty() && state.caregiverMode) {
             Button(onClick = { actions.openAddFamilyMember(subgroup) },
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)
                     .heightIn(min = 56.dp)) {
@@ -163,7 +163,7 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
         }
     }
 
-    if (isFamily && state.addingFamilyGroup != null) {
+    if (isFamily && state.caregiverMode && state.addingFamilyGroup != null) {
         AddFamilyMemberDialog(group = state.addingFamilyGroup, actions = actions)
     }
 
@@ -179,7 +179,7 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
     }
     // Caregiver editor.
     val editing = state.editingItemId?.let { id -> category.items.firstOrNull { it.id == id } }
-    if (editing != null) {
+    if (editing != null && state.caregiverMode) {
         WordEditorDialog(editing, isRecording = state.recordingItemId == editing.id, actions = actions)
     }
 }

@@ -97,4 +97,12 @@ interface WordDao {
 
     @Query("UPDATE word_items SET ttsPrompt = :tts, phonemicCue = :cue WHERE id = :id")
     suspend fun updateTtsAndCue(id: Long, tts: String, cue: String)
+    /** Fix only the historical placeholder on the known built-in melon card. */
+    @Query("UPDATE word_items SET emoji = '🍈' WHERE categoryId = 'fruits' AND displayText = 'قلعاوي' AND emoji = '??'")
+    suspend fun correctMelonPlaceholder()
+
+    /** Remove only obsolete built-in action hints, not other user-written phrases. */
+    @Query("UPDATE word_items SET sentencePrompt = NULL WHERE categoryId = 'actions' AND sentencePrompt = 'أُرِيدُ الـ...'")
+    suspend fun clearLegacyActionPlaceholder()
+
 }

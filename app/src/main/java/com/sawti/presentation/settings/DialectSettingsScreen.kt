@@ -42,9 +42,13 @@ fun DialectSettingsRoute(
     val voiceStatus by speech.voiceStatus.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val country = Locale.forLanguageTag(settings.dialect.localeTag).country
-    val voices = voiceStatus.voices.filter {
-        country.isEmpty() || Locale.forLanguageTag(it.localeTag).country == country
-    }
+    // A Libyan voice is rarely installed; show every Arabic voice rather than hiding
+    // Egyptian/Saudi/other offline options behind the selected dialect country.
+    val voices = voiceStatus.voices.sortedWith(
+        compareByDescending<com.sawti.speech.InstalledArabicVoice> {
+            Locale.forLanguageTag(it.localeTag).country.equals(country, ignoreCase = true)
+        }.thenByDescending { it.offline }.thenBy { it.name }
+    )
 
     Column(
         modifier = modifier.verticalScroll(rememberScrollState()).padding(16.dp),
@@ -96,7 +100,7 @@ fun DialectSettingsRoute(
                             Column(Modifier.weight(1f)) {
                                 Text(voice.name, style = MaterialTheme.typography.bodyMedium)
                                 Text(
-                                    "${voice.localeTag} · ${if (voice.offline) "لا يحتاج اتصالاً بالإنترنت" else "قد يتطلب اتصالاً بالإنترنت"}",
+                                    "${voice.localeTag} · ${if (Locale.forLanguageTag(voice.localeTag).country.equals(country, ignoreCase = true)) "مطابق للمنطقة · " else "صوت عربي بديل · "}${if (voice.offline) "لا يحتاج اتصالاً بالإنترنت" else "قد يتطلب اتصالاً بالإنترنت"}",
                                     style = MaterialTheme.typography.bodySmall,
                                 )
                             }

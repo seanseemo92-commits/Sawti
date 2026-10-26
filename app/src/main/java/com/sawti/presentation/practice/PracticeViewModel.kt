@@ -116,10 +116,18 @@ class PracticeViewModel(
     private fun showQuestion(i: Int) {
         val card = deck[i]
         if (_uiState.value.exercise == Exercise.CHOICE) {
+            val distractor = pickDistractor(card)
+            if (distractor == null) {
+                // The pool can change while a round is in progress (e.g. caregiver edits).
+                // End gracefully rather than calling random() on an empty collection.
+                voice.stop()
+                _uiState.update { it.copy(card = null, finished = true, choices = emptyList()) }
+                return
+            }
             _uiState.update {
                 it.copy(
                     card = card, index = i, finished = false,
-                    choices = listOf(card, pickDistractor(card)).shuffled(),
+                    choices = listOf(card, distractor).shuffled(),
                     wrongIds = emptySet(), solved = false,
                 )
             }
@@ -130,12 +138,14 @@ class PracticeViewModel(
     }
 
     /** A different picture, preferably from the same category (e.g. another fruit). */
-    private fun pickDistractor(target: PracticeCard): PracticeCard {
-        val others = choicePool.filter {
+    private fun pickDistractor(target: PracticeCard): PracticeCard? {
+        // Retain the round snapshot as a fallback if the live category pool changes mid-game.
+        val others = (choicePool + deck).distinctBy { it.item.id }.filter {
             it.item.id != target.item.id &&
                 (it.item.photoPath != null || target.item.photoPath != null || it.item.emoji != target.item.emoji)
         }
-        return others.filter { it.item.categoryId == target.item.categoryId }.ifEmpty { others }.random()
+        return others.filter { it.item.categoryId == target.item.categoryId }
+            .ifEmpty { others }.randomOrNull()
     }
 
     private fun advance() {

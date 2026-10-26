@@ -18,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /** Hand-rolled DI: one shared instance of everything the ViewModels need. Swap for Hilt if you prefer. */
 class AppContainer(private val app: Application) {
@@ -46,8 +47,12 @@ class SawtiApp : Application() {
         // Keep voice, region and rate reactive without recreating the TTS engine.
         appScope.launch {
             container.settingsRepository.state.collect { settings ->
-                container.speech.setSpeechRate(settings.speechRate.factor)
-                container.speech.setDialect(settings.dialect, settings.preferredVoice)
+                // TextToSpeech is owned by the main thread. Never reconfigure the
+                // same engine concurrently from the IO settings collector.
+                withContext(Dispatchers.Main.immediate) {
+                    container.speech.setSpeechRate(settings.speechRate.factor)
+                    container.speech.setDialect(settings.dialect, settings.preferredVoice)
+                }
             }
         }
     }

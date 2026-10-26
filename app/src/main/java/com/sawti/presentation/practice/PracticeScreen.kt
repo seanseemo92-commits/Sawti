@@ -21,7 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Refresh
@@ -225,7 +225,7 @@ private fun RecallContent(state: PracticeUiState, actions: PracticeActions) {
                 )
                 ActionPill(
                     label = stringResource(R.string.practice_next),
-                    icon = Icons.AutoMirrored.Filled.ArrowBack,
+                    icon = Icons.AutoMirrored.Filled.ArrowForward,
                     color = HintAmber,
                     onClick = actions::skip,
                 )

@@ -29,6 +29,7 @@
     <string name="family_all">الكل</string>
     <string name="family_empty_title">قسم %1$s فارغ</string>
     <string name="family_empty_caregiver">اضغط على علامة + لإضافة اسم، وبعدها تقدر تضيف صورة أو تسجّل صوت أو ترفع ملف صوتي.</string>
+    <string name="family_empty_patient">هذا القسم ما زال فارغًا. يقدر المرافق يضيف أسماء العائلة من وضع المرافق.</string>
     <string name="family_empty_normal">اضغط على علامة + لإضافة أول اسم.</string>
     <string name="family_delete">حذف هذا الشخص</string>
     <string name="family_delete_confirm">هل تريد حذف «%1$s» من قسم العائلة؟ ستُزال البطاقة والتسجيل والصورة المرفقان بها من التطبيق.</string>
