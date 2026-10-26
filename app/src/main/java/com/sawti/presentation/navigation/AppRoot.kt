@@ -85,6 +85,9 @@ fun AppRoot(
     var manageCategories by rememberSaveable { mutableStateOf(false) }
     var guideOpen by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
+    // The reopened help guide is dismissible with Android Back; first-launch setup
+    // remains visible until the user completes it or taps Skip.
+    BackHandler(enabled = guideOpen) { guideOpen = false }
 
     if (!settings.isOnboardingCompleted || guideOpen) {
         OnboardingScreen(
