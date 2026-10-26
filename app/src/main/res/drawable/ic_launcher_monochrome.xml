@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Solid silhouette for Android 13+ themed launcher icons. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFFFF" android:strokeWidth="3" android:strokeLineCap="round"
+        android:pathData="M26,40 C33,28 44,23 54,23 C67,23 78,30 83,42"/>
+    <path android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFFFF" android:strokeWidth="3" android:strokeLineCap="round"
+        android:pathData="M33,44 C38,36 46,33 54,33 C63,33 71,37 75,44"/>
+    <path android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFFFF" android:strokeWidth="6.5" android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M34,66 C43,67 46,57 52,53 C59,47 68,52 68,60 C69,65 65,69 58,69 L35,69 C29,69 25,74 26,80"/>
+</vector>
