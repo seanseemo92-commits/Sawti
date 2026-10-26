@@ -81,6 +81,9 @@ jobs:
           grep -q 'VACUUM INTO' extracted/MyWords/app/src/main/java/com/mywords/data/BackupManager.kt
           grep -q 'zip.getInputStream' extracted/MyWords/app/src/main/java/com/mywords/data/BackupManager.kt
           grep -q 'فشل إنشاء النسخة الاحتياطية' extracted/MyWords/app/src/main/java/com/mywords/presentation/settings/SettingsScreen.kt
+      - name: Show explicit restore success confirmation
+        shell: bash
+        run: python3 ci/restore_success_ux.py
       - name: Install JUnit dependency for added speech tests
         shell: bash
         run: |
