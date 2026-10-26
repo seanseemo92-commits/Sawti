@@ -31,7 +31,7 @@ jobs:
           test -f app/src/main/java/com/sawti/data/db/LegacyFamilyCleanup.kt
           test ! -f app/src/main/java/com/sawti/data/db/LegacyFamilyDefaults.kt
           test -f README.md
-          grep -q 'versionName = "4.4"' app/build.gradle.kts
+          grep -q 'versionName = "4.5"' app/build.gradle.kts
           grep -q 'rootProject.name = "Sawti"' settings.gradle.kts
           grep -q '<string name="app_name">صوتي</string>' app/src/main/res/values/strings.xml
           grep -q 'android:allowBackup="false"' app/src/main/AndroidManifest.xml
@@ -44,7 +44,7 @@ jobs:
       - name: Upload test APK
         uses: actions/upload-artifact@v4
         with:
-          name: Sawti-v4.4-main-debug-ci
+          name: Sawti-v4.5-audit-debug-ci
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 7
