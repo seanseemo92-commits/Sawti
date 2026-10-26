@@ -1,0 +1,152 @@
+name: Promote verified Sawti v4.2 source to main once
+on:
+  push:
+    branches: [integration/promote-sawti-v4-2-main]
+permissions:
+  contents: write
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact v4.2 source used for signed release
+        uses: actions/checkout@v4
+        with:
+          ref: 2389825f2451f41defa1d93fd4a788bb4c7cf05d
+          path: source
+          persist-credentials: false
+      - name: Checkout main separately, without overwriting existing commits
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main-tree
+          persist-credentials: true
+      - name: Reconstruct verified 4.2 source from exact release revision
+        working-directory: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$(git -C ../main-tree rev-parse HEAD)" == "ca32a2e996bfcfbc63cfb7ca1a7ef7d5c97504a7" ]] || { echo "::error::main changed, stopping"; exit 1; }
+          python3 - <<'PY'
+          import zipfile, os
+          archive="MyWords.zip"
+          temp=archive+".tmp"
+          with zipfile.ZipFile(archive) as src,zipfile.ZipFile(temp,"w") as dst:
+              for info in src.infolist():
+                  data=src.read(info.filename)
+                  if info.filename.endswith("/data/db/AppDatabase.kt"):
+                      code=data.decode("utf-8")
+                      for table in ("family_members","voice_recordings","pain_reports"):
+                          code=code.replace('db.execSQL("DROP TABLE IF EXISTS '+table+'")','// Legacy table retained: '+table)
+                      data=code.encode("utf-8")
+                  dst.writestr(info,data)
+          os.replace(temp,archive)
+          PY
+          python3 -m unittest discover -s tests -v
+          unzip -q MyWords.zip -d extracted
+          test -f extracted/MyWords/settings.gradle.kts
+          base64 -d ci/secure-backup-sources.tar.gz.b64 | tar -xz -C extracted/MyWords/app/src/main/java/com/mywords
+          base64 --decode ci/mywords-backup-export-fix.patch.xz.b64 | xz --decompress | patch -p1 -d extracted/MyWords
+          python3 ci/restore_success_ux.py
+          base64 --decode ci/sawti-source-overlay.tar.gz.b64 | tar --extract --gzip --directory extracted
+          sed -i 's/versionName = "3.2"/versionName = "4.0"/' extracted/MyWords/app/build.gradle.kts
+          base64 --decode ci/sawti-family-feature.patch.xz.b64 | xz --decompress | patch --batch -p1 -d extracted/MyWords
+          python3 ci/apply_sawti_family_migration.py
+          python3 ci/sanitize_public_family_ci.py
+          python3 ci/prepare_secure_release.py
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path("extracted/MyWords/app/build.gradle.kts")
+          s=p.read_text()
+          if 'testImplementation("junit:junit:4.13.2")' not in s:
+              s += '\n' if not s.endswith('\n') else ''
+              s += '\ndependencies { testImplementation("junit:junit:4.13.2") }\n'
+              p.write_text(s)
+          PY
+          mkdir -p extracted/MyWords/app/src/test/java/com/mywords/domain/model
+          cp tests/android/PhonemicCueArabicTest.kt extracted/MyWords/app/src/test/java/com/mywords/domain/model/
+      - name: Commit only clean source on main, never history rewrite or signing key
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f source/extracted/MyWords/app/src/main/java/com/mywords/data/db/LegacyFamilyCleanup.kt
+          test ! -e source/extracted/MyWords/app/src/main/java/com/mywords/data/db/LegacyFamilyDefaults.kt
+          grep -q 'versionCode = 7' source/extracted/MyWords/app/build.gradle.kts
+          grep -q 'versionName = "4.2"' source/extracted/MyWords/app/build.gradle.kts
+          grep -q 'rootProject.name = "Sawti"' source/extracted/MyWords/settings.gradle.kts
+          grep -q '<string name="app_name">صوتي</string>' source/extracted/MyWords/app/src/main/res/values/strings.xml
+          grep -q 'android:allowBackup="false"' source/extracted/MyWords/app/src/main/AndroidManifest.xml
+          cd main-tree
+          git rm -r -- .github MyWords.zip
+          cp -a ../source/extracted/MyWords/. .
+          cat >> .gitignore <<'EOF'
+
+          # Never add private signing keys or personal media
+          *.jks
+          *.keystore
+          *.p12
+          /app/signing/
+          /app/src/main/assets/private/
+          EOF
+          cat > README.md <<'EOF'
+          # صوتي | Sawti
+
+          **الإصدار 4.2** — تطبيق أندرويد عربي لدعم التواصل والنطق.
+
+          هذا هو مصدر التطبيق الرسمي مباشرة في الفرع الرئيسي. لا يحتاج فك أرشيفات قديمة أو ترقيعات بناء.
+
+          ## البناء
+          - Android Studio وJDK 17 وGradle 8.9، مع AGP 8.7.3 وKotlin 2.0.21.
+          - لبناء واختبار التطبيق: gradle --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintRelease
+          - الاسم الظاهر للمستخدم: صوتي (Sawti). الاسم الداخلي للمشروع: Sawti.
+          - المعرّف com.mywords محفوظ لتوافق التحديثات، ولا يظهر كاسم التطبيق.
+
+          ## العائلة والبيانات
+          - الأسماء العائلية الشخصية غير موجودة في البيانات الافتراضية الجديدة؛ الموجود صفات القرابة العامة فقط.
+          - إزالة الأمثلة القديمة عند التحديث لا تستهدف البطاقات المخصصة بصور أو أصوات أو هواتف.
+          - النسخ الاحتياطي السحابي التلقائي معطل؛ النسخ الاحتياطي اليدوي من داخل التطبيق متاح.
+
+          ## الخصوصية والإصدارات
+          - المستودع يبقى خاصًا: سجل Git القديم وأرشيفاته قد يحتوي أسماء شخصية. لا تجعله عامًا قبل إنشاء مستودع جديد بسجل نظيف من هذه الملفات.
+          - نسخة APK الموقّعة منشورة في GitHub Release v4.2.
+          - مفتاح التوقيع غير موجود في هذا المستودع، ويجب حفظه بشكل خاص للتحديثات القادمة.
+          - لا تغيّر معرّف التطبيق أو قاعدة البيانات بلا ترحيل آمن.
+          EOF
+          mkdir -p .github/workflows
+          cat > .github/workflows/verify-android.yml <<'EOF'
+          name: Verify Sawti Android source
+          on:
+            pull_request:
+              branches: [main]
+            workflow_dispatch:
+          permissions:
+            contents: read
+          jobs:
+            android:
+              runs-on: ubuntu-latest
+              timeout-minutes: 35
+              steps:
+                - uses: actions/checkout@v4
+                - uses: actions/setup-java@v4
+                  with:
+                    distribution: temurin
+                    java-version: '17'
+                - uses: gradle/actions/setup-gradle@v4
+                  with:
+                    gradle-version: '8.9'
+                - name: Compile and run tests
+                  run: gradle --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintRelease
+          EOF
+          test ! -e MyWords.zip
+          test ! -e Sawti-Baseline.zip
+          if find . -path './.git' -prune -o \( -iname '*.jks' -o -iname '*.p12' -o -iname '*.keystore' \) -print | grep -q .; then
+            echo "::error::Signing material found; refusing promotion"
+            exit 1
+          fi
+          git add -A
+          git diff --cached --check
+          git diff --cached --stat
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "release: promote clean Sawti v4.2 source as main baseline"
+          git push origin HEAD:main
