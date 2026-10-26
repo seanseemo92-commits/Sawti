@@ -6,17 +6,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Backspace
+import androidx.compose.material.icons.filled.Backspace
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -51,7 +48,7 @@ fun SentenceStrip(
                 Text("جملتي", style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.weight(1f))
                 IconButton(onClick = onBackspace, enabled = pieces.isNotEmpty()) {
-                    Icon(Icons.AutoMirrored.Filled.Backspace, contentDescription = "حذف آخر كلمة")
+                    Icon(Icons.Filled.Backspace, contentDescription = "حذف آخر كلمة")
                 }
                 IconButton(onClick = onClear, enabled = pieces.isNotEmpty()) {
                     Icon(Icons.Filled.DeleteSweep, contentDescription = "مسح الجملة")
@@ -67,11 +64,16 @@ fun SentenceStrip(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (pieces.isEmpty()) Text("المس الكلمات لتكوين جملة", style = MaterialTheme.typography.bodyMedium)
-                pieces.forEachIndexed { index, piece ->
-                    AssistChip(
-                        onClick = { }, // Read-only pill; avoids accidentally adding words twice.
-                        label = { Text(piece.text, maxLines = 1) },
-                        leadingIcon = {
+                pieces.forEach { piece ->
+                    Surface(
+                        shape = RoundedCornerShape(50),
+                        color = MaterialTheme.colorScheme.surface,
+                    ) {
+                        Row(
+                            Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(5.dp),
+                        ) {
                             if (piece.photoPath != null) {
                                 AsyncImage(
                                     model = File(piece.photoPath),
@@ -80,8 +82,9 @@ fun SentenceStrip(
                                     contentScale = ContentScale.Crop,
                                 )
                             } else Text(piece.emoji.ifBlank { piece.text.take(1) })
-                        },
-                    )
+                            Text(piece.text, maxLines = 1)
+                        }
+                    }
                 }
             }
         }
