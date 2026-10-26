@@ -1,0 +1,83 @@
+name: Public cleaned APK (one build)
+on:
+  push:
+    branches: [build/public-family-clean-v41]
+permissions:
+  contents: read
+jobs:
+  clean-android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Repair source archive locally without committing changes
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import zipfile,os
+          archive="MyWords.zip"
+          tmp=archive+".tmp"
+          with zipfile.ZipFile(archive) as src, zipfile.ZipFile(tmp,"w") as dst:
+              for info in src.infolist():
+                  data=src.read(info.filename)
+                  if info.filename.endswith("/data/db/AppDatabase.kt"):
+                      code=data.decode("utf-8")
+                      for table in ("family_members","voice_recordings","pain_reports"):
+                          code=code.replace('db.execSQL("DROP TABLE IF EXISTS '+table+'")','// Legacy table retained: '+table)
+                      data=code.encode("utf-8")
+                  dst.writestr(info,data)
+          os.replace(tmp,archive)
+          PY
+          python3 -m unittest discover -s tests -v
+      - name: Extract source and apply verified v77 fixes
+        shell: bash
+        run: |
+          set -euo pipefail
+          unzip -q MyWords.zip -d extracted
+          test -f extracted/MyWords/settings.gradle.kts
+          base64 -d ci/secure-backup-sources.tar.gz.b64 | tar -xz -C extracted/MyWords/app/src/main/java/com/mywords
+          base64 --decode ci/mywords-backup-export-fix.patch.xz.b64 | xz --decompress | patch -p1 -d extracted/MyWords
+          python3 ci/restore_success_ux.py
+          base64 --decode ci/sawti-source-overlay.tar.gz.b64 | tar --extract --gzip --directory extracted
+          sed -i 's/versionName = "3.2"/versionName = "4.0"/' extracted/MyWords/app/build.gradle.kts
+          base64 --decode ci/sawti-family-feature.patch.xz.b64 | xz --decompress | patch --batch -p1 -d extracted/MyWords
+          python3 ci/apply_sawti_family_migration.py
+      - name: Permanently remove personal family examples from public APK sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ci/sanitize_public_family_ci.py
+          test ! -e extracted/MyWords/app/src/main/java/com/mywords/data/db/LegacyFamilyDefaults.kt
+          test -s extracted/MyWords/app/src/main/java/com/mywords/data/db/LegacyFamilyCleanup.kt
+          grep -q 'version = 4,' extracted/MyWords/app/src/main/java/com/mywords/data/db/AppDatabase.kt
+      - name: Install tests
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path("extracted/MyWords/app/build.gradle.kts")
+          s=p.read_text()
+          if 'testImplementation("junit:junit:4.13.2")' not in s:
+              s += '\n' if not s.endswith('\n') else ''
+              s += '\ndependencies { testImplementation("junit:junit:4.13.2") }\n'
+              p.write_text(s)
+          PY
+          mkdir -p extracted/MyWords/app/src/test/java/com/mywords/domain/model
+          cp tests/android/PhonemicCueArabicTest.kt extracted/MyWords/app/src/test/java/com/mywords/domain/model/
+      - name: Compile verified clean Android debug APK and run unit tests
+        working-directory: extracted/MyWords
+        run: gradle --no-daemon :app:assembleDebug :app:testDebugUnitTest
+      - name: Package clean public Android APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: MyWords-v4-1-Public-Clean-APK
+          path: extracted/MyWords/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 14
