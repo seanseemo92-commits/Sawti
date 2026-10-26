@@ -11,6 +11,7 @@ data class SentencePiece(
 
 object SentenceComposer {
     const val MAX_PIECES = 24
+    const val MAX_SPEECH_CHARACTERS = 3500
 
     fun piece(word: WordItem) = SentencePiece(
         sourceId = word.id,
@@ -20,12 +21,15 @@ object SentenceComposer {
         emoji = word.emoji,
     )
 
-    fun add(current: List<SentencePiece>, word: WordItem): List<SentencePiece> =
-        if (current.size >= MAX_PIECES) current else current + piece(word)
+    fun add(current: List<SentencePiece>, word: WordItem): List<SentencePiece> {
+        if (current.size >= MAX_PIECES) return current
+        val next = current + piece(word)
+        return if (spokenSentence(next).length <= MAX_SPEECH_CHARACTERS) next else current
+    }
 
     /** A single TTS request preserves sentence context and natural engine pacing. */
     fun spokenSentence(parts: List<SentencePiece>): String =
-        parts.map { it.spokenText.trim().trimEnd('،', '،', '.', '!', '؟') }
+        parts.map { it.spokenText.trim().trimEnd('،', '.', '!', '؟') }
             .filter { it.isNotBlank() }
             .joinToString("، ")
 }
