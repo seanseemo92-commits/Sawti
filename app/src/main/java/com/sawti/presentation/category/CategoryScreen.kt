@@ -261,7 +261,7 @@ private fun WordGrid(
     actions: LibraryActions,
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
+        columns = GridCells.Adaptive(minSize = 160.dp),
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 28.dp),
         horizontalArrangement = Arrangement.spacedBy(14.dp),

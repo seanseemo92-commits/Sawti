@@ -52,6 +52,7 @@ dependencies {
 
     // Loads attached photos from app storage
     implementation("io.coil-kt:coil-compose:2.7.0")
+    implementation("androidx.exifinterface:exifinterface:1.3.7")
 }
 
 dependencies { testImplementation("junit:junit:4.13.2") }

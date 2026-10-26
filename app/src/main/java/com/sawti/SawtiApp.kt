@@ -1,6 +1,7 @@
 package com.sawti
 
 import android.app.Application
+import com.sawti.audio.AudioFocusController
 import com.sawti.audio.AudioPlayer
 import com.sawti.audio.SoftChime
 import com.sawti.audio.VoiceRecorder
@@ -23,8 +24,9 @@ import kotlinx.coroutines.withContext
 /** Hand-rolled DI: one shared instance of everything the ViewModels need. Swap for Hilt if you prefer. */
 class AppContainer(private val app: Application) {
     val database by lazy { AppDatabase.build(app) }
-    val speech by lazy { SpeechManager(app) }
-    val player by lazy { AudioPlayer() }
+    val audioFocus by lazy { AudioFocusController(app) }
+    val speech by lazy { SpeechManager(app, audioFocus) }
+    val player by lazy { AudioPlayer(audioFocus) }
     val recorder by lazy { VoiceRecorder(app) }
     val audioDispatcher by lazy { AudioDispatcher(speech, player) }
     val caregiver = CaregiverMode()

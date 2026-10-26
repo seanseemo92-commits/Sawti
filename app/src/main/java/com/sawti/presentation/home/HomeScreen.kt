@@ -52,7 +52,7 @@ import com.sawti.presentation.theme.HintAmber
 import com.sawti.presentation.theme.paletteOf
 
 /**
- * Home: quick-access favourites row on top, then the 2-column category grid
+ * Home: quick-access favourites row on top, then an adaptive category grid
  * (first two cards are always عائلتي and طلباتي اليومية).
  */
 @Composable
@@ -73,7 +73,7 @@ fun HomeScreen(
             FavoritesBar(favorites, activeItemId, caregiverMode, onQuickTap)
         }
         LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
+            columns = GridCells.Adaptive(minSize = 160.dp),
             modifier = Modifier.weight(1f),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 28.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),

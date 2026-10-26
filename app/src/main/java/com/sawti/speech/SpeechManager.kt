@@ -5,6 +5,8 @@ import android.media.AudioAttributes
 import android.os.Handler
 import android.os.Looper
 import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
+import com.sawti.audio.AudioFocusController
 import com.sawti.domain.model.ArabicDialect
 import java.util.Locale
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,8 +41,11 @@ data class DialectVoiceStatus(
  * native TTS voices for all nine accents, so availability/fallback is reported honestly.
  * Nothing in this class downloads voices or makes network requests.
  */
-class SpeechManager(context: Context) : TextToSpeech.OnInitListener {
+class SpeechManager(context: Context, private val focus: AudioFocusController) : TextToSpeech.OnInitListener {
     private val appContext = context.applicationContext
+    private val main = Handler(Looper.getMainLooper())
+    private var focusToken: Long? = null
+    private var utteranceId: String? = null
     private var tts: TextToSpeech? = null
     private var ready = false
     private var speechRate = 0.85f
@@ -88,6 +93,13 @@ class SpeechManager(context: Context) : TextToSpeech.OnInitListener {
             )
             engine.setSpeechRate(speechRate)
         }
+        engine.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+            override fun onStart(utteranceId: String?) = Unit
+            override fun onDone(utteranceId: String?) = finishUtterance(utteranceId)
+            @Deprecated("Older TTS callback")
+            override fun onError(utteranceId: String?) = finishUtterance(utteranceId)
+            override fun onError(utteranceId: String?, errorCode: Int) = finishUtterance(utteranceId)
+        })
         ready = true
         configureEngine()
         pending?.also { pending = null; it.invoke() }
@@ -157,19 +169,44 @@ class SpeechManager(context: Context) : TextToSpeech.OnInitListener {
 
     fun stop() {
         pending = null
+        utteranceId = null
+        val token = focusToken
+        focusToken = null
+        if (token != null) focus.release(token)
         runCatching { tts?.stop() }
+    }
+
+    private fun finishUtterance(completedId: String?) {
+        // TTS callbacks may arrive from a binder thread, after a newer phrase has begun.
+        main.post {
+            if (completedId != null && completedId == utteranceId) {
+                utteranceId = null
+                val token = focusToken
+                focusToken = null
+                if (token != null) focus.release(token)
+            }
+        }
     }
 
     private fun speakNow(text: String) {
         val engine = tts ?: return
+        stop()
+        // Do not speak during calls or when another application holds locked focus.
+        val token = focus.acquire { stop() } ?: return
+        val id = "sawti-${System.nanoTime()}"
+        focusToken = token
+        utteranceId = id
         runCatching {
-            val result = engine.speak(text, TextToSpeech.QUEUE_FLUSH, null, "sawti-${System.nanoTime()}")
+            val result = engine.speak(text, TextToSpeech.QUEUE_FLUSH, null, id)
             if (result == TextToSpeech.ERROR) {
+                stop()
                 _issue.value = SpeechIssue.EngineUnavailable
             } else {
-                // An earlier one-off audio failure must not leave a permanent warning.
                 _issue.value = null
             }
-        }.onFailure { _issue.value = SpeechIssue.EngineUnavailable }
+        }.onFailure {
+            stop()
+            _issue.value = SpeechIssue.EngineUnavailable
+        }
     }
 }
