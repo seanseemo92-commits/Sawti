@@ -71,7 +71,7 @@ class RoomWordRepository(
             val previous = prefs.getInt(KEY_SEED_VERSION, 0)
             if (previous < WordSeed.VERSION) {
                 if (previous >= 15) {
-                    // v15 -> v16: insert new cuisine words ONLY. No sort, prompt, TTS,
+                    // v15/v16 -> v17: insert missing regional cuisine words ONLY. No sort, prompt, TTS,
                     // photo, recording, favourite or other existing value is updated.
                     topUpCuisineOnly()
                 } else {
@@ -93,7 +93,7 @@ class RoomWordRepository(
                 phonemicCue = dish.phonemicCue,
                 sentencePrompt = dish.sentencePrompt,
                 emoji = dish.emoji,
-                sortOrder = index % 5,
+                sortOrder = index % 15,
             )
         }
 
