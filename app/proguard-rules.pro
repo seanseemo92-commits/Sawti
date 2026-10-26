@@ -6,3 +6,4 @@
 -keep class com.sawti.domain.model.TextSize { *; }
 -keep class com.sawti.domain.model.SpeechRate { *; }
 -keep class com.sawti.domain.model.ArabicDialect { *; }
+-keep class com.sawti.domain.model.TouchDwell { *; }
