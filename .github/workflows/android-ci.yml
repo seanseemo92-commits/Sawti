@@ -73,6 +73,14 @@ jobs:
           test -f extracted/MyWords/app/src/main/java/com/mywords/data/BackupManager.kt
           grep -q 'recoverIfInterrupted(this)' extracted/MyWords/app/src/main/java/com/mywords/MyWordsApp.kt
           grep -q 'PRAGMA integrity_check' extracted/MyWords/app/src/main/java/com/mywords/data/BackupManager.kt
+      - name: Patch empty-file backup export and verify file integrity
+        shell: bash
+        run: |
+          set -euo pipefail
+          base64 --decode ci/mywords-backup-export-fix.patch.xz.b64 | xz --decompress | patch -p1 -d extracted/MyWords
+          grep -q 'VACUUM INTO' extracted/MyWords/app/src/main/java/com/mywords/data/BackupManager.kt
+          grep -q 'zip.getInputStream' extracted/MyWords/app/src/main/java/com/mywords/data/BackupManager.kt
+          grep -q 'فشل إنشاء النسخة الاحتياطية' extracted/MyWords/app/src/main/java/com/mywords/presentation/settings/SettingsScreen.kt
       - name: Install JUnit dependency for added speech tests
         shell: bash
         run: |
