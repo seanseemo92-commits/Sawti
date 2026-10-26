@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -75,6 +76,8 @@ fun HomeScreen(
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
         return
     }
+    // Match the adaptive grid's effective column count for staggered *rows*.
+    val estimatedColumns = ((LocalConfiguration.current.screenWidthDp - 32) / 160).coerceAtLeast(1)
     Column(Modifier.fillMaxSize()) {
         if (favorites.isNotEmpty() || caregiverMode) {
             FavoritesBar(favorites, activeItemId, speakingItemId, caregiverMode, onQuickTap, onQuickLongTap)
@@ -87,7 +90,7 @@ fun HomeScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             itemsIndexed(categories, key = { _, category -> category.id }) { index, category ->
-                StaggeredCascade(key = category.id, row = index / 2, modifier = Modifier.fillMaxWidth()) {
+                StaggeredCascade(key = category.id, row = index / estimatedColumns, modifier = Modifier.fillMaxWidth()) {
                     CategoryCard(category) { onOpen(category.id) }
                 }
             }
