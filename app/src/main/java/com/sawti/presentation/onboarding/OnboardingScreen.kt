@@ -3,6 +3,12 @@ package com.sawti.presentation.onboarding
 import android.app.Activity
 import androidx.core.view.WindowCompat
 
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -33,6 +39,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.res.painterResource
@@ -55,6 +62,8 @@ import androidx.compose.ui.unit.sp
 import com.sawti.domain.model.ArabicDialect
 import com.sawti.presentation.theme.AppBarBlue
 import com.sawti.presentation.theme.LocalIsDark
+import com.sawti.presentation.theme.LocalPerformanceMode
+import com.sawti.presentation.theme.cardElevation
 import kotlinx.coroutines.launch
 
 private val PaleSky = Color(0xFF38BDF8)
@@ -62,10 +71,28 @@ private val DeepNavy = Color(0xFF1E293B)
 
 /** Calm concentric acoustic ripples; vector-like and drawn locally, never network dependent. */
 @Composable
-private fun AcousticRipples() {
+private fun AcousticRipples(page: Int) {
+    val reducedMotion = LocalPerformanceMode.current
+    if (reducedMotion) {
+        RippleArtwork(page, 0f)
+    } else {
+        val transition = rememberInfiniteTransition(label = "onboarding-acoustic-breath")
+        val progress by transition.animateFloat(
+            initialValue = 0f,
+            targetValue = 1f,
+            animationSpec = infiniteRepeatable(animation = tween(2800), repeatMode = RepeatMode.Reverse),
+            label = "ripple-phase",
+        )
+        RippleArtwork(page, progress)
+    }
+}
+
+@Composable
+private fun RippleArtwork(page: Int, progress: Float) {
     Canvas(Modifier.fillMaxSize()) {
-        val radius = size.minDimension * 0.75f
-        val origin = Offset(size.width * 0.5f, size.height * 0.32f)
+        val radius = size.minDimension * 0.78f
+        // The wave origin moves gently as the user swipes between onboarding pages.
+        val origin = Offset(size.width * (0.5f + page * 0.012f), size.height * 0.32f)
         drawCircle(
             brush = Brush.radialGradient(
                 listOf(PaleSky.copy(alpha = 0.19f), DeepNavy.copy(alpha = 0.045f), Color.Transparent),
@@ -79,7 +106,7 @@ private fun AcousticRipples() {
             drawCircle(
                 color = PaleSky.copy(alpha = 0.19f - index * 0.023f),
                 center = origin,
-                radius = size.minDimension * (0.115f + index * 0.115f),
+                radius = size.minDimension * (0.115f + index * 0.115f + progress * 0.010f),
                 style = Stroke(width = (2.8f - index * 0.33f).coerceAtLeast(1f), cap = StrokeCap.Round),
             )
         }
@@ -109,7 +136,7 @@ fun OnboardingScreen(
         onDispose { if (controller != null && previous != null) controller.isAppearanceLightStatusBars = previous }
     }
     Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-        AcousticRipples()
+        AcousticRipples(pager.currentPage)
         Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(horizontal = 20.dp, vertical = 12.dp)) {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Text(
@@ -126,11 +153,19 @@ fun OnboardingScreen(
                 modifier = Modifier.weight(1f).fillMaxWidth(),
                 beyondViewportPageCount = 1,
             ) { page ->
-                Column(
-                    modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 6.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
+                Surface(
+                    modifier = Modifier.fillMaxSize().padding(horizontal = 2.dp, vertical = 9.dp),
+                    shape = RoundedCornerShape(30.dp),
+                    color = MaterialTheme.colorScheme.surface.copy(alpha = if (dark) 0.88f else 0.81f),
+                    border = BorderStroke(1.dp, Color.White.copy(alpha = if (dark) 0.18f else 0.85f)),
+                    shadowElevation = cardElevation(6.dp),
                 ) {
+                    Column(
+                        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+                            .padding(horizontal = 18.dp, vertical = 24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                    ) {
                     Box(
                         modifier = Modifier.size(120.dp).background(
                             Brush.radialGradient(
@@ -176,10 +211,11 @@ fun OnboardingScreen(
                             2 -> "أيقونة الترس ⚙️ محمية: اضغط عليها باستمرار 3 ثوانٍ حتى يفتح وضع المرافق، لحماية إعدادات المستخدم من اللمس العرضي."
                             else -> "اختر لهجتك المفضلة. تتبدل الأكلات الشعبية وبعض المفردات مباشرة، وتبقى صورك وتسجيلاتك محفوظة."
                         },
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyLarge,
+                        color = if (page == 0) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = if (page == 0) MaterialTheme.typography.titleLarge else MaterialTheme.typography.bodyLarge,
+                        fontWeight = if (page == 0) FontWeight.SemiBold else FontWeight.Normal,
                         textAlign = TextAlign.Center,
-                        lineHeight = 28.sp,
+                        lineHeight = 30.sp,
                     )
                     if (page == 0) {
                         Spacer(Modifier.height(20.dp))
@@ -209,6 +245,7 @@ fun OnboardingScreen(
                         }
                     }
                     Spacer(Modifier.height(24.dp))
+                    }
                 }
             }
             Row(
