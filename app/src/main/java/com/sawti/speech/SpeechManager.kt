@@ -2,6 +2,8 @@ package com.sawti.speech
 
 import android.content.Context
 import android.media.AudioAttributes
+import android.os.Handler
+import android.os.Looper
 import android.speech.tts.TextToSpeech
 import com.sawti.domain.model.ArabicDialect
 import java.util.Locale
@@ -60,6 +62,15 @@ class SpeechManager(context: Context) : TextToSpeech.OnInitListener {
     }
 
     override fun onInit(status: Int) {
+        // Device TTS callbacks are not guaranteed to arrive on our chosen thread.
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            Handler(Looper.getMainLooper()).post { finishInit(status) }
+        } else {
+            finishInit(status)
+        }
+    }
+
+    private fun finishInit(status: Int) {
         val engine = tts
         if (status != TextToSpeech.SUCCESS || engine == null) {
             _issue.value = SpeechIssue.EngineUnavailable
