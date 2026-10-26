@@ -11,6 +11,7 @@ import java.io.File
  * It is created once by the Application container and only holds the application context,
  * so it survives Activity recreation (theme switches, rotation) without leaks or cut-offs.
  * Stop-and-play: every call first stops whatever is playing, then starts the new sound.
+ * Both sinks share an AudioFocusController: focus is acquired per playback and released on end.
  */
 class AudioDispatcher(
     private val speech: SpeechManager,
