@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -76,7 +77,10 @@ import com.sawti.presentation.common.FavoriteStar
 import com.sawti.presentation.common.HintButton
 import com.sawti.presentation.common.PhraseHintButton
 import com.sawti.presentation.common.ItemImage
-import com.sawti.presentation.common.AdultAccentBar
+import com.sawti.presentation.common.CeramicCard
+import com.sawti.presentation.common.CeramicImageTint
+import com.sawti.presentation.common.VoiceAura
+import com.sawti.presentation.common.StaggeredCascade
 import com.sawti.presentation.common.bounceClick
 import com.sawti.presentation.theme.CategoryPalette
 import com.sawti.presentation.theme.paletteOf
@@ -301,12 +305,14 @@ private fun WordGrid(
         horizontalArrangement = Arrangement.spacedBy(14.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        items(items, key = { it.id }) { item ->
+        itemsIndexed(items, key = { _, item -> item.id }) { index, item ->
+            StaggeredCascade(key = "${category.id}:${item.id}", row = index / 2, modifier = Modifier.fillMaxWidth()) {
             WordCard(
                 item = item,
                 palette = palette,
                 crop = category.previewOnTap,
                 isActive = state.activeItemId == item.id,
+                isSpeaking = state.playbackVisual.isSpeaking && state.playbackVisual.activeWordId == item.id,
                 caregiverMode = state.caregiverMode,
                 onClick = { actions.onItemTapped(item, flashcard = false) },
                 onLongClick = { actions.onItemLongPressed(item) },
@@ -314,6 +320,7 @@ private fun WordGrid(
                 onSentenceHint = { actions.onSentenceHint(item) },
                 onToggleFavorite = { actions.onToggleFavorite(item) },
             )
+            }
         }
     }
 }
@@ -324,6 +331,7 @@ internal fun WordCard(
     palette: CategoryPalette,
     crop: Boolean,
     isActive: Boolean,
+    isSpeaking: Boolean = false,
     caregiverMode: Boolean,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
@@ -331,23 +339,21 @@ internal fun WordCard(
     onSentenceHint: () -> Unit,
     onToggleFavorite: () -> Unit,
 ) {
-    Surface(
-        shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surface,
-        shadowElevation = cardElevation(2.dp),
-        border = if (isActive) BorderStroke(2.dp, palette.banner) else null,
-        modifier = Modifier
-            .fillMaxWidth()
+    CeramicCard(
+        isActive = isActive || isSpeaking,
+        accent = palette.banner,
+        modifier = Modifier.fillMaxWidth()
             .bounceClick(onLongClick = onLongClick, onClick = onClick),
     ) {
         Column {
-            AdultAccentBar(palette.banner)
             Box(
                 Modifier
                     .fillMaxWidth()
                     .aspectRatio(1.1f)
-                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.22f)),
+                    .background(MaterialTheme.colorScheme.surface),
             ) {
+                CeramicImageTint(palette.banner)
+                VoiceAura(active = isSpeaking)
                 ItemImage(
                     item = item,
                     accent = palette.banner,
@@ -480,26 +486,25 @@ private fun FlashcardPage(
     actions: LibraryActions,
     onCall: (String) -> Unit,
 ) {
-    Surface(
-        shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surface,
-        shadowElevation = cardElevation(2.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = 8.dp),
+    CeramicCard(
+        isActive = state.playbackVisual.activeWordId == item.id && state.playbackVisual.isSpeaking,
+        accent = palette.banner,
+        modifier = Modifier.fillMaxSize().padding(vertical = 8.dp),
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Box(
                 Modifier
                     .weight(1f)
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.22f))
+                    .background(MaterialTheme.colorScheme.surface)
                     .bounceClick(
                         onLongClick = { actions.onItemLongPressed(item) },
                         onClick = { actions.onItemTapped(item, flashcard = true) },
                     ),
                 contentAlignment = Alignment.Center,
             ) {
+                CeramicImageTint(palette.banner)
+                VoiceAura(active = state.playbackVisual.isSpeaking && state.playbackVisual.activeWordId == item.id)
                 ItemImage(
                     item = item,
                     accent = palette.banner,
