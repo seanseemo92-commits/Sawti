@@ -94,26 +94,7 @@ jobs:
           grep -q 'name="app_name">صوتي<' extracted/MyWords/app/src/main/res/values/strings.xml
           grep -q 'com.mywords' extracted/MyWords/app/build.gradle.kts
           test -f extracted/MyWords/app/src/test/java/com/mywords/domain/model/DialectCatalogTest.kt
-      - name: Apply Sawti custom family groups and relationship vocabulary
-        shell: bash
-        run: |
-          set -euo pipefail
-          base64 --decode ci/sawti-family-feature.patch.xz.b64 | xz --decompress | patch --batch -p1 -d extracted/MyWords
-          grep -q 'version = 4' extracted/MyWords/app/src/main/java/com/mywords/data/db/AppDatabase.kt
-          grep -q 'FamilyRelationships.tabs' extracted/MyWords/app/src/main/java/com/mywords/presentation/category/CategoryScreen.kt
-          grep -q 'relationshipLabels.map' extracted/MyWords/app/src/main/java/com/mywords/data/db/WordSeed.kt
-          test -f extracted/MyWords/app/src/test/java/com/mywords/domain/model/FamilyRelationshipsTest.kt
-      - name: Apply customizable family module
-        shell: bash
-        run: |
-          set -euo pipefail
-          base64 --decode ci/sawti-family-feature.patch.xz.b64 | xz --decompress | patch --batch --forward -p1 -d extracted/MyWords
-          sed -i 's/const val VERSION = 13/const val VERSION = 14/' extracted/MyWords/app/src/main/java/com/mywords/data/db/WordSeed.kt
-          grep -q 'const val VERSION = 14' extracted/MyWords/app/src/main/java/com/mywords/data/db/WordSeed.kt
-          grep -q 'MIGRATION_3_4' extracted/MyWords/app/src/main/java/com/mywords/data/db/AppDatabase.kt
-          test -f extracted/MyWords/app/src/main/java/com/mywords/domain/model/FamilyRelationships.kt
-          test -f extracted/MyWords/app/src/test/java/com/mywords/domain/model/FamilyRelationshipsTest.kt
-      - name: Apply customizable family groups and relationships
+      - name: Apply Sawti customizable family and relationships
         shell: bash
         run: |
           set -euo pipefail
