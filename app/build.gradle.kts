@@ -6,15 +6,15 @@ plugins {
 }
 
 android {
-    namespace = "com.mywords"
+    namespace = "com.sawti"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.mywords"
+        applicationId = "com.sawti"
         minSdk = 24
         targetSdk = 35
-        versionCode = 7
-        versionName = "4.2"
+        versionCode = 8
+        versionName = "4.3"
     }
 
     buildTypes {
