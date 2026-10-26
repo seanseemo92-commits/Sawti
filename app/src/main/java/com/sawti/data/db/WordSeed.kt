@@ -1,6 +1,8 @@
 package com.sawti.data.db
 
 import com.sawti.domain.model.CategoryIds
+import com.sawti.domain.model.ArabicDialect
+import com.sawti.domain.model.RegionalDishesCatalog
 import com.sawti.domain.model.PhonemicCue
 import com.sawti.domain.model.TtsEndings
 
@@ -73,7 +75,9 @@ object WordSeed {
                 Word("مقروض", "مَقْرُوضْ", "🍪", cue = "مَقْـ..."),
                 Word("شاهي بالنعناع", "شَاهِي بِالنَّعْنَاعْ", "🍵", cue = "شَا..."),
                 Word("قهوة عربية", "قَهْوَهْ عَرَبِيَّهْ", "☕", cue = "قَهْـ..."),
-            ),
+            ) + RegionalDishesCatalog.forDialect(ArabicDialect.LIBYAN).dishes.map { dish ->
+                Word(dish.displayText, dish.ttsPrompt, dish.emoji, cue = dish.phonemicCue)
+            },
         ),
 
         // ---- 4. روتين ويوميات ----
@@ -309,7 +313,7 @@ object WordSeed {
         ),
     )
 
-    const val VERSION = 15
+    const val VERSION = 16
 
     // جدول التحويلات الشامل لمنع تكرار الكلمات والحفاظ على بيانات وتفضيلات الوالدة
     val renames: List<Triple<String, String, String>> = listOf(
