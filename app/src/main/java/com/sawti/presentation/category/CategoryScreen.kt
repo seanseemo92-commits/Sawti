@@ -76,6 +76,7 @@ import com.sawti.presentation.common.FavoriteStar
 import com.sawti.presentation.common.HintButton
 import com.sawti.presentation.common.PhraseHintButton
 import com.sawti.presentation.common.ItemImage
+import com.sawti.presentation.common.AdultAccentBar
 import com.sawti.presentation.common.bounceClick
 import com.sawti.presentation.theme.CategoryPalette
 import com.sawti.presentation.theme.paletteOf
@@ -340,7 +341,7 @@ internal fun WordCard(
             .bounceClick(onLongClick = onLongClick, onClick = onClick),
     ) {
         Column {
-            Box(Modifier.fillMaxWidth().height(3.dp).background(palette.banner))
+            AdultAccentBar(palette.banner)
             Box(
                 Modifier
                     .fillMaxWidth()
