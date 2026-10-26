@@ -177,9 +177,10 @@ private fun FavoriteChip(entry: FavoriteEntry, isActive: Boolean, onClick: () ->
                     entry.item.displayText,
                     color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 14.sp,
-                    fontWeight = FontWeight.ExtraBold,
+                    lineHeight = 22.sp,
+                    fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
@@ -216,9 +217,10 @@ private fun CategoryCard(category: Category, onClick: () -> Unit) {
                     text = category.title,
                     color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 18.sp,
+                    lineHeight = 27.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
-                    maxLines = 2,
+                    maxLines = 3,
                 )
             }
         }
