@@ -20,6 +20,7 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
     fun setTextSize(size: TextSize) = repository.setTextSize(size)
     fun setPerformanceMode(on: Boolean) = repository.setPerformanceMode(on)
     fun setTouchDwell(value: TouchDwell) = repository.setTouchDwell(value)
+    fun setSentenceStripEnabled(enabled: Boolean) = repository.setSentenceStripEnabled(enabled)
     fun setSpeechRate(rate: SpeechRate) = repository.setSpeechRate(rate)
     fun setDialect(dialect: ArabicDialect) = repository.setDialect(dialect)
     fun setPreferredVoice(name: String?) = repository.setPreferredVoice(name)
