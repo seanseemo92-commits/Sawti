@@ -15,6 +15,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -38,6 +44,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sawti.R
 import com.sawti.presentation.category.CategoryScreen
+import com.sawti.presentation.category.SearchResultsScreen
+import com.sawti.presentation.common.LocalTouchDwell
 import com.sawti.presentation.category.LibraryViewModel
 import com.sawti.presentation.home.HomeScreen
 import com.sawti.presentation.practice.PracticeRoute
@@ -70,6 +78,7 @@ fun AppRoot(
     val state by library.uiState.collectAsStateWithLifecycle()
     val settings by settingsVm.settings.collectAsStateWithLifecycle()
     var route by rememberSaveable { mutableStateOf(HOME) }
+    var searchQuery by rememberSaveable { mutableStateOf("") }
     val context = LocalContext.current
 
     // one-shot messages, e.g. "favourites are full"
@@ -109,6 +118,21 @@ fun AppRoot(
                     onDialects = { route = DIALECT },
                     onToggleCaregiver = library::toggleCaregiver,
                 )
+                if (route == HOME || category != null) {
+                    OutlinedTextField(
+                        value = searchQuery,
+                        onValueChange = { searchQuery = it },
+                        label = { Text("بحث سريع في الكلمات") },
+                        leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
+                        trailingIcon = if (searchQuery.isNotEmpty()) ({
+                            IconButton(onClick = { searchQuery = "" }) {
+                                Icon(Icons.Filled.Close, contentDescription = "مسح البحث")
+                            }
+                        }) else null,
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
+                    )
+                }
                 if (state.caregiverMode) {
                     CaregiverBanner(
                         onOpenProgress = { route = PROGRESS },
@@ -130,13 +154,24 @@ fun AppRoot(
             val density = LocalDensity.current
             CompositionLocalProvider(
                 LocalDensity provides Density(density.density, density.fontScale * settings.textSize.factor),
+                LocalTouchDwell provides settings.touchDwell,
             ) {
                 when {
                     route == PRACTICE -> PracticeRoute(practice)
                     route == PROGRESS && state.caregiverMode -> ProgressRoute(progress)
                     route == SETTINGS && state.caregiverMode -> SettingsRoute(settingsVm)
                     route == DIALECT -> DialectSettingsRoute(settingsVm, (context.applicationContext as SawtiApp).container.speech)
-                    category != null -> CategoryScreen(category, state, library)
+                    category != null -> CategoryScreen(category, state, library, searchQuery)
+                    route == HOME && searchQuery.isNotBlank() -> SearchResultsScreen(
+                        categories = state.categories,
+                        searchQuery = searchQuery,
+                        state = state,
+                        actions = library,
+                        onOpenResult = { item ->
+                            route = CATEGORY_PREFIX + item.categoryId
+                            library.onItemTapped(item, flashcard = false)
+                        },
+                    )
                     else -> HomeScreen(
                         categories = state.categories,
                         favorites = state.favorites,
