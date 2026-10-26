@@ -13,7 +13,11 @@ class RegionalDishesCatalogTest {
         for (dialect in ArabicDialect.entries) {
             val cuisine = RegionalDishesCatalog.forDialect(dialect)
             assertTrue("Missing title: $dialect", cuisine.title.isNotBlank())
-            assertTrue("No food for $dialect", cuisine.dishes.size >= 5)
+            assertEquals(
+                "Wrong regional cuisine size for $dialect",
+                if (dialect == ArabicDialect.LIBYAN) 5 else 15,
+                cuisine.dishes.size,
+            )
             assertEquals(cuisine.dishes.size, cuisine.dishes.map { it.displayText }.distinct().size)
             for (dish in cuisine.dishes) {
                 assertTrue(dish.displayText.isNotBlank())
@@ -39,7 +43,7 @@ class RegionalDishesCatalogTest {
             assertFalse(RegionalDishesCatalog.visibleForDialect(tag, ArabicDialect.LIBYAN))
             assertFalse(RegionalDishesCatalog.visibleForDialect(tag, ArabicDialect.STANDARD.takeUnless { it == dialect } ?: ArabicDialect.EGYPTIAN))
         }
-        assertEquals(40, RegionalDishesCatalog.additionalDialects().size)
+        assertEquals(120, RegionalDishesCatalog.additionalDialects().size)
     }
 
     @Test fun fiveUserRequestedLibyanDishesHaveExactSpeechAndCue() {
@@ -65,6 +69,44 @@ class RegionalDishesCatalogTest {
             assertEquals(expected.getValue(dish.displayText).first, dish.ttsPrompt)
             assertEquals(expected.getValue(dish.displayText).second, dish.phonemicCue)
         }
-        assertEquals(16, WordSeed.VERSION)
+        assertEquals(17, WordSeed.VERSION)
     }
+    @Test fun exactFullOrderedListsAreNeverAccidentallyTruncatedOrRenamed() {
+        val expected = mapOf(
+            ArabicDialect.TUNISIAN to "كسكسي بالحوت|لبلابي|بريك|كفتاجي|طاجين تونسي|صحن تونسي|شربة لسان عصفور|ملوخية تونسية|مرقة جلبانة|مقرونة بالصلصة|عجة بالمرقاز|سلاطة مشوية|فريكاسي|مقروض قيرواني|بامبالوني",
+            ArabicDialect.EGYPTIAN to "كشري|ملوخية بالتقلية|حواوشي|فول مدمس|طعمية|حمام محشي|فتة بالخل والتوم|صينية بطاطس|كباب وحواوشي|محشي مشكل|مسقعة بلدي|كوارع وفتة|رقاق باللحمة|شربة لسان عصفور|أم علي",
+            ArabicDialect.ALGERIAN to "رشتة|شخشوخة بسكرية|كسكسي جزائري|طاجين الزيتون|شربة فريك|بوراك جزائري|كرانتيكا|طاجين الحلو|بركوكس|جواز بطاطا|مطبقة / محاجب|دوارة|قرنون معمر|قلب اللوز|مقروط العسل",
+            ArabicDialect.MOROCCAN to "طاجين بالبرقوق|كسكسو سبع خضار|بسطيلة بالحوت|حريرة مغربية|طنجية مراكشية|رفيسة بالدجاج|زعلوك|تكتوكة|طاجين كفتة بالبيض|شوا مغربي|مسمن|بغرير|سفة مدفونة|شباكية|سلو",
+            ArabicDialect.SYRIAN to "كبة مقلية|شاكرية برز|يبرق ورق عنب|شاورما دجاج|فتة حمص|مقلوبة باذنجان|فتوش|تبولة|كباب حلبي|شيش برك|كوسا بلبن / شيخ المحشي|متبل باذنجان|حراق بأصبعه|حلاوة الجبن|كنافة نابلسية",
+            ArabicDialect.IRAQI to "دولمة عراقية|سمك مسكوف|قوزي على تمن|تشريب لحم|باجة|كبة تمن / حلب|كبة موصلية|برياني عراقي|مطبق سمك|فافير / مخلمة|بامية عراقية|شلغم مطبوخ|هريسة|كليجة|زلابية",
+            ArabicDialect.SAUDI to "كبسة لحم|مندي|جريش|قرصان|سليق طائفي|حنيذ|مطازيز|مرقوق|مظبي دجاج|بخاري|مدفون|كبدة بالحوار|معصوب|حنيني|لقيمات",
+            ArabicDialect.STANDARD to "أرز باللحم|دجاج مشوي|شوربة عدس|يخنة خضار|مشويات مشكلة|سلطة خضراء|سمك مطهو|فطائر مخبوزة|حساء خضار|لحم مسلوق|خبز مخبوز|ثمار وبقوليات|بيض مسلوق|تمر وحليب|حلوى عربية",
+        )
+        assertEquals(8, expected.size)
+        expected.forEach { (dialect, sequence) ->
+            val dishes = RegionalDishesCatalog.forDialect(dialect).dishes
+            assertEquals("Missing or reordered regional dishes in $dialect",
+                sequence.split("|"), dishes.map { it.displayText })
+            assertEquals(15, dishes.size)
+        }
+    }
+
+    @Test fun culturallyDistinctPronunciationsAndCluesStayVerbatim() {
+        val examples = mapOf(
+            ArabicDialect.TUNISIAN to Triple("كسكسي بالحوت", "كُسْكْسِي بِالحُوتْ", "كُسْـ..."),
+            ArabicDialect.EGYPTIAN to Triple("كباب وحواوشي", "كَبَابْ وَكُفْتَةْ", "كَـ..."),
+            ArabicDialect.ALGERIAN to Triple("كسكسي جزائري", "طْعَامْ", "طْعَا..."),
+            ArabicDialect.MOROCCAN to Triple("شوا مغربي", "قُطْبَانْ", "قُطْـ..."),
+            ArabicDialect.SYRIAN to Triple("كوسا بلبن / شيخ المحشي", "كُوسَا بِلَبَنْ", "كُو..."),
+            ArabicDialect.IRAQI to Triple("سمك مسكوف", "سِمَچْ مَسْكُوفْ", "سِـ..."),
+            ArabicDialect.SAUDI to Triple("بخاري", "رُزْ بُخَارِي", "بُـ..."),
+            ArabicDialect.STANDARD to Triple("أرز باللحم", "أَرُزٌّ بِاللَّحْمْ", "أَ..."),
+        )
+        examples.forEach { (dialect, expected) ->
+            val item = RegionalDishesCatalog.forDialect(dialect).dishes.single { it.displayText == expected.first }
+            assertEquals(expected.second, item.ttsPrompt)
+            assertEquals(expected.third, item.phonemicCue)
+        }
+    }
+
 }
