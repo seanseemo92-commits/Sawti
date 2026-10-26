@@ -50,6 +50,7 @@ import com.sawti.presentation.category.SearchResultsScreen
 import com.sawti.presentation.common.LocalTouchDwell
 import com.sawti.presentation.category.LibraryViewModel
 import com.sawti.presentation.home.HomeScreen
+import com.sawti.presentation.onboarding.OnboardingScreen
 import com.sawti.presentation.practice.PracticeRoute
 import com.sawti.presentation.practice.PracticeViewModel
 import com.sawti.presentation.progress.ProgressRoute
@@ -82,7 +83,20 @@ fun AppRoot(
     var route by rememberSaveable { mutableStateOf(HOME) }
     var searchQuery by rememberSaveable { mutableStateOf("") }
     var manageCategories by rememberSaveable { mutableStateOf(false) }
+    var guideOpen by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
+
+    if (!settings.isOnboardingCompleted || guideOpen) {
+        OnboardingScreen(
+            selectedDialect = settings.dialect,
+            onSelectDialect = settingsVm::setDialect,
+            onFinish = {
+                settingsVm.completeOnboarding()
+                guideOpen = false
+            },
+        )
+        return
+    }
 
     // one-shot messages, e.g. "favourites are full"
     LaunchedEffect(Unit) {
@@ -175,7 +189,9 @@ fun AppRoot(
                 when {
                     route == PRACTICE -> PracticeRoute(practice)
                     route == PROGRESS && state.caregiverMode -> ProgressRoute(progress)
-                    route == SETTINGS && state.caregiverMode -> SettingsRoute(settingsVm)
+                    route == SETTINGS && state.caregiverMode -> SettingsRoute(
+                        settingsVm, onOpenGuide = { guideOpen = true },
+                    )
                     route == DIALECT -> DialectSettingsRoute(settingsVm, (context.applicationContext as SawtiApp).container.speech)
                     category != null -> CategoryScreen(category, state, library, searchQuery)
                     route == HOME && searchQuery.isNotBlank() -> SearchResultsScreen(
