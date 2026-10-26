@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 class SettingsViewModel(private val repository: SettingsRepository) : ViewModel() {
     val settings: StateFlow<AppSettings> = repository.state
 
+    fun completeOnboarding() = repository.completeOnboarding()
     fun setThemeMode(mode: ThemeMode) = repository.setThemeMode(mode)
     fun setTextSize(size: TextSize) = repository.setTextSize(size)
     fun setPerformanceMode(on: Boolean) = repository.setPerformanceMode(on)
