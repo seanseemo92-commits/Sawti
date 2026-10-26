@@ -88,7 +88,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          base64 --decode ci/sawti-dialect-feature.patch.xz.b64 | xz --decompress | patch --batch -p1 -d extracted
+          base64 --decode ci/sawti-source-overlay.tar.gz.b64 | tar --extract --gzip --directory extracted
           sed -i 's/versionName = "3.2"/versionName = "4.0"/' extracted/MyWords/app/build.gradle.kts
           grep -q 'rootProject.name = "Sawti"' extracted/MyWords/settings.gradle.kts
           grep -q 'name="app_name">صوتي<' extracted/MyWords/app/src/main/res/values/strings.xml
