@@ -211,6 +211,7 @@ fun AppRoot(
                         categories = state.categories,
                         favorites = state.favorites,
                         activeItemId = state.activeItemId,
+                        speakingItemId = state.playbackVisual.activeWordId.takeIf { state.playbackVisual.isSpeaking },
                         caregiverMode = state.caregiverMode,
                         onOpen = { id -> route = CATEGORY_PREFIX + id },
                         onQuickTap = library::onQuickTap,
