@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.GraphicEq
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.RecordVoiceOver
@@ -168,7 +167,7 @@ fun OnboardingScreen(
                     }
                     if (page == 3) {
                         Spacer(Modifier.height(12.dp))
-                        ArabicDialect.entries.chunked(3).forEach { group ->
+                        ArabicDialect.entries.chunked(2).forEach { group ->
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
