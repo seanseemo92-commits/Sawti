@@ -90,12 +90,10 @@ class RoomWordRepository(
             }
             val existing = dao.itemKeys()
 
-            val obsolete = existing.filter {
-                it.categoryId != CategoryIds.FAMILY &&
-                    Triple(it.categoryId, it.subgroup, it.displayText) !in seedKeys &&
-                    it.photoPath == null && it.audioPath == null
-            }
-            obsolete.forEach { dao.deleteItem(it.id) }
+            // Never guess that a card is disposable just because its picture and audio
+            // are empty: the caregiver may have edited phone, favourite, cue or sentence.
+            // Explicit deletion belongs in caregiver actions, not in automatic seeding.
+            val obsolete: List<com.sawti.data.db.ItemKey> = emptyList()
 
             // natural spoken endings (هْ rule) for every remaining word, without touching anything else
             existing.filter { e -> obsolete.none { it.id == e.id } }.forEach { e ->
@@ -188,12 +186,17 @@ class RoomWordRepository(
     /** Copies the picked image into app storage so it survives even if the gallery item moves. */
     override suspend fun setPhoto(id: Long, image: InputStream) {
         withContext(Dispatchers.IO) {
-            val dir = File(filesDir, "photos").apply { mkdirs() }
-            val target = File(dir, "word_${id}_${System.currentTimeMillis()}.jpg")
-            image.use { input -> target.outputStream().use { input.copyTo(it) } }
-            val old = dao.photoPath(id)
-            dao.updatePhoto(id, target.absolutePath)
-            deletePrivateMedia(old)
+            val dir = File(filesDir, "photos").apply { require(isDirectory || mkdirs()) }
+            val target = File(dir, "word_${id}_${System.nanoTime()}.jpg")
+            SafeMediaImport.copy(image, target, SafeMediaImport.MAX_PHOTO_BYTES)
+            try {
+                val old = dao.photoPath(id)
+                dao.updatePhoto(id, target.absolutePath)
+                deletePrivateMedia(old)
+            } catch (e: Exception) {
+                target.delete()
+                throw e
+            }
         }
     }
 
@@ -215,12 +218,18 @@ class RoomWordRepository(
     /** Copies a picked audio file into filesDir/custom_audio/ and stores its absolute path. */
     override suspend fun importAudio(id: Long, input: InputStream, extension: String) {
         withContext(Dispatchers.IO) {
-            val dir = File(filesDir, "custom_audio").apply { mkdirs() }
-            val target = File(dir, "word_${id}_${System.currentTimeMillis()}.$extension")
-            input.use { src -> target.outputStream().use { src.copyTo(it) } }
-            val old = dao.audioPath(id)
-            dao.updateAudio(id, target.absolutePath)
-            if (old != target.absolutePath) deletePrivateMedia(old)
+            SafeMediaImport.checkAudioExtension(extension)
+            val dir = File(filesDir, "custom_audio").apply { require(isDirectory || mkdirs()) }
+            val target = File(dir, "word_${id}_${System.nanoTime()}.$extension")
+            SafeMediaImport.copy(input, target, SafeMediaImport.MAX_AUDIO_BYTES)
+            try {
+                val old = dao.audioPath(id)
+                dao.updateAudio(id, target.absolutePath)
+                if (old != target.absolutePath) deletePrivateMedia(old)
+            } catch (e: Exception) {
+                target.delete()
+                throw e
+            }
         }
     }
 

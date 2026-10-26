@@ -281,24 +281,40 @@ class LibraryViewModel(
 
     override fun onPhotoPicked(itemId: Long, uri: Uri) {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) { resolver.openInputStream(uri) }
-                ?.let { repository.setPhoto(itemId, it) }
+            try {
+                withContext(Dispatchers.IO) {
+                    val input = resolver.openInputStream(uri) ?: error("ملف الصورة غير متاح")
+                    repository.setPhoto(itemId, input)
+                }
+            } catch (cancel: kotlinx.coroutines.CancellationException) {
+                throw cancel
+            } catch (_: Exception) {
+                emit(R.string.media_import_failed)
+            }
         }
     }
 
     /** Copies a picked audio file into filesDir/custom_audio/ and stores its absolute path. */
     override fun onAudioPicked(itemId: Long, uri: Uri) {
         viewModelScope.launch {
-            val mime = resolver.getType(uri).orEmpty()
-            val extension = when {
-                "mpeg" in mime -> "mp3"
-                "mp4" in mime || "m4a" in mime || "aac" in mime -> "m4a"
-                "ogg" in mime -> "ogg"
-                "wav" in mime -> "wav"
-                else -> "audio"
+            try {
+                withContext(Dispatchers.IO) {
+                    val mime = resolver.getType(uri).orEmpty()
+                    val extension = when {
+                        "mpeg" in mime -> "mp3"
+                        "mp4" in mime || "m4a" in mime || "aac" in mime -> "m4a"
+                        "ogg" in mime -> "ogg"
+                        "wav" in mime -> "wav"
+                        else -> "audio"
+                    }
+                    val input = resolver.openInputStream(uri) ?: error("ملف الصوت غير متاح")
+                    repository.importAudio(itemId, input, extension)
+                }
+            } catch (cancel: kotlinx.coroutines.CancellationException) {
+                throw cancel
+            } catch (_: Exception) {
+                emit(R.string.media_import_failed)
             }
-            withContext(Dispatchers.IO) { resolver.openInputStream(uri) }
-                ?.let { repository.importAudio(itemId, it, extension) }
         }
     }
 

@@ -22,17 +22,23 @@ class AudioPlayer {
             mp.setOnCompletionListener { stop(); onDone() }
             mp.setOnErrorListener { _, _, _ -> stop(); onDone(); true }
             mp.prepare()
-            mp.start()
             player = mp
+            mp.start()
             true
-        } catch (e: Exception) {
+        } catch (_: Exception) {
+            if (player === mp) player = null
             runCatching { mp.release() }
             false
         }
     }
 
     fun stop() {
-        player?.runCatching { stop(); release() }
+        val current = player
         player = null
+        if (current != null) {
+            runCatching { current.stop() }
+            // Always release, even if stop() throws IllegalStateException.
+            runCatching { current.release() }
+        }
     }
 }

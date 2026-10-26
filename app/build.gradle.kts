@@ -13,8 +13,8 @@ android {
         applicationId = "com.sawti"
         minSdk = 24
         targetSdk = 35
-        versionCode = 8
-        versionName = "4.3"
+        versionCode = 9
+        versionName = "4.4"
     }
 
     buildTypes {
