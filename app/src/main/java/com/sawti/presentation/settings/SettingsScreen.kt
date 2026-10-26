@@ -160,8 +160,8 @@ fun SettingsRoute(viewModel: SettingsViewModel) {
             ChoiceRow(
                 options = listOf(
                     TouchDwell.OFF to "معطل",
-                    TouchDwell.NORMAL to "300ms",
-                    TouchDwell.LONG to "500ms",
+                    TouchDwell.NORMAL to "عادي 300ms",
+                    TouchDwell.LONG to "طويل 500ms",
                 ),
                 selected = settings.touchDwell,
                 onSelect = viewModel::setTouchDwell,
