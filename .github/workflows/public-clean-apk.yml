@@ -1,4 +1,4 @@
-name: Public cleaned APK (one build)
+name: MyWords 4.2 signed release verification
 on:
   pull_request:
     branches: [main]
@@ -57,6 +57,9 @@ jobs:
           test ! -e extracted/MyWords/app/src/main/java/com/mywords/data/db/LegacyFamilyDefaults.kt
           test -s extracted/MyWords/app/src/main/java/com/mywords/data/db/LegacyFamilyCleanup.kt
           grep -q 'version = 4,' extracted/MyWords/app/src/main/java/com/mywords/data/db/AppDatabase.kt
+      - name: Harden release data protection and backups
+        shell: bash
+        run: python3 ci/prepare_secure_release.py
       - name: Install tests
         shell: bash
         run: |
@@ -71,13 +74,71 @@ jobs:
           PY
           mkdir -p extracted/MyWords/app/src/test/java/com/mywords/domain/model
           cp tests/android/PhonemicCueArabicTest.kt extracted/MyWords/app/src/test/java/com/mywords/domain/model/
-      - name: Compile verified clean Android debug APK and run unit tests
+      - name: Generate new signing identity for this one release
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p extracted/MyWords/app/signing
+          PASS="$(openssl rand -hex 24)"
+          echo "::add-mask::$PASS"
+          echo "MYWORDS_RELEASE_PASSWORD=$PASS" >> "$GITHUB_ENV"
+          keytool -genkeypair -noprompt -storetype PKCS12 -keyalg RSA -keysize 3072 -validity 10000 \
+            -alias mywords-release -dname "CN=MyWords, OU=Android Release, O=MyWords, C=LY" \
+            -keystore extracted/MyWords/app/signing/mywords-publisher.p12 -storepass "$PASS" -keypass "$PASS"
+          cat > extracted/MyWords/app/signing/KEEP_PRIVATE_SIGNING_INSTRUCTIONS.txt <<EOF
+          MYWORDS 4.2 RELEASE SIGNING - PRIVATE KEY BACKUP
+          DO NOT SHARE THIS KEY OR PASSWORD OR UPLOAD THEM TO PUBLIC GITHUB.
+          Signing key: mywords-publisher.p12
+          Store type: PKCS12
+          Key alias: mywords-release
+          Store and key password: $PASS
+          You MUST preserve this exact signing key for future APK updates.
+          The source project must use this key for all subsequent releases.
+          EOF
+          cat >> extracted/MyWords/app/build.gradle.kts <<'EOF'
+
+          android {
+              signingConfigs {
+                  create("publicRelease") {
+                      storeFile = file("signing/mywords-publisher.p12")
+                      storePassword = System.getenv("MYWORDS_RELEASE_PASSWORD")
+                      keyAlias = "mywords-release"
+                      keyPassword = System.getenv("MYWORDS_RELEASE_PASSWORD")
+                  }
+              }
+              buildTypes {
+                  getByName("release") {
+                      signingConfig = signingConfigs.getByName("publicRelease")
+                  }
+              }
+          }
+          EOF
+      - name: Build signed release, check Android Lint and run unit tests
         working-directory: extracted/MyWords
-        run: gradle --no-daemon :app:assembleDebug :app:testDebugUnitTest
-      - name: Package clean public Android APK
+        run: gradle --no-daemon :app:assembleRelease :app:testDebugUnitTest :app:lintRelease
+      - name: Verify APK cryptographic signatures
+        shell: bash
+        run: |
+          set -euo pipefail
+          apk=extracted/MyWords/app/build/outputs/apk/release/app-release.apk
+          test -s "$apk"
+          apksigner="$(find "$ANDROID_HOME/build-tools" -maxdepth 2 -type f -name apksigner | sort -V | tail -1)"
+          test -n "$apksigner"
+          "$apksigner" verify --verbose --print-certs "$apk"
+          grep -q 'android:allowBackup="false"' extracted/MyWords/app/src/main/AndroidManifest.xml
+      - name: Package signed release APK
         uses: actions/upload-artifact@v4
         with:
-          name: MyWords-v4-1-Public-Clean-APK
-          path: extracted/MyWords/app/build/outputs/apk/debug/*.apk
+          name: MyWords-v4-2-Signed-Release-APK
+          path: extracted/MyWords/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 14
+      - name: Back up unique release signing identity (PRIVATE)
+        uses: actions/upload-artifact@v4
+        with:
+          name: PRIVATE-MyWords-Publisher-Key-BACKUP
+          path: |
+            extracted/MyWords/app/signing/mywords-publisher.p12
+            extracted/MyWords/app/signing/KEEP_PRIVATE_SIGNING_INSTRUCTIONS.txt
+          if-no-files-found: error
+          retention-days: 90
