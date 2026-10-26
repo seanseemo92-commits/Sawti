@@ -136,21 +136,22 @@ private fun FavoritesBar(
 private fun FavoriteChip(entry: FavoriteEntry, isActive: Boolean, onClick: () -> Unit, onLongClick: () -> Unit) {
     val palette = paletteOf(entry.palette)
     Surface(
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(16.dp),
         color = MaterialTheme.colorScheme.surface,
-        shadowElevation = cardElevation(if (isActive) 10.dp else 4.dp),
-        border = if (isActive) BorderStroke(3.dp, palette.banner) else null,
+        shadowElevation = cardElevation(2.dp),
+        border = if (isActive) BorderStroke(2.dp, palette.banner) else null,
         modifier = Modifier
-            .width(98.dp)
-            .height(116.dp)
+            .width(116.dp)
+            .heightIn(min = 132.dp)
             .bounceClick(onLongClick = onLongClick, onClick = onClick),
     ) {
         Column {
+            Box(Modifier.fillMaxWidth().height(3.dp).background(palette.banner))
             Box(
                 Modifier
-                    .weight(1f)
+                    .height(82.dp)
                     .fillMaxWidth()
-                    .background(palette.pastel),
+                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.22f)),
                 contentAlignment = Alignment.Center,
             ) {
                 ItemImage(
@@ -166,15 +167,15 @@ private fun FavoriteChip(entry: FavoriteEntry, isActive: Boolean, onClick: () ->
             Box(
                 Modifier
                     .fillMaxWidth()
-                    .height(32.dp)
-                    .background(palette.banner)
-                    .padding(horizontal = 4.dp),
+                    .heightIn(min = 44.dp)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(horizontal = 6.dp, vertical = 7.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
                     entry.item.displayText,
-                    color = Color.White,
-                    fontSize = 13.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.ExtraBold,
                     textAlign = TextAlign.Center,
                     maxLines = 1,
@@ -191,29 +192,30 @@ private fun FavoriteChip(entry: FavoriteEntry, isActive: Boolean, onClick: () ->
 private fun CategoryCard(category: Category, onClick: () -> Unit) {
     val palette = paletteOf(category.palette)
     Surface(
-        shape = RoundedCornerShape(24.dp),
-        color = palette.pastel,
-        shadowElevation = cardElevation(6.dp),
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.surface,
+        shadowElevation = cardElevation(2.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(204.dp)
+            .heightIn(min = 210.dp)
             .bounceClick(onClick = onClick),
     ) {
         Column {
-            Montage(category, palette, Modifier.weight(1f).padding(12.dp))
+            Box(Modifier.fillMaxWidth().height(3.dp).background(palette.banner))
+            Montage(category, palette, Modifier.fillMaxWidth().height(142.dp).padding(12.dp))
             Box(
                 Modifier
                     .fillMaxWidth()
-                    .heightIn(min = 48.dp)
-                    .background(palette.banner)
-                    .padding(horizontal = 8.dp, vertical = 6.dp),
+                    .heightIn(min = 52.dp)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(horizontal = 8.dp, vertical = 8.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
                     text = category.title,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.ExtraBold,
+                    fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
                     maxLines = 2,
                 )
