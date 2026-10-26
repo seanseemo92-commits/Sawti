@@ -69,6 +69,12 @@ class RoomWordRepository(
      */
     private suspend fun topUpSeed(previousVersion: Int) {
         db.withTransaction {
+            if (previousVersion < 15) {
+                // Update only old built-in placeholders. Photos, voice, phone, IDs and
+                // personalized sentence hints remain untouched.
+                dao.correctMelonPlaceholder()
+                dao.clearLegacyActionPlaceholder()
+            }
             val seedCategories = WordSeed.categoryEntities()
             val existingCategories = dao.categoryIds().toSet()
             dao.insertCategories(seedCategories.filter { it.id !in existingCategories })
