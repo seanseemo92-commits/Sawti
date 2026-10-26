@@ -193,6 +193,20 @@ class RoomWordRepository(
         }
     }
 
+    /** Permanently removes only a caregiver-selected card from a custom category. */
+    override suspend fun deleteCustomCard(itemId: Long) {
+        val item = db.withTransaction {
+            val current = dao.wordById(itemId) ?: error("البطاقة غير موجودة")
+            require(isCustomId(current.categoryId)) { "لا يمكن حذف بطاقة من قسم افتراضي" }
+            dao.deleteItem(itemId)
+            current
+        }
+        withContext(Dispatchers.IO) {
+            deletePrivateMedia(item.photoPath)
+            deletePrivateMedia(item.audioPath)
+        }
+    }
+
     /** New family cards use the ordinary word/media model; no schema duplication. */
     override suspend fun addFamilyMember(name: String, group: String, phone: String): Long {
         val cleanName = name.trim().take(100)
