@@ -1,7 +1,7 @@
 name: Public cleaned APK (one build)
 on:
-  push:
-    branches: [build/public-family-clean-v41]
+  pull_request:
+    branches: [main]
 permissions:
   contents: read
 jobs:
