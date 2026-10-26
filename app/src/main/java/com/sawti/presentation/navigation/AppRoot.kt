@@ -195,6 +195,7 @@ fun AppRoot(
                         caregiverMode = state.caregiverMode,
                         onOpen = { id -> route = CATEGORY_PREFIX + id },
                         onQuickTap = library::onQuickTap,
+                        onQuickLongTap = library::onSpeakAgain,
                     )
                 }
             }
