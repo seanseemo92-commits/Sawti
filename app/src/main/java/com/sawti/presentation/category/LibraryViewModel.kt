@@ -63,6 +63,8 @@ interface LibraryActions {
     fun onItemLongPressed(item: WordItem)
     fun onHint(item: WordItem)
     fun onSentenceHint(item: WordItem)
+    fun addCustomCard(categoryId: String, title: String, spoken: String)
+    fun moveCardToCustomCategory(id: Long, destinationId: String)
     fun onSpeakAgain(item: WordItem)
     fun onToggleFavorite(item: WordItem)
     fun closePreview()
@@ -232,7 +234,7 @@ class LibraryViewModel(
             } catch (e: Exception) { report(e) }
         }
     }
-    fun addCustomCard(categoryId: String, title: String, spoken: String) {
+    override fun addCustomCard(categoryId: String, title: String, spoken: String) {
         if (!canEdit()) return
         viewModelScope.launch {
             try {
@@ -242,7 +244,7 @@ class LibraryViewModel(
             } catch (e: Exception) { report(e) }
         }
     }
-    fun moveCardToCustomCategory(id: Long, destinationId: String) {
+    override fun moveCardToCustomCategory(id: Long, destinationId: String) {
         if (!canEdit()) return
         viewModelScope.launch {
             try {
