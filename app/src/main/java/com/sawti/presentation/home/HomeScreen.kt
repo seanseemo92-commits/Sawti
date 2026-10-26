@@ -63,6 +63,7 @@ fun HomeScreen(
     caregiverMode: Boolean,
     onOpen: (String) -> Unit,
     onQuickTap: (WordItem) -> Unit,
+    onQuickLongTap: (WordItem) -> Unit,
 ) {
     if (categories.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
@@ -70,7 +71,7 @@ fun HomeScreen(
     }
     Column(Modifier.fillMaxSize()) {
         if (favorites.isNotEmpty() || caregiverMode) {
-            FavoritesBar(favorites, activeItemId, caregiverMode, onQuickTap)
+            FavoritesBar(favorites, activeItemId, caregiverMode, onQuickTap, onQuickLongTap)
         }
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 160.dp),
@@ -94,6 +95,7 @@ private fun FavoritesBar(
     activeItemId: Long?,
     caregiverMode: Boolean,
     onTap: (WordItem) -> Unit,
+    onLongTap: (WordItem) -> Unit,
 ) {
     Column(Modifier.fillMaxWidth().padding(top = 14.dp)) {
         Row(
@@ -122,7 +124,7 @@ private fun FavoritesBar(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 items(favorites, key = { it.item.id }) { entry ->
-                    FavoriteChip(entry, isActive = activeItemId == entry.item.id) { onTap(entry.item) }
+                    FavoriteChip(entry, isActive = activeItemId == entry.item.id, onClick = { onTap(entry.item) }, onLongClick = { onLongTap(entry.item) })
                 }
             }
         }
@@ -131,7 +133,7 @@ private fun FavoritesBar(
 
 /** One pinned card: tap = instant speech. */
 @Composable
-private fun FavoriteChip(entry: FavoriteEntry, isActive: Boolean, onClick: () -> Unit) {
+private fun FavoriteChip(entry: FavoriteEntry, isActive: Boolean, onClick: () -> Unit, onLongClick: () -> Unit) {
     val palette = paletteOf(entry.palette)
     Surface(
         shape = RoundedCornerShape(20.dp),
@@ -141,7 +143,7 @@ private fun FavoriteChip(entry: FavoriteEntry, isActive: Boolean, onClick: () ->
         modifier = Modifier
             .width(98.dp)
             .height(116.dp)
-            .bounceClick(onClick = onClick),
+            .bounceClick(onLongClick = onLongClick, onClick = onClick),
     ) {
         Column {
             Box(
