@@ -52,16 +52,7 @@ class AudioDispatcher(
         if (text.isBlank()) return
         stopAll()
         val current = generation
-        // The offsets mirror SentenceComposer.spokenSentence() exactly, including punctuation.
-        var offset = 0
-        val ranges = pieces.mapIndexedNotNull { index, piece ->
-            val spoken = piece.spokenText.trim().trimEnd('،', '.', '!', '؟')
-            if (spoken.isBlank()) null else {
-                val result = Triple(offset, offset + spoken.length, index)
-                offset += spoken.length + 2 // "، " joining separator
-                result
-            }
-        }
+        val ranges = SentenceComposer.spokenSegments(pieces)
         fun show(index: Int) {
             if (current == generation && index in pieces.indices) {
                 _playback.value = PlaybackVisual(
@@ -73,10 +64,10 @@ class AudioDispatcher(
         }
         speech.speak(
             text,
-            onStart = { if (ranges.isNotEmpty()) show(ranges.first().third) },
+            onStart = { if (ranges.isNotEmpty()) show(ranges.first().pieceIndex) },
             onRange = { character ->
-                ranges.firstOrNull { character >= it.first && character < it.second }?.let {
-                    show(it.third)
+                ranges.firstOrNull { character >= it.start && character < it.endExclusive }?.let {
+                    show(it.pieceIndex)
                 }
             },
             onDone = { if (current == generation) _playback.value = PlaybackVisual() },
