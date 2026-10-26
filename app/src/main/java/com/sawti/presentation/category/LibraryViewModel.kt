@@ -107,12 +107,14 @@ class LibraryViewModel(
         }
         viewModelScope.launch {
             caregiver.enabled.collect { on ->
+                if (!on) recorder.cancel()
                 _uiState.update {
                     it.copy(
                         caregiverMode = on,
                         editingItemId = if (on) it.editingItemId else null,
                         addingFamilyGroup = if (on) it.addingFamilyGroup else null,
                         previewItemId = if (on) null else it.previewItemId,
+                        recordingItemId = if (on) it.recordingItemId else null,
                     )
                 }
             }
@@ -123,6 +125,15 @@ class LibraryViewModel(
     }
 
     fun toggleCaregiver() = caregiver.toggle()
+
+    private fun canEdit(): Boolean = caregiver.enabled.value
+
+    /** Called when the Activity leaves the foreground: never leave the microphone running. */
+    fun onAppBackgrounded() {
+        recorder.cancel()
+        voice.stop()
+        _uiState.update { it.copy(recordingItemId = null) }
+    }
 
     // ---- Speaking -------------------------------------------------------
 
@@ -226,7 +237,7 @@ class LibraryViewModel(
     // ---- Caregiver editor ----------------------------------------------
 
     override fun openAddFamilyMember(group: String) {
-        if (FamilyRelationships.validPeopleGroup(group)) {
+        if (canEdit() && FamilyRelationships.validPeopleGroup(group)) {
             _uiState.update { it.copy(addingFamilyGroup = group) }
         }
     }
@@ -236,15 +247,17 @@ class LibraryViewModel(
     }
 
     override fun addFamilyMember(name: String, group: String, phone: String) {
-        if (name.isBlank() || _uiState.value.addingFamilyGroup != group ||
+        if (!canEdit() || name.isBlank() || _uiState.value.addingFamilyGroup != group ||
             !FamilyRelationships.validPeopleGroup(group)) return
         viewModelScope.launch {
+            if (!canEdit()) return@launch
             val id = repository.addFamilyMember(name, group, phone)
             _uiState.update { it.copy(addingFamilyGroup = null, editingItemId = id) }
         }
     }
 
     override fun deleteFamilyMember(id: Long) {
+        if (!canEdit()) return
         val current = find(id) ?: return
         if (current.categoryId != CategoryIds.FAMILY ||
             current.subgroup == FamilyRelationships.RELATIVES) return
@@ -252,7 +265,7 @@ class LibraryViewModel(
         voice.stop()
         _uiState.update { it.copy(editingItemId = null, previewItemId = null,
             focusItemId = null, recordingItemId = null) }
-        viewModelScope.launch { repository.deleteFamilyMember(id) }
+        viewModelScope.launch { if (canEdit()) repository.deleteFamilyMember(id) }
     }
 
     override fun closeEditor() {
@@ -262,6 +275,7 @@ class LibraryViewModel(
     }
 
     override fun saveDetails(id: Long, displayText: String, ttsPrompt: String, cue: String, sentence: String, phone: String, group: String) {
+        if (!canEdit()) return
         val current = find(id) ?: return
         val finalDisplay = displayText.ifBlank { current.displayText }
         val enteredTts = if (current.ttsPrompt == current.displayText &&
@@ -271,6 +285,7 @@ class LibraryViewModel(
         val finalCue = cue.ifBlank { PhonemicCue.derive(finalTts) }
         val finalSentence = sentence.ifBlank { null } // blank removes the 💬 button for this card
         viewModelScope.launch {
+            if (!canEdit()) return@launch
             repository.updateDetails(id, finalDisplay, finalTts, finalCue, finalSentence, phone)
             if (current.categoryId == com.sawti.domain.model.CategoryIds.FAMILY) {
                 repository.updateFamilyGroup(id, group)
@@ -280,7 +295,9 @@ class LibraryViewModel(
     }
 
     override fun onPhotoPicked(itemId: Long, uri: Uri) {
+        if (!canEdit()) return
         viewModelScope.launch {
+            if (!canEdit()) return@launch
             try {
                 withContext(Dispatchers.IO) {
                     val input = resolver.openInputStream(uri) ?: error("ملف الصورة غير متاح")
@@ -296,7 +313,9 @@ class LibraryViewModel(
 
     /** Copies a picked audio file into filesDir/custom_audio/ and stores its absolute path. */
     override fun onAudioPicked(itemId: Long, uri: Uri) {
+        if (!canEdit()) return
         viewModelScope.launch {
+            if (!canEdit()) return@launch
             try {
                 withContext(Dispatchers.IO) {
                     val mime = resolver.getType(uri).orEmpty()
@@ -319,19 +338,28 @@ class LibraryViewModel(
     }
 
     override fun removePhoto(itemId: Long) {
-        viewModelScope.launch { repository.clearPhoto(itemId) }
+        if (!canEdit()) return
+        viewModelScope.launch { if (canEdit()) repository.clearPhoto(itemId) }
     }
 
     /** The UI must have RECORD_AUDIO granted before calling this. */
     override fun startRecording(itemId: Long) {
+        if (!canEdit()) return
         voice.stop()
         if (recorder.start("word_$itemId")) _uiState.update { it.copy(recordingItemId = itemId) }
     }
 
     override fun stopRecording(itemId: Long) {
+        if (!canEdit() || _uiState.value.recordingItemId != itemId) {
+            recorder.cancel()
+            _uiState.update { it.copy(recordingItemId = null) }
+            return
+        }
         val file = recorder.stop()
         _uiState.update { it.copy(recordingItemId = null) }
-        if (file != null) viewModelScope.launch { repository.setAudio(itemId, file) }
+        if (file != null) viewModelScope.launch {
+            if (canEdit()) repository.setAudio(itemId, file) else file.delete()
+        }
     }
 
     override fun previewRecording(itemId: Long) {
@@ -339,8 +367,9 @@ class LibraryViewModel(
     }
 
     override fun deleteRecording(itemId: Long) {
+        if (!canEdit()) return
         voice.stop()
-        viewModelScope.launch { repository.clearAudio(itemId) }
+        viewModelScope.launch { if (canEdit()) repository.clearAudio(itemId) }
     }
 
     private fun find(id: Long): WordItem? =
