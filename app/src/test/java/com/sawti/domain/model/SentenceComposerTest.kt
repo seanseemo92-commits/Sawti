@@ -23,4 +23,31 @@ class SentenceComposerTest {
         assertEquals(2, SentenceComposer.add(listOf(SentenceComposer.piece(word(1, "نبي"))), word(1, "نبي")).size)
         assertTrue(SentenceComposer.spokenSentence(emptyList()).isEmpty())
     }
+    @Test fun speechRangeOffsetsFollowExactNormalizedArabicPhrase() {
+        val strip = listOf(
+            SentenceComposer.piece(word(1, "نبي", "نَبِّيْ،")),
+            SentenceComposer.piece(word(2, "مية", "مِيَّهْ")),
+            SentenceComposer.piece(word(3, "توا", "تَوَّا")),
+        )
+        val whole = SentenceComposer.spokenSentence(strip)
+        val segments = SentenceComposer.spokenSegments(strip)
+        assertEquals(3, segments.size)
+        assertEquals(0, segments[0].start)
+        assertEquals(1, segments[1].pieceIndex)
+        assertEquals(2, segments[2].pieceIndex)
+        assertEquals("نَبِّيْ، مِيَّهْ، تَوَّا", whole)
+        assertEquals("نَبِّيْ", whole.substring(segments[0].start, segments[0].endExclusive))
+        assertEquals("مِيَّهْ", whole.substring(segments[1].start, segments[1].endExclusive))
+        assertEquals("تَوَّا", whole.substring(segments[2].start, segments[2].endExclusive))
+    }
+
+    @Test fun blankSentencePartsDoNotShiftSpokenWordIndexes() {
+        val original = SentenceComposer.piece(word(1, "سلام"))
+        val blank = original.copy(spokenText = " ")
+        val strip = listOf(blank, original)
+        assertEquals("سلام", SentenceComposer.spokenSentence(strip))
+        assertEquals(1, SentenceComposer.spokenSegments(strip).single().pieceIndex)
+        assertEquals(0, SentenceComposer.spokenSegments(strip).single().start)
+    }
+
 }
