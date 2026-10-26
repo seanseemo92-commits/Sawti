@@ -36,6 +36,33 @@ interface WordDao {
     @Insert
     suspend fun insertItem(item: WordItemEntity): Long
 
+    // Custom categories use the existing Room v4 schema. Prefix + row checks prevent
+    // accidental editing/deletion of built-in categories, even during future seed updates.
+    @Query("SELECT * FROM categories WHERE id = :id LIMIT 1")
+    suspend fun categoryById(id: String): CategoryEntity?
+
+    @Query("SELECT COALESCE(MAX(sortOrder), 0) FROM categories")
+    suspend fun maxCategorySortOrder(): Int
+
+    @Insert
+    suspend fun insertCategory(category: CategoryEntity)
+
+    @Query("UPDATE categories SET title = :title, palette = :palette, sortOrder = :sortOrder WHERE id = :id AND id LIKE 'custom_%'")
+    suspend fun editCustomCategory(id: String, title: String, palette: Int, sortOrder: Int): Int
+
+    @Query("SELECT COUNT(*) FROM word_items WHERE categoryId = :categoryId")
+    suspend fun countItemsInCategory(categoryId: String): Int
+
+    /** Deleting populated categories is never automatic: moving their cards comes first. */
+    @Query("DELETE FROM categories WHERE id = :id AND id LIKE 'custom_%' AND NOT EXISTS (SELECT 1 FROM word_items WHERE categoryId = :id)")
+    suspend fun deleteEmptyCustomCategory(id: String): Int
+
+    @Query("SELECT * FROM word_items WHERE id = :id LIMIT 1")
+    suspend fun wordById(id: Long): WordItemEntity?
+
+    @Query("UPDATE word_items SET categoryId = :categoryId, subgroup = '' WHERE id = :id")
+    suspend fun moveWord(id: Long, categoryId: String)
+
     /** Custom family members are never seeded. Editing/deleting is caregiver-only in the UI. */
     @Query("SELECT * FROM word_items WHERE id = :id AND categoryId = 'family'")
     suspend fun familyItemById(id: Long): WordItemEntity?
