@@ -141,6 +141,7 @@ fun AppRoot(
                 if (settings.sentenceStripEnabled && (route == HOME || category != null)) {
                     SentenceStrip(
                         pieces = state.sentencePieces,
+                        speakingPieceIndex = state.playbackVisual.sentenceIndex.takeIf { state.playbackVisual.isSpeaking },
                         onPlay = library::playSentenceStrip,
                         onBackspace = library::deleteLastSentencePiece,
                         onClear = library::clearSentenceStrip,
