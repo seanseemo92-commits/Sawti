@@ -1,7 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 # Trusted one-time release from the verified main source only.
-test "$(git rev-parse HEAD)" = "904a4724badcb3be0adde40d2358c59f362caa8e"
+# Release branch may add only this script and its trigger; Android source must match main.
+changed="$(git diff --name-only 904a4724badcb3be0adde40d2358c59f362caa8e HEAD)"
+while IFS= read -r file; do
+    case "$file" in
+        ci/release_v44_once.sh|.github/workflows/release-v44-once.yml|"") ;;
+        *) echo "Unexpected release branch change: $file"; exit 1 ;;
+    esac
+done <<< "$changed"
 grep -q 'applicationId = "com.sawti"' app/build.gradle.kts
 grep -q 'versionName = "4.4"' app/build.gradle.kts
 grep -q 'versionCode = 9' app/build.gradle.kts
