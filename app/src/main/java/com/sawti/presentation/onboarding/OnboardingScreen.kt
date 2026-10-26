@@ -1,5 +1,8 @@
 package com.sawti.presentation.onboarding
 
+import android.app.Activity
+import androidx.core.view.WindowCompat
+
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,6 +15,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -33,8 +38,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.ui.res.painterResource
 import com.sawti.R
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -47,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sawti.domain.model.ArabicDialect
 import com.sawti.presentation.theme.AppBarBlue
+import com.sawti.presentation.theme.LocalIsDark
 import kotlinx.coroutines.launch
 
 private val PaleSky = Color(0xFF38BDF8)
@@ -90,9 +98,19 @@ fun OnboardingScreen(
 ) {
     val pager = rememberPagerState(pageCount = { 4 })
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val dark = LocalIsDark.current
+    // The guide uses a light canvas instead of the navy app bar. Keep system icons legible.
+    DisposableEffect(context, dark) {
+        val activity = context as? Activity
+        val controller = activity?.let { WindowCompat.getInsetsController(it.window, it.window.decorView) }
+        val previous = controller?.isAppearanceLightStatusBars
+        if (controller != null) controller.isAppearanceLightStatusBars = !dark
+        onDispose { if (controller != null && previous != null) controller.isAppearanceLightStatusBars = previous }
+    }
     Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         AcousticRipples()
-        Column(Modifier.fillMaxSize().padding(horizontal = 20.dp, vertical = 12.dp)) {
+        Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(horizontal = 20.dp, vertical = 12.dp)) {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     "صوتي",
