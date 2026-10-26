@@ -87,7 +87,7 @@ fun CustomCategoryManager(
             }
         },
         confirmButton = {
-            Button(enabled = title.isNotBlank() && sort.toIntOrNull() in 0..10_000, onClick = {
+            Button(enabled = title.isNotBlank() && (sort.toIntOrNull() ?: -1) in 0..10_000, onClick = {
                 val order = sort.toIntOrNull() ?: return@Button
                 val id = selected
                 if (id == null) onCreate(title.trim(), palette, order)
