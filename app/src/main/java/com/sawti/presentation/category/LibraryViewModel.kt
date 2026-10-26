@@ -12,6 +12,9 @@ import com.sawti.SawtiApp
 import com.sawti.R
 import com.sawti.audio.VoiceRecorder
 import com.sawti.audio.AudioDispatcher
+import com.sawti.data.SettingsRepository
+import com.sawti.domain.model.SentencePiece
+import com.sawti.domain.model.SentenceComposer
 import com.sawti.domain.model.Category
 import com.sawti.domain.model.FamilyRelationships
 import com.sawti.domain.model.CategoryIds
@@ -49,6 +52,9 @@ data class LibraryUiState(
     val addingFamilyGroup: String? = null,
     val recordingItemId: Long? = null,  // card whose voice is being recorded right now
     val speechIssue: SpeechIssue? = null,
+    val sentenceStripEnabled: Boolean = false,
+    val sentencePieces: List<SentencePiece> = emptyList(),
+    val errorMessage: String? = null,
 )
 
 /** Everything the category screens can ask for. */
@@ -83,6 +89,7 @@ class LibraryViewModel(
     private val recorder: VoiceRecorder,
     private val resolver: ContentResolver,
     private val caregiver: CaregiverMode,
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel(), LibraryActions {
 
     private val _uiState = MutableStateFlow(LibraryUiState())
@@ -97,6 +104,11 @@ class LibraryViewModel(
     private var cardLatchUntil = 0L
 
     init {
+        viewModelScope.launch {
+            settingsRepository.state.collect { settings ->
+                _uiState.update { it.copy(sentenceStripEnabled = settings.sentenceStripEnabled) }
+            }
+        }
         viewModelScope.launch {
             repository.observeCategories().collect { list ->
                 val favorites = list.flatMap { c ->
@@ -145,6 +157,11 @@ class LibraryViewModel(
             return
         }
 
+        if (state.sentenceStripEnabled) {
+            _uiState.update { it.copy(sentencePieces = SentenceComposer.add(it.sentencePieces, item)) }
+            highlight(item.id)
+            return
+        }
         voice.play(item)
         highlight(item.id)
 
@@ -156,8 +173,84 @@ class LibraryViewModel(
     /** 1-tap speech from the favourites bar on the home screen. */
     fun onQuickTap(item: WordItem) {
         if (cardLatched()) return
-        voice.play(item)
+        if (_uiState.value.sentenceStripEnabled && !_uiState.value.caregiverMode) {
+            _uiState.update { it.copy(sentencePieces = SentenceComposer.add(it.sentencePieces, item)) }
+        } else {
+            voice.play(item)
+        }
         highlight(item.id)
+    }
+
+    fun playSentenceStrip() {
+        val state = _uiState.value
+        if (!state.sentenceStripEnabled) return
+        SentenceComposer.spokenSentence(state.sentencePieces).takeIf { it.isNotBlank() }?.let(voice::say)
+    }
+
+    fun deleteLastSentencePiece() {
+        voice.stop()
+        _uiState.update { it.copy(sentencePieces = it.sentencePieces.dropLast(1)) }
+    }
+
+    fun clearSentenceStrip() {
+        voice.stop()
+        _uiState.update { it.copy(sentencePieces = emptyList()) }
+    }
+
+    fun setSentenceStripEnabled(enabled: Boolean) = settingsRepository.setSentenceStripEnabled(enabled)
+
+    fun clearError() { _uiState.update { it.copy(errorMessage = null) } }
+    private fun report(error: Throwable) {
+        _uiState.update { it.copy(errorMessage = error.message ?: "تعذر حفظ التغيير") }
+    }
+
+    /** Caregiver-only operations, checked again inside asynchronous coroutines. */
+    fun createCategory(title: String, palette: Int, sortOrder: Int) {
+        if (!canEdit()) return
+        viewModelScope.launch {
+            try {
+                if (!canEdit()) return@launch
+                repository.addCustomCategory(title, palette, sortOrder)
+            } catch (e: Exception) { report(e) }
+        }
+    }
+    fun editCategory(id: String, title: String, palette: Int, sortOrder: Int) {
+        if (!canEdit()) return
+        viewModelScope.launch {
+            try {
+                if (!canEdit()) return@launch
+                repository.editCustomCategory(id, title, palette, sortOrder)
+            } catch (e: Exception) { report(e) }
+        }
+    }
+    fun deleteCategory(id: String) {
+        if (!canEdit()) return
+        viewModelScope.launch {
+            try {
+                if (!canEdit()) return@launch
+                repository.deleteEmptyCustomCategory(id)
+            } catch (e: Exception) { report(e) }
+        }
+    }
+    fun addCustomCard(categoryId: String, title: String, spoken: String) {
+        if (!canEdit()) return
+        viewModelScope.launch {
+            try {
+                if (!canEdit()) return@launch
+                val id = repository.addCustomCard(categoryId, title, spoken)
+                if (canEdit()) _uiState.update { it.copy(editingItemId = id) }
+            } catch (e: Exception) { report(e) }
+        }
+    }
+    fun moveCardToCustomCategory(id: Long, destinationId: String) {
+        if (!canEdit()) return
+        viewModelScope.launch {
+            try {
+                if (!canEdit()) return@launch
+                repository.moveCardToCustomCategory(id, destinationId)
+                _uiState.update { it.copy(editingItemId = null) }
+            } catch (e: Exception) { report(e) }
+        }
     }
 
     /** Long-press in the grid: distraction-free full-screen view of one card. */
@@ -165,6 +258,10 @@ class LibraryViewModel(
         // Accidental long-press must never open a destructive editor in patient mode.
         if (_uiState.value.caregiverMode) {
             _uiState.update { it.copy(editingItemId = item.id) }
+        } else if (_uiState.value.sentenceStripEnabled) {
+            // Patient can always speak an individual word without changing the sentence.
+            voice.play(item)
+            highlight(item.id)
         } else {
             _uiState.update { it.copy(focusItemId = item.id) }
         }
@@ -385,6 +482,7 @@ class LibraryViewModel(
             val c = (app as SawtiApp).container
             return LibraryViewModel(
                 c.wordRepository, c.speech, c.audioDispatcher, c.recorder, app.contentResolver, c.caregiver,
+                c.settingsRepository,
             ) as T
         }
     }
