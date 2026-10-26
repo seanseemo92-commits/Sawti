@@ -39,8 +39,8 @@ jobs:
             echo "::error::Signing key found in source; aborting"
             exit 1
           fi
-      - name: Compile APK, unit tests and Android lint
-        run: gradle --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintRelease
+      - name: Compile debug and R8 release, unit tests and Android lint
+        run: gradle --no-daemon :app:assembleDebug :app:assembleRelease :app:testDebugUnitTest :app:lintRelease
       - name: Upload test APK
         uses: actions/upload-artifact@v4
         with:
