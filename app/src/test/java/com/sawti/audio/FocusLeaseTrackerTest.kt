@@ -16,6 +16,16 @@ class FocusLeaseTrackerTest {
         assertFalse(leases.owns(second))
     }
 
+    @Test fun resetInvalidatesCurrentToken() {
+        val leases = FocusLeaseTracker()
+        val first = leases.next()
+        leases.reset()
+        assertFalse(leases.clear(first))
+        assertFalse(leases.owns(first))
+        val second = leases.next()
+        assertTrue(leases.owns(second))
+    }
+
     @Test fun tokensAreUniqueAcrossRapidPlayStops() {
         val leases = FocusLeaseTracker()
         val a = leases.next()
