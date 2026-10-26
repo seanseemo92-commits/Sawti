@@ -31,12 +31,15 @@ class AudioFocusController(context: Context) {
             ) {
                 handler.post {
                     val stillOwned = synchronized(lock) { leases.owns(token) }
-                    if (stillOwned) onLost()
+                    if (stillOwned) runCatching { onLost() }
                 }
             }
         }
         activeListener = listener
-        val result = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        // Android may reject focus while a call or another exclusive session is active.
+        // Some OEMs throw instead of returning FAILED: never crash or start without focus.
+        val result = runCatching {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val attributes = AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_MEDIA)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
@@ -53,7 +56,8 @@ class AudioFocusController(context: Context) {
             manager.requestAudioFocus(
                 listener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK
             )
-        }
+            }
+        }.getOrDefault(AudioManager.AUDIOFOCUS_REQUEST_FAILED)
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) token else {
             clearCurrent()
             null
