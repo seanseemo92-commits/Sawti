@@ -74,6 +74,15 @@ import com.sawti.presentation.theme.cardElevation
 import com.sawti.presentation.theme.RecordRed
 import java.io.File
 
+/**
+ * Understated adult AAC identity: a three-dp accent rather than painting the whole card.
+ * Cards remain semantic touch targets; this is purely decorative.
+ */
+@Composable
+fun AdultAccentBar(color: Color) {
+    Box(Modifier.fillMaxWidth().height(3.dp).background(color))
+}
+
 /** Default cards retain bounce/long-click. With touch dwell, scroll consumes pointer events and
  * cancels the tap; lifting a stationary finger after the chosen interval confirms it.
  * A longer hold still opens the existing focus/editor action. */
