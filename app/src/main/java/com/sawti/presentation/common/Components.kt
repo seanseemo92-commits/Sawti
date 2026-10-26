@@ -208,16 +208,12 @@ fun ItemImage(
 /** Small, subtle 💡 button: speaks only the phonemic cue. */
 @Composable
 fun HintButton(onClick: () -> Unit, modifier: Modifier = Modifier, size: Int = 44) {
-    val haptic = LocalHapticFeedback.current
     Box(
         modifier
             .size(size.dp)
             .clip(CircleShape)
             .background(Color.White.copy(alpha = 0.9f))
-            .clickable {
-                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                onClick()
-            },
+            .bounceClick(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
@@ -232,16 +228,12 @@ fun HintButton(onClick: () -> Unit, modifier: Modifier = Modifier, size: Int = 4
 /** Small, subtle 💬 button: speaks the cloze carrier phrase ("نَأْكُلُ الـ...") up to the missing word. */
 @Composable
 fun PhraseHintButton(onClick: () -> Unit, modifier: Modifier = Modifier, size: Int = 44) {
-    val haptic = LocalHapticFeedback.current
     Box(
         modifier
             .size(size.dp)
             .clip(CircleShape)
             .background(Color.White.copy(alpha = 0.9f))
-            .clickable {
-                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                onClick()
-            },
+            .bounceClick(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
@@ -256,16 +248,12 @@ fun PhraseHintButton(onClick: () -> Unit, modifier: Modifier = Modifier, size: I
 /** Caregiver Mode only: pins / unpins a card to the quick-access bar. */
 @Composable
 fun FavoriteStar(isFavorite: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    val haptic = LocalHapticFeedback.current
     Box(
         modifier
             .size(44.dp)
             .clip(CircleShape)
             .background(Color.White.copy(alpha = 0.92f))
-            .clickable {
-                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                onClick()
-            },
+            .bounceClick(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
