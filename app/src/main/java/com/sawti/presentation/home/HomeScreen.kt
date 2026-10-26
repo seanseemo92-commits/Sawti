@@ -65,6 +65,7 @@ fun HomeScreen(
     categories: List<Category>,
     favorites: List<FavoriteEntry>,
     activeItemId: Long?,
+    speakingItemId: Long?,
     caregiverMode: Boolean,
     onOpen: (String) -> Unit,
     onQuickTap: (WordItem) -> Unit,
@@ -76,7 +77,7 @@ fun HomeScreen(
     }
     Column(Modifier.fillMaxSize()) {
         if (favorites.isNotEmpty() || caregiverMode) {
-            FavoritesBar(favorites, activeItemId, caregiverMode, onQuickTap, onQuickLongTap)
+            FavoritesBar(favorites, activeItemId, speakingItemId, caregiverMode, onQuickTap, onQuickLongTap)
         }
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 160.dp),
@@ -100,6 +101,7 @@ fun HomeScreen(
 private fun FavoritesBar(
     favorites: List<FavoriteEntry>,
     activeItemId: Long?,
+    speakingItemId: Long?,
     caregiverMode: Boolean,
     onTap: (WordItem) -> Unit,
     onLongTap: (WordItem) -> Unit,
@@ -131,7 +133,7 @@ private fun FavoritesBar(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 items(favorites, key = { it.item.id }) { entry ->
-                    FavoriteChip(entry, isActive = activeItemId == entry.item.id, onClick = { onTap(entry.item) }, onLongClick = { onLongTap(entry.item) })
+                    FavoriteChip(entry, isActive = activeItemId == entry.item.id, isSpeaking = speakingItemId == entry.item.id, onClick = { onTap(entry.item) }, onLongClick = { onLongTap(entry.item) })
                 }
             }
         }
@@ -140,10 +142,10 @@ private fun FavoritesBar(
 
 /** One pinned card: tap = instant speech. */
 @Composable
-private fun FavoriteChip(entry: FavoriteEntry, isActive: Boolean, onClick: () -> Unit, onLongClick: () -> Unit) {
+private fun FavoriteChip(entry: FavoriteEntry, isActive: Boolean, isSpeaking: Boolean, onClick: () -> Unit, onLongClick: () -> Unit) {
     val palette = paletteOf(entry.palette)
     CeramicCard(
-        isActive = isActive,
+        isActive = isActive || isSpeaking,
         accent = palette.banner,
         modifier = Modifier
             .width(116.dp)
@@ -159,7 +161,7 @@ private fun FavoriteChip(entry: FavoriteEntry, isActive: Boolean, onClick: () ->
                 contentAlignment = Alignment.Center,
             ) {
                 CeramicImageTint(palette.banner)
-                VoiceAura(active = isActive)
+                VoiceAura(active = isSpeaking)
                 ItemImage(
                     item = entry.item,
                     accent = palette.banner,
