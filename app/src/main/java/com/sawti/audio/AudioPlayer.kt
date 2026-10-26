@@ -4,12 +4,15 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 
 /** Plays caregiver recordings / imported audio files. One clip at a time; never throws. */
-class AudioPlayer {
+class AudioPlayer(private val focus: AudioFocusController) {
     private var player: MediaPlayer? = null
+    private var focusToken: Long? = null
 
     /** Returns false when the file could not be played, so the caller can fall back to TTS. */
     fun play(path: String, onDone: () -> Unit = {}): Boolean {
         stop()
+        val token = focus.acquire { stop() } ?: return false
+        focusToken = token
         val mp = MediaPlayer()
         return try {
             mp.setAudioAttributes(
@@ -19,8 +22,13 @@ class AudioPlayer {
                     .build()
             )
             mp.setDataSource(path)
-            mp.setOnCompletionListener { stop(); onDone() }
-            mp.setOnErrorListener { _, _, _ -> stop(); onDone(); true }
+            mp.setOnCompletionListener {
+                if (player === mp) { stop(); onDone() }
+            }
+            mp.setOnErrorListener { _, _, _ ->
+                if (player === mp) { stop(); onDone() }
+                true
+            }
             mp.prepare()
             player = mp
             mp.start()
@@ -28,6 +36,10 @@ class AudioPlayer {
         } catch (_: Exception) {
             if (player === mp) player = null
             runCatching { mp.release() }
+            if (focusToken == token) {
+                focusToken = null
+                focus.release(token)
+            }
             false
         }
     }
@@ -35,10 +47,13 @@ class AudioPlayer {
     fun stop() {
         val current = player
         player = null
+        val token = focusToken
+        focusToken = null
         if (current != null) {
             runCatching { current.stop() }
             // Always release, even if stop() throws IllegalStateException.
             runCatching { current.release() }
         }
+        if (token != null) focus.release(token)
     }
 }
