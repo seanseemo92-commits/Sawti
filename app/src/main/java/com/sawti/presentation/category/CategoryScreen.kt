@@ -55,6 +55,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -298,6 +299,7 @@ private fun WordGrid(
     state: LibraryUiState,
     actions: LibraryActions,
 ) {
+    val estimatedColumns = ((LocalConfiguration.current.screenWidthDp - 32) / 160).coerceAtLeast(1)
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 160.dp),
         modifier = Modifier.fillMaxSize(),
@@ -306,7 +308,7 @@ private fun WordGrid(
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         itemsIndexed(items, key = { _, item -> item.id }) { index, item ->
-            StaggeredCascade(key = "${category.id}:${item.id}", row = index / 2, modifier = Modifier.fillMaxWidth()) {
+            StaggeredCascade(key = "${category.id}:${item.id}", row = index / estimatedColumns, modifier = Modifier.fillMaxWidth()) {
             WordCard(
                 item = item,
                 palette = palette,
