@@ -1,6 +1,7 @@
 package com.sawti.presentation.onboarding
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,6 +30,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.ui.res.painterResource
+import com.sawti.R
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -113,14 +116,19 @@ fun OnboardingScreen(
                     Box(
                         modifier = Modifier.size(120.dp).background(
                             Brush.radialGradient(
-                                listOf(PaleSky.copy(alpha = 0.18f), Color.Transparent),
+                                if (page == 0) listOf(DeepNavy, Color(0xFF0F172A))
+                                else listOf(PaleSky.copy(alpha = 0.18f), Color.Transparent),
                             ),
                             CircleShape,
                         ),
                         contentAlignment = Alignment.Center,
                     ) {
                         when (page) {
-                            0 -> Text("ص", fontSize = 76.sp, color = PaleSky, fontWeight = FontWeight.Bold)
+                            0 -> Image(
+                                painter = painterResource(R.drawable.ic_launcher_foreground),
+                                contentDescription = "شعار صوتي",
+                                modifier = Modifier.size(108.dp),
+                            )
                             1 -> Icon(Icons.Filled.RecordVoiceOver, contentDescription = null,
                                 modifier = Modifier.size(74.dp), tint = PaleSky)
                             2 -> Icon(Icons.Filled.Lock, contentDescription = null,
