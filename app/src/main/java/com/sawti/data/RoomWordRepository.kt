@@ -188,7 +188,7 @@ class RoomWordRepository(
         withContext(Dispatchers.IO) {
             val dir = File(filesDir, "photos").apply { require(isDirectory || mkdirs()) }
             val target = File(dir, "word_${id}_${System.nanoTime()}.jpg")
-            copyPrivateMedia(image, target, MAX_PHOTO_BYTES)
+            SafeMediaImport.copy(image, target, SafeMediaImport.MAX_PHOTO_BYTES)
             try {
                 val old = dao.photoPath(id)
                 dao.updatePhoto(id, target.absolutePath)
@@ -218,10 +218,10 @@ class RoomWordRepository(
     /** Copies a picked audio file into filesDir/custom_audio/ and stores its absolute path. */
     override suspend fun importAudio(id: Long, input: InputStream, extension: String) {
         withContext(Dispatchers.IO) {
-            require(extension in setOf("mp3", "m4a", "wav", "ogg", "audio")) { "امتداد صوتي غير مدعوم" }
+            SafeMediaImport.checkAudioExtension(extension)
             val dir = File(filesDir, "custom_audio").apply { require(isDirectory || mkdirs()) }
             val target = File(dir, "word_${id}_${System.nanoTime()}.$extension")
-            copyPrivateMedia(input, target, MAX_AUDIO_BYTES)
+            SafeMediaImport.copy(input, target, SafeMediaImport.MAX_AUDIO_BYTES)
             try {
                 val old = dao.audioPath(id)
                 dao.updateAudio(id, target.absolutePath)
@@ -237,29 +237,6 @@ class RoomWordRepository(
         withContext(Dispatchers.IO) {
             deletePrivateMedia(dao.audioPath(id))
             dao.updateAudio(id, null)
-        }
-    }
-
-    /** Bounded streaming copy, with cleanup on any I/O failure or oversized media. */
-    private fun copyPrivateMedia(input: InputStream, target: File, limit: Long) {
-        try {
-            input.use { source ->
-                target.outputStream().use { output ->
-                    val buffer = ByteArray(8192)
-                    var total = 0L
-                    while (true) {
-                        val count = source.read(buffer)
-                        if (count < 0) break
-                        total += count
-                        require(total <= limit) { "الملف كبير جداً، اختر ملفاً أصغر" }
-                        output.write(buffer, 0, count)
-                    }
-                }
-            }
-            require(target.length() > 0L) { "الملف فارغ" }
-        } catch (error: Exception) {
-            target.delete()
-            throw error
         }
     }
 
@@ -279,7 +256,5 @@ class RoomWordRepository(
 
     private companion object {
         const val KEY_SEED_VERSION = "seed_version"
-        const val MAX_PHOTO_BYTES = 15L * 1024 * 1024
-        const val MAX_AUDIO_BYTES = 50L * 1024 * 1024
     }
 }
