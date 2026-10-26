@@ -18,6 +18,7 @@ interface WordRepository {
     suspend fun deleteEmptyCustomCategory(id: String)
     suspend fun addCustomCard(categoryId: String, displayText: String, spokenText: String): Long
     suspend fun moveCardToCustomCategory(itemId: Long, destinationId: String)
+    suspend fun deleteCustomCard(itemId: Long)
 
     /** Inserts the built-in vocabulary on first run and tops it up when the vocabulary version changes. */
     suspend fun seedOrUpdateDefaults()
