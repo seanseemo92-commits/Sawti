@@ -189,7 +189,7 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
         AddCustomWordDialog(
             categoryTitle = category.title,
             onAdd = { title, spoken ->
-                (actions as? LibraryViewModel)?.addCustomCard(category.id, title, spoken)
+                actions.addCustomCard(category.id, title, spoken)
             },
             onDismiss = { addingCustomWord = false },
         )
