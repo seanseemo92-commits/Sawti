@@ -136,6 +136,9 @@ fun Modifier.bounceClick(onLongClick: (() -> Unit)? = null, onClick: () -> Unit)
                         if (!change.pressed) {
                             val elapsed = change.uptimeMillis - down.uptimeMillis
                             if (elapsed >= dwell.millis) {
+                                // Nested hint/favorite buttons own this release; don't also trigger
+                                // the containing AAC card's speech action.
+                                change.consume()
                                 val longAction = currentLongClick
                                 if (longAction != null && elapsed >= maxOf(900L, dwell.millis + 500L)) {
                                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
