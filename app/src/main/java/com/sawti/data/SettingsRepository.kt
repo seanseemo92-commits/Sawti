@@ -32,7 +32,15 @@ class SettingsRepository(context: Context) {
         performanceMode = prefs.getBoolean("performance_mode", false),
         touchDwell = read("touch_dwell", TouchDwell.OFF),
         sentenceStripEnabled = prefs.getBoolean("sentence_strip", false),
+        isOnboardingCompleted = prefs.getBoolean("onboarding_completed", false),
     )
+
+    fun completeOnboarding() {
+        // Persist before notifying the UI; interrupted sessions will show it again safely.
+        if (prefs.edit().putBoolean("onboarding_completed", true).commit()) {
+            _state.update { it.copy(isOnboardingCompleted = true) }
+        }
+    }
 
     fun setThemeMode(mode: ThemeMode) {
         prefs.edit().putString("theme_mode", mode.name).apply()
