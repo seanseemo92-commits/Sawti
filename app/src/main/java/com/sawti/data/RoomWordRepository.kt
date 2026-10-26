@@ -194,7 +194,9 @@ class RoomWordRepository(
         withContext(Dispatchers.IO) {
             val dir = File(filesDir, "photos").apply { require(isDirectory || mkdirs()) }
             val target = File(dir, "word_${id}_${System.nanoTime()}.jpg")
-            SafeMediaImport.copy(image, target, SafeMediaImport.MAX_PHOTO_BYTES)
+            // Stream to a bounded temporary file, sample-decode, rotate using EXIF, and
+            // store only a compressed app-private JPEG. Old media stays until DB succeeds.
+            SafePhotoProcessor.import(image, target)
             try {
                 val old = dao.photoPath(id)
                 dao.updatePhoto(id, target.absolutePath)
