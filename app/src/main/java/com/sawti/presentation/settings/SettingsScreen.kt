@@ -44,6 +44,7 @@ import com.sawti.R
 import com.sawti.domain.model.SpeechRate
 import com.sawti.domain.model.TextSize
 import com.sawti.domain.model.ThemeMode
+import com.sawti.domain.model.TouchDwell
 import com.sawti.presentation.theme.AppBarBlue
 import com.sawti.presentation.theme.cardElevation
 
@@ -152,6 +153,18 @@ fun SettingsRoute(viewModel: SettingsViewModel) {
                 ),
                 selected = settings.textSize,
                 onSelect = viewModel::setTextSize,
+            )
+        }
+        SettingBlock("زمن تثبيت اللمس") {
+            Text("لتخفيف الضغطات غير المقصودة الناتجة عن ارتعاش اليد: اضغط مع الاستمرار على البطاقة قبل رفع الإصبع. السحب للتمرير يلغي الضغطة.")
+            ChoiceRow(
+                options = listOf(
+                    TouchDwell.OFF to "معطل",
+                    TouchDwell.NORMAL to "عادي 300ms",
+                    TouchDwell.LONG to "طويل 500ms",
+                ),
+                selected = settings.touchDwell,
+                onSelect = viewModel::setTouchDwell,
             )
         }
         SettingBlock(stringResource(R.string.settings_speech_rate)) {

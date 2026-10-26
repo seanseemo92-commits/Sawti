@@ -36,8 +36,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChange
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.onLongClick
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -56,6 +66,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.sawti.R
 import com.sawti.domain.model.WordItem
+import com.sawti.domain.model.TouchDwell
 import com.sawti.presentation.theme.AppBarBlue
 import com.sawti.presentation.theme.HintAmber
 import com.sawti.presentation.theme.LocalPerformanceMode
@@ -63,37 +74,86 @@ import com.sawti.presentation.theme.cardElevation
 import com.sawti.presentation.theme.RecordRed
 import java.io.File
 
-/** Spring "bounce" on press + haptic tick; the card squeezes in and springs back. */
+/** Default cards retain bounce/long-click. With touch dwell, scroll consumes pointer events and
+ * cancels the tap; lifting a stationary finger after the chosen interval confirms it.
+ * A longer hold still opens the existing focus/editor action. */
 fun Modifier.bounceClick(onLongClick: (() -> Unit)? = null, onClick: () -> Unit): Modifier = composed {
     val haptic = LocalHapticFeedback.current
+    val dwell = LocalTouchDwell.current
+    val currentClick by rememberUpdatedState(onClick)
+    val currentLongClick by rememberUpdatedState(onLongClick)
     val source = remember { MutableInteractionSource() }
     val pressed by source.collectIsPressedAsState()
     val performance = LocalPerformanceMode.current
     val scale by animateFloatAsState(
-        targetValue = if (pressed && !performance) 0.93f else 1f,
+        targetValue = if (pressed && !performance && dwell == TouchDwell.OFF) 0.93f else 1f,
         animationSpec = if (performance) snap() else spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessMedium,
         ),
         label = "bounce",
     )
-    graphicsLayer {
-        scaleX = scale
-        scaleY = scale
-    }.combinedClickable(
-        interactionSource = source,
-        indication = null,
-        onLongClick = onLongClick?.let { long ->
-            {
-                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                long()
+    val base = graphicsLayer { scaleX = scale; scaleY = scale }
+    if (dwell == TouchDwell.OFF) {
+        base.combinedClickable(
+            interactionSource = source,
+            indication = null,
+            onLongClick = onLongClick?.let { long ->
+                {
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    long()
+                }
+            },
+            onClick = {
+                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                currentClick()
+            },
+        )
+    } else {
+        base
+            .semantics {
+                onClick {
+                    currentClick() // Switch Access and TalkBack don't use physical dwell.
+                    true
+                }
+                if (onLongClick != null) onLongClick {
+                    currentLongClick?.invoke()
+                    true
+                }
             }
-        },
-        onClick = {
-            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-            onClick()
-        },
-    )
+            .pointerInput(dwell) {
+                awaitEachGesture {
+                    val down = awaitFirstDown(requireUnconsumed = false)
+                    val id = down.id
+                    var drift = Offset.Zero
+                    while (true) {
+                        // Observe after the LazyGrid scroll handler has had its chance to consume.
+                        val event = awaitPointerEvent(PointerEventPass.Final)
+                        val change = event.changes.firstOrNull { it.id == id } ?: break
+                        drift += change.positionChange()
+                        if (change.isConsumed || drift.getDistance() > viewConfiguration.touchSlop ||
+                            event.changes.any { it.id != id && it.pressed }) break
+                        if (!change.pressed) {
+                            val elapsed = change.uptimeMillis - down.uptimeMillis
+                            if (elapsed >= dwell.millis) {
+                                // Nested hint/favorite buttons own this release; don't also trigger
+                                // the containing AAC card's speech action.
+                                change.consume()
+                                val longAction = currentLongClick
+                                if (longAction != null && elapsed >= maxOf(900L, dwell.millis + 500L)) {
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    longAction()
+                                } else {
+                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                    currentClick()
+                                }
+                            }
+                            break
+                        }
+                    }
+                }
+            }
+    }
 }
 
 /**
@@ -151,16 +211,12 @@ fun ItemImage(
 /** Small, subtle 💡 button: speaks only the phonemic cue. */
 @Composable
 fun HintButton(onClick: () -> Unit, modifier: Modifier = Modifier, size: Int = 44) {
-    val haptic = LocalHapticFeedback.current
     Box(
         modifier
             .size(size.dp)
             .clip(CircleShape)
             .background(Color.White.copy(alpha = 0.9f))
-            .clickable {
-                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                onClick()
-            },
+            .bounceClick(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
@@ -175,16 +231,12 @@ fun HintButton(onClick: () -> Unit, modifier: Modifier = Modifier, size: Int = 4
 /** Small, subtle 💬 button: speaks the cloze carrier phrase ("نَأْكُلُ الـ...") up to the missing word. */
 @Composable
 fun PhraseHintButton(onClick: () -> Unit, modifier: Modifier = Modifier, size: Int = 44) {
-    val haptic = LocalHapticFeedback.current
     Box(
         modifier
             .size(size.dp)
             .clip(CircleShape)
             .background(Color.White.copy(alpha = 0.9f))
-            .clickable {
-                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                onClick()
-            },
+            .bounceClick(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
@@ -199,16 +251,12 @@ fun PhraseHintButton(onClick: () -> Unit, modifier: Modifier = Modifier, size: I
 /** Caregiver Mode only: pins / unpins a card to the quick-access bar. */
 @Composable
 fun FavoriteStar(isFavorite: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    val haptic = LocalHapticFeedback.current
     Box(
         modifier
             .size(44.dp)
             .clip(CircleShape)
             .background(Color.White.copy(alpha = 0.92f))
-            .clickable {
-                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                onClick()
-            },
+            .bounceClick(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         Icon(

@@ -10,6 +10,7 @@ import com.sawti.domain.model.ArabicDialect
 import com.sawti.domain.model.SpeechRate
 import com.sawti.domain.model.TextSize
 import com.sawti.domain.model.ThemeMode
+import com.sawti.domain.model.TouchDwell
 import kotlinx.coroutines.flow.StateFlow
 
 class SettingsViewModel(private val repository: SettingsRepository) : ViewModel() {
@@ -18,6 +19,7 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
     fun setThemeMode(mode: ThemeMode) = repository.setThemeMode(mode)
     fun setTextSize(size: TextSize) = repository.setTextSize(size)
     fun setPerformanceMode(on: Boolean) = repository.setPerformanceMode(on)
+    fun setTouchDwell(value: TouchDwell) = repository.setTouchDwell(value)
     fun setSpeechRate(rate: SpeechRate) = repository.setSpeechRate(rate)
     fun setDialect(dialect: ArabicDialect) = repository.setDialect(dialect)
     fun setPreferredVoice(name: String?) = repository.setPreferredVoice(name)

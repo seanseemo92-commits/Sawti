@@ -6,6 +6,7 @@ import com.sawti.domain.model.ArabicDialect
 import com.sawti.domain.model.SpeechRate
 import com.sawti.domain.model.TextSize
 import com.sawti.domain.model.ThemeMode
+import com.sawti.domain.model.TouchDwell
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,6 +30,7 @@ class SettingsRepository(context: Context) {
         preferredVoice = prefs.getString("preferred_voice", null),
         hapticsEnabled = prefs.getBoolean("haptics", true),
         performanceMode = prefs.getBoolean("performance_mode", false),
+        touchDwell = read("touch_dwell", TouchDwell.OFF),
     )
 
     fun setThemeMode(mode: ThemeMode) {
@@ -44,6 +46,11 @@ class SettingsRepository(context: Context) {
     fun setPerformanceMode(on: Boolean) {
         prefs.edit().putBoolean("performance_mode", on).apply()
         _state.update { it.copy(performanceMode = on) }
+    }
+
+    fun setTouchDwell(value: TouchDwell) {
+        prefs.edit().putString("touch_dwell", value.name).apply()
+        _state.update { it.copy(touchDwell = value) }
     }
 
     fun setSpeechRate(rate: SpeechRate) {

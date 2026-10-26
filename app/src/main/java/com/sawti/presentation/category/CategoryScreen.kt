@@ -69,6 +69,7 @@ import com.sawti.domain.model.CategoryIds
 import com.sawti.domain.model.FamilyRelationships
 import com.sawti.domain.model.ViewMode
 import com.sawti.domain.model.WordItem
+import com.sawti.domain.search.ArabicSearch
 import com.sawti.presentation.common.ActionPill
 import com.sawti.presentation.common.EditBadge
 import com.sawti.presentation.common.FavoriteStar
@@ -81,7 +82,7 @@ import com.sawti.presentation.theme.paletteOf
 import kotlinx.coroutines.launch
 
 @Composable
-fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryActions) {
+fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryActions, searchQuery: String = "") {
     val palette = paletteOf(category.palette)
     val isFamily = category.id == CategoryIds.FAMILY
     val subgroups = if (isFamily) FamilyRelationships.tabs + category.subgroups.filter {
@@ -94,10 +95,14 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
     LaunchedEffect(category.id, subgroups) {
         if (subgroup !in subgroups && subgroups.isNotEmpty()) subgroup = subgroups.first()
     }
-    val items = if (isFamily) category.items.filter { it.subgroup == subgroup }
+    val searching = searchQuery.isNotBlank()
+    // Search across *all* tabs, including names in hidden family subgroups.
+    val items = if (searching) category.items.filter {
+        ArabicSearch.matches(it.displayText, it.ttsPrompt, searchQuery)
+    } else if (isFamily) category.items.filter { it.subgroup == subgroup }
         else if (subgroups.isEmpty()) category.items
         else category.items.filter { it.subgroup == subgroup }
-    val isPeopleGroup = isFamily && subgroup != FamilyRelationships.RELATIVES
+    val isPeopleGroup = !searching && isFamily && subgroup != FamilyRelationships.RELATIVES
 
     val context = LocalContext.current
     val onCall: (String) -> Unit = { phone ->
@@ -108,7 +113,7 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
 
     Column(Modifier.fillMaxSize()) {
         // Always show the relationship vocabulary first; person groups exist even when empty.
-        if (subgroups.isNotEmpty()) {
+        if (!searching && subgroups.isNotEmpty()) {
             SubgroupTabs(
                 subgroups = subgroups,
                 selected = subgroup,
@@ -118,7 +123,7 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
                     .padding(start = 16.dp, end = 16.dp, top = 16.dp),
             )
         }
-        ViewModeToggle(
+        if (!searching) ViewModeToggle(
             mode = mode,
             palette = palette,
             onChange = { mode = it },
@@ -127,7 +132,11 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
                 .padding(horizontal = 16.dp, vertical = 10.dp),
         )
         Box(Modifier.weight(1f)) {
-            if (isPeopleGroup && items.isEmpty()) {
+            if (searching && items.isEmpty()) {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("ما لقيناش كلمات تطابق البحث")
+                }
+            } else if (isPeopleGroup && items.isEmpty()) {
                 Column(
                     Modifier.fillMaxSize().padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -145,7 +154,7 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
                     Text(stringResource(if (state.caregiverMode) R.string.family_empty_caregiver else R.string.family_empty_patient), fontSize = 16.sp,
                         textAlign = TextAlign.Center)
                 }
-            } else when (mode) {
+            } else when (if (searching) ViewMode.GRID else mode) {
                 ViewMode.GRID -> WordGrid(items, category, palette, state, actions)
                 ViewMode.FLASHCARD -> key(subgroup) {
                     FlashcardCarousel(items, category, palette, state, actions, onCall)
@@ -285,7 +294,7 @@ private fun WordGrid(
 }
 
 @Composable
-private fun WordCard(
+internal fun WordCard(
     item: WordItem,
     palette: CategoryPalette,
     crop: Boolean,

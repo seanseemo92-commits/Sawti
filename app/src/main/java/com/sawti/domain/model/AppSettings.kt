@@ -21,6 +21,11 @@ enum class TextSize(val factor: Float) { NORMAL(1f), LARGE(1.2f), EXTRA_LARGE(1.
 /** TTS speaking speed. */
 enum class SpeechRate(val factor: Float) { SLOW(0.75f), NORMAL(0.85f), FAST(1.0f) }
 
+/** How long a card must remain pressed before its tap is accepted. */
+enum class TouchDwell(val millis: Long) {
+    OFF(0L), NORMAL(300L), LONG(500L)
+}
+
 data class AppSettings(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val textSize: TextSize = TextSize.NORMAL,
@@ -30,4 +35,5 @@ data class AppSettings(
     val hapticsEnabled: Boolean = true,
     /** "وضع الأداء السلس": no spring/alpha animations or shadows, smaller decoded images. */
     val performanceMode: Boolean = false,
+    val touchDwell: TouchDwell = TouchDwell.OFF,
 )
