@@ -13,7 +13,13 @@ class AudioPlayer(private val focus: AudioFocusController) {
         stop()
         val token = focus.acquire { stop() } ?: return false
         focusToken = token
-        val mp = MediaPlayer()
+        val mp = try {
+            MediaPlayer()
+        } catch (_: Exception) {
+            focusToken = null
+            focus.release(token)
+            return false
+        }
         return try {
             mp.setAudioAttributes(
                 AudioAttributes.Builder()
