@@ -159,6 +159,7 @@ jobs:
           assert s.count("MIGRATION_3_4 = object") == 1
           PY
           grep -q 'version = 4,' extracted/MyWords/app/src/main/java/com/mywords/data/db/AppDatabase.kt
+          sed -i 's/const val VERSION = 13/const val VERSION = 14/' extracted/MyWords/app/src/main/java/com/mywords/data/db/WordSeed.kt
           grep -q 'const val VERSION = 14' extracted/MyWords/app/src/main/java/com/mywords/data/db/WordSeed.kt
           grep -q 'FamilyRelationships.tabs' extracted/MyWords/app/src/main/java/com/mywords/presentation/category/CategoryScreen.kt
           grep -q 'relationshipLabels.map' extracted/MyWords/app/src/main/java/com/mywords/data/db/WordSeed.kt
