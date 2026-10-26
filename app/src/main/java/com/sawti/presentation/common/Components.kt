@@ -38,6 +38,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -94,13 +96,14 @@ fun Modifier.bounceClick(onLongClick: (() -> Unit)? = null, onClick: () -> Unit)
     val currentClick by rememberUpdatedState(onClick)
     val currentLongClick by rememberUpdatedState(onLongClick)
     val source = remember { MutableInteractionSource() }
+    var dwellPressed by remember { mutableStateOf(false) }
     val pressed by source.collectIsPressedAsState()
     val performance = LocalPerformanceMode.current
     val scale by animateFloatAsState(
-        targetValue = if (pressed && !performance && dwell == TouchDwell.OFF) 0.93f else 1f,
+        targetValue = if ((pressed || dwellPressed) && !performance) 0.94f else 1f,
         animationSpec = if (performance) snap() else spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessMedium,
+            stiffness = Spring.StiffnessLow,
         ),
         label = "bounce",
     )
@@ -137,7 +140,9 @@ fun Modifier.bounceClick(onLongClick: (() -> Unit)? = null, onClick: () -> Unit)
                     val down = awaitFirstDown(requireUnconsumed = false)
                     val id = down.id
                     var drift = Offset.Zero
-                    while (true) {
+                    dwellPressed = true
+                    try {
+                        while (true) {
                         // Observe after the LazyGrid scroll handler has had its chance to consume.
                         val event = awaitPointerEvent(PointerEventPass.Final)
                         val change = event.changes.firstOrNull { it.id == id } ?: break
@@ -161,6 +166,10 @@ fun Modifier.bounceClick(onLongClick: (() -> Unit)? = null, onClick: () -> Unit)
                             }
                             break
                         }
+                        }
+                    } finally {
+                        // Release even when scrolling, multi-touch or cancellation consumes us.
+                        dwellPressed = false
                     }
                 }
             }
