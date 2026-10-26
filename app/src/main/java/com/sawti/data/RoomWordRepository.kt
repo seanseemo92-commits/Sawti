@@ -201,9 +201,12 @@ class RoomWordRepository(
             dao.deleteItem(itemId)
             current
         }
-        withContext(Dispatchers.IO) {
-            deletePrivateMedia(item.photoPath)
-            deletePrivateMedia(item.audioPath)
+        // Backups may contain rows with shared media references. Only remove an app-private
+        // attachment if NO other word still refers to it.
+        listOfNotNull(item.photoPath, item.audioPath).distinct().forEach { path ->
+            if (dao.mediaReferenceCount(path) == 0) {
+                withContext(Dispatchers.IO) { deletePrivateMedia(path) }
+            }
         }
     }
 
