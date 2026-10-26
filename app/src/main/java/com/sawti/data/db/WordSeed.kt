@@ -313,7 +313,7 @@ object WordSeed {
         ),
     )
 
-    const val VERSION = 16
+    const val VERSION = 17
 
     // جدول التحويلات الشامل لمنع تكرار الكلمات والحفاظ على بيانات وتفضيلات الوالدة
     val renames: List<Triple<String, String, String>> = listOf(
