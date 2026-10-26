@@ -50,7 +50,7 @@ import com.sawti.presentation.theme.cardElevation
 
 /** Caregiver-only display settings: theme, card text size and Performance Mode. */
 @Composable
-fun SettingsRoute(viewModel: SettingsViewModel) {
+fun SettingsRoute(viewModel: SettingsViewModel, onOpenGuide: () -> Unit = {}) {
     val settings by viewModel.settings.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -129,6 +129,10 @@ fun SettingsRoute(viewModel: SettingsViewModel) {
             }
             if (busy) Text("جاري المعالجة، يرجى الانتظار…")
             message?.let { Text(it) }
+        }
+        SettingBlock("دليل الاستخدام") {
+            Text("راجع شاشات الترحيب الأربع وتعرّف على نطق الكلمات وشريط الجمل وحماية وضع المرافق.")
+            Button(onClick = onOpenGuide) { Text("فتح دليل الاستخدام") }
         }
         SettingBlock("اللهجة والصوت") {
             Text("اللهجة الحالية: ${settings.dialect.label}. يمكن تغيير اللهجة واختيار الصوت من أيقونة اللغة أعلى الشاشة.")
