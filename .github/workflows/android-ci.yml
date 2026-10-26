@@ -167,6 +167,17 @@ jobs:
           grep -q 'FamilyRelationships.tabs' extracted/MyWords/app/src/main/java/com/mywords/presentation/category/CategoryScreen.kt
           grep -q 'relationshipLabels.map' extracted/MyWords/app/src/main/java/com/mywords/data/db/WordSeed.kt
           test -f extracted/MyWords/app/src/test/java/com/mywords/domain/model/FamilyRelationshipsTest.kt
+      - name: Apply Sawti custom family categories and safe migration
+        shell: bash
+        run: |
+          set -euo pipefail
+          base64 --decode ci/sawti-family-feature.patch.xz.b64 | xz --decompress | patch --batch -p1 -d extracted/MyWords
+          python3 ci/apply_sawti_family_migration.py
+          grep -q 'version = 4,' extracted/MyWords/app/src/main/java/com/mywords/data/db/AppDatabase.kt
+          grep -q 'MIGRATION_3_4)' extracted/MyWords/app/src/main/java/com/mywords/data/db/AppDatabase.kt
+          grep -q 'FamilyRelationships.tabs' extracted/MyWords/app/src/main/java/com/mywords/presentation/category/CategoryScreen.kt
+          grep -q 'relationshipLabels.map' extracted/MyWords/app/src/main/java/com/mywords/data/db/WordSeed.kt
+          test -f extracted/MyWords/app/src/test/java/com/mywords/domain/model/FamilyRelationshipsTest.kt
       - name: Install JUnit dependency for added speech tests
         shell: bash
         run: |
