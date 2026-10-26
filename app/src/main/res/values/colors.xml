@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="ic_launcher_background">#0F172A</color>
+    <color name="adult_canvas_light">#F8FAFC</color>
+    <color name="adult_canvas_dark">#0F172A</color>
+    <color name="adult_slate_navy">#1E293B</color>
+    <color name="adult_acoustic_sky">#38BDF8</color>
+    <color name="adult_sage">#4F7664</color>
+    <color name="adult_terracotta">#96624A</color>
+    <color name="adult_warm_stone">#746B60</color>
 </resources>
