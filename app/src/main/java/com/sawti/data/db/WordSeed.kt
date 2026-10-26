@@ -1,6 +1,8 @@
 package com.sawti.data.db
 
 import com.sawti.domain.model.CategoryIds
+import com.sawti.domain.model.ArabicDialect
+import com.sawti.domain.model.RegionalDishesCatalog
 import com.sawti.domain.model.PhonemicCue
 import com.sawti.domain.model.TtsEndings
 
@@ -73,7 +75,9 @@ object WordSeed {
                 Word("مقروض", "مَقْرُوضْ", "🍪", cue = "مَقْـ..."),
                 Word("شاهي بالنعناع", "شَاهِي بِالنَّعْنَاعْ", "🍵", cue = "شَا..."),
                 Word("قهوة عربية", "قَهْوَهْ عَرَبِيَّهْ", "☕", cue = "قَهْـ..."),
-            ),
+            ) + RegionalDishesCatalog.forDialect(ArabicDialect.LIBYAN).dishes.map { dish ->
+                Word(dish.displayText, dish.ttsPrompt, dish.emoji, cue = dish.phonemicCue)
+            },
         ),
 
         // ---- 4. روتين ويوميات ----
@@ -309,7 +313,7 @@ object WordSeed {
         ),
     )
 
-    const val VERSION = 15
+    const val VERSION = 17
 
     // جدول التحويلات الشامل لمنع تكرار الكلمات والحفاظ على بيانات وتفضيلات الوالدة
     val renames: List<Triple<String, String, String>> = listOf(
@@ -390,15 +394,21 @@ object WordSeed {
     fun categoryEntities(): List<CategoryEntity> =
         categories.mapIndexed { i, c -> CategoryEntity(c.id, c.title, c.palette, c.previewOnTap, i) }
 
-    fun itemEntities(): List<WordItemEntity> =
-        categories.flatMap { c ->
+    fun itemEntities(): List<WordItemEntity> {
+        // The requested new Libyan pronunciations are hand-curated exactly as written;
+        // do not append an extra final sukun to them automatically.
+        val curatedLibyan = RegionalDishesCatalog.forDialect(ArabicDialect.LIBYAN)
+            .dishes.map { it.displayText }.toSet()
+        return categories.flatMap { c ->
             c.words.mapIndexed { i, w ->
+                val spoken = if (c.id == "libyan" && w.display in curatedLibyan)
+                    w.tts else TtsEndings.normalize(w.tts)
                 WordItemEntity(
                     categoryId = c.id,
                     subgroup = w.subgroup,
                     displayText = w.display,
-                    ttsPrompt = TtsEndings.normalize(w.tts),
-                    phonemicCue = w.cue ?: PhonemicCue.derive(TtsEndings.normalize(w.tts)),
+                    ttsPrompt = spoken,
+                    phonemicCue = w.cue ?: PhonemicCue.derive(spoken),
                     sentencePrompt = SeedExtras.sentencePrompt(c.id, w.display),
                     isFavorite = SeedExtras.isFavorite(c.id, w.display),
                     emoji = w.emoji,
@@ -406,4 +416,5 @@ object WordSeed {
                 )
             }
         }
+    }
 }

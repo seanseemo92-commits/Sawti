@@ -55,6 +55,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.compose.material3.MaterialTheme
 import com.sawti.presentation.theme.cardElevation
 import com.sawti.R
+import com.sawti.domain.model.Category
 import com.sawti.domain.model.CategoryIds
 import com.sawti.domain.model.FamilyRelationships
 import com.sawti.domain.model.WordItem
@@ -236,7 +237,7 @@ fun AddFamilyMemberDialog(group: String, actions: LibraryActions) {
 
 /** Caregiver Mode editor: label, TTS text, cue, phone (family), photo and voice recording. */
 @Composable
-fun WordEditorDialog(item: WordItem, isRecording: Boolean, actions: LibraryActions) {
+fun WordEditorDialog(item: WordItem, isRecording: Boolean, actions: LibraryActions, availableCategories: List<Category> = emptyList()) {
     var display by remember(item.id) { mutableStateOf(item.displayText) }
     var tts by remember(item.id) { mutableStateOf(item.ttsPrompt) }
     var cue by remember(item.id) { mutableStateOf(item.phonemicCue) }
@@ -244,6 +245,8 @@ fun WordEditorDialog(item: WordItem, isRecording: Boolean, actions: LibraryActio
     var phone by remember(item.id) { mutableStateOf(item.phone) }
     var group by remember(item.id) { mutableStateOf(item.subgroup) }
     var showDeleteConfirm by remember(item.id) { mutableStateOf(false) }
+    var showCustomDeleteConfirm by remember(item.id) { mutableStateOf(false) }
+    var pendingMove by remember(item.id) { mutableStateOf<String?>(null) }
     val isRelationship = item.categoryId == CategoryIds.FAMILY &&
         item.subgroup == FamilyRelationships.RELATIVES
     val palette = paletteOf(if (item.categoryId == CategoryIds.FAMILY) 0 else 1)
@@ -332,6 +335,23 @@ fun WordEditorDialog(item: WordItem, isRecording: Boolean, actions: LibraryActio
                     onDelete = { actions.deleteRecording(item.id) },
                     onPickFile = { uri -> actions.onAudioPicked(item.id, uri) },
                 )
+                if (item.categoryId.startsWith("custom_")) {
+                    TextButton(onClick = { showCustomDeleteConfirm = true },
+                        modifier = Modifier.fillMaxWidth()) {
+                        Icon(Icons.Filled.Delete, contentDescription = null)
+                        Spacer(Modifier.width(8.dp))
+                        Text("حذف البطاقة المخصصة")
+                    }
+                }
+                if (!isRelationship && availableCategories.any { it.id != item.categoryId }) {
+                    Text("نقل البطاقة إلى قسم مخصص (احفظ أي تعديل بالنص أولاً):")
+                    availableCategories.filter { it.id != item.categoryId }.forEach { target ->
+                        TextButton(
+                            onClick = { pendingMove = target.id },
+                            modifier = Modifier.fillMaxWidth(),
+                        ) { Text("نقل إلى «${target.title}»") }
+                    }
+                }
                 if (item.categoryId == CategoryIds.FAMILY && !isRelationship) {
                     TextButton(onClick = { showDeleteConfirm = true },
                         modifier = Modifier.fillMaxWidth()) {
@@ -354,6 +374,32 @@ fun WordEditorDialog(item: WordItem, isRecording: Boolean, actions: LibraryActio
             }
         },
     )
+    if (showCustomDeleteConfirm) AlertDialog(
+        onDismissRequest = { showCustomDeleteConfirm = false },
+        title = { Text("حذف البطاقة نهائيًا؟") },
+        text = { Text("سيتم حذف «${item.displayText}» وصورتها وتسجيلها المخصصين. هذا الإجراء لا يمكن التراجع عنه. احفظ نسخة احتياطية قبل الحذف.") },
+        confirmButton = {
+            Button(onClick = { showCustomDeleteConfirm = false; actions.deleteCustomCard(item.id) }) {
+                Text("حذف نهائي")
+            }
+        },
+        dismissButton = { TextButton(onClick = { showCustomDeleteConfirm = false }) { Text("إلغاء") } },
+    )
+    val target = availableCategories.firstOrNull { it.id == pendingMove }
+    if (target != null) {
+        AlertDialog(
+            onDismissRequest = { pendingMove = null },
+            title = { Text("تأكيد نقل البطاقة") },
+            text = { Text("نقل «${item.displayText}» إلى «${target.title}»؟ تبقى الصور والتسجيلات والمفضلة محفوظة. احفظ تعديل النص أولًا إن لزم.") },
+            confirmButton = {
+                Button(onClick = {
+                    actions.moveCardToCustomCategory(item.id, target.id)
+                    pendingMove = null
+                }) { Text("نقل") }
+            },
+            dismissButton = { TextButton(onClick = { pendingMove = null }) { Text("إلغاء") } },
+        )
+    }
     if (showDeleteConfirm) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirm = false },

@@ -44,6 +44,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sawti.R
 import com.sawti.presentation.category.CategoryScreen
+import com.sawti.presentation.category.CustomCategoryManager
+import com.sawti.presentation.common.SentenceStrip
 import com.sawti.presentation.category.SearchResultsScreen
 import com.sawti.presentation.common.LocalTouchDwell
 import com.sawti.presentation.category.LibraryViewModel
@@ -79,6 +81,7 @@ fun AppRoot(
     val settings by settingsVm.settings.collectAsStateWithLifecycle()
     var route by rememberSaveable { mutableStateOf(HOME) }
     var searchQuery by rememberSaveable { mutableStateOf("") }
+    var manageCategories by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
 
     // one-shot messages, e.g. "favourites are full"
@@ -118,6 +121,19 @@ fun AppRoot(
                     onDialects = { route = DIALECT },
                     onToggleCaregiver = library::toggleCaregiver,
                 )
+                if (settings.sentenceStripEnabled && (route == HOME || category != null)) {
+                    SentenceStrip(
+                        pieces = state.sentencePieces,
+                        onPlay = library::playSentenceStrip,
+                        onBackspace = library::deleteLastSentencePiece,
+                        onClear = library::clearSentenceStrip,
+                    )
+                }
+                if (route == HOME && state.caregiverMode) {
+                    TextButton(onClick = { manageCategories = true }) {
+                        Text("إدارة الأقسام المخصصة +")
+                    }
+                }
                 if (route == HOME || category != null) {
                     OutlinedTextField(
                         value = searchQuery,
@@ -179,10 +195,28 @@ fun AppRoot(
                         caregiverMode = state.caregiverMode,
                         onOpen = { id -> route = CATEGORY_PREFIX + id },
                         onQuickTap = library::onQuickTap,
+                        onQuickLongTap = library::onSpeakAgain,
                     )
                 }
             }
         }
+    }
+    if (manageCategories && state.caregiverMode) {
+        CustomCategoryManager(
+            categories = state.categories,
+            onCreate = library::createCategory,
+            onUpdate = library::editCategory,
+            onDelete = library::deleteCategory,
+            onDismiss = { manageCategories = false },
+        )
+    }
+    state.errorMessage?.let { error ->
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = library::clearError,
+            title = { Text("تعذّر إكمال العملية") },
+            text = { Text(error) },
+            confirmButton = { TextButton(onClick = library::clearError) { Text("موافق") } },
+        )
     }
 }
 

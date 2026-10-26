@@ -31,6 +31,7 @@ class SettingsRepository(context: Context) {
         hapticsEnabled = prefs.getBoolean("haptics", true),
         performanceMode = prefs.getBoolean("performance_mode", false),
         touchDwell = read("touch_dwell", TouchDwell.OFF),
+        sentenceStripEnabled = prefs.getBoolean("sentence_strip", false),
     )
 
     fun setThemeMode(mode: ThemeMode) {
@@ -46,6 +47,11 @@ class SettingsRepository(context: Context) {
     fun setPerformanceMode(on: Boolean) {
         prefs.edit().putBoolean("performance_mode", on).apply()
         _state.update { it.copy(performanceMode = on) }
+    }
+
+    fun setSentenceStripEnabled(enabled: Boolean) {
+        prefs.edit().putBoolean("sentence_strip", enabled).apply()
+        _state.update { it.copy(sentenceStripEnabled = enabled) }
     }
 
     fun setTouchDwell(value: TouchDwell) {

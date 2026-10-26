@@ -85,9 +85,12 @@ import kotlinx.coroutines.launch
 fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryActions, searchQuery: String = "") {
     val palette = paletteOf(category.palette)
     val isFamily = category.id == CategoryIds.FAMILY
+    val isCustom = category.id.startsWith("custom_")
+    var addingCustomWord by rememberSaveable(category.id) { mutableStateOf(false) }
+    // Dialect tags on regional dishes are internal storage keys, not visible tabs.
     val subgroups = if (isFamily) FamilyRelationships.tabs + category.subgroups.filter {
         it.isNotBlank() && it !in FamilyRelationships.tabs
-    } else category.subgroups
+    } else if (category.id == "libyan") emptyList() else category.subgroups
     var mode by rememberSaveable(category.id) { mutableStateOf(ViewMode.GRID) }
     var subgroup by rememberSaveable(category.id) {
         mutableStateOf(if (isFamily) FamilyRelationships.RELATIVES else subgroups.firstOrNull().orEmpty())
@@ -161,6 +164,17 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
                 }
             }
         }
+        if (isCustom && state.caregiverMode && !searching) {
+            Button(
+                onClick = { addingCustomWord = true },
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)
+                    .heightIn(min = 56.dp),
+            ) {
+                Icon(Icons.Filled.Add, contentDescription = null)
+                Spacer(Modifier.size(10.dp))
+                Text("إضافة بطاقة")
+            }
+        }
         if (isPeopleGroup && items.isNotEmpty() && state.caregiverMode) {
             Button(onClick = { actions.openAddFamilyMember(subgroup) },
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)
@@ -172,6 +186,15 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
         }
     }
 
+    if (isCustom && state.caregiverMode && addingCustomWord) {
+        AddCustomWordDialog(
+            categoryTitle = category.title,
+            onAdd = { title, spoken ->
+                actions.addCustomCard(category.id, title, spoken)
+            },
+            onDismiss = { addingCustomWord = false },
+        )
+    }
     if (isFamily && state.caregiverMode && state.addingFamilyGroup != null) {
         AddFamilyMemberDialog(group = state.addingFamilyGroup, actions = actions)
     }
@@ -189,7 +212,8 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
     // Caregiver editor.
     val editing = state.editingItemId?.let { id -> category.items.firstOrNull { it.id == id } }
     if (editing != null && state.caregiverMode) {
-        WordEditorDialog(editing, isRecording = state.recordingItemId == editing.id, actions = actions)
+        WordEditorDialog(editing, isRecording = state.recordingItemId == editing.id,
+            actions = actions, availableCategories = state.categories.filter { it.id.startsWith("custom_") })
     }
 }
 
@@ -467,7 +491,10 @@ private fun FlashcardPage(
                     .weight(1f)
                     .fillMaxWidth()
                     .background(palette.pastel)
-                    .clickable { actions.onItemTapped(item, flashcard = true) },
+                    .bounceClick(
+                        onLongClick = { actions.onItemLongPressed(item) },
+                        onClick = { actions.onItemTapped(item, flashcard = true) },
+                    ),
                 contentAlignment = Alignment.Center,
             ) {
                 ItemImage(

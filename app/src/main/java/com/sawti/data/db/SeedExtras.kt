@@ -103,6 +103,7 @@ object SeedExtras {
         // ("أُرِيدُ الـ...") is not grammatical for them.
         // Libyan foods
         putAll(group("نَشْرَبُ الـ...", "libyan", "شاهي بالنعناع", "قهوة عربية"))
+        putAll(group("نَبِّي نَاكُلْ الـ...", "libyan", "مبطن", "حرايمي", "سفنز", "زميطة", "عيش باللبن"))
         // routines & faith
         put("routine/أذان", "نَسْمَعُ الـ...")
         put("routine/وضوء", "قَبْلَ الصَّلَاةِ نَقُومُ بِالـ...")

@@ -3,6 +3,7 @@ package com.sawti.data
 import android.content.Context
 import androidx.room.withTransaction
 import com.sawti.data.db.AppDatabase
+import com.sawti.data.db.CategoryEntity
 import com.sawti.data.db.SeedExtras
 import com.sawti.data.db.WordItemEntity
 import com.sawti.data.db.WordSeed
@@ -12,9 +13,13 @@ import com.sawti.domain.model.DialectCatalog
 import com.sawti.domain.model.TtsEndings
 import com.sawti.domain.model.PhonemicCue
 import com.sawti.domain.model.CategoryIds
+import com.sawti.domain.model.RegionalDishesCatalog
+import com.sawti.domain.model.ArabicDialect
+import com.sawti.domain.model.CustomCategoryRules
 import com.sawti.domain.repository.WordRepository
 import java.io.File
 import java.io.InputStream
+import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -34,12 +39,23 @@ class RoomWordRepository(
         combine(dao.observeCategories(), dao.observeItems(), settingsRepository.state) { categories, items, settings ->
             val byCategory = items.groupBy { it.categoryId }
             categories.map { c ->
+                val regionalCuisine = c.id == RegionalDishesCatalog.CATEGORY_ID
+                val visibleItems = byCategory[c.id].orEmpty().filter { item ->
+                    !regionalCuisine || RegionalDishesCatalog.visibleForDialect(item.subgroup, settings.dialect)
+                }
                 Category(
                     id = c.id,
-                    title = DialectCatalog.text(c.title, settings.dialect),
+                    title = if (regionalCuisine) RegionalDishesCatalog.forDialect(settings.dialect).title
+                            else DialectCatalog.text(c.title, settings.dialect),
                     palette = c.palette,
                     previewOnTap = c.previewOnTap,
-                    items = byCategory[c.id].orEmpty().map { DialectCatalog.localize(it.toDomain(), settings.dialect) },
+                    sortOrder = c.sortOrder,
+                    // A regional dish has a carefully written TTS prompt; never run the
+                    // generic display-label translator over a customized dish.
+                    items = visibleItems.map { item ->
+                        if (regionalCuisine) item.toDomain()
+                        else DialectCatalog.localize(item.toDomain(), settings.dialect)
+                    },
                 )
             }
         }
@@ -48,15 +64,55 @@ class RoomWordRepository(
         if (dao.categoryCount() == 0) {
             db.withTransaction {
                 dao.insertCategories(WordSeed.categoryEntities())
-                dao.insertItems(WordSeed.itemEntities())
+                dao.insertItems(WordSeed.itemEntities() + regionalSeedItems())
             }
             prefs.edit().putInt(KEY_SEED_VERSION, WordSeed.VERSION).apply()
         } else {
             val previous = prefs.getInt(KEY_SEED_VERSION, 0)
             if (previous < WordSeed.VERSION) {
-                topUpSeed(previous)
+                if (previous >= 15) {
+                    // v15/v16 -> v17: insert missing regional cuisine words ONLY. No sort, prompt, TTS,
+                    // photo, recording, favourite or other existing value is updated.
+                    topUpCuisineOnly()
+                } else {
+                    topUpSeed(previous)
+                }
                 prefs.edit().putInt(KEY_SEED_VERSION, WordSeed.VERSION).apply()
             }
+        }
+    }
+
+    /** Additional country-specific words use the same v4 word_items table, no migration. */
+    private fun regionalSeedItems(): List<WordItemEntity> =
+        RegionalDishesCatalog.additionalDialects().mapIndexed { index, (dialect, dish) ->
+            WordItemEntity(
+                categoryId = RegionalDishesCatalog.CATEGORY_ID,
+                subgroup = RegionalDishesCatalog.subgroupFor(dialect),
+                displayText = dish.displayText,
+                ttsPrompt = dish.ttsPrompt,
+                phonemicCue = dish.phonemicCue,
+                sentencePrompt = dish.sentencePrompt,
+                emoji = dish.emoji,
+                sortOrder = index % 15,
+            )
+        }
+
+    /**
+     * Insert-only update. Existing personalized cards and recordings are never changed,
+     * and old Libyan cards stay with their original IDs even when changing dialects.
+     */
+    private suspend fun topUpCuisineOnly() {
+        db.withTransaction {
+            val all = dao.itemKeys().map { Triple(it.categoryId, it.subgroup, it.displayText) }.toSet()
+            val newDefaults = WordSeed.itemEntities().filter {
+                it.categoryId == RegionalDishesCatalog.CATEGORY_ID &&
+                    it.displayText in RegionalDishesCatalog.forDialect(ArabicDialect.LIBYAN)
+                        .dishes.map { d -> d.displayText }.toSet()
+            } + regionalSeedItems()
+            val missing = newDefaults.filter {
+                Triple(it.categoryId, it.subgroup, it.displayText) !in all
+            }
+            if (missing.isNotEmpty()) dao.insertItems(missing)
         }
     }
 
@@ -81,7 +137,7 @@ class RoomWordRepository(
             seedCategories.filter { it.id in existingCategories }
                 .forEach { dao.updateCategory(it.id, it.title, it.palette, it.previewOnTap, it.sortOrder) }
 
-            val seedItems = WordSeed.itemEntities()
+            val seedItems = WordSeed.itemEntities() + regionalSeedItems()
             val seedKeys = seedItems.map { Triple(it.categoryId, it.subgroup, it.displayText) }.toSet()
 
             // 1. old default words that now have a Libyan name are renamed in place (photo/audio/phone kept)
@@ -126,6 +182,83 @@ class RoomWordRepository(
                 }
             }
             if (missing.isNotEmpty()) dao.insertItems(missing)
+        }
+    }
+
+    private fun isCustomId(id: String) = CustomCategoryRules.canManage(id)
+
+    override suspend fun addCustomCategory(title: String, palette: Int, sortOrder: Int): String {
+        val name = title.trim().take(70)
+        require(name.isNotBlank()) { "اسم القسم مطلوب" }
+        require(CustomCategoryRules.validPalette(palette) && CustomCategoryRules.validSortOrder(sortOrder)) { "إعدادات القسم غير صالحة" }
+        val id = "custom_" + UUID.randomUUID().toString()
+        db.withTransaction {
+            dao.insertCategory(CategoryEntity(id, name, palette, false, sortOrder))
+        }
+        return id
+    }
+
+    override suspend fun editCustomCategory(id: String, title: String, palette: Int, sortOrder: Int) {
+        require(isCustomId(id)) { "الأقسام الافتراضية غير قابلة للتعديل" }
+        val name = title.trim().take(70)
+        require(name.isNotBlank() && CustomCategoryRules.validPalette(palette) && CustomCategoryRules.validSortOrder(sortOrder))
+        db.withTransaction {
+            require(dao.categoryById(id) != null) { "القسم غير موجود" }
+            require(dao.editCustomCategory(id, name, palette, sortOrder) == 1)
+        }
+    }
+
+    override suspend fun deleteEmptyCustomCategory(id: String) {
+        require(isCustomId(id)) { "حذف الأقسام الافتراضية ممنوع" }
+        db.withTransaction {
+            require(CustomCategoryRules.canDelete(id, dao.countItemsInCategory(id))) {
+                "القسم يحتوي بطاقات. انقلها إلى قسم مخصص آخر قبل الحذف."
+            }
+            require(dao.deleteEmptyCustomCategory(id) == 1) { "تعذر حذف القسم" }
+        }
+    }
+
+    override suspend fun addCustomCard(categoryId: String, displayText: String, spokenText: String): Long {
+        require(isCustomId(categoryId)) { "يمكن إضافة بطاقات مخصصة إلى الأقسام المخصصة فقط" }
+        val display = displayText.trim().take(100)
+        require(display.isNotBlank()) { "نص البطاقة مطلوب" }
+        val spoken = spokenText.trim().ifBlank { display }.take(250)
+        return db.withTransaction {
+            require(dao.categoryById(categoryId) != null) { "القسم غير موجود" }
+            dao.insertItem(WordItemEntity(
+                categoryId = categoryId, displayText = display, ttsPrompt = spoken,
+                phonemicCue = PhonemicCue.derive(spoken), sortOrder = 10_000,
+            ))
+        }
+    }
+
+    override suspend fun moveCardToCustomCategory(itemId: Long, destinationId: String) {
+        require(isCustomId(destinationId)) { "الوجهة يجب أن تكون قسمًا مخصصًا" }
+        db.withTransaction {
+            require(dao.categoryById(destinationId) != null) { "قسم الوجهة غير موجود" }
+            val item = dao.wordById(itemId) ?: error("البطاقة غير موجودة")
+            require(item.categoryId != CategoryIds.FAMILY ||
+                item.subgroup != com.sawti.domain.model.FamilyRelationships.RELATIVES) {
+                "بطاقات صلات العائلة الافتراضية لا يمكن نقلها"
+            }
+            dao.moveWord(itemId, destinationId)
+        }
+    }
+
+    /** Permanently removes only a caregiver-selected card from a custom category. */
+    override suspend fun deleteCustomCard(itemId: Long) {
+        val item = db.withTransaction {
+            val current = dao.wordById(itemId) ?: error("البطاقة غير موجودة")
+            require(isCustomId(current.categoryId)) { "لا يمكن حذف بطاقة من قسم افتراضي" }
+            dao.deleteItem(itemId)
+            current
+        }
+        // Backups may contain rows with shared media references. Only remove an app-private
+        // attachment if NO other word still refers to it.
+        listOfNotNull(item.photoPath, item.audioPath).distinct().forEach { path ->
+            if (dao.mediaReferenceCount(path) == 0) {
+                withContext(Dispatchers.IO) { deletePrivateMedia(path) }
+            }
         }
     }
 
