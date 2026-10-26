@@ -3,6 +3,7 @@ package com.sawti.data
 import android.content.Context
 import androidx.room.withTransaction
 import com.sawti.data.db.AppDatabase
+import com.sawti.data.db.CategoryEntity
 import com.sawti.data.db.SeedExtras
 import com.sawti.data.db.WordItemEntity
 import com.sawti.data.db.WordSeed
@@ -15,6 +16,7 @@ import com.sawti.domain.model.CategoryIds
 import com.sawti.domain.repository.WordRepository
 import java.io.File
 import java.io.InputStream
+import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -126,6 +128,67 @@ class RoomWordRepository(
                 }
             }
             if (missing.isNotEmpty()) dao.insertItems(missing)
+        }
+    }
+
+    private fun isCustomId(id: String) =
+        id.startsWith("custom_") && id.length in 12..70
+
+    override suspend fun addCustomCategory(title: String, palette: Int, sortOrder: Int): String {
+        val name = title.trim().take(70)
+        require(name.isNotBlank()) { "اسم القسم مطلوب" }
+        require(palette in 0..11 && sortOrder in 0..10_000) { "إعدادات القسم غير صالحة" }
+        val id = "custom_" + UUID.randomUUID().toString()
+        db.withTransaction {
+            dao.insertCategory(CategoryEntity(id, name, palette, false, sortOrder))
+        }
+        return id
+    }
+
+    override suspend fun editCustomCategory(id: String, title: String, palette: Int, sortOrder: Int) {
+        require(isCustomId(id)) { "الأقسام الافتراضية غير قابلة للتعديل" }
+        val name = title.trim().take(70)
+        require(name.isNotBlank() && palette in 0..11 && sortOrder in 0..10_000)
+        db.withTransaction {
+            require(dao.categoryById(id) != null) { "القسم غير موجود" }
+            require(dao.editCustomCategory(id, name, palette, sortOrder) == 1)
+        }
+    }
+
+    override suspend fun deleteEmptyCustomCategory(id: String) {
+        require(isCustomId(id)) { "حذف الأقسام الافتراضية ممنوع" }
+        db.withTransaction {
+            require(dao.countItemsInCategory(id) == 0) {
+                "القسم يحتوي بطاقات. انقلها إلى قسم مخصص آخر قبل الحذف."
+            }
+            require(dao.deleteEmptyCustomCategory(id) == 1) { "تعذر حذف القسم" }
+        }
+    }
+
+    override suspend fun addCustomCard(categoryId: String, displayText: String, spokenText: String): Long {
+        require(isCustomId(categoryId)) { "يمكن إضافة بطاقات مخصصة إلى الأقسام المخصصة فقط" }
+        val display = displayText.trim().take(100)
+        require(display.isNotBlank()) { "نص البطاقة مطلوب" }
+        val spoken = spokenText.trim().ifBlank { display }.take(250)
+        return db.withTransaction {
+            require(dao.categoryById(categoryId) != null) { "القسم غير موجود" }
+            dao.insertItem(WordItemEntity(
+                categoryId = categoryId, displayText = display, ttsPrompt = spoken,
+                phonemicCue = PhonemicCue.derive(spoken), sortOrder = 10_000,
+            ))
+        }
+    }
+
+    override suspend fun moveCardToCustomCategory(itemId: Long, destinationId: String) {
+        require(isCustomId(destinationId)) { "الوجهة يجب أن تكون قسمًا مخصصًا" }
+        db.withTransaction {
+            require(dao.categoryById(destinationId) != null) { "قسم الوجهة غير موجود" }
+            val item = dao.wordById(itemId) ?: error("البطاقة غير موجودة")
+            require(item.categoryId != CategoryIds.FAMILY ||
+                item.subgroup != com.sawti.domain.model.FamilyRelationships.RELATIVES) {
+                "بطاقات صلات العائلة الافتراضية لا يمكن نقلها"
+            }
+            dao.moveWord(itemId, destinationId)
         }
     }
 
