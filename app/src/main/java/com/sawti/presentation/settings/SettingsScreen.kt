@@ -155,6 +155,12 @@ fun SettingsRoute(viewModel: SettingsViewModel) {
                 onSelect = viewModel::setTextSize,
             )
         }
+        SettingBlock("شريط تركيب الجملة") {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("إظهار شريط لتجميع الكلمات ثم نطقها كجملة متصلة. الضغط المطوّل ينطق البطاقة مباشرةً.", modifier = Modifier.weight(1f))
+                Switch(checked = settings.sentenceStripEnabled, onCheckedChange = viewModel::setSentenceStripEnabled)
+            }
+        }
         SettingBlock("زمن تثبيت اللمس") {
             Text("لتخفيف الضغطات غير المقصودة الناتجة عن ارتعاش اليد: اضغط مع الاستمرار على البطاقة قبل رفع الإصبع. السحب للتمرير يلغي الضغطة.")
             ChoiceRow(
