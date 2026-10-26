@@ -1,20 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- White speech bubble with three dots, kept inside the 66dp adaptive-icon safe zone. -->
+<!-- Original vector: human voice ripples surrounding an abstract Arabic ص curve. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <path
-        android:fillColor="#FFFFFFFF"
-        android:pathData="M36,34 h36 a6,6 0 0 1 6,6 v22 a6,6 0 0 1 -6,6 h-20 l-10,10 v-10 h-6 a6,6 0 0 1 -6,-6 v-22 a6,6 0 0 1 6,-6 z" />
-    <path
-        android:fillColor="#FF1E88E5"
-        android:pathData="M42,51m-3.5,0a3.5,3.5 0 1 0 7,0a3.5,3.5 0 1 0 -7,0" />
-    <path
-        android:fillColor="#FF1E88E5"
-        android:pathData="M54,51m-3.5,0a3.5,3.5 0 1 0 7,0a3.5,3.5 0 1 0 -7,0" />
-    <path
-        android:fillColor="#FF1E88E5"
-        android:pathData="M66,51m-3.5,0a3.5,3.5 0 1 0 7,0a3.5,3.5 0 1 0 -7,0" />
+    <path android:fillColor="@android:color/transparent"
+        android:strokeColor="#6638BDF8" android:strokeWidth="2.4"
+        android:strokeLineCap="round"
+        android:pathData="M26,40 C33,28 44,23 54,23 C67,23 78,30 83,42"/>
+    <path android:fillColor="@android:color/transparent"
+        android:strokeColor="#AA38BDF8" android:strokeWidth="2.8"
+        android:strokeLineCap="round"
+        android:pathData="M33,44 C38,36 46,33 54,33 C63,33 71,37 75,44"/>
+    <path android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF38BDF8" android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M39,47 C43,41 49,40 54,40 C61,40 66,43 68,47"/>
+    <path android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFFFF" android:strokeWidth="6.5"
+        android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M34,66 C43,67 46,57 52,53 C59,47 68,52 68,60 C69,65 65,69 58,69 L35,69 C29,69 25,74 26,80"/>
+    <path android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF38BDF8" android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M47,78 C59,82 72,76 78,66"/>
 </vector>
