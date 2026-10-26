@@ -84,6 +84,16 @@ jobs:
       - name: Show explicit restore success confirmation
         shell: bash
         run: python3 ci/restore_success_ux.py
+      - name: Apply Sawti dialect and regional speech settings
+        shell: bash
+        run: |
+          set -euo pipefail
+          base64 --decode ci/sawti-dialect-feature.patch.xz.b64 | xz --decompress | patch --batch -p1 -d extracted
+          sed -i 's/versionName = "3.2"/versionName = "4.0"/' extracted/MyWords/app/build.gradle.kts
+          grep -q 'rootProject.name = "Sawti"' extracted/MyWords/settings.gradle.kts
+          grep -q 'name="app_name">صوتي<' extracted/MyWords/app/src/main/res/values/strings.xml
+          grep -q 'com.mywords' extracted/MyWords/app/build.gradle.kts
+          test -f extracted/MyWords/app/src/test/java/com/mywords/domain/model/DialectCatalogTest.kt
       - name: Install JUnit dependency for added speech tests
         shell: bash
         run: |
@@ -167,6 +177,27 @@ jobs:
           name: MyWords-debug-apk
           path: extracted/MyWords/app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
+          retention-days: 14
+      - name: Package Sawti project safely
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p package
+          cp -a extracted/MyWords package/Sawti
+          rm -rf package/Sawti/.gradle package/Sawti/build package/Sawti/app/build
+          rm -f package/Sawti/app/mywords-release.jks package/Sawti/local.properties
+          if find package/Sawti -iname '*.jks' -o -iname '*.keystore' | grep -q .; then
+            echo "Signing file found in package. Refusing to publish source."
+            exit 1
+          fi
+          (cd package && zip -qr ../Sawti-source.zip Sawti)
+      - name: Upload Sawti project sources
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sawti-source-project
+          path: Sawti-source.zip
           retention-days: 14
       - name: Enforce data safety
         if: always()
