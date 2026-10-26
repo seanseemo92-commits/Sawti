@@ -98,8 +98,11 @@ class SpeechManager(context: Context) : TextToSpeech.OnInitListener {
             .sortedWith(compareBy({ it.isNetworkConnectionRequired }, { it.name }))
         val country = Locale.forLanguageTag(dialect.localeTag).country
         val exact = arabic.filter { country.isNotEmpty() && it.locale.country.equals(country, ignoreCase = true) }
-        val selected = arabic.firstOrNull { it.name == preferredVoice && (country.isEmpty() || it in exact) }
+        // An explicitly chosen Arabic voice wins even if its country differs from ar-LY.
+        // Only automatic selection prefers a regional voice, then an offline Arabic one.
+        val selected = arabic.firstOrNull { it.name == preferredVoice }
             ?: exact.firstOrNull()
+            ?: arabic.firstOrNull()
         var success = false
         if (selected != null) {
             success = runCatching { engine.setVoice(selected) == TextToSpeech.SUCCESS }.getOrDefault(false)
@@ -150,7 +153,12 @@ class SpeechManager(context: Context) : TextToSpeech.OnInitListener {
         val engine = tts ?: return
         runCatching {
             val result = engine.speak(text, TextToSpeech.QUEUE_FLUSH, null, "sawti-${System.nanoTime()}")
-            if (result == TextToSpeech.ERROR) _issue.value = SpeechIssue.EngineUnavailable
+            if (result == TextToSpeech.ERROR) {
+                _issue.value = SpeechIssue.EngineUnavailable
+            } else {
+                // An earlier one-off audio failure must not leave a permanent warning.
+                _issue.value = null
+            }
         }.onFailure { _issue.value = SpeechIssue.EngineUnavailable }
     }
 }
