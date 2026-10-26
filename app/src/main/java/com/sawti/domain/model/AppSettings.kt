@@ -37,4 +37,6 @@ data class AppSettings(
     val performanceMode: Boolean = false,
     val touchDwell: TouchDwell = TouchDwell.OFF,
     val sentenceStripEnabled: Boolean = false,
+    /** Stored in SharedPreferences; never in Room. Defaults false for first-launch guidance. */
+    val isOnboardingCompleted: Boolean = false,
 )
