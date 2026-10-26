@@ -13,6 +13,7 @@ import com.sawti.domain.model.DialectCatalog
 import com.sawti.domain.model.TtsEndings
 import com.sawti.domain.model.PhonemicCue
 import com.sawti.domain.model.CategoryIds
+import com.sawti.domain.model.CustomCategoryRules
 import com.sawti.domain.repository.WordRepository
 import java.io.File
 import java.io.InputStream
@@ -132,13 +133,12 @@ class RoomWordRepository(
         }
     }
 
-    private fun isCustomId(id: String) =
-        id.startsWith("custom_") && id.length in 12..70
+    private fun isCustomId(id: String) = CustomCategoryRules.canManage(id)
 
     override suspend fun addCustomCategory(title: String, palette: Int, sortOrder: Int): String {
         val name = title.trim().take(70)
         require(name.isNotBlank()) { "اسم القسم مطلوب" }
-        require(palette in 0..11 && sortOrder in 0..10_000) { "إعدادات القسم غير صالحة" }
+        require(CustomCategoryRules.validPalette(palette) && CustomCategoryRules.validSortOrder(sortOrder)) { "إعدادات القسم غير صالحة" }
         val id = "custom_" + UUID.randomUUID().toString()
         db.withTransaction {
             dao.insertCategory(CategoryEntity(id, name, palette, false, sortOrder))
@@ -149,7 +149,7 @@ class RoomWordRepository(
     override suspend fun editCustomCategory(id: String, title: String, palette: Int, sortOrder: Int) {
         require(isCustomId(id)) { "الأقسام الافتراضية غير قابلة للتعديل" }
         val name = title.trim().take(70)
-        require(name.isNotBlank() && palette in 0..11 && sortOrder in 0..10_000)
+        require(name.isNotBlank() && CustomCategoryRules.validPalette(palette) && CustomCategoryRules.validSortOrder(sortOrder))
         db.withTransaction {
             require(dao.categoryById(id) != null) { "القسم غير موجود" }
             require(dao.editCustomCategory(id, name, palette, sortOrder) == 1)
@@ -159,7 +159,7 @@ class RoomWordRepository(
     override suspend fun deleteEmptyCustomCategory(id: String) {
         require(isCustomId(id)) { "حذف الأقسام الافتراضية ممنوع" }
         db.withTransaction {
-            require(dao.countItemsInCategory(id) == 0) {
+            require(CustomCategoryRules.canDelete(id, dao.countItemsInCategory(id))) {
                 "القسم يحتوي بطاقات. انقلها إلى قسم مخصص آخر قبل الحذف."
             }
             require(dao.deleteEmptyCustomCategory(id) == 1) { "تعذر حذف القسم" }
