@@ -1,0 +1,38 @@
+name: Rename MyWords release display to Sawti
+on:
+  push:
+    branches: [maintenance/sawti-v42-release-name]
+permissions:
+  contents: write
+jobs:
+  rename-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Verify and rename existing release without rebuilding APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p package
+          gh release download v4.2 --repo "$GITHUB_REPOSITORY" --pattern "MyWords-v4.2-Release.apk" --dir package
+          test -s package/MyWords-v4.2-Release.apk
+          printf '%s  %s\n' 'c164147473e7e7e82b37150f842be68ffb2c9977c9f5b1d65ac1afcb1d04fba4' 'package/MyWords-v4.2-Release.apk' | sha256sum -c -
+          mv package/MyWords-v4.2-Release.apk package/Sawti-v4.2-Release.apk
+          (cd package && sha256sum Sawti-v4.2-Release.apk > SHA256SUMS.txt)
+          asset_id="$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/v4.2" --jq '.assets[] | select(.name == "MyWords-v4.2-Release.apk") | .id')"
+          test -n "$asset_id"
+          gh api --method PATCH "repos/$GITHUB_REPOSITORY/releases/assets/$asset_id" -f name="Sawti-v4.2-Release.apk" --jq '.name'
+          gh release upload v4.2 package/SHA256SUMS.txt --repo "$GITHUB_REPOSITORY" --clobber
+          gh release view v4.2 --repo "$GITHUB_REPOSITORY" --json body --jq .body > package/notes-original.md
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('package/notes-original.md')
+          s=p.read_text()
+          assert "## MyWords 4.2" in s
+          s=s.replace("## MyWords 4.2", "## صوتي | Sawti 4.2",1)
+          p.write_text(s)
+          PY
+          gh release edit v4.2 --repo "$GITHUB_REPOSITORY" --title 'صوتي | Sawti v4.2' --notes-file package/notes-original.md
+          gh release view v4.2 --repo "$GITHUB_REPOSITORY" --json name,assets --jq '{name,assets:(.assets|map(.name))}'
