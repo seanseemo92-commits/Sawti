@@ -65,6 +65,7 @@ class AudioFocusController(context: Context) {
     }
 
     private fun clearCurrent() {
+        leases.reset()
         val listener = activeListener
         val request = activeRequest
         activeListener = null
@@ -79,7 +80,5 @@ class AudioFocusController(context: Context) {
                 }
             }
         }
-        // Releases are guarded by token; no late callback can release the next session.
-        // next() invalidates an old token; clear() resets the current session.
     }
 }
