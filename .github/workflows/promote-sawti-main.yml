@@ -77,7 +77,7 @@ jobs:
           grep -q '<string name="app_name">صوتي</string>' source/extracted/MyWords/app/src/main/res/values/strings.xml
           grep -q 'android:allowBackup="false"' source/extracted/MyWords/app/src/main/AndroidManifest.xml
           cd main-tree
-          git rm -r -- .github MyWords.zip
+          git rm -- MyWords.zip
           cp -a ../source/extracted/MyWords/. .
           cat >> .gitignore <<'EOF'
 
@@ -112,31 +112,8 @@ jobs:
           - مفتاح التوقيع غير موجود في هذا المستودع، ويجب حفظه بشكل خاص للتحديثات القادمة.
           - لا تغيّر معرّف التطبيق أو قاعدة البيانات بلا ترحيل آمن.
           EOF
-          mkdir -p .github/workflows
-          cat > .github/workflows/verify-android.yml <<'EOF'
-          name: Verify Sawti Android source
-          on:
-            pull_request:
-              branches: [main]
-            workflow_dispatch:
-          permissions:
-            contents: read
-          jobs:
-            android:
-              runs-on: ubuntu-latest
-              timeout-minutes: 35
-              steps:
-                - uses: actions/checkout@v4
-                - uses: actions/setup-java@v4
-                  with:
-                    distribution: temurin
-                    java-version: '17'
-                - uses: gradle/actions/setup-gradle@v4
-                  with:
-                    gradle-version: '8.9'
-                - name: Compile and run tests
-                  run: gradle --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintRelease
-          EOF
+          # Keep existing Actions workflow unchanged in this commit.
+          # Update it separately with authorized repository permissions.
           test ! -e MyWords.zip
           test ! -e Sawti-Baseline.zip
           if find . -path './.git' -prune -o \( -iname '*.jks' -o -iname '*.p12' -o -iname '*.keystore' \) -print | grep -q .; then
