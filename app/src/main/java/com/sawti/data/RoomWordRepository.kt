@@ -13,6 +13,8 @@ import com.sawti.domain.model.DialectCatalog
 import com.sawti.domain.model.TtsEndings
 import com.sawti.domain.model.PhonemicCue
 import com.sawti.domain.model.CategoryIds
+import com.sawti.domain.model.RegionalDishesCatalog
+import com.sawti.domain.model.ArabicDialect
 import com.sawti.domain.model.CustomCategoryRules
 import com.sawti.domain.repository.WordRepository
 import java.io.File
@@ -37,13 +39,23 @@ class RoomWordRepository(
         combine(dao.observeCategories(), dao.observeItems(), settingsRepository.state) { categories, items, settings ->
             val byCategory = items.groupBy { it.categoryId }
             categories.map { c ->
+                val regionalCuisine = c.id == RegionalDishesCatalog.CATEGORY_ID
+                val visibleItems = byCategory[c.id].orEmpty().filter { item ->
+                    !regionalCuisine || RegionalDishesCatalog.visibleForDialect(item.subgroup, settings.dialect)
+                }
                 Category(
                     id = c.id,
-                    title = DialectCatalog.text(c.title, settings.dialect),
+                    title = if (regionalCuisine) RegionalDishesCatalog.forDialect(settings.dialect).title
+                            else DialectCatalog.text(c.title, settings.dialect),
                     palette = c.palette,
                     previewOnTap = c.previewOnTap,
                     sortOrder = c.sortOrder,
-                    items = byCategory[c.id].orEmpty().map { DialectCatalog.localize(it.toDomain(), settings.dialect) },
+                    // A regional dish has a carefully written TTS prompt; never run the
+                    // generic display-label translator over a customized dish.
+                    items = visibleItems.map { item ->
+                        if (regionalCuisine) item.toDomain()
+                        else DialectCatalog.localize(item.toDomain(), settings.dialect)
+                    },
                 )
             }
         }
@@ -52,15 +64,55 @@ class RoomWordRepository(
         if (dao.categoryCount() == 0) {
             db.withTransaction {
                 dao.insertCategories(WordSeed.categoryEntities())
-                dao.insertItems(WordSeed.itemEntities())
+                dao.insertItems(WordSeed.itemEntities() + regionalSeedItems())
             }
             prefs.edit().putInt(KEY_SEED_VERSION, WordSeed.VERSION).apply()
         } else {
             val previous = prefs.getInt(KEY_SEED_VERSION, 0)
             if (previous < WordSeed.VERSION) {
-                topUpSeed(previous)
+                if (previous >= 15) {
+                    // v15 -> v16: insert new cuisine words ONLY. No sort, prompt, TTS,
+                    // photo, recording, favourite or other existing value is updated.
+                    topUpCuisineOnly()
+                } else {
+                    topUpSeed(previous)
+                }
                 prefs.edit().putInt(KEY_SEED_VERSION, WordSeed.VERSION).apply()
             }
+        }
+    }
+
+    /** Additional country-specific words use the same v4 word_items table, no migration. */
+    private fun regionalSeedItems(): List<WordItemEntity> =
+        RegionalDishesCatalog.additionalDialects().mapIndexed { index, (dialect, dish) ->
+            WordItemEntity(
+                categoryId = RegionalDishesCatalog.CATEGORY_ID,
+                subgroup = RegionalDishesCatalog.subgroupFor(dialect),
+                displayText = dish.displayText,
+                ttsPrompt = dish.ttsPrompt,
+                phonemicCue = dish.phonemicCue,
+                sentencePrompt = dish.sentencePrompt,
+                emoji = dish.emoji,
+                sortOrder = index % 5,
+            )
+        }
+
+    /**
+     * Insert-only update. Existing personalized cards and recordings are never changed,
+     * and old Libyan cards stay with their original IDs even when changing dialects.
+     */
+    private suspend fun topUpCuisineOnly() {
+        db.withTransaction {
+            val all = dao.itemKeys().map { Triple(it.categoryId, it.subgroup, it.displayText) }.toSet()
+            val newDefaults = WordSeed.itemEntities().filter {
+                it.categoryId == RegionalDishesCatalog.CATEGORY_ID &&
+                    it.displayText in RegionalDishesCatalog.forDialect(ArabicDialect.LIBYAN)
+                        .dishes.map { d -> d.displayText }.toSet()
+            } + regionalSeedItems()
+            val missing = newDefaults.filter {
+                Triple(it.categoryId, it.subgroup, it.displayText) !in all
+            }
+            if (missing.isNotEmpty()) dao.insertItems(missing)
         }
     }
 
@@ -85,7 +137,7 @@ class RoomWordRepository(
             seedCategories.filter { it.id in existingCategories }
                 .forEach { dao.updateCategory(it.id, it.title, it.palette, it.previewOnTap, it.sortOrder) }
 
-            val seedItems = WordSeed.itemEntities()
+            val seedItems = WordSeed.itemEntities() + regionalSeedItems()
             val seedKeys = seedItems.map { Triple(it.categoryId, it.subgroup, it.displayText) }.toSet()
 
             // 1. old default words that now have a Libyan name are renamed in place (photo/audio/phone kept)
