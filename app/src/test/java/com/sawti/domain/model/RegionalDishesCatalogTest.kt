@@ -61,6 +61,10 @@ class RegionalDishesCatalogTest {
         }
         assertEquals(5, saved.size)
         assertTrue(saved.all { it.subgroup.isBlank() && !it.sentencePrompt.isNullOrBlank() })
+        saved.forEach { dish ->
+            assertEquals(expected.getValue(dish.displayText).first, dish.ttsPrompt)
+            assertEquals(expected.getValue(dish.displayText).second, dish.phonemicCue)
+        }
         assertEquals(16, WordSeed.VERSION)
     }
 }
