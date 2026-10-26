@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -46,7 +47,10 @@ import com.sawti.domain.model.Category
 import com.sawti.domain.model.WordItem
 import com.sawti.presentation.category.FavoriteEntry
 import com.sawti.presentation.common.ItemImage
-import com.sawti.presentation.common.AdultAccentBar
+import com.sawti.presentation.common.CeramicCard
+import com.sawti.presentation.common.CeramicImageTint
+import com.sawti.presentation.common.VoiceAura
+import com.sawti.presentation.common.StaggeredCascade
 import com.sawti.presentation.common.bounceClick
 import com.sawti.presentation.theme.CategoryPalette
 import com.sawti.presentation.theme.HintAmber
@@ -81,8 +85,10 @@ fun HomeScreen(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            items(categories, key = { it.id }) { category ->
-                CategoryCard(category) { onOpen(category.id) }
+            itemsIndexed(categories, key = { _, category -> category.id }) { index, category ->
+                StaggeredCascade(key = category.id, row = index / 2, modifier = Modifier.fillMaxWidth()) {
+                    CategoryCard(category) { onOpen(category.id) }
+                }
             }
         }
     }
@@ -136,25 +142,24 @@ private fun FavoritesBar(
 @Composable
 private fun FavoriteChip(entry: FavoriteEntry, isActive: Boolean, onClick: () -> Unit, onLongClick: () -> Unit) {
     val palette = paletteOf(entry.palette)
-    Surface(
-        shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surface,
-        shadowElevation = cardElevation(2.dp),
-        border = if (isActive) BorderStroke(2.dp, palette.banner) else null,
+    CeramicCard(
+        isActive = isActive,
+        accent = palette.banner,
         modifier = Modifier
             .width(116.dp)
             .heightIn(min = 132.dp)
             .bounceClick(onLongClick = onLongClick, onClick = onClick),
     ) {
         Column {
-            AdultAccentBar(palette.banner)
             Box(
                 Modifier
                     .height(82.dp)
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.22f)),
+                    .background(MaterialTheme.colorScheme.surface),
                 contentAlignment = Alignment.Center,
             ) {
+                CeramicImageTint(palette.banner)
+                VoiceAura(active = isActive)
                 ItemImage(
                     item = entry.item,
                     accent = palette.banner,
@@ -193,18 +198,18 @@ private fun FavoriteChip(entry: FavoriteEntry, isActive: Boolean, onClick: () ->
 @Composable
 private fun CategoryCard(category: Category, onClick: () -> Unit) {
     val palette = paletteOf(category.palette)
-    Surface(
-        shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surface,
-        shadowElevation = cardElevation(2.dp),
+    CeramicCard(
+        accent = palette.banner,
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(min = 210.dp)
             .bounceClick(onClick = onClick),
     ) {
         Column {
-            AdultAccentBar(palette.banner)
-            Montage(category, palette, Modifier.fillMaxWidth().height(142.dp).padding(12.dp))
+            Box(Modifier.fillMaxWidth().height(142.dp)) {
+                CeramicImageTint(palette.banner)
+                Montage(category, palette, Modifier.fillMaxSize().padding(12.dp))
+            }
             Box(
                 Modifier
                     .fillMaxWidth()
