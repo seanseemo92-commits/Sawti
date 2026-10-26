@@ -1,0 +1,17 @@
+*.iml
+.gradle/
+/local.properties
+/.idea/
+.DS_Store
+/build/
+/app/build/
+/captures/
+.externalNativeBuild/
+.cxx/
+
+# Never add private signing keys or personal media
+*.jks
+*.keystore
+*.p12
+/app/signing/
+/app/src/main/assets/private/
