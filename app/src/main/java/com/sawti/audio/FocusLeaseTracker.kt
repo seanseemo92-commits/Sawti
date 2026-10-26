@@ -11,6 +11,10 @@ internal class FocusLeaseTracker {
         return token
     }
 
+    fun reset() {
+        active = null
+    }
+
     fun owns(token: Long): Boolean = active == token
 
     fun clear(token: Long): Boolean {
