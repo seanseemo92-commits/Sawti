@@ -63,6 +63,9 @@ interface WordDao {
     @Query("UPDATE word_items SET categoryId = :categoryId, subgroup = '' WHERE id = :id")
     suspend fun moveWord(id: Long, categoryId: String)
 
+    @Query("SELECT COUNT(*) FROM word_items WHERE photoPath = :path OR audioPath = :path")
+    suspend fun mediaReferenceCount(path: String): Int
+
     /** Custom family members are never seeded. Editing/deleting is caregiver-only in the UI. */
     @Query("SELECT * FROM word_items WHERE id = :id AND categoryId = 'family'")
     suspend fun familyItemById(id: Long): WordItemEntity?
