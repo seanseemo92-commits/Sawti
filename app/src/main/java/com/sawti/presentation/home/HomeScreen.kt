@@ -46,6 +46,7 @@ import com.sawti.domain.model.Category
 import com.sawti.domain.model.WordItem
 import com.sawti.presentation.category.FavoriteEntry
 import com.sawti.presentation.common.ItemImage
+import com.sawti.presentation.common.AdultAccentBar
 import com.sawti.presentation.common.bounceClick
 import com.sawti.presentation.theme.CategoryPalette
 import com.sawti.presentation.theme.HintAmber
@@ -146,7 +147,7 @@ private fun FavoriteChip(entry: FavoriteEntry, isActive: Boolean, onClick: () ->
             .bounceClick(onLongClick = onLongClick, onClick = onClick),
     ) {
         Column {
-            Box(Modifier.fillMaxWidth().height(3.dp).background(palette.banner))
+            AdultAccentBar(palette.banner)
             Box(
                 Modifier
                     .height(82.dp)
@@ -201,7 +202,7 @@ private fun CategoryCard(category: Category, onClick: () -> Unit) {
             .bounceClick(onClick = onClick),
     ) {
         Column {
-            Box(Modifier.fillMaxWidth().height(3.dp).background(palette.banner))
+            AdultAccentBar(palette.banner)
             Montage(category, palette, Modifier.fillMaxWidth().height(142.dp).padding(12.dp))
             Box(
                 Modifier
