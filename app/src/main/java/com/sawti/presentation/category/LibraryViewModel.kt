@@ -65,6 +65,7 @@ interface LibraryActions {
     fun onSentenceHint(item: WordItem)
     fun addCustomCard(categoryId: String, title: String, spoken: String)
     fun moveCardToCustomCategory(id: Long, destinationId: String)
+    fun deleteCustomCard(id: Long)
     fun onSpeakAgain(item: WordItem)
     fun onToggleFavorite(item: WordItem)
     fun closePreview()
@@ -247,6 +248,17 @@ class LibraryViewModel(
             } catch (e: Exception) { report(e) }
         }
     }
+    override fun deleteCustomCard(id: Long) {
+        if (!canEdit()) return
+        viewModelScope.launch {
+            try {
+                if (!canEdit()) return@launch
+                repository.deleteCustomCard(id)
+                _uiState.update { it.copy(editingItemId = null) }
+            } catch (e: Exception) { report(e) }
+        }
+    }
+
     override fun moveCardToCustomCategory(id: Long, destinationId: String) {
         if (!canEdit()) return
         viewModelScope.launch {
