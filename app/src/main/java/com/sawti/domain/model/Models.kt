@@ -33,6 +33,7 @@ data class Category(
     /** True for the family category: tapping opens a large photo instead of only speaking. */
     val previewOnTap: Boolean,
     val items: List<WordItem>,
+    val sortOrder: Int = 0,
 ) {
     /** Sub-tab labels in first-appearance order (empty when the category has no sub-tabs). */
     val subgroups: List<String>
