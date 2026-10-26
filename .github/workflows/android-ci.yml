@@ -124,31 +124,31 @@ jobs:
               1,
           )
           migration = '''
-        /** Remove only untouched names bundled by earlier releases.
-         * Preserve family members with any personalized media, phone, or fields.
-         */
-        val MIGRATION_3_4 = object : Migration(3, 4) {
-            override fun migrate(db: SupportSQLiteDatabase) {
-                for (member in LegacyFamilyDefaults.entries) {
-                    val prompt = com.mywords.domain.model.TtsEndings.normalize(member.tts)
-                    val derived = com.mywords.domain.model.PhonemicCue.derive(prompt)
-                    val originalSentence = SeedExtras.sentencePrompt("family", member.name)
-                    db.execSQL(
-                        """DELETE FROM word_items
-                           WHERE categoryId = 'family' AND displayText = ? AND subgroup = ?
-                             AND photoPath IS NULL AND audioPath IS NULL AND TRIM(phone) = ''
-                             AND (ttsPrompt = ? OR ttsPrompt = ? OR ttsPrompt = ?)
-                             AND (phonemicCue = ? OR phonemicCue = ? OR phonemicCue = '')
-                             AND (sentencePrompt IS NULL OR sentencePrompt = ?)
-                        """.trimIndent(),
-                        arrayOf(member.name, member.group, member.name, member.tts, prompt,
-                            member.cue, derived, originalSentence),
-                    )
-                }
-            }
-        }
+                  /** Remove only untouched names bundled by earlier releases.
+                   * Preserve family members with any personalized media, phone, or fields.
+                   */
+                  val MIGRATION_3_4 = object : Migration(3, 4) {
+                      override fun migrate(db: SupportSQLiteDatabase) {
+                          for (member in LegacyFamilyDefaults.entries) {
+                              val prompt = com.mywords.domain.model.TtsEndings.normalize(member.tts)
+                              val derived = com.mywords.domain.model.PhonemicCue.derive(prompt)
+                              val originalSentence = SeedExtras.sentencePrompt("family", member.name)
+                              db.execSQL(
+                                  """DELETE FROM word_items
+                                     WHERE categoryId = 'family' AND displayText = ? AND subgroup = ?
+                                       AND photoPath IS NULL AND audioPath IS NULL AND TRIM(phone) = ''
+                                       AND (ttsPrompt = ? OR ttsPrompt = ? OR ttsPrompt = ?)
+                                       AND (phonemicCue = ? OR phonemicCue = ? OR phonemicCue = '')
+                                       AND (sentencePrompt IS NULL OR sentencePrompt = ?)
+                                  """.trimIndent(),
+                                  arrayOf(member.name, member.group, member.name, member.tts, prompt,
+                                      member.cue, derived, originalSentence),
+                              )
+                          }
+                      }
+                  }
 
-'''
+          '''
           anchor = "        fun build(context: Context): AppDatabase ="
           assert s.count(anchor) == 1, "Missing Room build anchor"
           s = s.replace(anchor, migration + anchor, 1)
