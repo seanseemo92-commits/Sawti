@@ -331,20 +331,21 @@ internal fun WordCard(
     onToggleFavorite: () -> Unit,
 ) {
     Surface(
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(16.dp),
         color = MaterialTheme.colorScheme.surface,
-        shadowElevation = cardElevation(if (isActive) 12.dp else 4.dp),
-        border = if (isActive) BorderStroke(3.dp, palette.banner) else null,
+        shadowElevation = cardElevation(2.dp),
+        border = if (isActive) BorderStroke(2.dp, palette.banner) else null,
         modifier = Modifier
             .fillMaxWidth()
             .bounceClick(onLongClick = onLongClick, onClick = onClick),
     ) {
         Column {
+            Box(Modifier.fillMaxWidth().height(3.dp).background(palette.banner))
             Box(
                 Modifier
                     .fillMaxWidth()
                     .aspectRatio(1.1f)
-                    .background(palette.pastel),
+                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.22f)),
             ) {
                 ItemImage(
                     item = item,
@@ -376,18 +377,19 @@ internal fun WordCard(
             Box(
                 Modifier
                     .fillMaxWidth()
-                    .heightIn(min = 52.dp)
-                    .background(palette.banner)
-                    .padding(horizontal = 8.dp, vertical = 6.dp),
+                    .heightIn(min = 56.dp)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(horizontal = 8.dp, vertical = 9.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
                     item.displayText,
-                    color = Color.White,
-                    fontSize = 17.sp,
-                    fontWeight = FontWeight.ExtraBold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 18.sp,
+                    lineHeight = 27.sp,
+                    fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
-                    maxLines = 2,
+                    maxLines = 3,
                 )
             }
         }
@@ -478,9 +480,9 @@ private fun FlashcardPage(
     onCall: (String) -> Unit,
 ) {
     Surface(
-        shape = RoundedCornerShape(32.dp),
+        shape = RoundedCornerShape(16.dp),
         color = MaterialTheme.colorScheme.surface,
-        shadowElevation = cardElevation(8.dp),
+        shadowElevation = cardElevation(2.dp),
         modifier = Modifier
             .fillMaxSize()
             .padding(vertical = 8.dp),
@@ -490,7 +492,7 @@ private fun FlashcardPage(
                 Modifier
                     .weight(1f)
                     .fillMaxWidth()
-                    .background(palette.pastel)
+                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.22f))
                     .bounceClick(
                         onLongClick = { actions.onItemLongPressed(item) },
                         onClick = { actions.onItemTapped(item, flashcard = true) },
@@ -517,8 +519,9 @@ private fun FlashcardPage(
             }
             Text(
                 item.displayText,
-                color = palette.accent,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 34.sp,
+                lineHeight = 44.sp,
                 fontWeight = FontWeight.ExtraBold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
