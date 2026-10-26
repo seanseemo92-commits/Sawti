@@ -394,15 +394,21 @@ object WordSeed {
     fun categoryEntities(): List<CategoryEntity> =
         categories.mapIndexed { i, c -> CategoryEntity(c.id, c.title, c.palette, c.previewOnTap, i) }
 
-    fun itemEntities(): List<WordItemEntity> =
-        categories.flatMap { c ->
+    fun itemEntities(): List<WordItemEntity> {
+        // The requested new Libyan pronunciations are hand-curated exactly as written;
+        // do not append an extra final sukun to them automatically.
+        val curatedLibyan = RegionalDishesCatalog.forDialect(ArabicDialect.LIBYAN)
+            .dishes.map { it.displayText }.toSet()
+        return categories.flatMap { c ->
             c.words.mapIndexed { i, w ->
+                val spoken = if (c.id == "libyan" && w.display in curatedLibyan)
+                    w.tts else TtsEndings.normalize(w.tts)
                 WordItemEntity(
                     categoryId = c.id,
                     subgroup = w.subgroup,
                     displayText = w.display,
-                    ttsPrompt = TtsEndings.normalize(w.tts),
-                    phonemicCue = w.cue ?: PhonemicCue.derive(TtsEndings.normalize(w.tts)),
+                    ttsPrompt = spoken,
+                    phonemicCue = w.cue ?: PhonemicCue.derive(spoken),
                     sentencePrompt = SeedExtras.sentencePrompt(c.id, w.display),
                     isFavorite = SeedExtras.isFavorite(c.id, w.display),
                     emoji = w.emoji,
@@ -410,4 +416,5 @@ object WordSeed {
                 )
             }
         }
+    }
 }
