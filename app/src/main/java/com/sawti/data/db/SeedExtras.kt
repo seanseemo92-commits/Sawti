@@ -99,9 +99,8 @@ object SeedExtras {
 
         put("body/كتف", "نَحْمِلُ عَلَى الـ...")
 
-        // daily actions
-        putAll(group("أُحِبُّ الـ...", "actions", "نقرا", "نضحك"))
-
+        // Conjugated verbs are complete utterances: a noun-style cloze prompt
+        // ("أُرِيدُ الـ...") is not grammatical for them.
         // Libyan foods
         putAll(group("نَشْرَبُ الـ...", "libyan", "شاهي بالنعناع", "قهوة عربية"))
         // routines & faith
@@ -129,7 +128,7 @@ object SeedExtras {
 
     fun sentencePrompt(categoryId: String, display: String): String? {
         val key = "$categoryId/$display"
-        if (key in noPrompt) return null
+        if (categoryId == "actions" || key in noPrompt) return null
         return overrides[key] ?: categoryDefault[categoryId]
     }
 
