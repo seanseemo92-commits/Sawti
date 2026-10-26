@@ -16,7 +16,8 @@ import java.io.InputStream
  */
 internal object SafePhotoProcessor {
     fun import(input: InputStream, target: File) {
-        val stage = File(target.parentFile, ".photo_${System.nanoTime()}.incoming")
+        // Stage OUTSIDE photos/: concurrent backups must never include an incomplete import.
+        val stage = File(target.parentFile.parentFile, ".photo_${System.nanoTime()}.incoming")
         var sampled: Bitmap? = null
         var oriented: Bitmap? = null
         var scaled: Bitmap? = null
