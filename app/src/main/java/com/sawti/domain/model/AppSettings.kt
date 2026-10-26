@@ -36,4 +36,5 @@ data class AppSettings(
     /** "وضع الأداء السلس": no spring/alpha animations or shadows, smaller decoded images. */
     val performanceMode: Boolean = false,
     val touchDwell: TouchDwell = TouchDwell.OFF,
+    val sentenceStripEnabled: Boolean = false,
 )
