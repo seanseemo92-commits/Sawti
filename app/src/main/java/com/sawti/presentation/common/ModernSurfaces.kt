@@ -85,6 +85,17 @@ fun CeramicImageTint(accent: Color, modifier: Modifier = Modifier) {
 fun VoiceAura(active: Boolean, modifier: Modifier = Modifier) {
     if (!active) return
     val performance = LocalPerformanceMode.current
+    if (performance) {
+        // Static soft glow in low-motion mode; no permanent frame invalidations.
+        Box(
+            modifier.fillMaxSize().background(
+                Brush.radialGradient(
+                    listOf(Sky.copy(alpha = 0.18f), Sky.copy(alpha = 0.07f), Color.Transparent)
+                )
+            )
+        )
+        return
+    }
     val transition = rememberInfiniteTransition(label = "speech-aura")
     val breath by transition.animateFloat(
         initialValue = 0.83f,
@@ -96,8 +107,8 @@ fun VoiceAura(active: Boolean, modifier: Modifier = Modifier) {
         label = "aura-radius",
     )
     Canvas(modifier.fillMaxSize()) {
-        val radius = size.minDimension * (if (performance) 0.53f else 0.53f * breath)
-        val alpha = if (performance) 0.20f else 0.23f
+        val radius = size.minDimension * 0.53f * breath
+        val alpha = 0.23f
         drawCircle(
             brush = Brush.radialGradient(
                 listOf(
