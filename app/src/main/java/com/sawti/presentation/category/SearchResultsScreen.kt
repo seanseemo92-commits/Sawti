@@ -54,6 +54,7 @@ fun SearchResultsScreen(
                     palette = paletteOf(category.palette),
                     crop = category.previewOnTap,
                     isActive = state.activeItemId == item.id,
+                    isSpeaking = state.playbackVisual.isSpeaking && state.playbackVisual.activeWordId == item.id,
                     caregiverMode = state.caregiverMode,
                     onClick = { onOpenResult(item) },
                     onLongClick = { actions.onItemLongPressed(item) },
