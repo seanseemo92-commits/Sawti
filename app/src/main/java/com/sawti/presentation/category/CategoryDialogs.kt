@@ -245,6 +245,7 @@ fun WordEditorDialog(item: WordItem, isRecording: Boolean, actions: LibraryActio
     var phone by remember(item.id) { mutableStateOf(item.phone) }
     var group by remember(item.id) { mutableStateOf(item.subgroup) }
     var showDeleteConfirm by remember(item.id) { mutableStateOf(false) }
+    var showCustomDeleteConfirm by remember(item.id) { mutableStateOf(false) }
     var pendingMove by remember(item.id) { mutableStateOf<String?>(null) }
     val isRelationship = item.categoryId == CategoryIds.FAMILY &&
         item.subgroup == FamilyRelationships.RELATIVES
@@ -334,6 +335,14 @@ fun WordEditorDialog(item: WordItem, isRecording: Boolean, actions: LibraryActio
                     onDelete = { actions.deleteRecording(item.id) },
                     onPickFile = { uri -> actions.onAudioPicked(item.id, uri) },
                 )
+                if (item.categoryId.startsWith("custom_")) {
+                    TextButton(onClick = { showCustomDeleteConfirm = true },
+                        modifier = Modifier.fillMaxWidth()) {
+                        Icon(Icons.Filled.Delete, contentDescription = null)
+                        Spacer(Modifier.width(8.dp))
+                        Text("حذف البطاقة المخصصة")
+                    }
+                }
                 if (!isRelationship && availableCategories.any { it.id != item.categoryId }) {
                     Text("نقل البطاقة إلى قسم مخصص (احفظ أي تعديل بالنص أولاً):")
                     availableCategories.filter { it.id != item.categoryId }.forEach { target ->
@@ -364,6 +373,17 @@ fun WordEditorDialog(item: WordItem, isRecording: Boolean, actions: LibraryActio
                 Text(stringResource(R.string.cancel), fontSize = 18.sp)
             }
         },
+    )
+    if (showCustomDeleteConfirm) AlertDialog(
+        onDismissRequest = { showCustomDeleteConfirm = false },
+        title = { Text("حذف البطاقة نهائيًا؟") },
+        text = { Text("سيتم حذف «${item.displayText}» وصورتها وتسجيلها المخصصين. هذا الإجراء لا يمكن التراجع عنه. احفظ نسخة احتياطية قبل الحذف.") },
+        confirmButton = {
+            Button(onClick = { showCustomDeleteConfirm = false; actions.deleteCustomCard(item.id) }) {
+                Text("حذف نهائي")
+            }
+        },
+        dismissButton = { TextButton(onClick = { showCustomDeleteConfirm = false }) { Text("إلغاء") } },
     )
     val target = availableCategories.firstOrNull { it.id == pendingMove }
     if (target != null) {
