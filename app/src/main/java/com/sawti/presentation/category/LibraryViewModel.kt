@@ -152,8 +152,10 @@ class LibraryViewModel(
     // ---- Speaking -------------------------------------------------------
 
     override fun onItemTapped(item: WordItem, flashcard: Boolean) {
-        if (cardLatched()) return
         val state = _uiState.value
+        // Composing a sentence requires rapid distinct words; keep the old 1.2s
+        // anti-repeat latch only for immediate playback / caregiver editing.
+        if ((state.caregiverMode || !state.sentenceStripEnabled) && cardLatched()) return
         if (state.caregiverMode) {
             _uiState.update { it.copy(editingItemId = item.id) }
             return
@@ -174,8 +176,9 @@ class LibraryViewModel(
 
     /** 1-tap speech from the favourites bar on the home screen. */
     fun onQuickTap(item: WordItem) {
-        if (cardLatched()) return
-        if (_uiState.value.sentenceStripEnabled && !_uiState.value.caregiverMode) {
+        val state = _uiState.value
+        if ((state.caregiverMode || !state.sentenceStripEnabled) && cardLatched()) return
+        if (state.sentenceStripEnabled && !state.caregiverMode) {
             _uiState.update { it.copy(sentencePieces = SentenceComposer.add(it.sentencePieces, item)) }
         } else {
             voice.play(item)
