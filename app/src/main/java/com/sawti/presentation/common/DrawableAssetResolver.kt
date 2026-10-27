@@ -155,6 +155,10 @@ fun wordDrawableName(item: WordItem): String? {
         "حمامة" -> "word_pigeon"
         "دجاجة" -> "word_chicken"
         "بطة" -> "word_duck"
+        // Batch 11 part 2: complete the animal and bird vocabulary.
+        "جمل" -> "word_camel"
+        "سردوك" -> "word_rooster"
+        "قنية" -> "word_rabbit"
         "موز" -> "word_banana"
         "عنب" -> "word_grapes"
         "شاهي", "نبي شاهي", "شاهي بالنعناع" -> "word_tea"
