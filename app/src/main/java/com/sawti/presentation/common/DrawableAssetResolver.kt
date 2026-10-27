@@ -33,6 +33,7 @@ fun categoryDrawableName(categoryId: String): String? = when (categoryId) {
     "clothes" -> "img_cat_clothes"
     "body" -> "img_cat_body"
     "animals" -> "img_cat_animals"
+    "actions" -> "img_cat_actions"
     "home" -> "word_living_room" // Cover the home section card with its existing living-room photo.
     else -> null
 }
@@ -234,6 +235,8 @@ fun wordDrawableName(item: WordItem): String? {
         "نضحك" -> "word_laugh"
         "نشوف" -> "word_see"
         "نلبس" -> "word_wear"
+        // Batch 19: complete the daily actions category.
+        "نصلي" -> "word_pray"
         "موز" -> "word_banana"
         "عنب" -> "word_grapes"
         "شاهي", "نبي شاهي", "شاهي بالنعناع" -> "word_tea"
