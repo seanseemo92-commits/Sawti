@@ -32,6 +32,7 @@ fun categoryDrawableName(categoryId: String): String? = when (categoryId) {
     "food" -> "img_cat_food_drink"
     "clothes" -> "img_cat_clothes"
     "body" -> "img_cat_body"
+    "home" -> "word_living_room" // Cover the home section card with its existing living-room photo.
     else -> null
 }
 
@@ -112,6 +113,16 @@ fun wordDrawableName(item: WordItem): String? {
         "ساعة" -> "word_clock"
         "مفتاح" -> "word_key"
         "كوجينة" -> "word_kitchen"
+        // Batch 8: Libyan home and dining vocabulary (nine independent photos).
+        "براد" -> "word_teapot"
+        "موس (سكين)", "موس", "سكين" -> "word_knife"
+        "طنجرة" -> "word_pot"
+        "شيشة" -> "word_water_bottle"
+        "بساط / حواشي", "بساط", "حواشي" -> "word_carpet_mat"
+        "طاسة" -> "word_glass_cup"
+        "صونية" -> "word_plate"
+        "كاشيك", "ملعقة" -> "word_spoon"
+        "فرشيطة", "شوكة" -> "word_fork"
         "موز" -> "word_banana"
         "عنب" -> "word_grapes"
         "شاهي", "نبي شاهي", "شاهي بالنعناع" -> "word_tea"
