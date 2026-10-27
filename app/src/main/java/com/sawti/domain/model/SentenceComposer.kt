@@ -27,23 +27,18 @@ object SentenceComposer {
         return if (spokenSentence(next).length <= MAX_SPEECH_CHARACTERS) next else current
     }
 
-    /** Offsets for TTS onRangeStart callbacks, using the exact same text as spokenSentence. */
-    data class SpokenSegment(val pieceIndex: Int, val start: Int, val endExclusive: Int)
+    /** Plain spoken pieces: stable indexes, no engine-specific word-range or time offsets. */
+    data class SpokenPiece(val pieceIndex: Int, val sourceId: Long, val speech: String)
 
     private fun spokenWord(piece: SentencePiece): String =
         piece.spokenText.trim().trimEnd('،', '.', '!', '؟')
 
-    fun spokenSegments(parts: List<SentencePiece>): List<SpokenSegment> {
-        var cursor = 0
-        return parts.mapIndexedNotNull { index, part ->
-            val spoken = spokenWord(part)
-            if (spoken.isBlank()) null else {
-                val segment = SpokenSegment(index, cursor, cursor + spoken.length)
-                cursor += spoken.length + 2 // the joining "، "
-                segment
-            }
+    fun spokenPieces(parts: List<SentencePiece>): List<SpokenPiece> =
+        parts.mapIndexedNotNull { index, part ->
+            val text = spokenWord(part)
+            if (text.isBlank()) null
+            else SpokenPiece(pieceIndex = index, sourceId = part.sourceId, speech = text)
         }
-    }
 
     /** A single TTS request preserves sentence context and natural engine pacing. */
     fun spokenSentence(parts: List<SentencePiece>): String =
