@@ -4,7 +4,6 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.weight
 import androidx.compose.ui.draw.alpha
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
