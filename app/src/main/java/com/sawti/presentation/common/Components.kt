@@ -245,6 +245,9 @@ fun CardImageContent(
 ) {
     val dark = LocalIsDark.current
     BoxWithConstraints(modifier, contentAlignment = Alignment.Center) {
+        // Diffused section hue is behind the image field, never over a real photo.
+        // The neutral circle remains the small fallback when no photo is attached.
+        if (item.photoPath == null) CeramicImageTint(accent, Modifier.fillMaxSize())
         if (item.photoPath != null) {
             ItemImage(
                 item = item,
