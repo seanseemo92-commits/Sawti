@@ -1,73 +1,124 @@
 package com.sawti.presentation.theme
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import com.sawti.domain.model.ThemeMode
 
-val AppBarBlue = Color(0xFF1E293B)
-val Ink = Color(0xFF1E293B)
+// ---------------------------------------------------------------------------
+// Core color tokens
+// ---------------------------------------------------------------------------
+
+/** Deep obsidian slate used for the top app bar (both light and dark). */
+val AppBarBlue = Color(0xFF0F172A)
+
+/** Primary text color on light surfaces. */
+val Ink = Color(0xFF0F172A)
+
+/** Warm off-white canvas behind cards in light mode. */
 val Canvas = Color(0xFFF8FAFC)
+
 val HintAmber = Color(0xFFF59E0B)
 val RecordRed = Color(0xFFC62828)
 val CaregiverTint = Color(0xFFF1EBDD)
 val CaregiverInk = Color(0xFF66513B)
 
-/** Neutral foundations with muted category accents. Kept the old palette indices stable. */
+/** Pure porcelain card surface (light mode). */
+val CardSurfaceLight = Color(0xFFFFFFFF)
+
+/** Deep titanium slate card surface (dark mode). */
+val CardSurfaceDark = Color(0xFF151C28)
+
+/** Obsidian slate canvas (dark mode). */
+val CanvasDark = Color(0xFF0B0F17)
+
+/** Primary text color on dark surfaces. */
+val InkOnDark = Color(0xFFF1F5F9)
+
+/** Azure/cyan used for the breathing voice aura and dark-mode accents. */
+val VoiceAura = Color(0xFF38BDF8)
+
+// ---------------------------------------------------------------------------
+// Category palettes
+// ---------------------------------------------------------------------------
+
 @Immutable
 data class CategoryPalette(val pastel: Color, val banner: Color, val accent: Color)
 
 private data class BasePalette(val pastel: Color, val banner: Color)
 
 private val Palettes = listOf(
-    BasePalette(Color(0xFFE8EDF4), Color(0xFF334155)), // 0 family: slate navy
-    BasePalette(Color(0xFFE7ECF3), Color(0xFF475569)), // 1 daily essentials
-    BasePalette(Color(0xFFF4EAE4), Color(0xFF985F4B)), // 2 fruit: terracotta
-    BasePalette(Color(0xFFE8F1EB), Color(0xFF4F7664)), // 3 vegetables: sage
-    BasePalette(Color(0xFFF5EBE4), Color(0xFF96624A)), // 4 food: warm clay
-    BasePalette(Color(0xFFEBEBF1), Color(0xFF685F78)), // 5 clothing: muted lilac
-    BasePalette(Color(0xFFF0EDE8), Color(0xFF746B60)), // 6 home: warm stone
-    BasePalette(Color(0xFFE7ECF2), Color(0xFF445E78)), // 7 actions: deep denim
-    BasePalette(Color(0xFFEAF0EA), Color(0xFF5A755B)), // 8 nature: sage
-    BasePalette(Color(0xFFE5EDF0), Color(0xFF436978)), // 9 body: steel teal
-    BasePalette(Color(0xFFF5ECE2), Color(0xFF986441)), // 10 cuisine: warm amber
-    BasePalette(Color(0xFFEBEDF0), Color(0xFF586474)), // 11 routine: stone slate
+    BasePalette(Color(0xFFE8EDF4), Color(0xFF334155)),
+    BasePalette(Color(0xFFE7ECF3), Color(0xFF475569)),
+    BasePalette(Color(0xFFF4EAE4), Color(0xFF985F4B)),
+    BasePalette(Color(0xFFE8F1EB), Color(0xFF4F7664)),
+    BasePalette(Color(0xFFF5EBE4), Color(0xFF96624A)),
+    BasePalette(Color(0xFFEBEBF1), Color(0xFF685F78)),
+    BasePalette(Color(0xFFF0EDE8), Color(0xFF746B60)),
+    BasePalette(Color(0xFFE7ECF2), Color(0xFF445E78)),
+    BasePalette(Color(0xFFEAF0EA), Color(0xFF5A755B)),
+    BasePalette(Color(0xFFE5EDF0), Color(0xFF436978)),
+    BasePalette(Color(0xFFF5ECE2), Color(0xFF986441)),
+    BasePalette(Color(0xFFEBEDF0), Color(0xFF586474)),
 )
 
-/** Replaces the system haptics when the caregiver turns them off. */
 private object NoHaptics : HapticFeedback {
     override fun performHapticFeedback(hapticFeedbackType: HapticFeedbackType) = Unit
 }
 
-/** True while the dark scheme is active. */
-val LocalIsDark = staticCompositionLocalOf { false }
+// ---------------------------------------------------------------------------
+// Composition locals
+// ---------------------------------------------------------------------------
 
-/** Performance Mode: no spring/alpha animations or shadows, smaller decoded images. */
+val LocalIsDark = staticCompositionLocalOf { false }
 val LocalPerformanceMode = staticCompositionLocalOf { false }
 
-/** Card shadow that disappears in Performance Mode. */
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
 @Composable
 fun cardElevation(base: Dp): Dp = if (LocalPerformanceMode.current) 0.dp else base
 
-/** Category colours; in dark mode the pastel becomes a deep tint and [CategoryPalette.accent] a lighter text colour. */
+/** Standard card corner radius for the ceramic surface language. */
+val CardShape = RoundedCornerShape(22.dp)
+
+/**
+ * Crisp translucent micro-border that replaces heavy drop shadows.
+ * Light: slate at 6% alpha. Dark: white at 8% alpha.
+ */
+@Composable
+fun cardBorder(): BorderStroke {
+    val isDark = LocalIsDark.current
+    return BorderStroke(
+        width = 1.dp,
+        color = if (isDark) {
+            Color.White.copy(alpha = 0.08f)
+        } else {
+            Color(0xFF0F172A).copy(alpha = 0.06f)
+        },
+    )
+}
+
 @Composable
 fun paletteOf(index: Int): CategoryPalette {
     val base = Palettes[index.mod(Palettes.size)]
@@ -82,45 +133,49 @@ fun paletteOf(index: Int): CategoryPalette {
     }
 }
 
-private val DarkSurface = Color(0xFF1E293B)
+// ---------------------------------------------------------------------------
+// Color schemes
+// ---------------------------------------------------------------------------
+
+private val DarkSurface = CardSurfaceDark
 
 private val LightScheme = lightColorScheme(
     primary = AppBarBlue,
     onPrimary = Color.White,
     primaryContainer = Color(0xFFE0F2FE),
-    onPrimaryContainer = Color(0xFF1E293B),
+    onPrimaryContainer = Color(0xFF0F172A),
     background = Canvas,
     onBackground = Ink,
-    surface = Color.White,
+    surface = CardSurfaceLight,
     onSurface = Ink,
     surfaceVariant = Color(0xFFEDF2F7),
     onSurfaceVariant = Color(0xFF475569),
 )
 
 private val DarkScheme = darkColorScheme(
-    primary = Color(0xFF38BDF8),
+    primary = VoiceAura,
     onPrimary = Color(0xFF0F172A),
     primaryContainer = Color(0xFF233C54),
     onPrimaryContainer = Color(0xFFF0F9FF),
-    background = Color(0xFF0F172A),
-    onBackground = Color(0xFFF1F5F9),
+    background = CanvasDark,
+    onBackground = InkOnDark,
     surface = DarkSurface,
-    onSurface = Color(0xFFF1F5F9),
-    surfaceVariant = Color(0xFF334155),
+    onSurface = InkOnDark,
+    surfaceVariant = Color(0xFF273244),
     onSurfaceVariant = Color(0xFFCBD5E1),
 )
 
 private val AppShapes = Shapes(
     small = RoundedCornerShape(12.dp),
     medium = RoundedCornerShape(16.dp),
-    large = RoundedCornerShape(20.dp),
+    large = RoundedCornerShape(22.dp),
     extraLarge = RoundedCornerShape(32.dp),
 )
 
-/**
- * The app is Arabic-first, so the whole UI is laid out right-to-left regardless of the phone's language.
- * [themeMode] = System / Light / Dark; the navy app bar stays #1E293B in every mode.
- */
+// ---------------------------------------------------------------------------
+// Theme entry point
+// ---------------------------------------------------------------------------
+
 @Composable
 fun SawtiTheme(
     themeMode: ThemeMode = ThemeMode.SYSTEM,
