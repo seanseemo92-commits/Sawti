@@ -80,9 +80,39 @@ class RoomWordRepository(
                 prefs.edit().putInt(KEY_SEED_VERSION, WordSeed.VERSION).apply()
             }
         }
+        // Restore and upgrade compatibility: assigning a key never overwrites personal data.
+        backfillSemanticImageKeys()
     }
 
-    /** Additional country-specific words use the same v4 word_items table, no migration. */
+    /**
+     * Assign the shared semantic asset to each existing built-in Room ID.
+     * Match unchanged names first, then legacy renames, then unique category/subgroup/
+     * position with matching default emoji for caregiver-renamed built-in words.
+     * Regional cuisine, custom people and custom cards remain untouched.
+     */
+    private suspend fun backfillSemanticImageKeys() {
+        db.withTransaction {
+            val defaults = WordSeed.itemEntities().filter { it.semanticKey != null }
+            val byName = defaults.associateBy { Triple(it.categoryId, it.subgroup, it.displayText) }
+            val byPosition = defaults.groupBy { Triple(it.categoryId, it.subgroup, it.sortOrder) }
+            val historical = WordSeed.renames.mapNotNull { (category, old, current) ->
+                val target = defaults.firstOrNull { it.categoryId == category && it.displayText == current }
+                target?.semanticKey?.let { Triple(category, "", old) to it }
+            }.toMap()
+            for (item in dao.itemsWithoutSemanticKeys()) {
+                val signature = Triple(item.categoryId, item.subgroup, item.displayText)
+                val key = byName[signature]?.semanticKey
+                    ?: historical[signature]
+                    ?: byPosition[Triple(item.categoryId, item.subgroup, item.sortOrder)]
+                        ?.singleOrNull()
+                        ?.takeIf { it.emoji.isNotBlank() && it.emoji == item.emoji }
+                        ?.semanticKey
+                if (key != null) dao.setSemanticKeyIfMissing(item.id, key)
+            }
+        }
+    }
+
+    /** Additional country-specific dishes have independent keys/images, not Libyan ones. */
     private fun regionalSeedItems(): List<WordItemEntity> =
         RegionalDishesCatalog.additionalDialects().mapIndexed { index, (dialect, dish) ->
             WordItemEntity(

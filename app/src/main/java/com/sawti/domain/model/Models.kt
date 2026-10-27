@@ -24,6 +24,7 @@ data class WordItem(
     val photoPath: String?,
     val phone: String,
     val emoji: String,
+    val semanticKey: String? = null,
 ) {
     /** Supports a lightweight visual-only category preview item. */
     constructor(
