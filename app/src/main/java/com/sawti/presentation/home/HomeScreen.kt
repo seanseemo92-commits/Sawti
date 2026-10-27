@@ -149,11 +149,12 @@ private fun FavoritesBar(
 private fun FavoriteChip(entry: FavoriteEntry, isActive: Boolean, isSpeaking: Boolean, onClick: () -> Unit, onLongClick: () -> Unit) {
     val palette = paletteOf(entry.palette)
     CeramicCard(
-        isActive = isActive || isSpeaking,
+        isActive = isActive,
+        isSpeaking = isSpeaking,
         accent = palette.banner,
         modifier = Modifier
             .width(144.dp)
-            .height(176.dp)
+            .height(180.dp)
             .bounceClick(onLongClick = onLongClick, onClick = onClick),
     ) {
         Column {
@@ -161,14 +162,13 @@ private fun FavoriteChip(entry: FavoriteEntry, isActive: Boolean, isSpeaking: Bo
                 item = entry.item,
                 accent = palette.banner,
                 isCurrentlyPlaying = isSpeaking,
-                modifier = Modifier.height(111.dp).fillMaxWidth().padding(5.dp),
+                modifier = Modifier.height(116.dp).fillMaxWidth().padding(6.dp),
                 crop = entry.item.categoryId == "family",
             )
             Box(
                 Modifier
                     .fillMaxWidth()
                     .heightIn(min = 64.dp)
-                    .background(MaterialTheme.colorScheme.surface)
                     .padding(horizontal = 10.dp, vertical = 10.dp),
                 contentAlignment = Alignment.Center,
             ) {
@@ -200,15 +200,33 @@ private fun CategoryCard(category: Category, onClick: () -> Unit) {
             .bounceClick(onClick = onClick),
     ) {
         Column {
-            Box(Modifier.fillMaxWidth().height(142.dp)) {
-                CeramicImageTint(palette.banner)
-                Montage(category, palette, Modifier.fillMaxSize().padding(12.dp))
+            Box(Modifier.fillMaxWidth().height(148.dp), contentAlignment = Alignment.Center) {
+                val hero = category.items.firstOrNull { it.photoPath != null }
+                    ?: category.items.firstOrNull()
+                if (hero != null) {
+                    CardImageContent(
+                        item = hero,
+                        accent = palette.banner,
+                        isCurrentlyPlaying = false,
+                        modifier = Modifier.fillMaxSize().padding(10.dp),
+                        crop = category.previewOnTap,
+                    )
+                } else {
+                    Box(
+                        Modifier.size(88.dp)
+                            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.56f),
+                                RoundedCornerShape(44.dp)),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(category.title.take(1), color = palette.accent,
+                            fontWeight = FontWeight.Bold, fontSize = 34.sp)
+                    }
+                }
             }
             Box(
                 Modifier
                     .fillMaxWidth()
                     .heightIn(min = 52.dp)
-                    .background(MaterialTheme.colorScheme.surface)
                     .padding(horizontal = 8.dp, vertical = 8.dp),
                 contentAlignment = Alignment.Center,
             ) {
