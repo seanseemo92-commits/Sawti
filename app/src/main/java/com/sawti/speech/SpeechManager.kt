@@ -48,7 +48,6 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
     private var utteranceId: String? = null
     private var onSpeechStart: (() -> Unit)? = null
     private var onSpeechDone: (() -> Unit)? = null
-    private var onSpeechRange: ((Int) -> Unit)? = null
     private var tts: TextToSpeech? = null
     private var ready = false
     private var speechRate = 0.85f
@@ -101,13 +100,6 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
                 main.post {
                     if (utteranceId != null && utteranceId == this@SpeechManager.utteranceId) {
                         onSpeechStart?.invoke()
-                    }
-                }
-            }
-            override fun onRangeStart(utteranceId: String?, start: Int, end: Int, frame: Int) {
-                main.post {
-                    if (utteranceId != null && utteranceId == this@SpeechManager.utteranceId) {
-                        onSpeechRange?.invoke(start)
                     }
                 }
             }
@@ -171,10 +163,10 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
         _issue.value = if (success) null else SpeechIssue.MissingArabicVoice
     }
 
-    fun speak(text: String, onStart: () -> Unit = {}, onDone: () -> Unit = {}, onRange: (Int) -> Unit = {}) {
+    fun speak(text: String, onStart: () -> Unit = {}, onDone: () -> Unit = {}) {
         if (text.isBlank()) return
         if (tts == null) createEngine()
-        val action = { speakNow(text, onStart, onDone, onRange) }
+        val action = { speakNow(text, onStart, onDone) }
         if (ready) action() else pending = action
     }
 
@@ -187,7 +179,6 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
         pending = null
         utteranceId = null
         onSpeechStart = null
-        onSpeechRange = null
         val done = onSpeechDone
         onSpeechDone = null
         // Also reset the aura if focus was lost or a later tap interrupted playback.
@@ -204,8 +195,7 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
             if (completedId != null && completedId == utteranceId) {
                 utteranceId = null
                 onSpeechStart = null
-                onSpeechRange = null
-                val done = onSpeechDone
+                        val done = onSpeechDone
                 onSpeechDone = null
                 // A completion listener may start the NEXT sentence piece synchronously.
                 // Release only this utterance's focus BEFORE invoking it, or a late
@@ -218,7 +208,7 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
         }
     }
 
-    private fun speakNow(text: String, onStart: () -> Unit, onDone: () -> Unit, onRange: (Int) -> Unit) {
+    private fun speakNow(text: String, onStart: () -> Unit, onDone: () -> Unit) {
         val engine = tts ?: return
         stop()
         // Do not speak during calls or when another application holds locked focus.
@@ -228,7 +218,6 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
         utteranceId = id
         onSpeechStart = onStart
         onSpeechDone = onDone
-        onSpeechRange = onRange
         runCatching {
             val result = engine.speak(text, TextToSpeech.QUEUE_FLUSH, null, id)
             if (result == TextToSpeech.ERROR) {
