@@ -37,43 +37,6 @@ import kotlinx.coroutines.delay
 private val Sky = Color(0xFF38BDF8)
 private val DarkCeramic = Color(0xFF161D2A)
 
-/**
- * Clean, zero-elevation adult AAC surface.
- * The thin sky border is driven by REAL voice playback, never a stale tap highlight.
- * No shadow: this prevents muddy Android spot/ambient elevation in either theme.
- */
-@Composable
-fun CeramicCard(
-    modifier: Modifier = Modifier,
-    isActive: Boolean = false,
-    isSpeaking: Boolean = false,
-    accent: Color = Sky,
-    content: @Composable () -> Unit,
-) {
-    val dark = LocalIsDark.current
-    val shape = RoundedCornerShape(22.dp)
-    val restingBorder = if (dark) Color.White.copy(alpha = 0.08f)
-        else Color.Black.copy(alpha = 0.05f)
-    // Real audio playback alone changes the micro-border, not tap/highlight state.
-    // A short color transition gives feedback without an always-running glow loop.
-    val performance = LocalPerformanceMode.current
-    val borderColor by animateColorAsState(
-        targetValue = if (isSpeaking) Sky.copy(alpha = 0.82f) else restingBorder,
-        animationSpec = if (performance) androidx.compose.animation.core.snap()
-            else tween(durationMillis = 200),
-        label = "spoken-card-border",
-    )
-    Surface(
-        modifier = modifier,
-        shape = shape,
-        color = if (dark) Color(0xFF131924) else Color.White,
-        shadowElevation = 0.dp,
-        tonalElevation = 0.dp,
-        border = BorderStroke(1.dp, borderColor),
-        content = content,
-    )
-}
-
 /** Low-opacity radial hue tint that makes food/health/family cards distinct but calm. */
 @Composable
 fun CeramicImageTint(accent: Color, modifier: Modifier = Modifier) {
