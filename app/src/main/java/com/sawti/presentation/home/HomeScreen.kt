@@ -29,7 +29,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -50,8 +49,9 @@ import com.sawti.presentation.common.bounceClick
 import com.sawti.presentation.theme.LocalIsDark
 import com.sawti.presentation.theme.LocalPerformanceMode
 import com.sawti.presentation.theme.paletteOf
+import com.sawti.presentation.theme.categoryBannerColor
 
-private val CardRadius = RoundedCornerShape(26.dp)
+private val CardRadius = RoundedCornerShape(20.dp)
 
 @Composable
 fun HomeScreen(
@@ -106,11 +106,12 @@ private fun LuxuryCategoryCard(
     val dark = LocalIsDark.current
     val performance = LocalPerformanceMode.current
     val palette = paletteOf(category.palette)
+    val bannerColor = categoryBannerColor(category.id, palette.banner)
     // An optional packaged image is used when WebP files are added to res/drawable.
     val resId = drawableResourceId(categoryDrawableName(category.id))
 
-    // ألوان السيراميك واللمعان المحيطي
-    val surfaceColor = if (dark) Color(0xFF131B26) else Color.White
+    // The photographic stage touches the card edges; a soft border follows the outer shape.
+    val surfaceColor = if (dark) Color(0xFF131B26) else bannerColor
     val borderColor = if (dark) Color.White.copy(alpha = 0.09f) else Color(0xFF0F172A).copy(alpha = 0.07f)
 
     // أنيميشن هالة الصوت المشعة الحية (Bioluminescent Aura)
@@ -162,16 +163,12 @@ private fun LuxuryCategoryCard(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // 1. مسرح الصورة الواقعية الفخمة (يشغل 70% من الكرت)
+                // Full-bleed photo: no interior margin or secondary rounded corners.
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(0.70f)
-                        .padding(top = 10.dp, start = 10.dp, end = 10.dp)
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(
-                            if (dark) Color(0xFF1A2332) else palette.pastel.copy(alpha = 0.45f)
-                        ),
+                        .background(if (dark) Color(0xFF1A2332) else palette.pastel),
                     contentAlignment = Alignment.Center
                 ) {
                     val heroItem = category.items.firstOrNull { it.photoPath != null }
@@ -195,19 +192,21 @@ private fun LuxuryCategoryCard(
                     }
                 }
 
-                // 2. بطانة العنوان العربي الوقور (يشغل 30% مع حماية كاملة لحركات التشكيل)
+                // Solid category banner sits flush beneath the photo; Surface clips its
+                // bottom corners to the same outer 20.dp radius.
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(0.30f)
-                        .padding(horizontal = 10.dp, vertical = 6.dp),
+                        .background(bannerColor)
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = category.title,
-                        color = if (dark) Color(0xFFF1F5F9) else Color(0xFF0F172A),
+                        color = Color.White,
                         fontSize = 18.sp,
-                        lineHeight = 26.sp,
+                        lineHeight = 24.sp,
                         fontWeight = FontWeight.ExtraBold,
                         textAlign = TextAlign.Center,
                         maxLines = 2,

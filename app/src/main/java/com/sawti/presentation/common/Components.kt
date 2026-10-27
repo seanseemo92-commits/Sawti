@@ -38,6 +38,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.RectangleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Star
@@ -66,6 +67,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
@@ -229,6 +231,7 @@ fun ItemImage(
     modifier: Modifier = Modifier,
     crop: Boolean = false,
     glyphScale: Float = 0.55f,
+    fullBleed: Boolean = false,
 ) {
     BoxWithConstraints(modifier, contentAlignment = Alignment.Center) {
         val side = minOf(maxWidth, maxHeight)
@@ -256,14 +259,15 @@ fun ItemImage(
                     contentScale = if (crop) ContentScale.Crop else ContentScale.Fit,
                     modifier = Modifier
                         .fillMaxSize()
-                        .clip(RoundedCornerShape(16.dp)),
+                        .then(if (fullBleed) Modifier else Modifier.clip(RoundedCornerShape(16.dp))),
                 )
             }
             resId != null -> Image(
                 painter = painterResource(resId),
                 contentDescription = item.displayText,
                 contentScale = if (crop) ContentScale.Crop else ContentScale.Fit,
-                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(16.dp)),
+                modifier = Modifier.fillMaxSize()
+                    .then(if (fullBleed) Modifier else Modifier.clip(RoundedCornerShape(16.dp))),
             )
             // For vocabulary without a dedicated photo yet, use the Arabic initial
             // rather than the older emoji artwork. Personal photos take priority.
@@ -340,12 +344,13 @@ fun CardImageContent(
     isCurrentlyPlaying: Boolean,
     modifier: Modifier = Modifier,
     crop: Boolean = false,
+    fullBleed: Boolean = false,
 ) {
     val dark = LocalIsDark.current
     val resId = drawableResourceId(wordDrawableName(item))
     BoxWithConstraints(modifier, contentAlignment = Alignment.Center) {
         if (item.photoPath != null || resId != null) {
-            val photoShape = RoundedCornerShape(16.dp)
+            val photoShape = if (fullBleed) RectangleShape else RoundedCornerShape(16.dp)
             if (isCurrentlyPlaying) {
                 VoiceAuraHalo(Modifier.matchParentSize())
             }
@@ -361,10 +366,15 @@ fun CardImageContent(
                             Modifier
                         },
                     ),
-                crop = crop,
+                crop = crop || fullBleed,
                 glyphScale = 0.45f,
+                fullBleed = fullBleed,
             )
         } else {
+            // For words without photos, keep the entire stage softly tinted.
+            if (fullBleed) {
+                Box(Modifier.matchParentSize().background(accent.copy(alpha = if (dark) 0.24f else 0.13f)))
+            }
             // Disc is never smaller than 84dp so the glyph stays >= 52sp.
             val circle = minOf(maxWidth, maxHeight, 132.dp).coerceAtLeast(84.dp)
             val surface = if (dark) CardSurfaceDark else CardSurfaceLight
@@ -411,6 +421,7 @@ fun CeramicCard(
     isActive: Boolean = false,
     isSpeaking: Boolean = false,
     modifier: Modifier = Modifier,
+    shape: Shape = CardShape,
     content: @Composable () -> Unit,
 ) {
     val dark = LocalIsDark.current
@@ -422,7 +433,7 @@ fun CeramicCard(
     }
     Surface(
         modifier = modifier,
-        shape = CardShape,
+        shape = shape,
         color = if (dark) CardSurfaceDark else CardSurfaceLight,
         contentColor = if (dark) InkOnDark else Ink,
         tonalElevation = 0.dp,

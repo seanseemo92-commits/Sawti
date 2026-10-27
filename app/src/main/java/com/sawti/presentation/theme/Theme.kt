@@ -133,6 +133,26 @@ fun paletteOf(index: Int): CategoryPalette {
     }
 }
 
+/**
+ * Consistent saturated card banners across category tiles and vocabulary cards.
+ * The darker vibrant values preserve the readability of bold white Arabic text.
+ */
+fun categoryBannerColor(categoryId: String, fallback: Color): Color = when (categoryId) {
+    "family" -> Color(0xFF1769A8)       // blue
+    "libyan" -> Color(0xFF99502B)       // warm brown
+    "daily" -> Color(0xFF087E82)        // teal
+    "routine" -> Color(0xFF7A399D)      // purple
+    "vegetables" -> Color(0xFF2D793A)   // green
+    "fruits" -> Color(0xFFAF5300)       // rich orange, readable with white
+    "food" -> Color(0xFF9B512E)
+    "home" -> Color(0xFF8C5635)
+    "clothes" -> Color(0xFF67449A)
+    "body" -> Color(0xFF176F8C)
+    "actions" -> Color(0xFF295F9A)
+    "animals" -> Color(0xFF357746)
+    else -> fallback
+}
+
 // ---------------------------------------------------------------------------
 // Color schemes
 // ---------------------------------------------------------------------------

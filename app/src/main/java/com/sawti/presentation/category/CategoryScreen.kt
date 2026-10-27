@@ -59,6 +59,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -92,6 +93,7 @@ import com.sawti.presentation.common.StaggeredCascade
 import com.sawti.presentation.common.bounceClick
 import com.sawti.presentation.theme.CategoryPalette
 import com.sawti.presentation.theme.paletteOf
+import com.sawti.presentation.theme.categoryBannerColor
 import kotlinx.coroutines.launch
 
 @Composable
@@ -385,24 +387,29 @@ internal fun WordCard(
     onSentenceHint: () -> Unit,
     onToggleFavorite: () -> Unit,
 ) {
-    val extendedLabel = item.displayText.length > 17 || LocalDensity.current.fontScale > 1.15f
+    val fontScale = LocalDensity.current.fontScale
+    val extendedLabel = item.displayText.length > 17 || fontScale > 1.15f
+    val bannerColor = categoryBannerColor(item.categoryId, palette.banner)
     CeramicCard(
         isActive = isActive,
         isSpeaking = isSpeaking,
-        accent = palette.banner,
+        accent = bannerColor,
+        shape = RoundedCornerShape(20.dp),
         modifier = Modifier.fillMaxWidth()
-            .then(if (extendedLabel) Modifier.heightIn(min = 258.dp)
-                  else Modifier.aspectRatio(0.90f))
+            .then(if (extendedLabel) Modifier.heightIn(min = (360f * fontScale).dp)
+                  else Modifier.aspectRatio(0.85f))
             .bounceClick(onLongClick = onLongClick, onClick = onClick),
     ) {
         Column(Modifier.fillMaxSize()) {
+            // 70% full-bleed photograph; outer CeramicCard shape clips the image.
             Box(Modifier.fillMaxWidth().weight(0.70f)) {
                 CardImageContent(
                     item = item,
-                    accent = palette.banner,
+                    accent = bannerColor,
                     isCurrentlyPlaying = isSpeaking,
-                    modifier = Modifier.fillMaxSize().padding(9.dp),
-                    crop = crop,
+                    modifier = Modifier.fillMaxSize(),
+                    crop = true,
+                    fullBleed = true,
                 )
                 WordCardContextActions(
                     item = item,
@@ -413,19 +420,22 @@ internal fun WordCard(
                     modifier = Modifier.align(Alignment.TopEnd).padding(3.dp),
                 )
             }
+            // 30% vibrant banner, clipped at the card's bottom corners.
             Box(
                 Modifier.fillMaxWidth().weight(0.30f)
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                    .background(bannerColor)
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
                     item.displayText,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = Color.White,
                     fontSize = 18.sp,
-                    lineHeight = 27.sp,
-                    fontWeight = FontWeight.Bold,
+                    lineHeight = 24.sp,
+                    fontWeight = FontWeight.ExtraBold,
                     textAlign = TextAlign.Center,
-                    maxLines = if (extendedLabel) 4 else 3,
+                    maxLines = if (extendedLabel) 4 else 2,
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
         }
