@@ -207,10 +207,13 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
                 onSpeechRange = null
                 val done = onSpeechDone
                 onSpeechDone = null
-                done?.invoke()
+                // A completion listener may start the NEXT sentence piece synchronously.
+                // Release only this utterance's focus BEFORE invoking it, or a late
+                // callback can accidentally abandon the freshly acquired focus.
                 val token = focusToken
                 focusToken = null
                 if (token != null) focus.release(token)
+                done?.invoke()
             }
         }
     }
