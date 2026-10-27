@@ -1,5 +1,6 @@
 package com.sawti.presentation.common
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -51,9 +52,17 @@ fun CeramicCard(
 ) {
     val dark = LocalIsDark.current
     val shape = RoundedCornerShape(22.dp)
-    val borderColor = if (isSpeaking) Sky.copy(alpha = 0.82f)
-        else if (dark) Color.White.copy(alpha = 0.08f)
+    val restingBorder = if (dark) Color.White.copy(alpha = 0.08f)
         else Color.Black.copy(alpha = 0.05f)
+    // Real audio playback alone changes the micro-border, not tap/highlight state.
+    // A short color transition gives feedback without an always-running glow loop.
+    val performance = LocalPerformanceMode.current
+    val borderColor by animateColorAsState(
+        targetValue = if (isSpeaking) Sky.copy(alpha = 0.82f) else restingBorder,
+        animationSpec = if (performance) androidx.compose.animation.core.snap()
+            else tween(durationMillis = 200),
+        label = "spoken-card-border",
+    )
     Surface(
         modifier = modifier,
         shape = shape,
