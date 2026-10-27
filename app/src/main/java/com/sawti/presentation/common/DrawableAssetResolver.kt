@@ -32,6 +32,7 @@ fun categoryDrawableName(categoryId: String): String? = when (categoryId) {
     "food" -> "img_cat_food_drink"
     "clothes" -> "img_cat_clothes"
     "body" -> "img_cat_body"
+    "animals" -> "img_cat_animals"
     "home" -> "word_living_room" // Cover the home section card with its existing living-room photo.
     else -> null
 }
@@ -144,6 +145,16 @@ fun wordDrawableName(item: WordItem): String? {
         "بطن" -> "word_stomach"
         "ظهر" -> "word_back"
         "قلب" -> "word_heart"
+        // Batch 11 part 1: pets, farm animals, and birds.
+        "قطوسة", "قطة" -> "word_cat"
+        "كلب" -> "word_dog"
+        "خروف" -> "word_sheep"
+        "حصان" -> "word_horse"
+        "بقرة" -> "word_cow"
+        "عصفور" -> "word_sparrow"
+        "حمامة" -> "word_pigeon"
+        "دجاجة" -> "word_chicken"
+        "بطة" -> "word_duck"
         "موز" -> "word_banana"
         "عنب" -> "word_grapes"
         "شاهي", "نبي شاهي", "شاهي بالنعناع" -> "word_tea"
