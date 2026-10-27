@@ -36,36 +36,31 @@ import kotlinx.coroutines.delay
 private val Sky = Color(0xFF38BDF8)
 private val DarkCeramic = Color(0xFF161D2A)
 
-/** Subtle ceramic edge: no solid saturated top strip, with softer ambient elevation. */
+/**
+ * Clean, zero-elevation adult AAC surface.
+ * The thin sky border is driven by REAL voice playback, never a stale tap highlight.
+ * No shadow: this prevents muddy Android spot/ambient elevation in either theme.
+ */
 @Composable
 fun CeramicCard(
     modifier: Modifier = Modifier,
     isActive: Boolean = false,
+    isSpeaking: Boolean = false,
     accent: Color = Sky,
     content: @Composable () -> Unit,
 ) {
     val dark = LocalIsDark.current
-    val shape = RoundedCornerShape(20.dp)
+    val shape = RoundedCornerShape(22.dp)
+    val borderColor = if (isSpeaking) Sky.copy(alpha = 0.82f)
+        else if (dark) Color.White.copy(alpha = 0.08f)
+        else Color.Black.copy(alpha = 0.05f)
     Surface(
-        modifier = modifier.shadow(
-            elevation = cardElevation(if (isActive) 5.dp else 3.dp),
-            shape = shape,
-            ambientColor = Color(0xFF0F172A).copy(alpha = if (dark) 0.23f else 0.075f),
-            spotColor = Color(0xFF0F172A).copy(alpha = if (dark) 0.13f else 0.05f),
-        ),
+        modifier = modifier,
         shape = shape,
-        color = if (dark) DarkCeramic else Color.White,
-        shadowElevation = cardElevation(2.dp),
-        border = BorderStroke(
-            1.dp,
-            Brush.linearGradient(
-                listOf(
-                    if (dark) Color.White.copy(alpha = 0.19f) else Color.White.copy(alpha = 0.90f),
-                    accent.copy(alpha = if (isActive) 0.22f else 0.075f),
-                    if (dark) Color.White.copy(alpha = 0.08f) else Color(0xFF94A3B8).copy(alpha = 0.23f),
-                )
-            )
-        ),
+        color = if (dark) Color(0xFF131924) else Color.White,
+        shadowElevation = 0.dp,
+        tonalElevation = 0.dp,
+        border = BorderStroke(1.dp, borderColor),
         content = content,
     )
 }
