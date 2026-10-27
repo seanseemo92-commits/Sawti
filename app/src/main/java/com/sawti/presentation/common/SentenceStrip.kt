@@ -40,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -65,9 +66,9 @@ fun SentenceStrip(
     val performance = LocalPerformanceMode.current
     val dock = if (dark) Color(0xFF161D2A) else Color.White
     Surface(
-        shape = RoundedCornerShape(28.dp),
-        color = dock,
-        shadowElevation = cardElevation(9.dp),
+        shape = RoundedCornerShape(24.dp),
+        color = dock.copy(alpha = if (dark) 0.96f else 0.98f),
+        shadowElevation = cardElevation(3.dp),
         border = BorderStroke(
             1.dp,
             Brush.linearGradient(
@@ -76,7 +77,14 @@ fun SentenceStrip(
                     Color(0xFF64748B).copy(alpha = 0.16f))
             )
         ),
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 7.dp),
+        modifier = Modifier.fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 9.dp)
+            .shadow(
+                elevation = cardElevation(8.dp),
+                shape = RoundedCornerShape(24.dp),
+                ambientColor = Color(0xFF0F172A).copy(alpha = if (dark) 0.20f else 0.085f),
+                spotColor = Color(0xFF0F172A).copy(alpha = if (dark) 0.15f else 0.06f),
+            ),
     ) {
         Column(
             Modifier.then(if (performance) Modifier else Modifier.animateContentSize())
@@ -143,13 +151,13 @@ fun SentenceStrip(
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.spacedBy(5.dp),
                                 ) {
-                                    Box(Modifier.size(30.dp), contentAlignment = Alignment.Center) {
+                                    Box(Modifier.size(38.dp), contentAlignment = Alignment.Center) {
                                         VoiceAura(active = speakingPieceIndex == index)
                                         if (piece.photoPath != null) {
                                             AsyncImage(
                                                 model = File(piece.photoPath),
                                                 contentDescription = null,
-                                                modifier = Modifier.size(27.dp).clip(RoundedCornerShape(7.dp)),
+                                                modifier = Modifier.size(30.dp).clip(RoundedCornerShape(9.dp)),
                                                 contentScale = ContentScale.Crop,
                                             )
                                         } else {
