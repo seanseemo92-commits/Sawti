@@ -40,6 +40,27 @@ fun wordDrawableName(item: WordItem): String? {
         "عنب" -> "word_grapes"
         "شاهي", "نبي شاهي", "شاهي بالنعناع" -> "word_tea"
         "ماء", "مية", "نبي مية" -> "word_water"
+        // Matching real-world photos for common words and short everyday requests.
+        "بصل" -> "word_onion"
+        "طماطم" -> "word_tomato"
+        "تفاح" -> "word_apple"
+        "جزر" -> "word_carrot"
+        "بطاطا" -> "word_potato"
+        "خيار" -> "word_cucumber"
+        "حليب" -> "word_milk"
+        "دواء", "دوا", "نبي دوايا" -> "word_medicine"
+        "دوش", "استحمام" -> "word_shower"
+        "حمام", "نبي الحمام" -> "word_toilet"
+        "نوم", "نرقد", "سرير", "نبي نرتاح", "راحة" -> "word_sleep"
+        "منشفة", "فوطة" -> "word_towel"
+        "برتقال" -> "word_orange"
+        "هدوم", "ملابس" -> "word_clothes"
+        "كندرة", "أحذية" -> "word_shoes"
+        "فرشاة أسنان", "فرشة سنان" -> "word_toothbrush"
+        "صابون" -> "word_soap"
+        "منديل", "مناديل" -> "word_tissue"
+        "باب" -> "word_door"
+        "كرسي" -> "word_chair"
         else -> null
     }
 }

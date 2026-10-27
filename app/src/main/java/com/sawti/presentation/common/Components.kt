@@ -265,7 +265,8 @@ fun ItemImage(
                 contentScale = if (crop) ContentScale.Crop else ContentScale.Fit,
                 modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(16.dp)),
             )
-            item.emoji.isNotBlank() -> Text(item.emoji, fontSize = glyphSize)
+            // For vocabulary without a dedicated photo yet, use the Arabic initial
+            // rather than the older emoji artwork. Personal photos take priority.
             else -> Text(
                 item.displayText.take(1),
                 fontSize = glyphSize,
