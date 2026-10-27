@@ -73,6 +73,7 @@ class AudioDispatcher(
             speech.speak(
                 piece.speech,
                 onDone = { if (current == generation) playPiece(position + 1) },
+                onCanceled = { if (current == generation) _playback.value = PlaybackVisual() },
             )
         }
         playPiece(0)
