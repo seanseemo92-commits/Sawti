@@ -25,6 +25,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.sawti.presentation.theme.LocalIsDark
@@ -44,18 +45,24 @@ fun CeramicCard(
     content: @Composable () -> Unit,
 ) {
     val dark = LocalIsDark.current
+    val shape = RoundedCornerShape(20.dp)
     Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(18.dp),
+        modifier = modifier.shadow(
+            elevation = cardElevation(if (isActive) 5.dp else 3.dp),
+            shape = shape,
+            ambientColor = Color(0xFF0F172A).copy(alpha = if (dark) 0.23f else 0.075f),
+            spotColor = Color(0xFF0F172A).copy(alpha = if (dark) 0.13f else 0.05f),
+        ),
+        shape = shape,
         color = if (dark) DarkCeramic else Color.White,
-        shadowElevation = cardElevation(if (isActive) 7.dp else 5.dp),
+        shadowElevation = cardElevation(2.dp),
         border = BorderStroke(
             1.dp,
             Brush.linearGradient(
                 listOf(
-                    if (dark) Color.White.copy(alpha = 0.17f) else Color.White.copy(alpha = 0.95f),
-                    accent.copy(alpha = if (isActive) 0.37f else 0.13f),
-                    if (dark) Color.White.copy(alpha = 0.07f) else Color(0xFF94A3B8).copy(alpha = 0.25f),
+                    if (dark) Color.White.copy(alpha = 0.19f) else Color.White.copy(alpha = 0.90f),
+                    accent.copy(alpha = if (isActive) 0.22f else 0.075f),
+                    if (dark) Color.White.copy(alpha = 0.08f) else Color(0xFF94A3B8).copy(alpha = 0.23f),
                 )
             )
         ),
@@ -107,8 +114,8 @@ fun VoiceAura(active: Boolean, modifier: Modifier = Modifier) {
         label = "aura-radius",
     )
     Canvas(modifier.fillMaxSize()) {
-        val radius = size.minDimension * 0.53f * breath
-        val alpha = 0.23f
+        val radius = size.minDimension * 0.60f * breath
+        val alpha = 0.27f
         drawCircle(
             brush = Brush.radialGradient(
                 listOf(
