@@ -201,8 +201,9 @@ private fun CategoryCard(category: Category, onClick: () -> Unit) {
     ) {
         Column {
             Box(Modifier.fillMaxWidth().height(148.dp), contentAlignment = Alignment.Center) {
+                // Use authentic user photos as the hero. With none attached,
+                // display a quiet category monogram instead of an oversized emoji.
                 val hero = category.items.firstOrNull { it.photoPath != null }
-                    ?: category.items.firstOrNull()
                 if (hero != null) {
                     CardImageContent(
                         item = hero,
