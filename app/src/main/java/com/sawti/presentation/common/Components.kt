@@ -102,10 +102,10 @@ fun Modifier.bounceClick(onLongClick: (() -> Unit)? = null, onClick: () -> Unit)
     val pressed by source.collectIsPressedAsState()
     val performance = LocalPerformanceMode.current
     val scale by animateFloatAsState(
-        targetValue = if ((pressed || dwellPressed) && !performance) 0.94f else 1f,
+        targetValue = if ((pressed || dwellPressed) && !performance) 0.95f else 1f,
         animationSpec = if (performance) snap() else spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow,
+            stiffness = Spring.StiffnessMediumLow,
         ),
         label = "bounce",
     )
@@ -231,10 +231,9 @@ fun ItemImage(
 }
 
 /**
- * A dedicated image stage for high-quality cutout JPEG/WebP and personal photographs.
- * Coil already loads source images from the app-private photo path with size-aware decoding.
- * The emoji remains only as a meaningful AAC fallback when no image has been attached.
- * The aura is behind the smaller image so it stays visible instead of being occluded.
+ * Image-first AAC canvas. Real imported photographs (JPEG/WebP) use the entire image
+ * field. A glyph is only a modest fallback within a neutral, non-cartoonish circle.
+ * The parent card provides the playback border; no pulsing aura obscures the photo.
  */
 @Composable
 fun CardImageContent(
@@ -246,28 +245,31 @@ fun CardImageContent(
 ) {
     val dark = LocalIsDark.current
     BoxWithConstraints(modifier, contentAlignment = Alignment.Center) {
-        val diameter = (minOf(maxWidth, maxHeight) - 8.dp).coerceAtLeast(88.dp)
-        val pictureSize = (diameter * 0.82f).coerceAtLeast(80.dp)
-        Box(
-            Modifier.size(diameter).clip(CircleShape).background(
-                if (dark) Color(0xFF1E293B) else Color(0xFFF1F5F9),
-            ),
-            contentAlignment = Alignment.Center,
-        ) {
-            Box(Modifier.fillMaxSize().background(
-                Brush.radialGradient(listOf(
-                    accent.copy(alpha = if (dark) 0.12f else 0.055f),
-                    Color.Transparent,
-                ))
-            ))
-            VoiceAura(active = isCurrentlyPlaying)
+        if (item.photoPath != null) {
             ItemImage(
                 item = item,
                 accent = accent,
-                modifier = Modifier.size(pictureSize),
+                modifier = Modifier.fillMaxSize(),
                 crop = crop,
-                glyphScale = 0.66f,
+                glyphScale = 0.45f,
             )
+        } else {
+            val circle = minOf(maxWidth, maxHeight, 94.dp).coerceAtLeast(52.dp)
+            Box(
+                modifier = Modifier.size(circle)
+                    .background(
+                        if (dark) Color(0xFF202A36) else Color(0xFFF1F4F7),
+                        CircleShape,
+                    ),
+                contentAlignment = Alignment.Center,
+            ) {
+                ItemImage(
+                    item = item,
+                    accent = if (dark) Color(0xFFCBD5E1) else Color(0xFF64748B),
+                    modifier = Modifier.size(circle * 0.58f),
+                    glyphScale = 0.65f,
+                )
+            }
         }
     }
 }
