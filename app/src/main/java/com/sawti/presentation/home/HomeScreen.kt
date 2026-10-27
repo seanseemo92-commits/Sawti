@@ -48,6 +48,7 @@ import com.sawti.domain.model.Category
 import com.sawti.domain.model.WordItem
 import com.sawti.presentation.category.FavoriteEntry
 import com.sawti.presentation.common.ItemImage
+import com.sawti.presentation.common.CardImageContent
 import com.sawti.presentation.common.CeramicCard
 import com.sawti.presentation.common.CeramicImageTint
 import com.sawti.presentation.common.VoiceAura
@@ -151,36 +152,24 @@ private fun FavoriteChip(entry: FavoriteEntry, isActive: Boolean, isSpeaking: Bo
         isActive = isActive || isSpeaking,
         accent = palette.banner,
         modifier = Modifier
-            .width(116.dp)
-            .heightIn(min = 132.dp)
+            .width(144.dp)
+            .height(176.dp)
             .bounceClick(onLongClick = onLongClick, onClick = onClick),
     ) {
         Column {
-            Box(
-                Modifier
-                    .height(82.dp)
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surface),
-                contentAlignment = Alignment.Center,
-            ) {
-                CeramicImageTint(palette.banner)
-                VoiceAura(active = isSpeaking)
-                ItemImage(
-                    item = entry.item,
-                    accent = palette.banner,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(6.dp),
-                    crop = entry.item.categoryId == "family",
-                    glyphScale = 0.62f,
-                )
-            }
+            CardImageContent(
+                item = entry.item,
+                accent = palette.banner,
+                isCurrentlyPlaying = isSpeaking,
+                modifier = Modifier.height(111.dp).fillMaxWidth().padding(5.dp),
+                crop = entry.item.categoryId == "family",
+            )
             Box(
                 Modifier
                     .fillMaxWidth()
-                    .heightIn(min = 44.dp)
+                    .heightIn(min = 64.dp)
                     .background(MaterialTheme.colorScheme.surface)
-                    .padding(horizontal = 6.dp, vertical = 7.dp),
+                    .padding(horizontal = 10.dp, vertical = 10.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
