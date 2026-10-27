@@ -82,6 +82,17 @@ fun wordDrawableName(item: WordItem): String? {
         "خوخ" -> "word_peach"
         "مشمش" -> "word_apricot"
         "تمر", "بلح" -> "word_dates"
+        // Batch 12: remaining fruit photos, including Libyan Arabic synonyms.
+        "إجاص", "كمثرى" -> "word_pear"
+        "رمان" -> "word_pomegranate"
+        "كرموس", "تين" -> "word_figs"
+        "كيوي" -> "word_kiwi"
+        "أناناس" -> "word_pineapple"
+        "كرز" -> "word_cherry"
+        "توت" -> "word_berries"
+        "مندرين", "يوسفي", "كلمنتينا" -> "word_mandarin"
+        "أفوكادو" -> "word_avocado"
+        "جوز الهند" -> "word_coconut"
         // Batch 5: remaining fresh vegetable photographs.
         "ثوم" -> "word_garlic"
         "باذنجان" -> "word_eggplant"
