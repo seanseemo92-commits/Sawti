@@ -52,7 +52,7 @@ class AudioDispatcher(
      * (which many Android Arabic TTS engines do not implement).
      */
     fun speakSentence(pieces: List<SentencePiece>) {
-        val speakable = pieces.withIndex().filter { it.value.spokenText.isNotBlank() }
+        val speakable = SentenceComposer.spokenPieces(pieces)
         if (speakable.isEmpty()) return
         stopAll()
         val current = generation
@@ -62,16 +62,16 @@ class AudioDispatcher(
                 _playback.value = PlaybackVisual()
                 return
             }
-            val (index, piece) = speakable[position]
+            val piece = speakable[position]
             _playback.value = PlaybackVisual(
                 activeWordId = piece.sourceId,
-                sentenceIndex = index,
+                sentenceIndex = piece.pieceIndex,
                 isSpeaking = true,
             )
-            // A short natural pause is provided by the TTS engine between utterances.
-            // The current piece stays lit for exactly this utterance's lifecycle.
+            // Sequential completion callbacks are independent of unsupported Arabic
+            // TTS word-range timings. Each piece becomes active before requesting speech.
             speech.speak(
-                piece.spokenText.trim().trimEnd('،', '.', '!', '؟'),
+                piece.speech,
                 onDone = { if (current == generation) playPiece(position + 1) },
             )
         }
