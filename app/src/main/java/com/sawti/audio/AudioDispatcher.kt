@@ -38,40 +38,44 @@ class AudioDispatcher(
                 PlaybackVisual(activeWordId = item.id, isSpeaking = true)
             return
         }
+        // The card becomes active immediately on a tap, not after a delayed engine callback.
+        _playback.value = PlaybackVisual(activeWordId = item.id, isSpeaking = true)
         speech.speak(
             item.ttsPrompt,
-            onStart = { if (current == generation) _playback.value =
-                PlaybackVisual(activeWordId = item.id, isSpeaking = true) },
             onDone = { if (current == generation) _playback.value = PlaybackVisual() },
         )
     }
 
-    /** One real continuous utterance; optional TTS range callbacks follow each spoken chip. */
+    /**
+     * Each sentence piece has its own real TTS completion callback, so the active aura
+     * follows the actual speaking piece. Never guess word times or depend on onRangeStart
+     * (which many Android Arabic TTS engines do not implement).
+     */
     fun speakSentence(pieces: List<SentencePiece>) {
-        val text = SentenceComposer.spokenSentence(pieces)
-        if (text.isBlank()) return
+        val speakable = pieces.withIndex().filter { it.value.spokenText.isNotBlank() }
+        if (speakable.isEmpty()) return
         stopAll()
         val current = generation
-        val ranges = SentenceComposer.spokenSegments(pieces)
-        fun show(index: Int) {
-            if (current == generation && index in pieces.indices) {
-                _playback.value = PlaybackVisual(
-                    activeWordId = pieces[index].sourceId,
-                    sentenceIndex = index,
-                    isSpeaking = true,
-                )
+        fun playPiece(position: Int) {
+            if (current != generation) return // interrupted by any other voice/playback
+            if (position == speakable.size) {
+                _playback.value = PlaybackVisual()
+                return
             }
+            val (index, piece) = speakable[position]
+            _playback.value = PlaybackVisual(
+                activeWordId = piece.sourceId,
+                sentenceIndex = index,
+                isSpeaking = true,
+            )
+            // A short natural pause is provided by the TTS engine between utterances.
+            // The current piece stays lit for exactly this utterance's lifecycle.
+            speech.speak(
+                piece.spokenText.trim().trimEnd('،', '.', '!', '؟'),
+                onDone = { if (current == generation) playPiece(position + 1) },
+            )
         }
-        speech.speak(
-            text,
-            onStart = { if (ranges.isNotEmpty()) show(ranges.first().pieceIndex) },
-            onRange = { character ->
-                ranges.firstOrNull { character >= it.start && character < it.endExclusive }?.let {
-                    show(it.pieceIndex)
-                }
-            },
-            onDone = { if (current == generation) _playback.value = PlaybackVisual() },
-        )
+        playPiece(0)
     }
 
     fun hint(item: WordItem) {
