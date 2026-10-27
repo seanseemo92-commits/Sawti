@@ -11,7 +11,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -52,6 +52,12 @@ import com.sawti.presentation.theme.paletteOf
 import com.sawti.presentation.theme.categoryBannerColor
 
 private val CardRadius = RoundedCornerShape(20.dp)
+private val BannerRadius = RoundedCornerShape(
+    topStart = 16.dp,
+    topEnd = 16.dp,
+    bottomStart = 20.dp,
+    bottomEnd = 20.dp,
+)
 
 @Composable
 fun HomeScreen(
@@ -159,48 +165,38 @@ private fun LuxuryCategoryCard(
             ),
             shadowElevation = if (performance) 0.dp else if (dark) 4.dp else 8.dp,
         ) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                // Full-bleed photo: no interior margin or secondary rounded corners.
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(0.70f)
-                        .background(if (dark) Color(0xFF1A2332) else palette.pastel),
-                    contentAlignment = Alignment.Center
-                ) {
-                    val heroItem = category.items.firstOrNull { it.photoPath != null }
-                        ?: category.items.firstOrNull()
+            // Keep the photo edge-to-edge behind a content-sized, rounded
+            // title banner. This removes the old 30%-height empty text area.
+            Box(modifier = Modifier.fillMaxSize()) {
+                val heroItem = category.items.firstOrNull { it.photoPath != null }
+                    ?: category.items.firstOrNull()
 
-                    if (resId != null) {
-                        Image(
-                            painter = painterResource(resId),
-                            contentDescription = category.title,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize(),
-                        )
-                    } else if (heroItem != null) {
-                        CardImageContent(
-                            item = heroItem,
-                            accent = palette.banner,
-                            isCurrentlyPlaying = isSpeaking,
-                            modifier = Modifier.fillMaxSize(),
-                            crop = true
-                        )
-                    }
+                if (resId != null) {
+                    Image(
+                        painter = painterResource(resId),
+                        contentDescription = category.title,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                } else if (heroItem != null) {
+                    CardImageContent(
+                        item = heroItem,
+                        accent = palette.banner,
+                        isCurrentlyPlaying = isSpeaking,
+                        modifier = Modifier.fillMaxSize(),
+                        crop = true,
+                        fullBleed = true,
+                    )
                 }
 
-                // Solid category banner sits flush beneath the photo; Surface clips its
-                // bottom corners to the same outer 20.dp radius.
                 Box(
                     modifier = Modifier
+                        .align(Alignment.BottomCenter)
                         .fillMaxWidth()
-                        .weight(0.30f)
+                        .clip(BannerRadius)
                         .background(bannerColor)
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
-                    contentAlignment = Alignment.Center
+                        .padding(horizontal = 8.dp, vertical = 5.dp),
+                    contentAlignment = Alignment.Center,
                 ) {
                     Text(
                         text = category.title,
@@ -210,7 +206,7 @@ private fun LuxuryCategoryCard(
                         fontWeight = FontWeight.ExtraBold,
                         textAlign = TextAlign.Center,
                         maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
             }

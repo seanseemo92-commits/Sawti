@@ -400,35 +400,35 @@ internal fun WordCard(
                   else Modifier.aspectRatio(0.85f))
             .bounceClick(onLongClick = onLongClick, onClick = onClick),
     ) {
-        Column(Modifier.fillMaxSize()) {
-            // 70% full-bleed photograph; outer CeramicCard shape clips the image.
-            Box(Modifier.fillMaxWidth().weight(0.70f)) {
-                CardImageContent(
-                    item = item,
-                    accent = bannerColor,
-                    isCurrentlyPlaying = isSpeaking,
-                    modifier = Modifier.fillMaxSize(),
-                    crop = true,
-                    fullBleed = true,
-                )
-                WordCardContextActions(
-                    item = item,
-                    caregiverMode = caregiverMode,
-                    onHint = onHint,
-                    onSentenceHint = onSentenceHint,
-                    onToggleFavorite = onToggleFavorite,
-                    modifier = Modifier.align(Alignment.TopEnd).padding(3.dp),
-                )
-            }
-            // 30% vibrant banner, clipped at the card's bottom corners.
+        // The photo fills the card; the compact caption overlays its bottom,
+        // leaving substantially more visible image area than a weighted 30% panel.
+        Box(Modifier.fillMaxSize()) {
+            CardImageContent(
+                item = item,
+                accent = bannerColor,
+                isCurrentlyPlaying = isSpeaking,
+                modifier = Modifier.fillMaxSize(),
+                crop = true,
+                fullBleed = true,
+            )
             Box(
-                Modifier.fillMaxWidth().weight(0.30f)
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = 16.dp,
+                            topEnd = 16.dp,
+                            bottomStart = 20.dp,
+                            bottomEnd = 20.dp,
+                        )
+                    )
                     .background(bannerColor)
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                    .padding(horizontal = 8.dp, vertical = 5.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    item.displayText,
+                    text = item.displayText,
                     color = Color.White,
                     fontSize = 18.sp,
                     lineHeight = 24.sp,
@@ -438,6 +438,14 @@ internal fun WordCard(
                     overflow = TextOverflow.Ellipsis,
                 )
             }
+            WordCardContextActions(
+                item = item,
+                caregiverMode = caregiverMode,
+                onHint = onHint,
+                onSentenceHint = onSentenceHint,
+                onToggleFavorite = onToggleFavorite,
+                modifier = Modifier.align(Alignment.TopEnd).padding(3.dp),
+            )
         }
     }
 }
