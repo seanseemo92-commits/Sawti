@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Backspace
@@ -40,20 +41,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.sawti.domain.model.SentencePiece
 import com.sawti.presentation.theme.LocalIsDark
 import com.sawti.presentation.theme.LocalPerformanceMode
-import com.sawti.presentation.theme.cardElevation
 import java.io.File
 
-/** A softly floating AAC composition dock. Mutations and spoken text are unchanged. */
+/**
+ * Clean island dock: no Material shadow and no loud coloured container.
+ * Sentence composition and TTS sequencing remain in the original ViewModel.
+ */
 @Composable
 fun SentenceStrip(
     pieces: List<SentencePiece>,
@@ -64,73 +65,59 @@ fun SentenceStrip(
 ) {
     val dark = LocalIsDark.current
     val performance = LocalPerformanceMode.current
-    val dock = if (dark) Color(0xFF161D2A) else Color.White
+    val foreground = MaterialTheme.colorScheme.onSurface
+    val surface = if (dark) Color(0xFF131924) else Color.White
+    val hairline = if (dark) Color.White.copy(alpha = 0.08f)
+        else Color.Black.copy(alpha = 0.05f)
     Surface(
-        shape = RoundedCornerShape(24.dp),
-        color = dock.copy(alpha = if (dark) 0.96f else 0.98f),
-        shadowElevation = cardElevation(3.dp),
-        border = BorderStroke(
-            1.dp,
-            Brush.linearGradient(
-                listOf(Color.White.copy(alpha = if (dark) 0.19f else 0.93f),
-                    Color(0xFF38BDF8).copy(alpha = 0.13f),
-                    Color(0xFF64748B).copy(alpha = 0.16f))
-            )
-        ),
-        modifier = Modifier.fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 9.dp)
-            .shadow(
-                elevation = cardElevation(8.dp),
-                shape = RoundedCornerShape(24.dp),
-                ambientColor = Color(0xFF0F172A).copy(alpha = if (dark) 0.20f else 0.085f),
-                spotColor = Color(0xFF0F172A).copy(alpha = if (dark) 0.15f else 0.06f),
-            ),
+        shape = RoundedCornerShape(26.dp),
+        color = surface,
+        tonalElevation = 0.dp,
+        shadowElevation = 0.dp,
+        border = BorderStroke(1.dp, hairline),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp),
     ) {
         Column(
             Modifier.then(if (performance) Modifier else Modifier.animateContentSize())
-                .padding(horizontal = 12.dp, vertical = 10.dp),
-            verticalArrangement = Arrangement.spacedBy(7.dp),
+                .padding(horizontal = 13.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("جملتي", color = MaterialTheme.colorScheme.onSurface,
-                    fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                Text("جملتي", color = foreground,
+                    fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
                 Spacer(Modifier.weight(1f))
                 IconButton(onClick = onBackspace, enabled = pieces.isNotEmpty()) {
-                    Icon(Icons.Filled.Backspace, contentDescription = "حذف آخر كلمة")
+                    Icon(Icons.Filled.Backspace, contentDescription = "حذف آخر كلمة",
+                        modifier = Modifier.size(20.dp))
                 }
                 IconButton(onClick = onClear, enabled = pieces.isNotEmpty()) {
-                    Icon(Icons.Filled.DeleteSweep, contentDescription = "مسح الجملة بالكامل")
+                    Icon(Icons.Filled.DeleteSweep, contentDescription = "مسح الجملة بالكامل",
+                        modifier = Modifier.size(20.dp))
                 }
                 Button(
                     onClick = onPlay,
                     enabled = pieces.isNotEmpty(),
                     shape = RoundedCornerShape(50),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Transparent,
+                        containerColor = Color(0xFF0284C7),
                         contentColor = Color.White,
                         disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                     ),
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(50))
-                        .background(
-                            Brush.horizontalGradient(
-                                listOf(Color(0xFF0369A1), Color(0xFF38BDF8))
-                            )
-                        ),
                 ) {
-                    Icon(Icons.Filled.PlayArrow, contentDescription = null)
+                    Icon(Icons.Filled.PlayArrow, contentDescription = null,
+                        modifier = Modifier.size(20.dp))
                     Text("انطق", fontWeight = FontWeight.Bold)
                 }
             }
             Row(
                 modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(7.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (pieces.isEmpty()) {
                     Text("المس الكلمات لبناء جملتك",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium)
+                        style = MaterialTheme.typography.bodySmall)
                 }
                 pieces.forEachIndexed { index, piece ->
                     key(index, piece.sourceId) {
@@ -139,44 +126,46 @@ fun SentenceStrip(
                         @Composable fun Chip() {
                             Surface(
                                 shape = RoundedCornerShape(50),
-                                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.57f),
-                                border = BorderStroke(
-                                    1.dp,
-                                    if (speakingPieceIndex == index) Color(0xFF38BDF8).copy(alpha = 0.70f)
-                                    else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.26f),
-                                ),
+                                color = if (dark) Color(0xFF202A36) else Color(0xFFF8FAFC),
+                                shadowElevation = 0.dp,
+                                border = BorderStroke(1.dp,
+                                    if (speakingPieceIndex == index) Color(0xFF38BDF8).copy(alpha = 0.82f)
+                                    else hairline),
                             ) {
                                 Row(
-                                    Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
+                                    Modifier.padding(horizontal = 8.dp, vertical = 5.dp),
                                     verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(5.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(6.dp),
                                 ) {
-                                    Box(Modifier.size(38.dp), contentAlignment = Alignment.Center) {
-                                        VoiceAura(active = speakingPieceIndex == index)
+                                    Box(
+                                        Modifier.size(30.dp).background(
+                                            if (dark) Color(0xFF2A3442) else Color(0xFFEFF3F6),
+                                            CircleShape,
+                                        ),
+                                        contentAlignment = Alignment.Center,
+                                    ) {
                                         if (piece.photoPath != null) {
                                             AsyncImage(
                                                 model = File(piece.photoPath),
                                                 contentDescription = null,
-                                                modifier = Modifier.size(30.dp).clip(RoundedCornerShape(9.dp)),
+                                                modifier = Modifier.size(28.dp).clip(CircleShape),
                                                 contentScale = ContentScale.Crop,
                                             )
-                                        } else {
-                                            Text(piece.emoji.ifBlank { piece.text.take(1) })
-                                        }
+                                        } else Text(piece.emoji.ifBlank { piece.text.take(1) },
+                                            style = MaterialTheme.typography.bodySmall)
                                     }
-                                    Text(piece.text, maxLines = 1,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        style = MaterialTheme.typography.bodyMedium)
+                                    Text(piece.text, maxLines = 1, color = foreground,
+                                        style = MaterialTheme.typography.bodySmall)
                                 }
                             }
                         }
                         if (performance) Chip()
                         else AnimatedVisibility(
                             visible = visible,
-                            enter = fadeIn(animationSpec = spring(stiffness = Spring.StiffnessLow)) +
-                                scaleIn(initialScale = 0.86f, animationSpec = spring(
+                            enter = fadeIn(animationSpec = spring(stiffness = Spring.StiffnessMediumLow)) +
+                                scaleIn(initialScale = 0.92f, animationSpec = spring(
                                     dampingRatio = Spring.DampingRatioMediumBouncy,
-                                    stiffness = Spring.StiffnessLow,
+                                    stiffness = Spring.StiffnessMediumLow,
                                 )),
                         ) { Chip() }
                     }
