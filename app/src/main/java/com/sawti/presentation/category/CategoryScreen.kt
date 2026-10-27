@@ -4,6 +4,12 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.weight
+import androidx.compose.ui.draw.alpha
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.IconButton
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -329,6 +335,49 @@ private fun WordGrid(
     }
 }
 
+/**
+ * Hidden secondary actions preserve phonemic/sentence hints, favourites and caregiver
+ * editing without obstructing a real image. The long-press action stays untouched.
+ */
+@Composable
+private fun WordCardContextActions(
+    item: WordItem,
+    caregiverMode: Boolean,
+    onHint: () -> Unit,
+    onSentenceHint: () -> Unit,
+    onToggleFavorite: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var expanded by androidx.compose.runtime.remember(item.id) { mutableStateOf(false) }
+    Box(modifier) {
+        IconButton(
+            onClick = { expanded = true },
+            modifier = Modifier.size(44.dp).alpha(0.42f),
+        ) {
+            Icon(Icons.Filled.MoreVert, contentDescription = "خيارات البطاقة",
+                tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(21.dp))
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DropdownMenuItem(
+                text = { Text("تلميح بداية النطق") },
+                onClick = { expanded = false; onHint() },
+            )
+            if (!item.sentencePrompt.isNullOrBlank()) {
+                DropdownMenuItem(
+                    text = { Text("تلميح الجملة") },
+                    onClick = { expanded = false; onSentenceHint() },
+                )
+            }
+            if (caregiverMode) {
+                DropdownMenuItem(
+                    text = { Text(if (item.isFavorite) "إزالة من المفضلة" else "إضافة للمفضلة") },
+                    onClick = { expanded = false; onToggleFavorite() },
+                )
+            }
+        }
+    }
+}
+
 @Composable
 internal fun WordCard(
     item: WordItem,
@@ -343,55 +392,37 @@ internal fun WordCard(
     onSentenceHint: () -> Unit,
     onToggleFavorite: () -> Unit,
 ) {
-    // Normal-size words keep the requested 0.88 portrait ratio. At enlarged font
-    // scales or for long multi-word labels, allow the card to grow instead of clipping.
     val extendedLabel = item.displayText.length > 17 || LocalDensity.current.fontScale > 1.15f
     CeramicCard(
-        isActive = isActive || isSpeaking,
+        isActive = isActive,
+        isSpeaking = isSpeaking,
         accent = palette.banner,
         modifier = Modifier.fillMaxWidth()
-            .then(if (extendedLabel) Modifier.heightIn(min = 230.dp) else Modifier.aspectRatio(0.88f))
+            .then(if (extendedLabel) Modifier.heightIn(min = 258.dp)
+                  else Modifier.aspectRatio(0.90f))
             .bounceClick(onLongClick = onLongClick, onClick = onClick),
     ) {
         Column(Modifier.fillMaxSize()) {
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .heightIn(min = 112.dp),
-            ) {
+            Box(Modifier.fillMaxWidth().weight(0.65f)) {
                 CardImageContent(
                     item = item,
                     accent = palette.banner,
                     isCurrentlyPlaying = isSpeaking,
-                    modifier = Modifier.fillMaxSize().padding(5.dp),
+                    modifier = Modifier.fillMaxSize().padding(9.dp),
                     crop = crop,
                 )
-                // 💡 first-sound cue, 💬 sentence cue (only when the card has one)
-                Column(
-                    Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(6.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp),
-                ) {
-                    HintButton(onClick = onHint, size = 40)
-                    if (!item.sentencePrompt.isNullOrBlank()) PhraseHintButton(onClick = onSentenceHint, size = 40)
-                }
-                if (caregiverMode) {
-                    EditBadge(Modifier.align(Alignment.TopStart).padding(8.dp))
-                    FavoriteStar(
-                        isFavorite = item.isFavorite,
-                        onClick = onToggleFavorite,
-                        modifier = Modifier.align(Alignment.BottomStart).padding(6.dp),
-                    )
-                }
+                WordCardContextActions(
+                    item = item,
+                    caregiverMode = caregiverMode,
+                    onHint = onHint,
+                    onSentenceHint = onSentenceHint,
+                    onToggleFavorite = onToggleFavorite,
+                    modifier = Modifier.align(Alignment.TopEnd).padding(3.dp),
+                )
             }
             Box(
-                Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 56.dp)
-                    .background(MaterialTheme.colorScheme.surface)
-                    .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 14.dp),
+                Modifier.fillMaxWidth().weight(0.35f)
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
@@ -401,7 +432,7 @@ internal fun WordCard(
                     lineHeight = 27.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
-                    maxLines = 3,
+                    maxLines = if (extendedLabel) 4 else 3,
                 )
             }
         }
@@ -492,7 +523,7 @@ private fun FlashcardPage(
     onCall: (String) -> Unit,
 ) {
     CeramicCard(
-        isActive = state.playbackVisual.activeWordId == item.id && state.playbackVisual.isSpeaking,
+        isSpeaking = state.playbackVisual.activeWordId == item.id && state.playbackVisual.isSpeaking,
         accent = palette.banner,
         modifier = Modifier.fillMaxSize().padding(vertical = 8.dp),
     ) {
@@ -516,14 +547,14 @@ private fun FlashcardPage(
                     modifier = Modifier.fillMaxSize().padding(22.dp),
                     crop = category.previewOnTap,
                 )
-                if (state.caregiverMode) {
-                    EditBadge(Modifier.align(Alignment.TopStart).padding(14.dp))
-                    FavoriteStar(
-                        isFavorite = item.isFavorite,
-                        onClick = { actions.onToggleFavorite(item) },
-                        modifier = Modifier.align(Alignment.TopEnd).padding(10.dp),
-                    )
-                }
+                WordCardContextActions(
+                    item = item,
+                    caregiverMode = state.caregiverMode,
+                    onHint = { actions.onHint(item) },
+                    onSentenceHint = { actions.onSentenceHint(item) },
+                    onToggleFavorite = { actions.onToggleFavorite(item) },
+                    modifier = Modifier.align(Alignment.TopEnd).padding(10.dp),
+                )
             }
             Text(
                 item.displayText,
@@ -539,10 +570,6 @@ private fun FlashcardPage(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                HintButton(onClick = { actions.onHint(item) }, size = 60)
-                if (!item.sentencePrompt.isNullOrBlank()) {
-                    PhraseHintButton(onClick = { actions.onSentenceHint(item) }, size = 60)
-                }
                 ActionPill(
                     label = stringResource(R.string.listen),
                     icon = Icons.AutoMirrored.Filled.VolumeUp,
