@@ -36,6 +36,17 @@ fun categoryDrawableName(categoryId: String): String? = when (categoryId) {
 fun wordDrawableName(item: WordItem): String? {
     val label = item.displayText.trim().replace(Regex("[\\u064B-\\u065F\\u0670]"), "")
     return when (label) {
+        // Dedicated photographic assets for the first 10 Libyan dishes.
+        "بازين" -> "word_bazin"
+        "رشدة كسكاس" -> "word_reshda_kaskas"
+        "رشدة برمة" -> "word_reshda_borma"
+        "مكرونة مبكبكة" -> "word_mbakbaka"
+        "مكرونة مسقية" -> "word_pasta_masqiya"
+        "كسكسي بالحوت" -> "word_couscous_fish"
+        "رز بلاو" -> "word_rice_blaw"
+        "شربة ليبية" -> "word_libyan_soup"
+        "طبيخة بطاطا" -> "word_potato_stew"
+        "عصبان" -> "word_osban"
         "موز" -> "word_banana"
         "عنب" -> "word_grapes"
         "شاهي", "نبي شاهي", "شاهي بالنعناع" -> "word_tea"
