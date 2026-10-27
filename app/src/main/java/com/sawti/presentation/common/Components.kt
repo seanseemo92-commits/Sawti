@@ -55,6 +55,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
+import com.sawti.presentation.theme.LocalIsDark
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -223,6 +225,48 @@ fun ItemImage(
                 fontSize = glyphSize,
                 fontWeight = FontWeight.ExtraBold,
                 color = accent,
+            )
+        }
+    }
+}
+
+/**
+ * A dedicated image stage for high-quality cutout JPEG/WebP and personal photographs.
+ * Coil already loads source images from the app-private photo path with size-aware decoding.
+ * The emoji remains only as a meaningful AAC fallback when no image has been attached.
+ * The aura is behind the smaller image so it stays visible instead of being occluded.
+ */
+@Composable
+fun CardImageContent(
+    item: WordItem,
+    accent: Color,
+    isCurrentlyPlaying: Boolean,
+    modifier: Modifier = Modifier,
+    crop: Boolean = false,
+) {
+    val dark = LocalIsDark.current
+    BoxWithConstraints(modifier, contentAlignment = Alignment.Center) {
+        val diameter = (minOf(maxWidth, maxHeight) - 8.dp).coerceAtLeast(88.dp)
+        val pictureSize = (diameter * 0.82f).coerceAtLeast(80.dp)
+        Box(
+            Modifier.size(diameter).clip(CircleShape).background(
+                if (dark) Color(0xFF1E293B) else Color(0xFFF1F5F9),
+            ),
+            contentAlignment = Alignment.Center,
+        ) {
+            Box(Modifier.fillMaxSize().background(
+                Brush.radialGradient(listOf(
+                    accent.copy(alpha = if (dark) 0.12f else 0.055f),
+                    Color.Transparent,
+                ))
+            ))
+            VoiceAura(active = isCurrentlyPlaying)
+            ItemImage(
+                item = item,
+                accent = accent,
+                modifier = Modifier.size(pictureSize),
+                crop = crop,
+                glyphScale = 0.66f,
             )
         }
     }
