@@ -56,6 +56,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -78,6 +79,7 @@ import com.sawti.presentation.common.FavoriteStar
 import com.sawti.presentation.common.HintButton
 import com.sawti.presentation.common.PhraseHintButton
 import com.sawti.presentation.common.ItemImage
+import com.sawti.presentation.common.CardImageContent
 import com.sawti.presentation.common.CeramicCard
 import com.sawti.presentation.common.CeramicImageTint
 import com.sawti.presentation.common.VoiceAura
@@ -341,27 +343,28 @@ internal fun WordCard(
     onSentenceHint: () -> Unit,
     onToggleFavorite: () -> Unit,
 ) {
+    // Normal-size words keep the requested 0.88 portrait ratio. At enlarged font
+    // scales or for long multi-word labels, allow the card to grow instead of clipping.
+    val extendedLabel = item.displayText.length > 17 || LocalDensity.current.fontScale > 1.15f
     CeramicCard(
         isActive = isActive || isSpeaking,
         accent = palette.banner,
         modifier = Modifier.fillMaxWidth()
+            .then(if (extendedLabel) Modifier.heightIn(min = 230.dp) else Modifier.aspectRatio(0.88f))
             .bounceClick(onLongClick = onLongClick, onClick = onClick),
     ) {
-        Column {
+        Column(Modifier.fillMaxSize()) {
             Box(
                 Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1.1f)
-                    .background(MaterialTheme.colorScheme.surface),
+                    .weight(1f)
+                    .heightIn(min = 112.dp),
             ) {
-                CeramicImageTint(palette.banner)
-                VoiceAura(active = isSpeaking)
-                ItemImage(
+                CardImageContent(
                     item = item,
                     accent = palette.banner,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(10.dp),
+                    isCurrentlyPlaying = isSpeaking,
+                    modifier = Modifier.fillMaxSize().padding(5.dp),
                     crop = crop,
                 )
                 // 💡 first-sound cue, 💬 sentence cue (only when the card has one)
@@ -388,7 +391,7 @@ internal fun WordCard(
                     .fillMaxWidth()
                     .heightIn(min = 56.dp)
                     .background(MaterialTheme.colorScheme.surface)
-                    .padding(horizontal = 8.dp, vertical = 9.dp),
+                    .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 14.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
@@ -505,16 +508,13 @@ private fun FlashcardPage(
                     ),
                 contentAlignment = Alignment.Center,
             ) {
-                CeramicImageTint(palette.banner)
-                VoiceAura(active = state.playbackVisual.isSpeaking && state.playbackVisual.activeWordId == item.id)
-                ItemImage(
+                CardImageContent(
                     item = item,
                     accent = palette.banner,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
+                    isCurrentlyPlaying = state.playbackVisual.isSpeaking &&
+                        state.playbackVisual.activeWordId == item.id,
+                    modifier = Modifier.fillMaxSize().padding(22.dp),
                     crop = category.previewOnTap,
-                    glyphScale = 0.6f,
                 )
                 if (state.caregiverMode) {
                     EditBadge(Modifier.align(Alignment.TopStart).padding(14.dp))
