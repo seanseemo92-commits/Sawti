@@ -367,12 +367,6 @@ private fun WordCardContextActions(
                     onClick = { expanded = false; onSentenceHint() },
                 )
             }
-            if (caregiverMode) {
-                DropdownMenuItem(
-                    text = { Text(if (item.isFavorite) "إزالة من المفضلة" else "إضافة للمفضلة") },
-                    onClick = { expanded = false; onToggleFavorite() },
-                )
-            }
         }
     }
 }
@@ -402,7 +396,7 @@ internal fun WordCard(
             .bounceClick(onLongClick = onLongClick, onClick = onClick),
     ) {
         Column(Modifier.fillMaxSize()) {
-            Box(Modifier.fillMaxWidth().weight(0.65f)) {
+            Box(Modifier.fillMaxWidth().weight(0.70f)) {
                 CardImageContent(
                     item = item,
                     accent = palette.banner,
@@ -420,7 +414,7 @@ internal fun WordCard(
                 )
             }
             Box(
-                Modifier.fillMaxWidth().weight(0.35f)
+                Modifier.fillMaxWidth().weight(0.30f)
                     .padding(horizontal = 12.dp, vertical = 8.dp),
                 contentAlignment = Alignment.Center,
             ) {

@@ -14,6 +14,7 @@ import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -74,6 +75,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.onLongClick
 import androidx.compose.ui.semantics.semantics
@@ -231,6 +233,7 @@ fun ItemImage(
     BoxWithConstraints(modifier, contentAlignment = Alignment.Center) {
         val side = minOf(maxWidth, maxHeight)
         val photo = item.photoPath
+        val resId = drawableResourceId(wordDrawableName(item))
         val performance = LocalPerformanceMode.current
         val density = LocalDensity.current
         val glyphSize = with(density) { (side * glyphScale).toSp() }
@@ -256,6 +259,12 @@ fun ItemImage(
                         .clip(RoundedCornerShape(16.dp)),
                 )
             }
+            resId != null -> Image(
+                painter = painterResource(resId),
+                contentDescription = item.displayText,
+                contentScale = if (crop) ContentScale.Crop else ContentScale.Fit,
+                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(16.dp)),
+            )
             item.emoji.isNotBlank() -> Text(item.emoji, fontSize = glyphSize)
             else -> Text(
                 item.displayText.take(1),
@@ -332,8 +341,9 @@ fun CardImageContent(
     crop: Boolean = false,
 ) {
     val dark = LocalIsDark.current
+    val resId = drawableResourceId(wordDrawableName(item))
     BoxWithConstraints(modifier, contentAlignment = Alignment.Center) {
-        if (item.photoPath != null) {
+        if (item.photoPath != null || resId != null) {
             val photoShape = RoundedCornerShape(16.dp)
             if (isCurrentlyPlaying) {
                 VoiceAuraHalo(Modifier.matchParentSize())

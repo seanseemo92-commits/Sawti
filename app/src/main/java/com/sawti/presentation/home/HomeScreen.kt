@@ -7,11 +7,10 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
@@ -32,10 +31,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -43,9 +42,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sawti.domain.model.Category
-import com.sawti.domain.model.WordItem
-import com.sawti.presentation.category.FavoriteEntry
 import com.sawti.presentation.common.CardImageContent
+import com.sawti.presentation.common.categoryDrawableName
+import com.sawti.presentation.common.drawableResourceId
 import com.sawti.presentation.common.StaggeredCascade
 import com.sawti.presentation.common.bounceClick
 import com.sawti.presentation.theme.LocalIsDark
@@ -57,13 +56,8 @@ private val CardRadius = RoundedCornerShape(26.dp)
 @Composable
 fun HomeScreen(
     categories: List<Category>,
-    favorites: List<FavoriteEntry>,
-    activeItemId: Long?,
     speakingItemId: Long?,
-    caregiverMode: Boolean,
     onOpen: (String) -> Unit,
-    onQuickTap: (WordItem) -> Unit,
-    onQuickLongTap: (WordItem) -> Unit,
 ) {
     if (categories.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { 
@@ -112,6 +106,8 @@ private fun LuxuryCategoryCard(
     val dark = LocalIsDark.current
     val performance = LocalPerformanceMode.current
     val palette = paletteOf(category.palette)
+    // An optional packaged image is used when WebP files are added to res/drawable.
+    val resId = drawableResourceId(categoryDrawableName(category.id))
 
     // ألوان السيراميك واللمعان المحيطي
     val surfaceColor = if (dark) Color(0xFF131B26) else Color.White
@@ -181,7 +177,14 @@ private fun LuxuryCategoryCard(
                     val heroItem = category.items.firstOrNull { it.photoPath != null }
                         ?: category.items.firstOrNull()
 
-                    if (heroItem != null) {
+                    if (resId != null) {
+                        Image(
+                            painter = painterResource(resId),
+                            contentDescription = category.title,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    } else if (heroItem != null) {
                         CardImageContent(
                             item = heroItem,
                             accent = palette.banner,

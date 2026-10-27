@@ -15,12 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Icon
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -46,7 +40,6 @@ import com.sawti.R
 import com.sawti.presentation.category.CategoryScreen
 import com.sawti.presentation.category.CustomCategoryManager
 import com.sawti.presentation.common.SentenceStrip
-import com.sawti.presentation.category.SearchResultsScreen
 import com.sawti.presentation.common.LocalTouchDwell
 import com.sawti.presentation.category.LibraryViewModel
 import com.sawti.presentation.home.HomeScreen
@@ -81,7 +74,6 @@ fun AppRoot(
     val state by library.uiState.collectAsStateWithLifecycle()
     val settings by settingsVm.settings.collectAsStateWithLifecycle()
     var route by rememberSaveable { mutableStateOf(HOME) }
-    var searchQuery by rememberSaveable { mutableStateOf("") }
     var manageCategories by rememberSaveable { mutableStateOf(false) }
     var guideOpen by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
@@ -152,21 +144,6 @@ fun AppRoot(
                         Text("إدارة الأقسام المخصصة +")
                     }
                 }
-                if (route == HOME || category != null) {
-                    OutlinedTextField(
-                        value = searchQuery,
-                        onValueChange = { searchQuery = it },
-                        label = { Text("بحث سريع في الكلمات") },
-                        leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
-                        trailingIcon = if (searchQuery.isNotEmpty()) ({
-                            IconButton(onClick = { searchQuery = "" }) {
-                                Icon(Icons.Filled.Close, contentDescription = "مسح البحث")
-                            }
-                        }) else null,
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
-                    )
-                }
                 if (state.caregiverMode) {
                     CaregiverBanner(
                         onOpenProgress = { route = PROGRESS },
@@ -197,26 +174,11 @@ fun AppRoot(
                         settingsVm, onOpenGuide = { guideOpen = true },
                     )
                     route == DIALECT -> DialectSettingsRoute(settingsVm, (context.applicationContext as SawtiApp).container.speech)
-                    category != null -> CategoryScreen(category, state, library, searchQuery)
-                    route == HOME && searchQuery.isNotBlank() -> SearchResultsScreen(
-                        categories = state.categories,
-                        searchQuery = searchQuery,
-                        state = state,
-                        actions = library,
-                        onOpenResult = { item ->
-                            route = CATEGORY_PREFIX + item.categoryId
-                            library.onItemTapped(item, flashcard = false)
-                        },
-                    )
+                    category != null -> CategoryScreen(category, state, library)
                     else -> HomeScreen(
                         categories = state.categories,
-                        favorites = state.favorites,
-                        activeItemId = state.activeItemId,
                         speakingItemId = state.playbackVisual.activeWordId.takeIf { state.playbackVisual.isSpeaking },
-                        caregiverMode = state.caregiverMode,
                         onOpen = { id -> route = CATEGORY_PREFIX + id },
-                        onQuickTap = library::onQuickTap,
-                        onQuickLongTap = library::onSpeakAgain,
                     )
                 }
             }
