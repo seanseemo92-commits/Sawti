@@ -531,7 +531,6 @@ private fun FlashcardPage(
                 Modifier
                     .weight(1f)
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surface)
                     .bounceClick(
                         onLongClick = { actions.onItemLongPressed(item) },
                         onClick = { actions.onItemTapped(item, flashcard = true) },
