@@ -29,6 +29,9 @@ fun categoryDrawableName(categoryId: String): String? = when (categoryId) {
     "routine" -> "img_cat_routine"
     "vegetables" -> "img_cat_vegetables"
     "fruits" -> "img_cat_fruits"
+    "food" -> "img_cat_food_drink"
+    "clothes" -> "img_cat_clothes"
+    "body" -> "img_cat_body"
     else -> null
 }
 
@@ -69,6 +72,14 @@ fun wordDrawableName(item: WordItem): String? {
         "مصحف" -> "word_quran"
         "قهوة العشية" -> "word_evening_coffee"
         "مشي", "نمشي" -> "word_walking"
+        // Fourth batch: real photos for seven fruit words.
+        "فراولة" -> "word_strawberry"
+        "مانجو" -> "word_mango"
+        "دلاع" -> "word_watermelon"
+        "قلعاوي" -> "word_melon_libyan"
+        "خوخ" -> "word_peach"
+        "مشمش" -> "word_apricot"
+        "تمر", "بلح" -> "word_dates"
         "موز" -> "word_banana"
         "عنب" -> "word_grapes"
         "شاهي", "نبي شاهي", "شاهي بالنعناع" -> "word_tea"
