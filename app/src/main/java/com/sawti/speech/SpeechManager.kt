@@ -48,12 +48,14 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
     private var utteranceId: String? = null
     private var onSpeechStart: (() -> Unit)? = null
     private var onSpeechDone: (() -> Unit)? = null
+    private var onSpeechCanceled: (() -> Unit)? = null
     private var tts: TextToSpeech? = null
     private var ready = false
     private var speechRate = 0.85f
     private var dialect = ArabicDialect.LIBYAN
     private var preferredVoice: String? = null
     private var pending: (() -> Unit)? = null
+    private var pendingCancel: (() -> Unit)? = null
 
     private val _issue = MutableStateFlow<SpeechIssue?>(null)
     val issue: StateFlow<SpeechIssue?> = _issue.asStateFlow()
@@ -80,6 +82,10 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
     private fun finishInit(status: Int) {
         val engine = tts
         if (status != TextToSpeech.SUCCESS || engine == null) {
+            val cancel = pendingCancel
+            pending = null
+            pendingCancel = null
+            cancel?.invoke()
             _issue.value = SpeechIssue.EngineUnavailable
             runCatching { engine?.shutdown() }
             tts = null
@@ -105,12 +111,12 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
             }
             override fun onDone(utteranceId: String?) = finishUtterance(utteranceId)
             @Deprecated("Older TTS callback")
-            override fun onError(utteranceId: String?) = finishUtterance(utteranceId)
-            override fun onError(utteranceId: String?, errorCode: Int) = finishUtterance(utteranceId)
+            override fun onError(utteranceId: String?) = finishUtterance(utteranceId, failed = true)
+            override fun onError(utteranceId: String?, errorCode: Int) = finishUtterance(utteranceId, failed = true)
         })
         ready = true
         configureEngine()
-        pending?.also { pending = null; it.invoke() }
+        pending?.also { pending = null; pendingCancel = null; it.invoke() }
     }
 
     /** Called on every settings change. A missing regional voice never causes a crash. */
@@ -163,11 +169,22 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
         _issue.value = if (success) null else SpeechIssue.MissingArabicVoice
     }
 
-    fun speak(text: String, onStart: () -> Unit = {}, onDone: () -> Unit = {}) {
-        if (text.isBlank()) return
+    fun speak(
+        text: String,
+        onStart: () -> Unit = {},
+        onDone: () -> Unit = {},
+        onCanceled: () -> Unit = onDone,
+    ) {
+        if (text.isBlank()) { onCanceled(); return }
         if (tts == null) createEngine()
-        val action = { speakNow(text, onStart, onDone) }
-        if (ready) action() else pending = action
+        if (tts == null) { onCanceled(); return }
+        val action = { speakNow(text, onStart, onDone, onCanceled) }
+        if (ready) action() else {
+            val prior = pendingCancel
+            pending = action
+            pendingCancel = onCanceled
+            prior?.invoke()
+        }
     }
 
     fun setSpeechRate(rate: Float) {
@@ -176,48 +193,54 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
     }
 
     fun stop() {
+        val canceled = onSpeechCanceled ?: pendingCancel
         pending = null
+        pendingCancel = null
         utteranceId = null
         onSpeechStart = null
-        val done = onSpeechDone
         onSpeechDone = null
-        // Also reset the aura if focus was lost or a later tap interrupted playback.
-        done?.invoke()
+        onSpeechCanceled = null
         val token = focusToken
         focusToken = null
         if (token != null) focus.release(token)
         runCatching { tts?.stop() }
+        // Explicit interruption must NOT be interpreted as a completed sentence word.
+        canceled?.invoke()
     }
 
-    private fun finishUtterance(completedId: String?) {
-        // TTS callbacks may arrive from a binder thread, after a newer phrase has begun.
+    private fun finishUtterance(completedId: String?, failed: Boolean = false) {
         main.post {
             if (completedId != null && completedId == utteranceId) {
                 utteranceId = null
                 onSpeechStart = null
-                        val done = onSpeechDone
+                val done = onSpeechDone
+                val canceled = onSpeechCanceled
                 onSpeechDone = null
-                // A completion listener may start the NEXT sentence piece synchronously.
-                // Release only this utterance's focus BEFORE invoking it, or a late
-                // callback can accidentally abandon the freshly acquired focus.
+                onSpeechCanceled = null
+                // A callback can start a new word synchronously. Release this focus first.
                 val token = focusToken
                 focusToken = null
                 if (token != null) focus.release(token)
-                done?.invoke()
+                if (failed) canceled?.invoke() else done?.invoke()
             }
         }
     }
 
-    private fun speakNow(text: String, onStart: () -> Unit, onDone: () -> Unit) {
-        val engine = tts ?: return
+    private fun speakNow(
+        text: String,
+        onStart: () -> Unit,
+        onDone: () -> Unit,
+        onCanceled: () -> Unit,
+    ) {
+        val engine = tts ?: run { onCanceled(); return }
         stop()
-        // Do not speak during calls or when another application holds locked focus.
-        val token = focus.acquire { stop() } ?: return
+        val token = focus.acquire { stop() } ?: run { onCanceled(); return }
         val id = "sawti-${System.nanoTime()}"
         focusToken = token
         utteranceId = id
         onSpeechStart = onStart
         onSpeechDone = onDone
+        onSpeechCanceled = onCanceled
         runCatching {
             val result = engine.speak(text, TextToSpeech.QUEUE_FLUSH, null, id)
             if (result == TextToSpeech.ERROR) {
@@ -231,4 +254,5 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
             _issue.value = SpeechIssue.EngineUnavailable
         }
     }
+
 }
