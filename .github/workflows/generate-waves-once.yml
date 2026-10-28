@@ -1,0 +1,92 @@
+name: One-time generation of supplied splash wave PNGs
+on:
+  push:
+    branches:
+      - fix/splash-background-bitmap-20261028
+jobs:
+  generate:
+    if: "github.event.head_commit.message == 'chore(splash): generate supplied wave backgrounds'"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Pillow and NumPy
+        run: python -m pip install numpy pillow
+      - name: Generate light and dark background bitmaps using supplied recipe
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os
+          import numpy as np
+          from PIL import Image, ImageDraw, ImageFilter
+          W, H = 2048, 2732
+          def cubic_bezier(p0, p1, p2, p3, n_points=600):
+              t = np.linspace(0, 1, n_points)
+              x = (1-t)**3 * p0[0] + 3*(1-t)**2 * t * p1[0] + 3*(1-t) * t**2 * p2[0] + t**3 * p3[0]
+              y = (1-t)**3 * p0[1] + 3*(1-t)**2 * t * p1[1] + 3*(1-t) * t**2 * p2[1] + t**3 * p3[1]
+              return list(zip(x.astype(int), y.astype(int)))
+          x = np.linspace(0, 1, W, dtype=np.float32)[None, :]
+          y = np.linspace(0, 1, H, dtype=np.float32)[:, None]
+          def vertical_rgb(start_rgb, end_rgb, t):
+              channels = []
+              for i in range(3):
+                  component = start_rgb[i] * (1-t) + end_rgb[i] * t
+                  channels.append(np.broadcast_to(component, (H,W)).clip(0,255).astype(np.uint8))
+              return Image.fromarray(np.stack(channels,axis=-1),"RGB").convert("RGBA")
+          c_cyan=np.array([56,189,248],dtype=np.float32)
+          c_violet=np.array([129,140,248],dtype=np.float32)
+          c_purple=np.array([139,92,246],dtype=np.float32)
+          c_deep_purple=np.array([109,40,217],dtype=np.float32)
+          t_sky=np.clip(x*.40+y*.60,0,1)
+          img_sky=vertical_rgb(c_cyan,c_violet,t_sky)
+          p0=(0,int(H*.35));p1=(int(W*.35),int(H*.22));p2=(int(W*.68),int(H*.45));p3=(W,int(H*.33))
+          curve1=cubic_bezier(p0,p1,p2,p3,n_points=600)
+          mask1=Image.new("L",(W,H),0)
+          ImageDraw.Draw(mask1).polygon([(0,H)]+curve1+[(W,H)],fill=255)
+          mask1=mask1.filter(ImageFilter.GaussianBlur(radius=10))
+          img_w1=vertical_rgb(c_purple,c_deep_purple,y)
+          p0_low=(0,int(H*.54));p1_low=(int(W*.30),int(H*.46));p2_low=(int(W*.72),int(H*.61));p3_low=(W,int(H*.51))
+          curve2=cubic_bezier(p0_low,p1_low,p2_low,p3_low,n_points=600)
+          mask2=Image.new("L",(W,H),0)
+          ImageDraw.Draw(mask2).polygon([(0,H)]+curve2+[(W,H)],fill=255)
+          mask2=mask2.filter(ImageFilter.GaussianBlur(radius=10))
+          c_lavender=np.array([238,242,255],dtype=np.float32)
+          c_white=np.array([255,255,255],dtype=np.float32)
+          t_low=np.clip((y-.48)/.52,0,1)
+          img_low=vertical_rgb(c_lavender,c_white,t_low)
+          comp_light=Image.composite(img_low,Image.composite(img_w1,img_sky,mask1),mask2)
+          final_light=comp_light.convert("RGB")
+          c_dark_top=np.array([7,13,24],dtype=np.float32)
+          c_dark_bot=np.array([15,23,42],dtype=np.float32)
+          c_dark_ambient=np.array([24,36,62],dtype=np.float32)
+          dark_t=np.clip(y*.75+x*.25,0,1)
+          img_dark=vertical_rgb(c_dark_top,c_dark_bot,dark_t)
+          mask_dark=Image.new("L",(W,H),0)
+          ImageDraw.Draw(mask_dark).polygon([(0,H)]+curve1+[(W,H)],fill=255)
+          mask_dark=mask_dark.filter(ImageFilter.GaussianBlur(radius=35))
+          img_amb=Image.new("RGBA",(W,H),tuple(c_dark_ambient.astype(np.uint8).tolist())+(255,))
+          comp_dark=Image.blend(img_dark,Image.composite(img_amb,img_dark,mask_dark),.35)
+          final_dark=comp_dark.convert("RGB")
+          light="app/src/main/res/drawable/bg_splash_waves.png"
+          dark="app/src/main/res/drawable-night/bg_splash_waves.png"
+          os.makedirs(os.path.dirname(light),exist_ok=True)
+          os.makedirs(os.path.dirname(dark),exist_ok=True)
+          final_light.save(light,quality=98)
+          final_dark.save(dark,quality=98)
+          print("Generated Light:",light)
+          print("Generated Dark:",dark)
+          PY
+      - name: Commit and push two background PNGs
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/src/main/res/drawable/bg_splash_waves.png app/src/main/res/drawable-night/bg_splash_waves.png
+          git diff --cached --quiet && { echo "Expected new PNG assets"; exit 1; }
+          git commit -m "feat(splash): add light and dark wave backgrounds"
+          git push origin HEAD:fix/splash-background-bitmap-20261028
