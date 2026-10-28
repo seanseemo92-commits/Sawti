@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -52,46 +53,59 @@ fun SawtiSplashScreen(
             .fillMaxSize()
             .background(if (isDark) Color(0xFF070D18) else Color(0xFF38BDF8))
     ) {
-        // 1. رسم تموجات الخلفية الانسيابية برمجياً كطبقة كاملة ممتدة
+        // 1. رسم التموجات الانسيابية بتدرجات ناعمة ومواقع دقيقة
         Canvas(modifier = Modifier.fillMaxSize()) {
             val w = size.width
             val h = size.height
 
             if (!isDark) {
-                // موجة التداخل البنفسجية الوسطى
-                val wavePath1 = Path().apply {
-                    moveTo(0f, h * 0.22f)
-                    cubicTo(w * 0.35f, h * 0.14f, w * 0.65f, h * 0.42f, w, h * 0.32f)
-                    lineTo(w, h)
-                    lineTo(0f, h)
-                    close()
-                }
-                drawPath(
-                    path = wavePath1,
+                // تدرج الخلفية السماوية العلوية
+                drawRect(
                     brush = Brush.verticalGradient(
-                        colors = listOf(Color(0xFF6366F1), Color(0xFF8B5CF6))
+                        colors = listOf(Color(0xFF38BDF8), Color(0xFF60A5FA), Color(0xFF818CF8)),
+                        startY = 0f,
+                        endY = h * 0.45f
                     )
                 )
 
-                // موجة القاعدة السفلية الفاتحة والناعمة
-                val wavePath2 = Path().apply {
-                    moveTo(0f, h * 0.58f)
-                    cubicTo(w * 0.30f, h * 0.48f, w * 0.70f, h * 0.68f, w, h * 0.56f)
+                // التموج البنفسجي الأوسط (ينتهي أعلى منتصف الشاشة ليحتضن الرمز فقط)
+                val purpleWave = Path().apply {
+                    moveTo(0f, h * 0.20f)
+                    cubicTo(w * 0.35f, h * 0.12f, w * 0.65f, h * 0.36f, w, h * 0.26f)
+                    lineTo(w, h * 0.48f)
+                    cubicTo(w * 0.70f, h * 0.44f, w * 0.30f, h * 0.52f, 0f, h * 0.44f)
+                    close()
+                }
+                drawPath(
+                    path = purpleWave,
+                    brush = Brush.linearGradient(
+                        colors = listOf(Color(0xFF6366F1), Color(0xFF8B5CF6), Color(0xFFA855F7)),
+                        start = Offset(0f, h * 0.2f),
+                        end = Offset(w, h * 0.5f)
+                    )
+                )
+
+                // المساحة الانسيابية السفلية الفاتحة بتدرج اللافندر الناعم
+                val lightWave = Path().apply {
+                    moveTo(0f, h * 0.44f)
+                    cubicTo(w * 0.30f, h * 0.52f, w * 0.70f, h * 0.44f, w, h * 0.48f)
                     lineTo(w, h)
                     lineTo(0f, h)
                     close()
                 }
                 drawPath(
-                    path = wavePath2,
+                    path = lightWave,
                     brush = Brush.verticalGradient(
-                        colors = listOf(Color(0xFFE0E7FF), Color(0xFFF5F3FF), Color(0xFFFFFFFF))
+                        colors = listOf(Color(0xFFEBEBFF), Color(0xFFF5F3FF), Color(0xFFFFFFFF)),
+                        startY = h * 0.44f,
+                        endY = h
                     )
                 )
             } else {
-                // تموجات هادئة وعميقة للوضع الداكن
+                // تدرجات الوضع الليلي
                 val darkWave = Path().apply {
-                    moveTo(0f, h * 0.28f)
-                    cubicTo(w * 0.35f, h * 0.18f, w * 0.65f, h * 0.46f, w, h * 0.36f)
+                    moveTo(0f, h * 0.25f)
+                    cubicTo(w * 0.35f, h * 0.18f, w * 0.65f, h * 0.42f, w, h * 0.32f)
                     lineTo(w, h)
                     lineTo(0f, h)
                     close()
@@ -99,16 +113,17 @@ fun SawtiSplashScreen(
                 drawPath(
                     path = darkWave,
                     brush = Brush.verticalGradient(
-                        colors = listOf(Color(0xFF0F172A), Color(0xFF1E293B))
+                        colors = listOf(Color(0xFF0F172A), Color(0xFF1E293B), Color(0xFF0F172A))
                     )
                 )
             }
         }
 
-        // 2. المحتوى المركزي: الرمز المقصوص المفرغ واسم التطبيق برمجياً بدقة عالية
+        // 2. المحتوى المركزي: الرمز على حافة التموج والنصوص بالكامل في المساحة الفاتحة
         Column(
             modifier = Modifier
                 .align(Alignment.Center)
+                .padding(top = 10.dp)
                 .alpha(contentAlpha.value),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -122,16 +137,16 @@ fun SawtiSplashScreen(
                 ),
                 contentDescription = "Sawti Emblem",
                 modifier = Modifier
-                    .width(175.dp)
+                    .width(170.dp)
                     .wrapContentHeight(),
                 contentScale = ContentScale.Fit
             )
 
-            Spacer(modifier = Modifier.height(14.dp))
+            Spacer(modifier = Modifier.height(18.dp))
 
             Text(
                 text = "صوتي",
-                fontSize = 42.sp,
+                fontSize = 44.sp,
                 fontWeight = FontWeight.Bold,
                 color = brandTitleColor,
                 textAlign = TextAlign.Center
@@ -149,7 +164,7 @@ fun SawtiSplashScreen(
             )
         }
 
-        // 3. الفوتر بالإنجليزية في الأسفل
+        // 3. الفوتر الإنجليزي في الأسفل
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
