@@ -21,6 +21,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -80,7 +81,7 @@ class PracticeViewModel(
 
     init {
         viewModelScope.launch {
-            repository.observeCategories().collect { categories ->
+            repository.observeCategories().catch { Log.e("SawtiPractice", "Category observation failed", it) }.collect { categories ->
                 recallPool = buildPool(categories, excludeActions = false)
                 choicePool = buildPool(categories, excludeActions = true)
                 if (deck.isEmpty()) startRound()
