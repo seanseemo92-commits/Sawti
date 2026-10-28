@@ -10,7 +10,7 @@ class StartupBrandingDefaultsTest {
         assertEquals(ArabicDialect.STANDARD, AppSettings().dialect)
         assertTrue(AppSettings().isOnboardingCompleted)
     }
-    @Test fun splashIsExactlyTwoSeconds() {
-        assertEquals(2_000L, SAWTI_SPLASH_DURATION_MS)
+    @Test fun splashIncludesFooterFadeAndHold() {
+        assertEquals(600L + 1_900L, SAWTI_SPLASH_DURATION_MS)
     }
 }
