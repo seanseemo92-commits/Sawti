@@ -30,7 +30,7 @@ data class AppSettings(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val textSize: TextSize = TextSize.NORMAL,
     val speechRate: SpeechRate = SpeechRate.NORMAL,
-    val dialect: ArabicDialect = ArabicDialect.LIBYAN,
+    val dialect: ArabicDialect = ArabicDialect.STANDARD,
     val preferredVoice: String? = null,
     val hapticsEnabled: Boolean = true,
     /** "وضع الأداء السلس": no spring/alpha animations or shadows, smaller decoded images. */
@@ -38,5 +38,5 @@ data class AppSettings(
     val touchDwell: TouchDwell = TouchDwell.OFF,
     val sentenceStripEnabled: Boolean = false,
     /** Stored in SharedPreferences; never in Room. Defaults false for first-launch guidance. */
-    val isOnboardingCompleted: Boolean = false,
+    val isOnboardingCompleted: Boolean = true,
 )

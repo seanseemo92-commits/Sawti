@@ -43,7 +43,6 @@ import com.sawti.presentation.common.SentenceStrip
 import com.sawti.presentation.common.LocalTouchDwell
 import com.sawti.presentation.category.LibraryViewModel
 import com.sawti.presentation.home.HomeScreen
-import com.sawti.presentation.onboarding.OnboardingScreen
 import com.sawti.presentation.practice.PracticeRoute
 import com.sawti.presentation.practice.PracticeViewModel
 import com.sawti.presentation.progress.ProgressRoute
@@ -75,24 +74,7 @@ fun AppRoot(
     val settings by settingsVm.settings.collectAsStateWithLifecycle()
     var route by rememberSaveable { mutableStateOf(HOME) }
     var manageCategories by rememberSaveable { mutableStateOf(false) }
-    var guideOpen by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
-    // The reopened help guide is dismissible with Android Back; first-launch setup
-    // remains visible until the user completes it or taps Skip.
-    BackHandler(enabled = guideOpen) { guideOpen = false }
-
-    if (!settings.isOnboardingCompleted || guideOpen) {
-        OnboardingScreen(
-            selectedDialect = settings.dialect,
-            onSelectDialect = settingsVm::setDialect,
-            onFinish = {
-                settingsVm.completeOnboarding()
-                guideOpen = false
-            },
-        )
-        return
-    }
-
     // one-shot messages, e.g. "favourites are full"
     LaunchedEffect(Unit) {
         library.messages.collect { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
@@ -170,9 +152,7 @@ fun AppRoot(
                 when {
                     route == PRACTICE -> PracticeRoute(practice)
                     route == PROGRESS && state.caregiverMode -> ProgressRoute(progress)
-                    route == SETTINGS && state.caregiverMode -> SettingsRoute(
-                        settingsVm, onOpenGuide = { guideOpen = true },
-                    )
+                    route == SETTINGS && state.caregiverMode -> SettingsRoute(settingsVm)
                     route == DIALECT -> DialectSettingsRoute(settingsVm, (context.applicationContext as SawtiApp).container.speech)
                     category != null -> CategoryScreen(category, state, library)
                     else -> HomeScreen(

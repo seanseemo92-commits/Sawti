@@ -22,6 +22,7 @@ import com.sawti.presentation.progress.ProgressViewModel
 import com.sawti.presentation.settings.SettingsViewModel
 import com.sawti.presentation.theme.SawtiTheme
 import com.sawti.presentation.splash.SawtiWelcomeScreen
+import com.sawti.presentation.splash.SAWTI_SPLASH_DURATION_MS
 
 class MainActivity : ComponentActivity() {
 
@@ -47,7 +48,7 @@ class MainActivity : ComponentActivity() {
             val settings by settingsVm.settings.collectAsStateWithLifecycle()
             var showBrandWelcome by rememberSaveable { mutableStateOf(true) }
             LaunchedEffect(Unit) {
-                delay(1900)
+                delay(SAWTI_SPLASH_DURATION_MS)
                 showBrandWelcome = false
             }
             SawtiTheme(

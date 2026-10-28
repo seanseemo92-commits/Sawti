@@ -16,6 +16,14 @@ import kotlinx.coroutines.flow.update
 class SettingsRepository(context: Context) {
     private val prefs = context.applicationContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
 
+    // Old four-step onboarding is retired. Mark existing installs completed without
+    // touching dialect choices, caregiver media, or the database.
+    init {
+        if (!prefs.getBoolean("onboarding_completed", false)) {
+            prefs.edit().putBoolean("onboarding_completed", true).apply()
+        }
+    }
+
     private val _state = MutableStateFlow(load())
     val state: StateFlow<AppSettings> = _state.asStateFlow()
 
@@ -26,13 +34,13 @@ class SettingsRepository(context: Context) {
         themeMode = read("theme_mode", ThemeMode.SYSTEM),
         textSize = read("text_size", TextSize.NORMAL),
         speechRate = read("speech_rate", SpeechRate.NORMAL),
-        dialect = read("dialect", ArabicDialect.LIBYAN),
+        dialect = read("dialect", ArabicDialect.STANDARD),
         preferredVoice = prefs.getString("preferred_voice", null),
         hapticsEnabled = prefs.getBoolean("haptics", true),
         performanceMode = prefs.getBoolean("performance_mode", false),
         touchDwell = read("touch_dwell", TouchDwell.OFF),
         sentenceStripEnabled = prefs.getBoolean("sentence_strip", false),
-        isOnboardingCompleted = prefs.getBoolean("onboarding_completed", false),
+        isOnboardingCompleted = true,
     )
 
     fun completeOnboarding() {

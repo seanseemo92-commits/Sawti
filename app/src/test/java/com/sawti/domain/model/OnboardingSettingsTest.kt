@@ -1,14 +1,14 @@
 package com.sawti.domain.model
 
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** No Room schema mutation or private family data is required for onboarding state. */
+/** Legacy onboarding is retired; startup defaults do not change private Room data. */
 class OnboardingSettingsTest {
-    @Test fun firstLaunchShowsGuideByDefault() {
-        assertFalse(AppSettings().isOnboardingCompleted)
-        assertEquals(ArabicDialect.LIBYAN, AppSettings().dialect)
+    @Test fun firstLaunchStartsOnMainAfterBrandSplash() {
+        assertTrue(AppSettings().isOnboardingCompleted)
+        assertEquals(ArabicDialect.STANDARD, AppSettings().dialect)
     }
 
     @Test fun completingGuideCannotResetOtherPreferences() {
