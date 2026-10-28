@@ -76,8 +76,11 @@ fun AppRoot(
     var route by rememberSaveable { mutableStateOf(HOME) }
     var manageCategories by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
-    val backup by (context.applicationContext as SawtiApp).container.backupOperations.state.collectAsStateWithLifecycle()
+    val operations = (context.applicationContext as SawtiApp).container.backupOperations
+    val backup by operations.state.collectAsStateWithLifecycle()
     val backupLocked = backup.busy || backup.restartRequired
+    // Read the live state in click handlers; a rapid second tap must not beat recomposition.
+    val navigationLocked = { operations.state.value.let { it.busy || it.restartRequired } }
     // one-shot messages, e.g. "favourites are full"
     LaunchedEffect(Unit) {
         library.messages.collect { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
@@ -99,7 +102,7 @@ fun AppRoot(
     }
 
     BackHandler(enabled = route != HOME || backupLocked) {
-        if (!backupLocked) route = HOME
+        if (!navigationLocked()) route = HOME
     }
 
     val title = when {
@@ -119,10 +122,10 @@ fun AppRoot(
                     title = title,
                     showBack = route != HOME,
                     caregiverMode = state.caregiverMode,
-                    onBack = { if (!backupLocked) route = HOME },
-                    onPractice = { if (!backupLocked) route = PRACTICE },
-                    onDialects = { if (!backupLocked) route = DIALECT },
-                    onToggleCaregiver = { if (!backupLocked) library.toggleCaregiver() },
+                    onBack = { if (!navigationLocked()) route = HOME },
+                    onPractice = { if (!navigationLocked()) route = PRACTICE },
+                    onDialects = { if (!navigationLocked()) route = DIALECT },
+                    onToggleCaregiver = { if (!navigationLocked()) library.toggleCaregiver() },
                 )
                 if (settings.sentenceStripEnabled && (route == HOME || category != null)) {
                     SentenceStrip(
@@ -134,14 +137,14 @@ fun AppRoot(
                     )
                 }
                 if (route == HOME && state.caregiverMode) {
-                    TextButton(onClick = { if (!backupLocked) manageCategories = true }) {
+                    TextButton(onClick = { if (!navigationLocked()) manageCategories = true }) {
                         Text("إدارة الأقسام المخصصة +")
                     }
                 }
                 if (state.caregiverMode) {
                     CaregiverBanner(
-                        onOpenProgress = { if (!backupLocked) route = PROGRESS },
-                        onOpenSettings = { if (!backupLocked) route = SETTINGS },
+                        onOpenProgress = { if (!navigationLocked()) route = PROGRESS },
+                        onOpenSettings = { if (!navigationLocked()) route = SETTINGS },
                     )
                 }
                 state.speechIssue?.let { issue ->
@@ -174,7 +177,7 @@ fun AppRoot(
                     else -> HomeScreen(
                         categories = state.categories,
                         speakingItemId = state.playbackVisual.activeWordId.takeIf { state.playbackVisual.isSpeaking },
-                        onOpen = { id -> if (!backupLocked) route = CATEGORY_PREFIX + id },
+                        onOpen = { id -> if (!navigationLocked()) route = CATEGORY_PREFIX + id },
                     )
                 }
             }
