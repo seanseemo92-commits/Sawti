@@ -192,8 +192,8 @@ fun SawtiSplashScreen(onNavigateToMain: () -> Unit) {
             }
         }
 
-        // Use PNGs with visually centered alpha content. The source logo has
-        // unequal transparent margins (dark ink is biased right, light ink left).
+        // Use cleaned vector paths reconstructed from the complete original wordmark.
+        // The center and sizing stay unchanged; no raster scaling or alpha-key speckles.
         // Measure INSIDE safe insets so small phones, tablets, landscape and
         // display cutouts have the same predictable, centered layout.
         BoxWithConstraints(
@@ -209,8 +209,8 @@ fun SawtiSplashScreen(onNavigateToMain: () -> Unit) {
             )
             Image(
                 painter = painterResource(
-                    if (isDark) R.drawable.sawti_wordmark_hd_dark
-                    else R.drawable.sawti_wordmark_hd_light
+                    if (isDark) R.drawable.sawti_wordmark_vector_dark
+                    else R.drawable.sawti_wordmark_vector_light
                 ),
                 contentDescription = "شعار صوتي — SAWTI",
                 modifier = Modifier
