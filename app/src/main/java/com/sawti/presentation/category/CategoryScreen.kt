@@ -398,7 +398,8 @@ internal fun WordCard(
         modifier = Modifier.fillMaxWidth()
             .then(if (extendedLabel) Modifier.heightIn(min = (360f * fontScale).dp)
                   else Modifier.aspectRatio(0.85f))
-            .bounceClick(onLongClick = onLongClick, onClick = onClick),
+            .clip(RoundedCornerShape(20.dp))
+            .bounceClick(onLongClick = onLongClick, onClick = onClick, accent = bannerColor),
     ) {
         // The photo fills the card; the compact caption overlays its bottom,
         // leaving substantially more visible image area than a weighted 30% panel.
@@ -546,6 +547,7 @@ private fun FlashcardPage(
                     .bounceClick(
                         onLongClick = { actions.onItemLongPressed(item) },
                         onClick = { actions.onItemTapped(item, flashcard = true) },
+                        accent = categoryBannerColor(category.id, palette.banner),
                     ),
                 contentAlignment = Alignment.Center,
             ) {
