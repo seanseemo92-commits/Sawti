@@ -24,7 +24,7 @@ import com.sawti.presentation.progress.ProgressViewModel
 import com.sawti.presentation.settings.SettingsViewModel
 import com.sawti.presentation.theme.SawtiTheme
 import com.sawti.presentation.theme.LocalIsDark
-import com.sawti.presentation.splash.SawtiSplashScreen
+import com.sawti.presentation.splash.SawtiAuroraSplash
 
 class MainActivity : ComponentActivity() {
 
@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // The original splash artwork paints under the transparent status/navigation bars.
+        // Aurora paints below transparent system bars during launch.
         // Let Android choose dark/light system icons against the current device theme.
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
@@ -66,14 +66,14 @@ class MainActivity : ComponentActivity() {
                 hapticsEnabled = settings.hapticsEnabled,
             ) {
                 // Contrast follows Sawti's chosen theme, not just the phone system theme.
-                // The light splash has a bright cyan top; app toolbar uses a dark
-                // branded gradient with white system-bar icons.
+                // The Aurora light background needs dark status icons; other screens
+                // keep light icons above their dark adaptive toolbar.
                 val dark = LocalIsDark.current
                 SideEffect {
                     WindowInsetsControllerCompat(window, window.decorView)
                         .isAppearanceLightStatusBars = showBrandWelcome && !dark
                 }
-                if (showBrandWelcome) SawtiSplashScreen(onNavigateToMain = { showBrandWelcome = false })
+                if (showBrandWelcome) SawtiAuroraSplash(onFinished = { showBrandWelcome = false })
                 else AppRoot(libraryVm, practiceVm, progressVm, settingsVm)
             }
         }
