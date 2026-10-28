@@ -2,9 +2,7 @@ package com.sawti.presentation.splash
 
 import androidx.compose.runtime.Composable
 
-/** Two-second branded startup; navigation is handled by MainActivity. */
-const val SAWTI_SPLASH_DURATION_MS = 2_000L
-
-/** Historical entry point retained for compatibility with older screens/tests. */
+/** Legacy entry point; the splash itself owns navigation timing. */
 @Composable
-fun SawtiWelcomeScreen() = SawtiSplashScreen()
+fun SawtiWelcomeScreen(onNavigateToMain: () -> Unit) =
+    SawtiSplashScreen(onNavigateToMain)
