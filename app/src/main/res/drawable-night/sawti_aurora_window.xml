@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Consistent dark launch window until Compose's vector scene is ready. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:angle="315"
+        android:startColor="#071527"
+        android:centerColor="#102B48"
+        android:endColor="#101C39" />
+</shape>
