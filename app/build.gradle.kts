@@ -17,9 +17,23 @@ android {
         versionName = "1.0.0"
     }
 
+    // The production key is supplied only at release time by GitHub Actions secrets.
+    // Local and PR builds continue to produce unsigned Release APKs for validation.
+    signingConfigs {
+        val storePath = System.getenv("SAWTI_KEYSTORE_PATH")
+        if (!storePath.isNullOrBlank()) {
+            create("production") {
+                storeFile = file(storePath)
+                storePassword = System.getenv("SAWTI_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("SAWTI_KEY_ALIAS")
+                keyPassword = System.getenv("SAWTI_KEY_PASSWORD")
+            }
+        }
+    }
     buildTypes {
         release {
             isMinifyEnabled = true
+            signingConfigs.findByName("production")?.let { signingConfig = it }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
