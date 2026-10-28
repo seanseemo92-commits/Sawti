@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -31,6 +32,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
@@ -44,12 +46,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sawti.R
-import com.sawti.presentation.theme.AppBarBlue
+import com.sawti.presentation.theme.LocalIsDark
 import kotlinx.coroutines.launch
 
 private const val HOLD_MS = 3000
 
-/** Navy app bar: bold white title, practice icon and the discreet settings gear. */
+/** Brand-adaptive app bar, with high-contrast text and controls in both modes. */
 @Composable
 fun AppTopBar(
     title: String,
@@ -60,11 +62,18 @@ fun AppTopBar(
     onDialects: () -> Unit,
     onToggleCaregiver: () -> Unit,
 ) {
+    val dark = LocalIsDark.current
+    val headerGradient = if (dark) {
+        Brush.horizontalGradient(listOf(Color(0xFF071629), Color(0xFF123554), Color(0xFF081A31)))
+    } else {
+        Brush.horizontalGradient(listOf(Color(0xFF5845B2), Color(0xFF4859C4), Color(0xFF2566AB)))
+    }
     Surface(
-        color = AppBarBlue,
+        color = Color.Transparent,
         shadowElevation = 2.dp,
         shape = RoundedCornerShape(bottomStart = 18.dp, bottomEnd = 18.dp),
     ) {
+        Box(Modifier.background(headerGradient)) {
         Row(
             Modifier
                 .statusBarsPadding()
@@ -104,6 +113,7 @@ fun AppTopBar(
                 Icon(Icons.Filled.Language, contentDescription = "اختيار اللهجة والصوت", tint = Color.White)
             }
             SettingsGear(caregiverMode, onToggleCaregiver)
+        }
         }
     }
 }
