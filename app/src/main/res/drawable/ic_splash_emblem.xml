@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sharp emblem-only splash artwork: reuses the exact scalable launcher symbol. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="116dp" android:height="116dp"
+    android:viewportWidth="80" android:viewportHeight="64">
+    <group android:translateX="-15" android:translateY="-22">
+    <!-- The waveform at the left of ص -->
+    <path android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/sawti_logo_accent" android:strokeWidth="2.0"
+        android:strokeLineCap="round"
+        android:pathData="M17,55 L20,55 M21.5,51 L21.5,59"/>
+    <path android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/sawti_logo_primary" android:strokeWidth="3.1"
+        android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M25,55 L27,55 L29,40 L32,69 L35,46 L38,57 L40,49 L43,55"/>
+    <!-- Letter sad: loop, bowl and sweeping finish -->
+    <path android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/sawti_logo_primary" android:strokeWidth="7.2"
+        android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M43,65 C49,59 51,52 60,50 C68,47 76,51 77,58 C79,65 73,69 65,69 L49,69 C45,69 44,73 41,78 C38,82 34,81 32,78"/>
+    <path android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/sawti_logo_accent" android:strokeWidth="2.4"
+        android:strokeLineCap="round"
+        android:pathData="M52,71 C60,75 71,74 78,67"/>
+    <!-- Small sound pulses above the mark -->
+    <path android:fillColor="@android:color/transparent" android:strokeColor="@color/sawti_logo_accent" android:strokeWidth="2.9"
+        android:strokeLineCap="round" android:pathData="M59,30 L59,35 M66,25 L66,36 M73,30 L73,35"/>
+    <path android:fillColor="@android:color/transparent" android:strokeColor="@color/sawti_logo_primary" android:strokeWidth="2.7"
+        android:strokeLineCap="round" android:pathData="M82,53 L82,59 M86,50 L86,62"/>
+    <path android:fillColor="@android:color/transparent" android:strokeColor="@color/sawti_logo_accent" android:strokeWidth="1.8"
+        android:strokeLineCap="round" android:pathData="M90,56 L93,56"/>
+    </group>
+</vector>

@@ -21,7 +21,7 @@ import com.sawti.presentation.practice.PracticeViewModel
 import com.sawti.presentation.progress.ProgressViewModel
 import com.sawti.presentation.settings.SettingsViewModel
 import com.sawti.presentation.theme.SawtiTheme
-import com.sawti.presentation.splash.SawtiWelcomeScreen
+import com.sawti.presentation.splash.SawtiSplashScreen
 import com.sawti.presentation.splash.SAWTI_SPLASH_DURATION_MS
 
 class MainActivity : ComponentActivity() {
@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
                 performanceMode = settings.performanceMode,
                 hapticsEnabled = settings.hapticsEnabled,
             ) {
-                if (showBrandWelcome) SawtiWelcomeScreen()
+                if (showBrandWelcome) SawtiSplashScreen()
                 else AppRoot(libraryVm, practiceVm, progressVm, settingsVm)
             }
         }
