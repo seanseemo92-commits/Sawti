@@ -28,4 +28,6 @@ jobs:
           git add app/src/main/res/mipmap-night-*/ic_launcher*.png
           git diff --cached --quiet && { echo "::error::Expected generated assets"; exit 1; }
           git commit -m "fix(branding): add refined source-faithful logos and full-bleed dark icon"
+          git fetch origin feat/adaptive-branding-feedback-release-20261028
+          git rebase FETCH_HEAD
           git push origin HEAD:feat/adaptive-branding-feedback-release-20261028
