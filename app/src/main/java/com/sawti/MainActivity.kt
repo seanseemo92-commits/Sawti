@@ -10,6 +10,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,6 +23,7 @@ import com.sawti.presentation.practice.PracticeViewModel
 import com.sawti.presentation.progress.ProgressViewModel
 import com.sawti.presentation.settings.SettingsViewModel
 import com.sawti.presentation.theme.SawtiTheme
+import com.sawti.presentation.theme.LocalIsDark
 import com.sawti.presentation.splash.SawtiSplashScreen
 
 class MainActivity : ComponentActivity() {
@@ -62,6 +65,14 @@ class MainActivity : ComponentActivity() {
                 performanceMode = settings.performanceMode,
                 hapticsEnabled = settings.hapticsEnabled,
             ) {
+                // Contrast follows Sawti's chosen theme, not just the phone system theme.
+                // The light splash has a bright cyan top; app toolbar uses a dark
+                // branded gradient with white system-bar icons.
+                val dark = LocalIsDark.current
+                SideEffect {
+                    WindowInsetsControllerCompat(window, window.decorView)
+                        .isAppearanceLightStatusBars = showBrandWelcome && !dark
+                }
                 if (showBrandWelcome) SawtiSplashScreen(onNavigateToMain = { showBrandWelcome = false })
                 else AppRoot(libraryVm, practiceVm, progressVm, settingsVm)
             }
