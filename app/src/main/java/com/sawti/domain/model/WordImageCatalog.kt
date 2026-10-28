@@ -298,7 +298,7 @@ object WordImageCatalog {
         "مشة" to "word_cat",
         "قط" to "word_cat",
         "قطوس" to "word_cat",
-    )
+    ).mapKeys { (label, _) -> label.replace(Regex("[\\u064B-\\u065F\\u0670]"), "") }
 
     /** Custom and family words never acquire an unrelated built-in image by label. */
     fun keyForSeed(categoryId: String, originalText: String, subgroup: String = ""): String? {

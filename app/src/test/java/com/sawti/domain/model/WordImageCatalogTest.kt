@@ -12,6 +12,13 @@ class WordImageCatalogTest {
         semanticKey = WordImageCatalog.keyForSeed(category, label),
     )
 
+    @Test fun originallyVocalizedLabelsKeepTheirSemanticImageKeys() {
+        // "عدّل" has a shadda in the seed, while the lookup strips harakat.
+        // Normalize BOTH the alias map keys and the incoming label before lookup.
+        assertEquals("word_adjust_pillow", WordImageCatalog.keyForSeed("daily", "عدّل لي المخدة"))
+        assertEquals("word_adjust_pillow", WordImageCatalog.keyForSeed("daily", "عدل لي المخدة"))
+    }
+
     @Test fun localizedCatsAlwaysKeepTheirImageKey() {
         val original = card("animals", "قطوسة")
         assertEquals("word_cat", original.semanticKey)
