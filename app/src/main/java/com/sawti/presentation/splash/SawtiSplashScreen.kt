@@ -4,6 +4,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
@@ -13,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -20,64 +22,82 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sawti.R
 import kotlinx.coroutines.delay
 
+/**
+ * Original supplied Sawti artwork, shown as a bounded, un-cropped logo.
+ * No Canvas, manually drawn waves, zooming, scrim or dark overlay.
+ * Background responds to Android light/dark appearance.
+ */
 @Composable
 fun SawtiSplashScreen(
     onNavigateToMain: () -> Unit
 ) {
     val isDark = isSystemInDarkTheme()
-    val footerAlpha = remember { Animatable(0f) }
+    val contentAlpha = remember { Animatable(0f) }
 
     LaunchedEffect(key1 = true) {
-        footerAlpha.animateTo(1f, animationSpec = tween(600, easing = FastOutSlowInEasing))
+        contentAlpha.animateTo(1f, animationSpec = tween(700, easing = FastOutSlowInEasing))
         delay(1900)
         onNavigateToMain()
     }
 
-    // نصوص كحلية ناعمة في الوضع الفاتح لتقرأ بوضوح تام فوق التموجات الفاتحة، وفاتحة في الوضع الداكن
-    val primaryTextColor = if (isDark) Color(0xFFF8FAFC) else Color(0xFF1E293B)
-    val secondaryTextColor = if (isDark) Color(0xFF94A3B8) else Color(0xFF475569)
+    val bgGradient = if (isDark) {
+        Brush.verticalGradient(
+            colors = listOf(Color(0xFF070D18), Color(0xFF0F172A), Color(0xFF1E293B))
+        )
+    } else {
+        Brush.verticalGradient(
+            colors = listOf(Color(0xFF38BDF8), Color(0xFF6366F1), Color(0xFF8B5CF6))
+        )
+    }
+
+    val footerPrimaryColor = if (isDark) Color(0xFFF8FAFC) else Color.White
+    val footerSecondaryColor = if (isDark) Color(0xFF94A3B8) else Color(0xFFE2E8F0)
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .background(bgGradient)
     ) {
-        // صورة الشاشة الأصلية بالكامل تمتد من الحافة إلى الحافة
         Image(
             painter = painterResource(
                 id = if (isDark) {
-                    com.sawti.R.drawable.ic_splash_logo_dark
+                    R.drawable.ic_splash_logo_dark
                 } else {
-                    com.sawti.R.drawable.ic_splash_logo_light
+                    R.drawable.ic_splash_logo_light
                 }
             ),
-            contentDescription = "Sawti Splash",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
+            contentDescription = "Sawti Logo",
+            modifier = Modifier
+                .align(Alignment.Center)
+                .fillMaxWidth(0.62f)
+                .alpha(contentAlpha.value),
+            contentScale = ContentScale.Fit
         )
 
-        // الفوتر بنصوص برمجية نظيفة بالإنجليزية، بدون أي طبقة سوداء أو تدرج لوني خلفه
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .navigationBarsPadding()
-                .padding(bottom = 24.dp)
-                .alpha(footerAlpha.value),
+                .padding(bottom = 28.dp)
+                .alpha(contentAlpha.value),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = "Developed by Ismail Bin Salem",
                 fontSize = 13.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = primaryTextColor,
+                color = footerPrimaryColor,
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(3.dp))
             Text(
                 text = "Ismail92sa@gmail.com",
                 fontSize = 12.sp,
-                fontWeight = FontWeight.Medium,
-                color = secondaryTextColor,
+                fontWeight = FontWeight.Normal,
+                color = footerSecondaryColor,
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(3.dp))
@@ -85,7 +105,7 @@ fun SawtiSplashScreen(
                 text = "v1.0.0 • © 2026 All Rights Reserved",
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Normal,
-                color = secondaryTextColor.copy(alpha = 0.85f),
+                color = footerSecondaryColor.copy(alpha = 0.85f),
                 textAlign = TextAlign.Center
             )
         }
