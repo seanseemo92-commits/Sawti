@@ -1,0 +1,31 @@
+name: Regenerate Sawti high-density brand assets once
+on:
+  push:
+    branches: [feat/adaptive-branding-feedback-release-20261028]
+permissions:
+  contents: write
+jobs:
+  assets:
+    if: "github.event.head_commit.message == 'chore(branding): regenerate high-density and night icons'"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install image processing dependencies
+        run: python -m pip install --disable-pip-version-check pillow numpy
+      - name: Generate requested assets from original art
+        run: python tools/generate_brand_assets.py
+      - name: Commit generated assets
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/src/main/res/drawable-nodpi/sawti_wordmark_hd_light.png
+          git add app/src/main/res/drawable-nodpi/sawti_wordmark_hd_dark.png
+          git add app/src/main/res/drawable-night-nodpi/sawti_adaptive_brand.png
+          git add app/src/main/res/mipmap-night-*/ic_launcher*.png
+          git diff --cached --quiet && { echo "::error::Expected generated assets"; exit 1; }
+          git commit -m "fix(branding): add refined source-faithful logos and full-bleed dark icon"
+          git push origin HEAD:feat/adaptive-branding-feedback-release-20261028
