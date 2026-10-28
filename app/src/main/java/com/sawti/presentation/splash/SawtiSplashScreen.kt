@@ -3,16 +3,11 @@ package com.sawti.presentation.splash
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,97 +17,169 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sawti.R
-import com.sawti.presentation.theme.LocalIsDark
 import kotlinx.coroutines.delay
 
-/**
- * One continuous adaptive background plus the ORIGINAL bitmap containing both the
- * emblem and its "صوتي SAWTI" wordmark. No hand-drawn Canvas, paths or duplicate text.
- * The bitmap is always measured to fit INSIDE the screen without cropping or stretching.
- */
 @Composable
-fun SawtiSplashScreen(onNavigateToMain: () -> Unit) {
-    val dark = LocalIsDark.current
-    val alpha = remember { Animatable(0f) }
-    LaunchedEffect(Unit) {
-        alpha.animateTo(1f, tween(650, easing = FastOutSlowInEasing))
-        delay(1350)
+fun SawtiSplashScreen(
+    onNavigateToMain: () -> Unit
+) {
+    val isDark = isSystemInDarkTheme()
+    val contentAlpha = remember { Animatable(0f) }
+
+    LaunchedEffect(key1 = true) {
+        contentAlpha.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing)
+        )
+        delay(1900)
         onNavigateToMain()
     }
 
-    val background = if (dark) {
-        Brush.verticalGradient(
-            0f to Color(0xFF071A30),
-            0.50f to Color(0xFF0A203B),
-            1f to Color(0xFF0F172A),
-        )
-    } else {
-        Brush.verticalGradient(
-            0f to Color(0xFF4BAEEB),
-            0.34f to Color(0xFF7F7CEB),
-            0.64f to Color(0xFFD8E1FA),
-            1f to Color(0xFFF1EAFB),
-        )
-    }
+    val brandTitleColor = if (isDark) Color(0xFFF8FAFC) else Color(0xFF162044)
+    val brandSubtitleColor = if (isDark) Color(0xFFD4AF6A) else Color(0xFF162044)
+    val footerPrimaryColor = if (isDark) Color(0xFFF8FAFC) else Color(0xFF1E293B)
+    val footerSecondaryColor = if (isDark) Color(0xFF94A3B8) else Color(0xFF475569)
 
-    BoxWithConstraints(Modifier.fillMaxSize().background(background)) {
-        // Source logo bitmap: 410 x 430. Never use Crop or FillBounds, which made
-        // the Arabic wordmark disappear offscreen on narrower phones.
-        // Leave at least 170dp for the footer / navigation bars on short devices.
-        val widthLimit = maxWidth * 0.84f
-        val heightLimit = ((maxHeight - 175.dp).coerceAtLeast(100.dp)) * (410f / 430f)
-        val imageWidth = minOf(widthLimit, heightLimit)
-        Image(
-            painter = painterResource(
-                if (dark) R.drawable.ic_splash_logo_dark else R.drawable.ic_splash_logo_light
-            ),
-            contentDescription = "صوتي SAWTI",
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(if (isDark) Color(0xFF070D18) else Color(0xFF38BDF8))
+    ) {
+        // 1. رسم تموجات الخلفية الانسيابية برمجياً كطبقة كاملة ممتدة
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val w = size.width
+            val h = size.height
+
+            if (!isDark) {
+                // موجة التداخل البنفسجية الوسطى
+                val wavePath1 = Path().apply {
+                    moveTo(0f, h * 0.22f)
+                    cubicTo(w * 0.35f, h * 0.14f, w * 0.65f, h * 0.42f, w, h * 0.32f)
+                    lineTo(w, h)
+                    lineTo(0f, h)
+                    close()
+                }
+                drawPath(
+                    path = wavePath1,
+                    brush = Brush.verticalGradient(
+                        colors = listOf(Color(0xFF6366F1), Color(0xFF8B5CF6))
+                    )
+                )
+
+                // موجة القاعدة السفلية الفاتحة والناعمة
+                val wavePath2 = Path().apply {
+                    moveTo(0f, h * 0.58f)
+                    cubicTo(w * 0.30f, h * 0.48f, w * 0.70f, h * 0.68f, w, h * 0.56f)
+                    lineTo(w, h)
+                    lineTo(0f, h)
+                    close()
+                }
+                drawPath(
+                    path = wavePath2,
+                    brush = Brush.verticalGradient(
+                        colors = listOf(Color(0xFFE0E7FF), Color(0xFFF5F3FF), Color(0xFFFFFFFF))
+                    )
+                )
+            } else {
+                // تموجات هادئة وعميقة للوضع الداكن
+                val darkWave = Path().apply {
+                    moveTo(0f, h * 0.28f)
+                    cubicTo(w * 0.35f, h * 0.18f, w * 0.65f, h * 0.46f, w, h * 0.36f)
+                    lineTo(w, h)
+                    lineTo(0f, h)
+                    close()
+                }
+                drawPath(
+                    path = darkWave,
+                    brush = Brush.verticalGradient(
+                        colors = listOf(Color(0xFF0F172A), Color(0xFF1E293B))
+                    )
+                )
+            }
+        }
+
+        // 2. المحتوى المركزي: الرمز المقصوص المفرغ واسم التطبيق برمجياً بدقة عالية
+        Column(
             modifier = Modifier
                 .align(Alignment.Center)
-                .width(imageWidth)
-                .aspectRatio(410f / 430f)
-                .alpha(alpha.value),
-            contentScale = ContentScale.Fit,
-        )
+                .alpha(contentAlpha.value),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(
+                    id = if (isDark) {
+                        com.sawti.R.drawable.ic_splash_logo_dark
+                    } else {
+                        com.sawti.R.drawable.ic_splash_logo_light
+                    }
+                ),
+                contentDescription = "Sawti Emblem",
+                modifier = Modifier
+                    .width(175.dp)
+                    .wrapContentHeight(),
+                contentScale = ContentScale.Fit
+            )
 
-        // Only this footer is programmatic. It never overlaps the centered logo.
+            Spacer(modifier = Modifier.height(14.dp))
+
+            Text(
+                text = "صوتي",
+                fontSize = 42.sp,
+                fontWeight = FontWeight.Bold,
+                color = brandTitleColor,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(2.dp))
+
+            Text(
+                text = "SAWTI",
+                fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 5.sp,
+                color = brandSubtitleColor,
+                textAlign = TextAlign.Center
+            )
+        }
+
+        // 3. الفوتر بالإنجليزية في الأسفل
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .navigationBarsPadding()
-                .padding(start = 16.dp, end = 16.dp, bottom = 24.dp)
-                .alpha(alpha.value),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+                .padding(bottom = 26.dp)
+                .alpha(contentAlpha.value),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = "Developed by Ismail Bin Salem",
                 fontSize = 13.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = if (dark) Color.White else Color(0xFF162044),
-                textAlign = TextAlign.Center,
-                maxLines = 1,
+                color = footerPrimaryColor,
+                textAlign = TextAlign.Center
             )
+            Spacer(modifier = Modifier.height(3.dp))
             Text(
-                text = "Ismail92sa@gmail.com",
+                text = "ismail92sa@gmail.com",
                 fontSize = 12.sp,
-                color = if (dark) Color(0xFFD5DFEB) else Color(0xFF475569),
-                textAlign = TextAlign.Center,
-                maxLines = 1,
+                fontWeight = FontWeight.Medium,
+                color = footerSecondaryColor,
+                textAlign = TextAlign.Center
             )
+            Spacer(modifier = Modifier.height(3.dp))
             Text(
                 text = "v1.0.0 • © 2026 All Rights Reserved",
                 fontSize = 11.sp,
-                color = if (dark) Color(0xFF94A3B8) else Color(0xFF64748B),
-                textAlign = TextAlign.Center,
-                maxLines = 1,
+                fontWeight = FontWeight.Normal,
+                color = footerSecondaryColor.copy(alpha = 0.85f),
+                textAlign = TextAlign.Center
             )
         }
     }
