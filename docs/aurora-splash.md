@@ -1,50 +1,34 @@
-# Sawti Aurora — new launch experience
+# Sawti — approved conversation welcome
 
-The previous welcome screens and their dedicated transparent PNGs, traced wordmarks,
-bitmap wave backgrounds, and image-generation scripts were removed. The new
-splash is implemented solely in
-`app/src/main/java/com/sawti/presentation/splash/SawtiAuroraSplash.kt`.
+The user-approved welcome screen replaces the timed Aurora intro.
 
-## Design
+- Exact composition: older man at left, bearded adult man center, hijab-wearing
+  woman at right, with speech-wave conversation artwork derived from the
+  approved image. The people are decorative only; they never collect user data.
+- The title, subtitle, Continue CTA and developer footer are **native Compose
+  elements**, not bitmap text. This keeps Arabic glyphs sharp and interaction
+  accessible.
+- Blue → purple top and animated Bezier ribbons echo the app's adaptive app bar.
+- Light/dark adapt the lower surface and footer while the upper visual identity
+  remains dark blue.
+- Opening is staged: background 1100ms; people 1050ms (170ms stagger);
+  typography 700ms (420ms stagger); CTA 600ms (780ms stagger).
+- Continuous slow drift stops in Performance Mode; the intro becomes static
+  there. No online services or video decoders are required.
+- **There is no automatic navigation or countdown**. Continue triggers
+  `onFinished` once, even if pressed repeatedly.
+- Window insets and viewport constraints adapt to narrow phones, display
+  cutouts and tablets.
+- The scene asset is stored in `drawable-nodpi/sawti_welcome_people.webp`
+  so Android never density-upscales it at resource loading.
 
-- **Light:** bright pearl → pale sky → lavender, with soft procedural aurora
-  and two Bezier sound ribbons.
-- **Dark:** deep navy / violet with warm metallic gold accents.
-- The centerpiece is the existing **native vector launcher symbol**, reused
-  directly from `ic_launcher_foreground.xml`. It cannot exhibit the alpha
-  pinholes or JPEG/PNG upscale artifacts of the previous wordmarks.
-- The title `صوتي` and English `SAWTI` render as actual Android text, not
-  baked-in low-resolution pixels. A concise subtitle and seven gently moving
-  equalizer bars complete the composition.
-- Intro fades and lifts over 720 ms; the splash hands control to the existing
-  `AppRoot` after approximately 2.3 s.
-- With the app's Performance Mode enabled, continuous effects are disabled.
-- Sizes scale to the safe usable viewport for both small phones and tablets.
-- `sawti_aurora_window.xml` provides a matching window background during
-  the Android cold-start interval before Jetpack Compose renders.
+## Real-device QA
 
-## Scope and safeguards
-
-This redesign does not touch Room migrations, user-supplied family photos,
-recordings, TTS, backup/restore, existing launcher icons or home/category screens.
-
-Retained shared assets:
-`ic_launcher_foreground.xml`, launcher-adaptive foregrounds/backgrounds,
-night launcher mipmaps, and color values `sawti_logo_primary/accent`.
-These are needed by the app icon and the new splash; they are **not** legacy
-splash files.
-
-## Verification
-
-Run `gradle --no-daemon :app:assembleDebug :app:assembleRelease
-:app:testDebugUnitTest :app:lintRelease`.
-On real devices, verify:
-1. Light/dark/app-theme override on a small Android phone and a tablet.
-2. At increased text scale, title stays legible without clipping.
-3. Performance Mode disables looping animation and still navigates.
-4. Cold start avoids a flash of the old gradient; background theme matches.
-5. No blank launch, duplicate navigation or overlap with status/navigation bars.
-6. Launcher icon remains unchanged and backup data is preserved.
-
-A green CI build does **not** prove exact visual appearance on every device;
-final sign-off requires a screenshot from the target phone.
+- Test light and dark themes, landscape and smallest phones.
+- Ensure no clipped footer with large font scaling and display size.
+- Verify status bar icons are visible on the dark top gradient.
+- Verify the app remains on welcome for at least a minute with no auto advance.
+- Double-tap Continue and check navigation happens exactly once.
+- Test Performance Mode and TalkBack; no continuous animation in reduced mode.
+- Compare scene picture clarity on the target device before final visual signoff.
+- Never delete app data or change the existing backup/restore path.
