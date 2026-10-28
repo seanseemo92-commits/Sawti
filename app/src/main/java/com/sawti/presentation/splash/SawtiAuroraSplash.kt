@@ -53,6 +53,11 @@ import com.sawti.presentation.theme.LocalPerformanceMode
 import kotlin.math.sin
 import kotlinx.coroutines.delay
 
+/** Verified startup timings, shared with regression tests. */
+const val SAWTI_AURORA_ENTRANCE_MS = 720
+const val SAWTI_AURORA_HOLD_MS = 1600L
+const val SAWTI_AURORA_REDUCED_MOTION_MS = 1500L
+
 /**
  * New Sawti Aurora welcome screen.
  *
@@ -71,9 +76,9 @@ fun SawtiAuroraSplash(onFinished: () -> Unit) {
     LaunchedEffect(reducedMotion) {
         entrance.snapTo(if (reducedMotion) 1f else 0f)
         if (!reducedMotion) {
-            entrance.animateTo(1f, animationSpec = tween(720, easing = FastOutSlowInEasing))
+            entrance.animateTo(1f, animationSpec = tween(SAWTI_AURORA_ENTRANCE_MS, easing = FastOutSlowInEasing))
         }
-        delay(if (reducedMotion) 1500L else 1600L)
+        delay(if (reducedMotion) SAWTI_AURORA_REDUCED_MOTION_MS else SAWTI_AURORA_HOLD_MS)
         currentFinish()
     }
 
