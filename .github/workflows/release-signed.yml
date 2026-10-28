@@ -1,0 +1,76 @@
+name: Sawti signed release (manual)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  signed-release:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Recover private release key (required, never commit it)
+        env:
+          KEYSTORE_BASE64: ${{ secrets.SAWTI_RELEASE_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.SAWTI_RELEASE_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.SAWTI_RELEASE_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.SAWTI_RELEASE_KEY_PASSWORD }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "$KEYSTORE_BASE64" || -z "$STORE_PASSWORD" || -z "$KEY_ALIAS" || -z "$KEY_PASSWORD" ]]; then
+            echo "::error::Required Sawti signing secrets are missing; no unsigned production artifact will be published."
+            exit 1
+          fi
+          umask 077
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/sawti-release.jks"
+          test -s "$RUNNER_TEMP/sawti-release.jks"
+          {
+            echo "SAWTI_KEYSTORE_PATH=$RUNNER_TEMP/sawti-release.jks"
+            echo "SAWTI_KEYSTORE_PASSWORD=$STORE_PASSWORD"
+            echo "SAWTI_KEY_ALIAS=$KEY_ALIAS"
+            echo "SAWTI_KEY_PASSWORD=$KEY_PASSWORD"
+          } >> "$GITHUB_ENV"
+          echo "::add-mask::$STORE_PASSWORD"
+          echo "::add-mask::$KEY_PASSWORD"
+      - name: Build signed Release APK and AAB
+        run: gradle --no-daemon :app:assembleRelease :app:bundleRelease :app:testDebugUnitTest :app:lintRelease
+      - name: Verify the signed APK and Bundle are present
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK=app/build/outputs/apk/release/app-release.apk
+          AAB=app/build/outputs/bundle/release/app-release.aab
+          test -s "$APK"
+          test -s "$AAB"
+          APKSIGNER="$ANDROID_HOME/build-tools/35.0.0/apksigner"
+          if [[ ! -x "$APKSIGNER" ]]; then
+            APKSIGNER=$(find "$ANDROID_HOME/build-tools" -maxdepth 2 -name apksigner -type f | sort -V | tail -n 1)
+          fi
+          "$APKSIGNER" verify --verbose "$APK"
+          unzip -t "$AAB" > /dev/null
+      - name: Upload signed Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sawti-signed-release-apk
+          path: app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+          retention-days: 30
+      - name: Upload signed AAB for Google Play Internal Testing
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sawti-signed-play-aab
+          path: app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+          retention-days: 30
+      - name: Clean signing material
+        if: always()
+        run: rm -f "$RUNNER_TEMP/sawti-release.jks"
