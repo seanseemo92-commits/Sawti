@@ -3,132 +3,218 @@ package com.sawti.presentation.splash
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.sawti.R
+import com.sawti.presentation.theme.LocalIsDark
 import kotlinx.coroutines.delay
 
+/**
+ * Brand-identical splash: the original transparent logo already contains the complete
+ * Arabic "صوتي" lettering and SAWTI wordmark. Keeping that artwork together avoids
+ * the missing glyphs and font mismatch in earlier implementations.
+ *
+ * Curves are drawn relative to the real canvas size, not sampled from a phone-shaped
+ * bitmap: no stretch, cropping or hard horizontal bands on tablets/landscape screens.
+ */
 @Composable
-fun SawtiSplashScreen(
-    onNavigateToMain: () -> Unit
-) {
-    val isDark = isSystemInDarkTheme()
-    val contentAlpha = remember { Animatable(0f) }
-
-    LaunchedEffect(key1 = true) {
-        contentAlpha.animateTo(
-            targetValue = 1f,
-            animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing)
-        )
+fun SawtiSplashScreen(onNavigateToMain: () -> Unit) {
+    // Follow the app's explicit Light/Dark/System preference, not Android mode alone.
+    val isDark = LocalIsDark.current
+    val reveal = remember { Animatable(0f) }
+    LaunchedEffect(Unit) {
+        reveal.animateTo(1f, animationSpec = tween(800, easing = FastOutSlowInEasing))
         delay(1900)
         onNavigateToMain()
     }
 
-    val brandTitleColor = if (isDark) Color(0xFFF8FAFC) else Color(0xFF162044)
-    val brandSubtitleColor = if (isDark) Color(0xFFD4AF6A) else Color(0xFF162044)
-    val footerPrimaryColor = if (isDark) Color(0xFFF8FAFC) else Color(0xFF1E293B)
-    val footerSecondaryColor = if (isDark) Color(0xFF94A3B8) else Color(0xFF475569)
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        Canvas(Modifier.fillMaxSize()) {
+            val w = size.width
+            val h = size.height
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        // 1. الخلفية التكيفية: تتبدل تلقائياً عبر نظام الأندرويد وتتمدد للهاتف والتابلت
-        Image(
-            painter = painterResource(id = com.sawti.R.drawable.bg_splash_waves),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
+            if (isDark) {
+                // Midnight navy that matches the original dark app icon.
+                drawRect(
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            Color(0xFF071629),
+                            Color(0xFF0B2540),
+                            Color(0xFF081A31),
+                        ),
+                        start = Offset.Zero,
+                        end = Offset(w, h),
+                    ),
+                )
+                // Very soft light behind the golden emblem: no solid purple waves at night.
+                drawRect(
+                    brush = Brush.radialGradient(
+                        colors = listOf(
+                            Color(0xFF356080).copy(alpha = 0.25f),
+                            Color(0xFF173655).copy(alpha = 0.08f),
+                            Color.Transparent,
+                        ),
+                        center = Offset(w * 0.5f, h * 0.47f),
+                        radius = maxOf(w, h) * 0.53f,
+                    ),
+                )
+                drawRect(
+                    brush = Brush.radialGradient(
+                        colors = listOf(Color(0xFFD7A75D).copy(alpha = 0.075f), Color.Transparent),
+                        center = Offset(w * 0.5f, h * 0.47f),
+                        radius = w * 0.53f,
+                    ),
+                )
+            } else {
+                // Icon palette: airy cyan at top left, periwinkle at top right.
+                drawRect(
+                    brush = Brush.linearGradient(
+                        colorStops = arrayOf(
+                            0.00f to Color(0xFF4CCCF0),
+                            0.43f to Color(0xFF61A9F5),
+                            0.78f to Color(0xFF777EED),
+                            1.00f to Color(0xFF8666E5),
+                        ),
+                        start = Offset.Zero,
+                        end = Offset(w * 1.03f, h * 0.58f),
+                    ),
+                )
+
+                // Light translucent corner curves tie the screen to the app icon.
+                val leftGlow = Path().apply {
+                    moveTo(0f, 0f)
+                    lineTo(w * 0.58f, 0f)
+                    cubicTo(w * 0.41f, h * 0.14f, w * 0.22f, h * 0.18f, 0f, h * 0.16f)
+                    close()
+                }
+                drawPath(
+                    path = leftGlow,
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            Color(0xFF6CE1F5).copy(alpha = 0.47f),
+                            Color(0xFFB3E5FF).copy(alpha = 0.03f),
+                        ),
+                        start = Offset.Zero,
+                        end = Offset(w * 0.70f, h * 0.25f),
+                    ),
+                )
+                val rightGlow = Path().apply {
+                    moveTo(w * 0.51f, 0f)
+                    lineTo(w, 0f)
+                    lineTo(w, h * 0.22f)
+                    cubicTo(w * 0.76f, h * 0.21f, w * 0.66f, h * 0.15f, w * 0.51f, 0f)
+                    close()
+                }
+                drawPath(
+                    path = rightGlow,
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            Color(0xFFDADEFF).copy(alpha = 0.27f),
+                            Color(0xFFAFA7F8).copy(alpha = 0.18f),
+                        ),
+                        start = Offset(w * 0.55f, 0f),
+                        end = Offset(w, h * 0.24f),
+                    ),
+                )
+
+                // Wide sweeping lavender area, with the boundary behind the logo:
+                // the Arabic/English title stays entirely on a pale surface.
+                val lowerWave = Path().apply {
+                    moveTo(0f, h * 0.39f)
+                    cubicTo(
+                        w * 0.12f, h * 0.385f,
+                        w * 0.25f, h * 0.58f,
+                        w * 0.48f, h * 0.54f,
+                    )
+                    cubicTo(
+                        w * 0.69f, h * 0.50f,
+                        w * 0.73f, h * 0.48f,
+                        w, h * 0.51f,
+                    )
+                    lineTo(w, h)
+                    lineTo(0f, h)
+                    close()
+                }
+                drawPath(
+                    path = lowerWave,
+                    brush = Brush.verticalGradient(
+                        colorStops = arrayOf(
+                            0f to Color(0xFFDDE4FF),
+                            0.45f to Color(0xFFF3EDFF),
+                            1f to Color(0xFFEAF7FF),
+                        ),
+                        startY = h * 0.40f,
+                        endY = h,
+                    ),
+                )
+
+                // Gentle near-white lower corner, distinct from the central wave.
+                val bottomGlow = Path().apply {
+                    moveTo(0f, h * 0.79f)
+                    cubicTo(w * 0.23f, h * 0.69f, w * 0.47f, h * 0.84f, w, h * 0.80f)
+                    lineTo(w, h)
+                    lineTo(0f, h)
+                    close()
+                }
+                drawPath(
+                    path = bottomGlow,
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            Color(0xFFECDFFF).copy(alpha = 0.37f),
+                            Color(0xFFDDF5FF).copy(alpha = 0.38f),
+                        ),
+                        start = Offset(0f, h * 0.74f),
+                        end = Offset(w, h),
+                    ),
+                )
+            }
+        }
+
+        // The original 410x430 transparent wordmark includes the emblem, Arabic title
+        // and English title. Fit it as one unit; never crop or retype its typography.
+        val logoWidth = minOf(
+            maxWidth * 0.78f,
+            if (maxWidth >= 600.dp) 390.dp else 300.dp,
+            (maxHeight - 120.dp).coerceAtLeast(130.dp) * (410f / 430f),
         )
-
-        // 2. كتلة الشعار والاسم في المنتصف بتناسب مثالي
-        Column(
+        Box(
             modifier = Modifier
-                .align(Alignment.Center)
-                .alpha(contentAlpha.value),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxSize()
+                .windowInsetsPadding(WindowInsets.safeDrawing),
+            contentAlignment = Alignment.Center,
         ) {
             Image(
                 painter = painterResource(
-                    id = if (isDark) {
-                        com.sawti.R.drawable.ic_splash_logo_dark
-                    } else {
-                        com.sawti.R.drawable.ic_splash_logo_light
-                    }
+                    if (isDark) R.drawable.sawti_splash_mark_dark
+                    else R.drawable.sawti_splash_mark_light
                 ),
-                contentDescription = "Sawti Emblem",
+                contentDescription = "شعار صوتي — SAWTI",
                 modifier = Modifier
-                    .width(195.dp)
-                    .wrapContentHeight(),
-                contentScale = ContentScale.Fit
-            )
-
-            Spacer(modifier = Modifier.height(14.dp))
-
-            Text(
-                text = "صوتي",
-                fontSize = 44.sp,
-                fontWeight = FontWeight.Bold,
-                color = brandTitleColor,
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(2.dp))
-
-            Text(
-                text = "SAWTI",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-                letterSpacing = 5.sp,
-                color = brandSubtitleColor,
-                textAlign = TextAlign.Center
-            )
-        }
-
-        // 3. الفوتر باللغة الإنجليزية في الأسفل
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .navigationBarsPadding()
-                .padding(bottom = 26.dp)
-                .alpha(contentAlpha.value),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Developed by Ismail Bin Salem",
-                fontSize = 13.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = footerPrimaryColor,
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(3.dp))
-            Text(
-                text = "ismail92sa@gmail.com",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Medium,
-                color = footerSecondaryColor,
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(3.dp))
-            Text(
-                text = "v1.0.0 • © 2026 All Rights Reserved",
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Normal,
-                color = footerSecondaryColor.copy(alpha = 0.85f),
-                textAlign = TextAlign.Center
+                    .width(logoWidth)
+                    .aspectRatio(410f / 430f)
+                    .alpha(reveal.value),
+                contentScale = ContentScale.Fit,
             )
         }
     }
