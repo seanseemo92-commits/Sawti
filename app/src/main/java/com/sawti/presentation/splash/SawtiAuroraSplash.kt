@@ -155,10 +155,11 @@ fun SawtiAuroraSplash(onFinished: () -> Unit) {
                             scaleY = scaleX
                         }
                         .drawWithContent {
+                            val contentScope = this
                             clipRect(
                                 top = size.height * .29f,
                                 bottom = size.height * .755f
-                            ) { drawContent() }
+                            ) { contentScope.drawContent() }
                         }
                 )
 
@@ -175,7 +176,8 @@ fun SawtiAuroraSplash(onFinished: () -> Unit) {
                             translationY = (1f - credits.value) * 16.dp.toPx()
                         }
                         .drawWithContent {
-                            clipRect(top = size.height * .755f) { drawContent() }
+                            val contentScope = this
+                            clipRect(top = size.height * .755f) { contentScope.drawContent() }
                         }
                 )
 
