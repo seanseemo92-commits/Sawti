@@ -247,7 +247,11 @@ private fun SpeechIssueBanner(issue: SpeechIssue, onInstall: () -> Unit) {
         ) {
             Text(
                 stringResource(
-                    if (issue is SpeechIssue.MissingArabicVoice) R.string.voice_missing else R.string.tts_unavailable
+                    when (issue) {
+                        SpeechIssue.EngineUnavailable -> R.string.tts_unavailable
+                        SpeechIssue.MissingArabicVoice -> R.string.voice_missing
+                        SpeechIssue.PlaybackFailed -> R.string.tts_playback_failed
+                    }
                 ),
                 color = Color(0xFF5D3A00),
                 fontSize = 15.sp,

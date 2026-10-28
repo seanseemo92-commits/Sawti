@@ -40,6 +40,8 @@ class AudioDispatcher(
         }
         // The card becomes active immediately on a tap, not after a delayed engine callback.
         _playback.value = PlaybackVisual(activeWordId = item.id, isSpeaking = true)
+        // All dialects use the same engine language. Only speechText changes;
+        // SpeechManager owns the general-arabic language fallback policy.
         speech.speak(
             item.speechText,
             onDone = { if (current == generation) _playback.value = PlaybackVisual() },
