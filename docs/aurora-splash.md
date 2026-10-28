@@ -1,50 +1,35 @@
-# Sawti Aurora — new launch experience
+# Sawti welcome — approved visual reference
 
-The previous welcome screens and their dedicated transparent PNGs, traced wordmarks,
-bitmap wave backgrounds, and image-generation scripts were removed. The new
-splash is implemented solely in
-`app/src/main/java/com/sawti/presentation/splash/SawtiAuroraSplash.kt`.
+The welcome screen now uses the **exact user-approved composition** as a
+single reference artwork resource:
+`app/src/main/res/drawable-nodpi/sawti_approved_reference.webp`.
 
-## Design
+The image has only the top 57 screenshot pixels removed so Android can display
+its **real clock and status indicators**, avoiding duplicate or frozen system
+icons. The source artwork otherwise retains the precise positions and styling
+of the title, three conversation partners, speech bubbles, flowing ribbons,
+flat purple-blue button, developer credit, email, and copyright.
 
-- **Light:** bright pearl → pale sky → lavender, with soft procedural aurora
-  and two Bezier sound ribbons.
-- **Dark:** deep navy / violet with warm metallic gold accents.
-- The centerpiece is the existing **native vector launcher symbol**, reused
-  directly from `ic_launcher_foreground.xml`. It cannot exhibit the alpha
-  pinholes or JPEG/PNG upscale artifacts of the previous wordmarks.
-- The title `صوتي` and English `SAWTI` render as actual Android text, not
-  baked-in low-resolution pixels. A concise subtitle and seven gently moving
-  equalizer bars complete the composition.
-- Intro fades and lifts over 720 ms; the splash hands control to the existing
-  `AppRoot` after approximately 2.3 s.
-- With the app's Performance Mode enabled, continuous effects are disabled.
-- Sizes scale to the safe usable viewport for both small phones and tablets.
-- `sawti_aurora_window.xml` provides a matching window background during
-  the Android cold-start interval before Jetpack Compose renders.
+`SawtiAuroraSplash.kt` fits the artwork without cropping and stages a light
+cinematic fade/zoom, separate conversation-scene reveal and footer reveal.
+**No timer starts navigation**. A real accessible Compose clickable surface
+with label `متابعة` is positioned on top of the painted button; this
+prevents double navigation and supports actual touch and accessibility input.
+The idle screen is identical to the approved artwork.
 
-## Scope and safeguards
+This is an intentionally image-led design because **strict screenshot fidelity**
+was explicitly requested. Responsive image fitting avoids portrait cropping on
+smaller devices, though wider tablets may have side gutters. Text in the artwork
+is raster, so future copy changes need the layered source design rather than
+editing Kotlin strings. The app's main screen, local Room data, recording and
+backup code were not changed.
 
-This redesign does not touch Room migrations, user-supplied family photos,
-recordings, TTS, backup/restore, existing launcher icons or home/category screens.
+## QA
 
-Retained shared assets:
-`ic_launcher_foreground.xml`, launcher-adaptive foregrounds/backgrounds,
-night launcher mipmaps, and color values `sawti_logo_primary/accent`.
-These are needed by the app icon and the new splash; they are **not** legacy
-splash files.
-
-## Verification
-
-Run `gradle --no-daemon :app:assembleDebug :app:assembleRelease
-:app:testDebugUnitTest :app:lintRelease`.
-On real devices, verify:
-1. Light/dark/app-theme override on a small Android phone and a tablet.
-2. At increased text scale, title stays legible without clipping.
-3. Performance Mode disables looping animation and still navigates.
-4. Cold start avoids a flash of the old gradient; background theme matches.
-5. No blank launch, duplicate navigation or overlap with status/navigation bars.
-6. Launcher icon remains unchanged and backup data is preserved.
-
-A green CI build does **not** prove exact visual appearance on every device;
-final sign-off requires a screenshot from the target phone.
+- On the user's portrait phone, verify that the approved image fills the safe
+  area, with the real status clock on top and no duplicate screenshot icons.
+- Verify the Continue tap and TalkBack activation, including during animation.
+- Keep the welcome visible indefinitely until the user explicitly continues.
+- Check both performance modes and device theme modes.
+- Confirm short-screen portrait and tablet fit without cropping any credits.
+- Verify no old low-resolution people cut-out resource remains.

@@ -66,12 +66,12 @@ class MainActivity : ComponentActivity() {
                 hapticsEnabled = settings.hapticsEnabled,
             ) {
                 // Contrast follows Sawti's chosen theme, not just the phone system theme.
-                // The Aurora light background needs dark status icons; other screens
-                // keep light icons above their dark adaptive toolbar.
+                // The new welcome is dark across its top edge in both themes; use light
+                // status icons over it and the dark app bar to retain contrast.
                 val dark = LocalIsDark.current
                 SideEffect {
                     WindowInsetsControllerCompat(window, window.decorView)
-                        .isAppearanceLightStatusBars = showBrandWelcome && !dark
+                        .isAppearanceLightStatusBars = false
                 }
                 if (showBrandWelcome) SawtiAuroraSplash(onFinished = { showBrandWelcome = false })
                 else AppRoot(libraryVm, practiceVm, progressVm, settingsVm)
