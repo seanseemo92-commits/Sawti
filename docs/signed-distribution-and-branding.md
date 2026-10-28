@@ -46,11 +46,11 @@ first, and only reinstall when the restore/restart workflow has been tested.
 
 The daytime launcher resources remain unchanged. The dark launcher uses a
 foreground **without a second internal rounded card**, allowing Android's
-adaptive mask to own the crop. Light/dark splash artwork is generated from
-the original complete user-supplied wordmark, without replacing the Arabic
-letterforms. The enhanced 4× PNG is high-density raster artwork, **not** an
-original vector; a genuine designer-supplied SVG is still best for pixel-
-independent rendering.
+adaptive mask to own the crop. The previous raster welcome artwork was retired in favor of the new
+**Sawti Aurora** native Compose screen. Its emblem uses the same scalable
+`ic_launcher_foreground.xml` as the app icon; the new Arabic/English title
+is real Android text instead of an upscaled PNG. See
+`docs/aurora-splash.md` for startup/animation and visual QA.
 
 Test on real devices: Android 7/8/13+, light and dark phone themes, app theme
 overrides, circular launchers, home and word cards from each category, long
