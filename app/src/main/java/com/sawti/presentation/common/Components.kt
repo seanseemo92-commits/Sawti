@@ -46,6 +46,7 @@ import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.Lightbulb
 import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ripple
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -138,7 +139,7 @@ fun AdultAccentBar(color: Color) {
 // Touch handling: spring compression + haptics + Touch-Dwell anti-tremor filter
 // ---------------------------------------------------------------------------
 
-fun Modifier.bounceClick(onLongClick: (() -> Unit)? = null, onClick: () -> Unit): Modifier = composed {
+fun Modifier.bounceClick(onLongClick: (() -> Unit)? = null, onClick: () -> Unit, accent: Color? = null): Modifier = composed {
     val haptic = LocalHapticFeedback.current
     val dwell = LocalTouchDwell.current
     val currentClick by rememberUpdatedState(onClick)
@@ -159,7 +160,7 @@ fun Modifier.bounceClick(onLongClick: (() -> Unit)? = null, onClick: () -> Unit)
     if (dwell == TouchDwell.OFF) {
         base.combinedClickable(
             interactionSource = source,
-            indication = null,
+            indication = accent?.let { ripple(color = it) },
             onLongClick = onLongClick?.let { long ->
                 {
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -286,16 +287,16 @@ fun ItemImage(
 // ---------------------------------------------------------------------------
 
 /**
- * Soft azure radial wash that breathes while a word/phrase is being spoken.
+ * Category-colored radial wash that breathes while a word/phrase is being spoken.
  * In performance mode it renders as a static wash (no infinite animation).
  */
 @Composable
-fun VoiceAuraHalo(modifier: Modifier = Modifier) {
+fun VoiceAuraHalo(accent: Color, modifier: Modifier = Modifier) {
     val performance = LocalPerformanceMode.current
     val brush = Brush.radialGradient(
         colors = listOf(
-            VoiceAura.copy(alpha = 0.42f),
-            VoiceAura.copy(alpha = 0.16f),
+            accent.copy(alpha = 0.32f),
+            accent.copy(alpha = 0.13f),
             Color.Transparent,
         ),
     )
@@ -352,7 +353,7 @@ fun CardImageContent(
         if (item.photoPath != null || resId != null) {
             val photoShape = if (fullBleed) RectangleShape else RoundedCornerShape(16.dp)
             if (isCurrentlyPlaying) {
-                VoiceAuraHalo(Modifier.matchParentSize())
+                VoiceAuraHalo(accent, Modifier.matchParentSize())
             }
             ItemImage(
                 item = item,
@@ -380,7 +381,7 @@ fun CardImageContent(
             val surface = if (dark) CardSurfaceDark else CardSurfaceLight
             val disc = accent.copy(alpha = if (dark) 0.16f else 0.08f).compositeOver(surface)
             if (isCurrentlyPlaying) {
-                VoiceAuraHalo(Modifier.requiredSize(circle * 1.5f))
+                VoiceAuraHalo(accent, Modifier.requiredSize(circle * 1.5f))
             }
             Box(
                 modifier = Modifier
@@ -427,7 +428,7 @@ fun CeramicCard(
     val dark = LocalIsDark.current
     val resting = cardBorder()
     val border = when {
-        isSpeaking -> BorderStroke(2.dp, VoiceAura.copy(alpha = 0.85f))
+        isSpeaking -> BorderStroke(2.dp, accent.copy(alpha = 0.86f))
         isActive -> BorderStroke(2.dp, accent.copy(alpha = if (dark) 0.75f else 0.60f))
         else -> resting
     }
@@ -445,7 +446,7 @@ fun CeramicCard(
                 Box(
                     Modifier
                         .matchParentSize()
-                        .background(VoiceAura.copy(alpha = if (dark) 0.10f else 0.07f)),
+                        .background(accent.copy(alpha = if (dark) 0.12f else 0.08f)),
                 )
             }
             content()

@@ -9,7 +9,9 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ripple
 import androidx.compose.foundation.background
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
@@ -48,6 +50,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -129,6 +132,9 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
         } catch (_: ActivityNotFoundException) { /* no dialer on this device */ }
     }
 
+    CompositionLocalProvider(
+        LocalIndication provides ripple(color = categoryBannerColor(category.id, palette.banner))
+    ) {
     Column(Modifier.fillMaxSize()) {
         // Always show the relationship vocabulary first; person groups exist even when empty.
         if (!searching && subgroups.isNotEmpty()) {
@@ -199,6 +205,7 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
                 Text(stringResource(R.string.family_add), fontSize = 18.sp)
             }
         }
+    }
     }
 
     if (isCustom && state.caregiverMode && addingCustomWord) {
@@ -398,7 +405,8 @@ internal fun WordCard(
         modifier = Modifier.fillMaxWidth()
             .then(if (extendedLabel) Modifier.heightIn(min = (360f * fontScale).dp)
                   else Modifier.aspectRatio(0.85f))
-            .bounceClick(onLongClick = onLongClick, onClick = onClick),
+            .clip(RoundedCornerShape(20.dp))
+            .bounceClick(onLongClick = onLongClick, onClick = onClick, accent = bannerColor),
     ) {
         // The photo fills the card; the compact caption overlays its bottom,
         // leaving substantially more visible image area than a weighted 30% panel.
@@ -546,6 +554,7 @@ private fun FlashcardPage(
                     .bounceClick(
                         onLongClick = { actions.onItemLongPressed(item) },
                         onClick = { actions.onItemTapped(item, flashcard = true) },
+                        accent = categoryBannerColor(category.id, palette.banner),
                     ),
                 contentAlignment = Alignment.Center,
             ) {
