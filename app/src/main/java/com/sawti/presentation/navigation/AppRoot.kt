@@ -214,7 +214,7 @@ fun AppRoot(
             onDismiss = { manageCategories = false },
         )
     }
-    state.errorMessage?.let { error ->
+    if (!backupLocked) state.errorMessage?.let { error ->
         androidx.compose.material3.AlertDialog(
             onDismissRequest = library::clearError,
             title = { Text("تعذّر إكمال العملية") },
