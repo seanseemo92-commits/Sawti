@@ -11,6 +11,6 @@ class StartupBrandingDefaultsTest {
         assertTrue(AppSettings().isOnboardingCompleted)
     }
     @Test fun splashIncludesFooterFadeAndHold() {
-        assertEquals(600L + 1_900L, SAWTI_SPLASH_DURATION_MS)
+        assertEquals(700L + 1_900L, SAWTI_SPLASH_DURATION_MS)
     }
 }
