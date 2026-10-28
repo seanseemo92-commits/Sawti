@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Day-mode counterpart for the supplied drawable-night/ic_splash_logo.png.
-     The active Compose splash uses dedicated light/dark transparent artwork. -->
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/ic_splash_logo_light" />
-</layer-list>
