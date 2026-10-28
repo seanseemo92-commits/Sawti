@@ -9,7 +9,9 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ripple
 import androidx.compose.foundation.background
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
@@ -48,6 +50,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -129,6 +132,9 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
         } catch (_: ActivityNotFoundException) { /* no dialer on this device */ }
     }
 
+    CompositionLocalProvider(
+        LocalIndication provides ripple(color = categoryBannerColor(category.id, palette.banner))
+    ) {
     Column(Modifier.fillMaxSize()) {
         // Always show the relationship vocabulary first; person groups exist even when empty.
         if (!searching && subgroups.isNotEmpty()) {
@@ -199,6 +205,7 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
                 Text(stringResource(R.string.family_add), fontSize = 18.sp)
             }
         }
+    }
     }
 
     if (isCustom && state.caregiverMode && addingCustomWord) {
