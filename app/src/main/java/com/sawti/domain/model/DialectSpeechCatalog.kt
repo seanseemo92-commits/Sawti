@@ -212,6 +212,16 @@ object DialectSpeechCatalog {
     private val longVowels = setOf('ا','ى','آ')
     private fun isMark(c: Char) = c in 'ً'..'ٟ' || c == 'ٰ'
     private fun isLetter(c: Char) = c in 'ء'..'ي' || c in "چگڤپ"
+    // Arabic medial ي after kasra and و after damma carry the preceding long vowel.
+    // They do not accept an extra short vowel; compare شْخَاشِيرْ and حُوتْ.
+    private fun medialCarrier(units: List<Pair<Char, String>>, index: Int): Boolean {
+        if (index <= 0 || index >= units.lastIndex) return false
+        val (letter, marks) = units[index]
+        val before = units[index - 1].second
+        return marks.isEmpty() &&
+            ((letter == 'ي' && 'ِ' in before) || (letter == 'و' && 'ُ' in before))
+    }
+
 
     fun spoken(original: String, localized: String, originalPrompt: String, dialect: ArabicDialect): String {
         val source = curated[dialect]?.get(original)
@@ -235,8 +245,10 @@ object DialectSpeechCatalog {
             if (part.isBlank()) continue
             val units = clusters(part)
             if (units.isEmpty()) return false
-            if (units.any { (letter,marks) ->
-                    letter !in longVowels && marks.none { it in shortVowels || it == SUKUN }
+            if (units.withIndex().any { (i,unit) ->
+                    val (letter,marks) = unit
+                    letter !in longVowels && !medialCarrier(units, i) &&
+                        marks.none { it in shortVowels || it == SUKUN }
                 }) return false
             val ending = units.last()
             if (ending.first !in longVowels && SUKUN !in ending.second) return false
@@ -259,7 +271,8 @@ object DialectSpeechCatalog {
                     if (final && c !in longVowels) {
                         marks.removeAll { it in shortVowels || it == SUKUN }
                         marks += SUKUN
-                    } else if (c !in longVowels && marks.none { it in shortVowels || it == SUKUN }) {
+                    } else if (c !in longVowels && !medialCarrier(parts, index) &&
+                        marks.none { it in shortVowels || it == SUKUN }) {
                         marks += 'َ'
                     }
                     append(c)

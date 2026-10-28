@@ -48,7 +48,7 @@ class DialectSpeechCatalogTest {
         assertEquals("كَلْسِيطَهْ", speech("شخاشير", ArabicDialect.TUNISIAN))
         assertEquals("مَيَهْ", DialectSpeechCatalog.fullyMark("مية"))
         assertEquals("تْشَايْ", speech("شاهي", ArabicDialect.IRAQI))
-        assertEquals("نَبِّي إِمِّيَهْ", speech("نبي مية", ArabicDialect.LIBYAN))
+        assertEquals("نَبِّيْ إِمِّيَهْ", speech("نبي مية", ArabicDialect.LIBYAN))
     }
 
     @Test fun speechIsDifferentFromVisibleTextAndRetainsCustomMedia() {
