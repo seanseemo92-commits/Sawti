@@ -105,17 +105,17 @@ object DialectCatalog {
     fun hasVariant(original: String): Boolean = words.containsKey(original)
 
     fun localize(item: WordItem, dialect: ArabicDialect): WordItem {
-        // Do not translate a custom card, a family member or a regional dish.
-        // The Libyan projection must also run so "بيض" can display as "دحي".
         if (item.categoryId.startsWith("custom_") || item.categoryId == "family" ||
             item.categoryId == RegionalDishesCatalog.CATEGORY_ID) return item
-        val localized = words[item.displayText]?.get(dialect.ordinal) ?: return item
-        if (localized == item.displayText) return item
+        val visible = words[item.displayText]?.get(dialect.ordinal) ?: item.displayText
+        if (item.semanticKey == null && !words.containsKey(item.displayText)) return item
+        if (item.semanticKey == null && dialect == ArabicDialect.LIBYAN &&
+            visible == item.displayText) return item
+        val speech = DialectSpeechCatalog.spoken(item.displayText, visible, item.ttsPrompt, dialect)
         return item.copy(
-            displayText = localized,
-            ttsPrompt = localized,
-            phonemicCue = PhonemicCue.derive(localized),
-            // The Libyan carrier-phrase cue might no longer match the selected dialect.
+            displayText = visible,
+            ttsPrompt = speech,
+            phonemicCue = PhonemicCue.derive(speech),
             sentencePrompt = if (dialect == ArabicDialect.LIBYAN) item.sentencePrompt else null,
         )
     }

@@ -41,7 +41,7 @@ class AudioDispatcher(
         // The card becomes active immediately on a tap, not after a delayed engine callback.
         _playback.value = PlaybackVisual(activeWordId = item.id, isSpeaking = true)
         speech.speak(
-            item.ttsPrompt,
+            item.speechText,
             onDone = { if (current == generation) _playback.value = PlaybackVisual() },
         )
     }

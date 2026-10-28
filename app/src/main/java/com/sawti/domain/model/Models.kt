@@ -26,6 +26,9 @@ data class WordItem(
     val emoji: String,
     val semanticKey: String? = null,
 ) {
+    /** Speech-only channel backed by the existing Room ttsPrompt column. */
+    val speechText: String get() = ttsPrompt
+
     /** Supports a lightweight visual-only category preview item. */
     constructor(
         id: Long,
