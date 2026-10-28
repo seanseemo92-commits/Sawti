@@ -1,0 +1,16 @@
+package com.sawti.domain.model
+
+import com.sawti.presentation.splash.SAWTI_SPLASH_DURATION_MS
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Test
+
+class StartupBrandingDefaultsTest {
+    @Test fun defaultDialectIsStandardArabic() {
+        assertEquals(ArabicDialect.STANDARD, AppSettings().dialect)
+        assertTrue(AppSettings().isOnboardingCompleted)
+    }
+    @Test fun splashIncludesFooterFadeAndHold() {
+        assertEquals(700L + 1_900L, SAWTI_SPLASH_DURATION_MS)
+    }
+}

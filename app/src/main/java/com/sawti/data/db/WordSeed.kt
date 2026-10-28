@@ -5,6 +5,7 @@ import com.sawti.domain.model.ArabicDialect
 import com.sawti.domain.model.RegionalDishesCatalog
 import com.sawti.domain.model.PhonemicCue
 import com.sawti.domain.model.TtsEndings
+import com.sawti.domain.model.WordImageCatalog
 
 /**
  * Built-in vocabulary with refined clinical phonetics for Libyan Arabic TTS.
@@ -222,6 +223,10 @@ object WordSeed {
         Cat(
             id = "clothes", title = "الملابس", palette = 5,
             words = listOf(
+                Word("تيشرت", "تِيشِرْتْ", "👕", cue = "تِي..."),
+                Word("قميص", "قَمِيصْ", "👔", cue = "قَمِ..."),
+                Word("جاكة", "جَاكَهْ", "🧥", cue = "جَا..."),
+                Word("شورت", "شُورْتْ", "🩳", cue = "شُو..."),
                 Word("سورية", "سُورِيَّهْ", "👕", cue = "سُو..."),
                 Word("بنطلون", "بَنْطَلُونْ", "👖", cue = "بَنْـ..."),
                 Word("فستان", "فُسْتَانْ", "👗", cue = "فُسْـ..."),
@@ -313,7 +318,7 @@ object WordSeed {
         ),
     )
 
-    const val VERSION = 17
+    const val VERSION = 18
 
     // جدول التحويلات الشامل لمنع تكرار الكلمات والحفاظ على بيانات وتفضيلات الوالدة
     val renames: List<Triple<String, String, String>> = listOf(
@@ -413,6 +418,7 @@ object WordSeed {
                     isFavorite = SeedExtras.isFavorite(c.id, w.display),
                     emoji = w.emoji,
                     sortOrder = w.sort ?: i,
+                    semanticKey = WordImageCatalog.keyForSeed(c.id, w.display, w.subgroup),
                 )
             }
         }

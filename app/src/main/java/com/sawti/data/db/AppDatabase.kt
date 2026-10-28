@@ -12,13 +12,14 @@ import androidx.sqlite.db.SupportSQLiteDatabase
  *  v1  family_members / voice_recordings / pain_reports
  *  v2  unified categories + word_items          (MIGRATION_1_2 copies the family members, photos, phones, recordings)
  *  v3  favourites, sentence prompt, progress    (MIGRATION_2_3 only ALTERs / CREATEs)
+ *  v5  stable image keys                       (MIGRATION_4_5 only ALTERs)
  * There is NO destructive fallback: an unsupported path fails loudly instead of wiping data.
  * New vocabulary is added at startup by WordRepository.seedOrUpdateDefaults() because Room's onCreate
  * callback does not run for upgraded installs.
  */
 @Database(
     entities = [CategoryEntity::class, WordItemEntity::class, ProgressRecordEntity::class],
-    version = 4,
+    version = 5,
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -80,9 +81,16 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        /** Non-destructive v4→v5 upgrade: keep every card, photo, favourite and recording. */
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE word_items ADD COLUMN semanticKey TEXT DEFAULT NULL")
+            }
+        }
+
         fun build(context: Context): AppDatabase =
             Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "my_words.db")
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                 .build()
     }
 }

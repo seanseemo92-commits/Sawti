@@ -27,9 +27,22 @@ object SentenceComposer {
         return if (spokenSentence(next).length <= MAX_SPEECH_CHARACTERS) next else current
     }
 
+    /** Plain spoken pieces: stable indexes, no engine-specific word-range or time offsets. */
+    data class SpokenPiece(val pieceIndex: Int, val sourceId: Long, val speech: String)
+
+    private fun spokenWord(piece: SentencePiece): String =
+        piece.spokenText.trim().trimEnd('،', '.', '!', '؟')
+
+    fun spokenPieces(parts: List<SentencePiece>): List<SpokenPiece> =
+        parts.mapIndexedNotNull { index, part ->
+            val text = spokenWord(part)
+            if (text.isBlank()) null
+            else SpokenPiece(pieceIndex = index, sourceId = part.sourceId, speech = text)
+        }
+
     /** A single TTS request preserves sentence context and natural engine pacing. */
     fun spokenSentence(parts: List<SentencePiece>): String =
-        parts.map { it.spokenText.trim().trimEnd('،', '.', '!', '؟') }
+        parts.map(::spokenWord)
             .filter { it.isNotBlank() }
             .joinToString("، ")
 }

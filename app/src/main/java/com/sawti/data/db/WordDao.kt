@@ -99,6 +99,12 @@ interface WordDao {
     @Query("UPDATE word_items SET audioPath = :path WHERE id = :id")
     suspend fun updateAudio(id: Long, path: String?)
 
+    @Query("SELECT * FROM word_items WHERE semanticKey IS NULL")
+    suspend fun itemsWithoutSemanticKeys(): List<WordItemEntity>
+
+    @Query("UPDATE word_items SET semanticKey = :key WHERE id = :id AND semanticKey IS NULL")
+    suspend fun setSemanticKeyIfMissing(id: Long, key: String)
+
     // ---- seed top-up (existing installs) ----
     @Query("SELECT id FROM categories")
     suspend fun categoryIds(): List<String>

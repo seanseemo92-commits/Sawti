@@ -4,6 +4,11 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.ui.draw.alpha
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.IconButton
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -24,6 +29,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -53,7 +59,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -76,9 +85,15 @@ import com.sawti.presentation.common.FavoriteStar
 import com.sawti.presentation.common.HintButton
 import com.sawti.presentation.common.PhraseHintButton
 import com.sawti.presentation.common.ItemImage
+import com.sawti.presentation.common.CardImageContent
+import com.sawti.presentation.common.CeramicCard
+import com.sawti.presentation.common.CeramicImageTint
+import com.sawti.presentation.common.VoiceAura
+import com.sawti.presentation.common.StaggeredCascade
 import com.sawti.presentation.common.bounceClick
 import com.sawti.presentation.theme.CategoryPalette
 import com.sawti.presentation.theme.paletteOf
+import com.sawti.presentation.theme.categoryBannerColor
 import kotlinx.coroutines.launch
 
 @Composable
@@ -293,6 +308,7 @@ private fun WordGrid(
     state: LibraryUiState,
     actions: LibraryActions,
 ) {
+    val estimatedColumns = ((LocalConfiguration.current.screenWidthDp - 32) / 160).coerceAtLeast(1)
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 160.dp),
         modifier = Modifier.fillMaxSize(),
@@ -300,12 +316,14 @@ private fun WordGrid(
         horizontalArrangement = Arrangement.spacedBy(14.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        items(items, key = { it.id }) { item ->
+        itemsIndexed(items, key = { _, item -> item.id }) { index, item ->
+            StaggeredCascade(key = "${category.id}:${item.id}", row = index / estimatedColumns, modifier = Modifier.fillMaxWidth()) {
             WordCard(
                 item = item,
                 palette = palette,
                 crop = category.previewOnTap,
                 isActive = state.activeItemId == item.id,
+                isSpeaking = state.playbackVisual.isSpeaking && state.playbackVisual.activeWordId == item.id,
                 caregiverMode = state.caregiverMode,
                 onClick = { actions.onItemTapped(item, flashcard = false) },
                 onLongClick = { actions.onItemLongPressed(item) },
@@ -313,6 +331,44 @@ private fun WordGrid(
                 onSentenceHint = { actions.onSentenceHint(item) },
                 onToggleFavorite = { actions.onToggleFavorite(item) },
             )
+            }
+        }
+    }
+}
+
+/**
+ * Hidden secondary actions preserve phonemic/sentence hints, favourites and caregiver
+ * editing without obstructing a real image. The long-press action stays untouched.
+ */
+@Composable
+private fun WordCardContextActions(
+    item: WordItem,
+    caregiverMode: Boolean,
+    onHint: () -> Unit,
+    onSentenceHint: () -> Unit,
+    onToggleFavorite: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var expanded by androidx.compose.runtime.remember(item.id) { mutableStateOf(false) }
+    Box(modifier) {
+        IconButton(
+            onClick = { expanded = true },
+            modifier = Modifier.size(44.dp).alpha(0.42f),
+        ) {
+            Icon(Icons.Filled.MoreVert, contentDescription = "خيارات البطاقة",
+                tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(21.dp))
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DropdownMenuItem(
+                text = { Text("تلميح بداية النطق") },
+                onClick = { expanded = false; onHint() },
+            )
+            if (!item.sentencePrompt.isNullOrBlank()) {
+                DropdownMenuItem(
+                    text = { Text("تلميح الجملة") },
+                    onClick = { expanded = false; onSentenceHint() },
+                )
+            }
         }
     }
 }
@@ -323,6 +379,7 @@ internal fun WordCard(
     palette: CategoryPalette,
     crop: Boolean,
     isActive: Boolean,
+    isSpeaking: Boolean = false,
     caregiverMode: Boolean,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
@@ -330,66 +387,65 @@ internal fun WordCard(
     onSentenceHint: () -> Unit,
     onToggleFavorite: () -> Unit,
 ) {
-    Surface(
-        shape = RoundedCornerShape(24.dp),
-        color = MaterialTheme.colorScheme.surface,
-        shadowElevation = cardElevation(if (isActive) 12.dp else 4.dp),
-        border = if (isActive) BorderStroke(3.dp, palette.banner) else null,
-        modifier = Modifier
-            .fillMaxWidth()
+    val fontScale = LocalDensity.current.fontScale
+    val extendedLabel = item.displayText.length > 17 || fontScale > 1.15f
+    val bannerColor = categoryBannerColor(item.categoryId, palette.banner)
+    CeramicCard(
+        isActive = isActive,
+        isSpeaking = isSpeaking,
+        accent = bannerColor,
+        shape = RoundedCornerShape(20.dp),
+        modifier = Modifier.fillMaxWidth()
+            .then(if (extendedLabel) Modifier.heightIn(min = (360f * fontScale).dp)
+                  else Modifier.aspectRatio(0.85f))
             .bounceClick(onLongClick = onLongClick, onClick = onClick),
     ) {
-        Column {
+        // The photo fills the card; the compact caption overlays its bottom,
+        // leaving substantially more visible image area than a weighted 30% panel.
+        Box(Modifier.fillMaxSize()) {
+            CardImageContent(
+                item = item,
+                accent = bannerColor,
+                isCurrentlyPlaying = isSpeaking,
+                modifier = Modifier.fillMaxSize(),
+                crop = true,
+                fullBleed = true,
+            )
             Box(
-                Modifier
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .aspectRatio(1.1f)
-                    .background(palette.pastel),
-            ) {
-                ItemImage(
-                    item = item,
-                    accent = palette.banner,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(10.dp),
-                    crop = crop,
-                )
-                // 💡 first-sound cue, 💬 sentence cue (only when the card has one)
-                Column(
-                    Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(6.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp),
-                ) {
-                    HintButton(onClick = onHint, size = 40)
-                    if (!item.sentencePrompt.isNullOrBlank()) PhraseHintButton(onClick = onSentenceHint, size = 40)
-                }
-                if (caregiverMode) {
-                    EditBadge(Modifier.align(Alignment.TopStart).padding(8.dp))
-                    FavoriteStar(
-                        isFavorite = item.isFavorite,
-                        onClick = onToggleFavorite,
-                        modifier = Modifier.align(Alignment.BottomStart).padding(6.dp),
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = 16.dp,
+                            topEnd = 16.dp,
+                            bottomStart = 20.dp,
+                            bottomEnd = 20.dp,
+                        )
                     )
-                }
-            }
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 52.dp)
-                    .background(palette.banner)
-                    .padding(horizontal = 8.dp, vertical = 6.dp),
+                    .background(bannerColor)
+                    .padding(horizontal = 8.dp, vertical = 5.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    item.displayText,
+                    text = item.displayText,
                     color = Color.White,
-                    fontSize = 17.sp,
+                    fontSize = 18.sp,
+                    lineHeight = 24.sp,
                     fontWeight = FontWeight.ExtraBold,
                     textAlign = TextAlign.Center,
-                    maxLines = 2,
+                    maxLines = if (extendedLabel) 4 else 2,
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
+            WordCardContextActions(
+                item = item,
+                caregiverMode = caregiverMode,
+                onHint = onHint,
+                onSentenceHint = onSentenceHint,
+                onToggleFavorite = onToggleFavorite,
+                modifier = Modifier.align(Alignment.TopEnd).padding(3.dp),
+            )
         }
     }
 }
@@ -477,48 +533,44 @@ private fun FlashcardPage(
     actions: LibraryActions,
     onCall: (String) -> Unit,
 ) {
-    Surface(
-        shape = RoundedCornerShape(32.dp),
-        color = MaterialTheme.colorScheme.surface,
-        shadowElevation = cardElevation(8.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = 8.dp),
+    CeramicCard(
+        isSpeaking = state.playbackVisual.activeWordId == item.id && state.playbackVisual.isSpeaking,
+        accent = palette.banner,
+        modifier = Modifier.fillMaxSize().padding(vertical = 8.dp),
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Box(
                 Modifier
                     .weight(1f)
                     .fillMaxWidth()
-                    .background(palette.pastel)
                     .bounceClick(
                         onLongClick = { actions.onItemLongPressed(item) },
                         onClick = { actions.onItemTapped(item, flashcard = true) },
                     ),
                 contentAlignment = Alignment.Center,
             ) {
-                ItemImage(
+                CardImageContent(
                     item = item,
                     accent = palette.banner,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
+                    isCurrentlyPlaying = state.playbackVisual.isSpeaking &&
+                        state.playbackVisual.activeWordId == item.id,
+                    modifier = Modifier.fillMaxSize().padding(22.dp),
                     crop = category.previewOnTap,
-                    glyphScale = 0.6f,
                 )
-                if (state.caregiverMode) {
-                    EditBadge(Modifier.align(Alignment.TopStart).padding(14.dp))
-                    FavoriteStar(
-                        isFavorite = item.isFavorite,
-                        onClick = { actions.onToggleFavorite(item) },
-                        modifier = Modifier.align(Alignment.TopEnd).padding(10.dp),
-                    )
-                }
+                WordCardContextActions(
+                    item = item,
+                    caregiverMode = state.caregiverMode,
+                    onHint = { actions.onHint(item) },
+                    onSentenceHint = { actions.onSentenceHint(item) },
+                    onToggleFavorite = { actions.onToggleFavorite(item) },
+                    modifier = Modifier.align(Alignment.TopEnd).padding(10.dp),
+                )
             }
             Text(
                 item.displayText,
-                color = palette.accent,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 34.sp,
+                lineHeight = 44.sp,
                 fontWeight = FontWeight.ExtraBold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
@@ -528,10 +580,6 @@ private fun FlashcardPage(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                HintButton(onClick = { actions.onHint(item) }, size = 60)
-                if (!item.sentencePrompt.isNullOrBlank()) {
-                    PhraseHintButton(onClick = { actions.onSentenceHint(item) }, size = 60)
-                }
                 ActionPill(
                     label = stringResource(R.string.listen),
                     icon = Icons.AutoMirrored.Filled.VolumeUp,

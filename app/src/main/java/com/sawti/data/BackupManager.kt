@@ -150,7 +150,7 @@ class BackupManager(private val context: Context, private val database: AppDatab
                     "قاعدة البيانات غير سليمة"
                 }
             }
-            require(sqlite.version == 4) { "إصدار قاعدة البيانات غير مدعوم" }
+            require(sqlite.version == 5) { "إصدار قاعدة البيانات غير مدعوم" }
         }
     }
 
@@ -215,7 +215,7 @@ class BackupManager(private val context: Context, private val database: AppDatab
                     require(cursor.moveToFirst() && cursor.getString(0) == "ok") { "قاعدة البيانات تالفة" }
                 }
                 val version = sqlite.version
-                require(version in 3..4) { "إصدار قاعدة البيانات غير مدعوم" }
+                require(version in 3..5) { "إصدار قاعدة البيانات غير مدعوم" }
                 val expectedTables = listOf("categories", "word_items", "progress_records")
                 expectedTables.forEach { name ->
                     sqlite.rawQuery("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", arrayOf(name)).use {

@@ -49,7 +49,7 @@ import kotlinx.coroutines.launch
 
 private const val HOLD_MS = 3000
 
-/** Blue app bar: bold white title, practice icon and the discreet settings gear. */
+/** Navy app bar: bold white title, practice icon and the discreet settings gear. */
 @Composable
 fun AppTopBar(
     title: String,
@@ -62,8 +62,8 @@ fun AppTopBar(
 ) {
     Surface(
         color = AppBarBlue,
-        shadowElevation = 8.dp,
-        shape = RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp),
+        shadowElevation = 2.dp,
+        shape = RoundedCornerShape(bottomStart = 18.dp, bottomEnd = 18.dp),
     ) {
         Row(
             Modifier

@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ic_launcher_background">#1E88E5</color>
+    <color name="ic_launcher_background">#0F172A</color>
+    <color name="adult_canvas_light">#F8FAFC</color>
+    <color name="adult_canvas_dark">#0F172A</color>
+    <color name="adult_slate_navy">#1E293B</color>
+    <color name="adult_acoustic_sky">#38BDF8</color>
+    <color name="adult_sage">#4F7664</color>
+    <color name="adult_terracotta">#96624A</color>
+    <color name="adult_warm_stone">#746B60</color>
+    <!-- Reference-matched SAWTI branding, daytime. -->
+    <color name="sawti_logo_primary">#FFFFFFFF</color>
+    <color name="sawti_logo_accent">#FFF0C98C</color>
+    <color name="sawti_splash_background">#FF58B7ED</color>
+    <color name="splash_bg_start">#38BDF8</color>
+    <color name="splash_bg_mid">#6366F1</color>
+    <color name="splash_bg_end">#8B5CF6</color>
+    <color name="splash_text_primary">#FFFFFF</color>
+    <color name="splash_text_footer">#E2E8F0</color>
 </resources>

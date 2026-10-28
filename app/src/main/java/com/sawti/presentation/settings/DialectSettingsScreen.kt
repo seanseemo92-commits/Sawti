@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sawti.domain.model.ArabicDialect
 import com.sawti.speech.SpeechManager
+import com.sawti.speech.ArabicTtsLocalePolicy
 import java.util.Locale
 
 /** Dialect selection is available to the user, independently of caregiver editing permissions. */
@@ -41,14 +42,11 @@ fun DialectSettingsRoute(
     val settings by settingsVm.settings.collectAsStateWithLifecycle()
     val voiceStatus by speech.voiceStatus.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val country = Locale.forLanguageTag(settings.dialect.localeTag).country
-    // A Libyan voice is rarely installed; show every Arabic voice rather than hiding
-    // Egyptian/Saudi/other offline options behind the selected dialect country.
-    val voices = voiceStatus.voices.sortedWith(
-        compareByDescending<com.sawti.speech.InstalledArabicVoice> {
-            Locale.forLanguageTag(it.localeTag).country.equals(country, ignoreCase = true)
-        }.thenByDescending { it.offline }.thenBy { it.name }
-    )
+    // Manual voice selection is limited to generic Arabic/ar-SA; regional voices
+    // may reintroduce unsupported locale switches despite phonetic speechText.
+    val voices = voiceStatus.voices.filter {
+        ArabicTtsLocalePolicy.isGenericArabic(Locale.forLanguageTag(it.localeTag))
+    }.sortedWith(compareByDescending<com.sawti.speech.InstalledArabicVoice> { it.offline }.thenBy { it.name })
 
     Column(
         modifier = modifier.verticalScroll(rememberScrollState()).padding(16.dp),
@@ -81,8 +79,8 @@ fun DialectSettingsRoute(
                 Text(
                     when {
                         !voiceStatus.initialized -> "جارٍ فحص محرك النطق العربي على الجهاز…"
-                        voiceStatus.regionalVoiceAvailable -> "يتوفر صوت عربي بإعدادات المنطقة المحددة. قد يختلف النطق الفعلي باختلاف محرك الجهاز."
-                        voiceStatus.actualTag != null -> "لا يوجد صوت مثبت مؤكد لهذه اللهجة. يجري استعمال أقرب صوت عربي متاح (${voiceStatus.actualTag})."
+                        voiceStatus.regionalVoiceAvailable -> "المحرك مضبوط على العربية العامة؛ اختلاف اللهجة يعتمد على التشكيل الصوتي للكلمات، وليس لغة المحرك."
+                        voiceStatus.actualTag != null -> "لا تتوفر العربية العامة في المحرك الحالي. نجرب لغة الجهاز الافتراضية (${voiceStatus.actualTag}) لتفادي توقف الصوت."
                         else -> "محرك النطق العربي غير متاح. ثبّت بيانات اللغة العربية أو جرّب صوتاً مسجلاً."
                     },
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -100,7 +98,7 @@ fun DialectSettingsRoute(
                             Column(Modifier.weight(1f)) {
                                 Text(voice.name, style = MaterialTheme.typography.bodyMedium)
                                 Text(
-                                    "${voice.localeTag} · ${if (Locale.forLanguageTag(voice.localeTag).country.equals(country, ignoreCase = true)) "مطابق للمنطقة · " else "صوت عربي بديل · "}${if (voice.offline) "لا يحتاج اتصالاً بالإنترنت" else "قد يتطلب اتصالاً بالإنترنت"}",
+                                    "${voice.localeTag} · صوت عربي عام · ${if (voice.offline) "لا يحتاج اتصالاً بالإنترنت" else "قد يتطلب اتصالاً بالإنترنت"}",
                                     style = MaterialTheme.typography.bodySmall,
                                 )
                             }

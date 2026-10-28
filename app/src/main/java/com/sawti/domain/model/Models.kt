@@ -24,7 +24,33 @@ data class WordItem(
     val photoPath: String?,
     val phone: String,
     val emoji: String,
-)
+    val semanticKey: String? = null,
+) {
+    /** Speech-only channel backed by the existing Room ttsPrompt column. */
+    val speechText: String get() = ttsPrompt
+
+    /** Supports a lightweight visual-only category preview item. */
+    constructor(
+        id: Long,
+        categoryId: String,
+        displayText: String,
+        speechText: String,
+        emoji: String,
+    ) : this(
+        id = id,
+        categoryId = categoryId,
+        subgroup = "",
+        displayText = displayText,
+        ttsPrompt = speechText,
+        phonemicCue = "",
+        sentencePrompt = null,
+        isFavorite = false,
+        audioPath = null,
+        photoPath = null,
+        phone = "",
+        emoji = emoji,
+    )
+}
 
 data class Category(
     val id: String,

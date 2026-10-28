@@ -42,13 +42,14 @@ data class WordItemEntity(
     val phone: String = "",
     val emoji: String = "",
     val sortOrder: Int = 0,
+    val semanticKey: String? = null,
 )
 
 fun WordItemEntity.toDomain() = WordItem(
     id = id, categoryId = categoryId, subgroup = subgroup, displayText = displayText,
     ttsPrompt = ttsPrompt, phonemicCue = phonemicCue, sentencePrompt = sentencePrompt,
     isFavorite = isFavorite, audioPath = audioPath,
-    photoPath = photoPath, phone = phone, emoji = emoji,
+    photoPath = photoPath, phone = phone, emoji = emoji, semanticKey = semanticKey,
 )
 
 /** One practice record (added in DB v3). Stored as plain strings so the history survives enum changes. */

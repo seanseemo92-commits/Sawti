@@ -53,6 +53,7 @@
     <!-- speech engine -->
     <string name="voice_missing">صوت اللغة العربية غير مثبّت على هذا الجهاز.</string>
     <string name="tts_unavailable">لا يوجد محرك صوتي متاح على هذا الجهاز.</string>
+    <string name="tts_playback_failed">تعذّر تشغيل الصوت. تأكد من تفعيل محرك النطق وبيانات اللغة العربية في إعدادات Android.</string>
     <string name="install_voice">تثبيت</string>
 
     <!-- practice -->

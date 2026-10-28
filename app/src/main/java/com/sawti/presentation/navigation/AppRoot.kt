@@ -15,12 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Icon
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -46,7 +40,6 @@ import com.sawti.R
 import com.sawti.presentation.category.CategoryScreen
 import com.sawti.presentation.category.CustomCategoryManager
 import com.sawti.presentation.common.SentenceStrip
-import com.sawti.presentation.category.SearchResultsScreen
 import com.sawti.presentation.common.LocalTouchDwell
 import com.sawti.presentation.category.LibraryViewModel
 import com.sawti.presentation.home.HomeScreen
@@ -80,10 +73,8 @@ fun AppRoot(
     val state by library.uiState.collectAsStateWithLifecycle()
     val settings by settingsVm.settings.collectAsStateWithLifecycle()
     var route by rememberSaveable { mutableStateOf(HOME) }
-    var searchQuery by rememberSaveable { mutableStateOf("") }
     var manageCategories by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
-
     // one-shot messages, e.g. "favourites are full"
     LaunchedEffect(Unit) {
         library.messages.collect { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
@@ -124,6 +115,7 @@ fun AppRoot(
                 if (settings.sentenceStripEnabled && (route == HOME || category != null)) {
                     SentenceStrip(
                         pieces = state.sentencePieces,
+                        speakingPieceIndex = state.playbackVisual.sentenceIndex.takeIf { state.playbackVisual.isSpeaking },
                         onPlay = library::playSentenceStrip,
                         onBackspace = library::deleteLastSentencePiece,
                         onClear = library::clearSentenceStrip,
@@ -133,21 +125,6 @@ fun AppRoot(
                     TextButton(onClick = { manageCategories = true }) {
                         Text("إدارة الأقسام المخصصة +")
                     }
-                }
-                if (route == HOME || category != null) {
-                    OutlinedTextField(
-                        value = searchQuery,
-                        onValueChange = { searchQuery = it },
-                        label = { Text("بحث سريع في الكلمات") },
-                        leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
-                        trailingIcon = if (searchQuery.isNotEmpty()) ({
-                            IconButton(onClick = { searchQuery = "" }) {
-                                Icon(Icons.Filled.Close, contentDescription = "مسح البحث")
-                            }
-                        }) else null,
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
-                    )
                 }
                 if (state.caregiverMode) {
                     CaregiverBanner(
@@ -177,25 +154,11 @@ fun AppRoot(
                     route == PROGRESS && state.caregiverMode -> ProgressRoute(progress)
                     route == SETTINGS && state.caregiverMode -> SettingsRoute(settingsVm)
                     route == DIALECT -> DialectSettingsRoute(settingsVm, (context.applicationContext as SawtiApp).container.speech)
-                    category != null -> CategoryScreen(category, state, library, searchQuery)
-                    route == HOME && searchQuery.isNotBlank() -> SearchResultsScreen(
-                        categories = state.categories,
-                        searchQuery = searchQuery,
-                        state = state,
-                        actions = library,
-                        onOpenResult = { item ->
-                            route = CATEGORY_PREFIX + item.categoryId
-                            library.onItemTapped(item, flashcard = false)
-                        },
-                    )
+                    category != null -> CategoryScreen(category, state, library)
                     else -> HomeScreen(
                         categories = state.categories,
-                        favorites = state.favorites,
-                        activeItemId = state.activeItemId,
-                        caregiverMode = state.caregiverMode,
+                        speakingItemId = state.playbackVisual.activeWordId.takeIf { state.playbackVisual.isSpeaking },
                         onOpen = { id -> route = CATEGORY_PREFIX + id },
-                        onQuickTap = library::onQuickTap,
-                        onQuickLongTap = library::onSpeakAgain,
                     )
                 }
             }
@@ -264,7 +227,11 @@ private fun SpeechIssueBanner(issue: SpeechIssue, onInstall: () -> Unit) {
         ) {
             Text(
                 stringResource(
-                    if (issue is SpeechIssue.MissingArabicVoice) R.string.voice_missing else R.string.tts_unavailable
+                    when (issue) {
+                        SpeechIssue.EngineUnavailable -> R.string.tts_unavailable
+                        SpeechIssue.MissingArabicVoice -> R.string.voice_missing
+                        SpeechIssue.PlaybackFailed -> R.string.tts_playback_failed
+                    }
                 ),
                 color = Color(0xFF5D3A00),
                 fontSize = 15.sp,

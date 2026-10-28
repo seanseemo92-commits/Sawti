@@ -12,6 +12,7 @@ import com.sawti.SawtiApp
 import com.sawti.R
 import com.sawti.audio.VoiceRecorder
 import com.sawti.audio.AudioDispatcher
+import com.sawti.audio.PlaybackVisual
 import com.sawti.data.SettingsRepository
 import com.sawti.domain.model.SentencePiece
 import com.sawti.domain.model.SentenceComposer
@@ -46,6 +47,7 @@ data class LibraryUiState(
     val favorites: List<FavoriteEntry> = emptyList(),
     val caregiverMode: Boolean = false,
     val activeItemId: Long? = null,     // card highlighted after a tap
+    val playbackVisual: PlaybackVisual = PlaybackVisual(),
     val previewItemId: Long? = null,    // family member shown in the large-photo dialog
     val focusItemId: Long? = null,      // card shown in the distraction-free focus dialog
     val editingItemId: Long? = null,    // card shown in the caregiver editor
@@ -107,6 +109,11 @@ class LibraryViewModel(
     private var cardLatchUntil = 0L
 
     init {
+        viewModelScope.launch {
+            voice.playback.collect { playback ->
+                _uiState.update { it.copy(playbackVisual = playback) }
+            }
+        }
         viewModelScope.launch {
             settingsRepository.state.collect { settings ->
                 _uiState.update { it.copy(sentenceStripEnabled = settings.sentenceStripEnabled) }
@@ -190,7 +197,7 @@ class LibraryViewModel(
     fun playSentenceStrip() {
         val state = _uiState.value
         if (!state.sentenceStripEnabled) return
-        SentenceComposer.spokenSentence(state.sentencePieces).takeIf { it.isNotBlank() }?.let(voice::say)
+        voice.speakSentence(state.sentencePieces)
     }
 
     fun deleteLastSentencePiece() {
