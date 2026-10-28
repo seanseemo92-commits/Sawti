@@ -35,6 +35,18 @@ jobs:
           grep -q 'rootProject.name = "Sawti"' settings.gradle.kts
           grep -q '<string name="app_name">صوتي</string>' app/src/main/res/values/strings.xml
           grep -q 'android:allowBackup="false"' app/src/main/AndroidManifest.xml
+          # Prevent accidental resurrection of stale splash screens/resources.
+          test -f app/src/main/java/com/sawti/presentation/splash/SawtiAuroraSplash.kt
+          grep -q 'SawtiAuroraSplash(onFinished' app/src/main/java/com/sawti/MainActivity.kt
+          test -f app/src/main/res/drawable/ic_launcher_foreground.xml
+          test -f app/src/main/res/drawable/sawti_aurora_window.xml
+          test -f app/src/main/res/drawable-night/sawti_aurora_window.xml
+          test ! -f app/src/main/java/com/sawti/presentation/splash/SawtiSplashScreen.kt
+          test ! -f app/src/main/java/com/sawti/presentation/splash/SawtiWelcomeScreen.kt
+          test ! -f app/src/main/res/drawable/bg_splash_waves.png
+          test ! -f app/src/main/res/drawable-night/bg_splash_waves.png
+          test ! -f app/src/main/res/drawable/sawti_wordmark_vector_light.xml
+          test ! -f app/src/main/res/drawable/sawti_wordmark_vector_dark.xml
           if find . -path './.git' -prune -o \( -iname '*.jks' -o -iname '*.p12' -o -iname '*.keystore' \) -print | grep -q .; then
             echo "::error::Signing key found in source; aborting"
             exit 1
