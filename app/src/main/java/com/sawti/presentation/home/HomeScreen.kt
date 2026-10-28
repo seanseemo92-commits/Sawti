@@ -142,8 +142,8 @@ private fun LuxuryCategoryCard(
                         drawCircle(
                             brush = Brush.radialGradient(
                                 colors = listOf(
-                                    Color(0xFF38BDF8).copy(alpha = auraGlow * 0.45f),
-                                    Color(0xFF0284C7).copy(alpha = 0.12f),
+                                    bannerColor.copy(alpha = auraGlow * 0.39f),
+                                    bannerColor.copy(alpha = 0.12f),
                                     Color.Transparent
                                 ),
                                 center = center,
@@ -153,7 +153,8 @@ private fun LuxuryCategoryCard(
                     }
                 } else Modifier
             )
-            .bounceClick(onClick = onClick)
+            .clip(CardRadius)
+            .bounceClick(onClick = onClick, accent = bannerColor)
     ) {
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -161,7 +162,7 @@ private fun LuxuryCategoryCard(
             color = surfaceColor,
             border = BorderStroke(
                 width = if (isSpeaking) 2.dp else 1.dp,
-                color = if (isSpeaking) Color(0xFF38BDF8) else borderColor
+                color = if (isSpeaking) bannerColor else borderColor
             ),
             shadowElevation = if (performance) 0.dp else if (dark) 4.dp else 8.dp,
         ) {
