@@ -209,8 +209,8 @@ fun SawtiSplashScreen(onNavigateToMain: () -> Unit) {
             )
             Image(
                 painter = painterResource(
-                    if (isDark) R.drawable.sawti_wordmark_centered_dark
-                    else R.drawable.sawti_wordmark_centered_light
+                    if (isDark) R.drawable.sawti_wordmark_hd_dark
+                    else R.drawable.sawti_wordmark_hd_light
                 ),
                 contentDescription = "شعار صوتي — SAWTI",
                 modifier = Modifier
