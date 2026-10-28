@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -191,28 +192,31 @@ fun SawtiSplashScreen(onNavigateToMain: () -> Unit) {
             }
         }
 
-        // The original 410x430 transparent wordmark includes the emblem, Arabic title
-        // and English title. Fit it as one unit; never crop or retype its typography.
-        val logoWidth = minOf(
-            maxWidth * 0.78f,
-            if (maxWidth >= 600.dp) 390.dp else 300.dp,
-            (maxHeight - 120.dp).coerceAtLeast(130.dp) * (410f / 430f),
-        )
-        Box(
+        // Use PNGs with visually centered alpha content. The source logo has
+        // unequal transparent margins (dark ink is biased right, light ink left).
+        // Measure INSIDE safe insets so small phones, tablets, landscape and
+        // display cutouts have the same predictable, centered layout.
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.safeDrawing),
             contentAlignment = Alignment.Center,
         ) {
+            val logoWidth = minOf(
+                maxWidth * 0.72f,
+                if (maxWidth >= 600.dp) 380.dp else 270.dp,
+                maxHeight * 0.50f * (410f / 430f),
+            )
             Image(
                 painter = painterResource(
-                    if (isDark) R.drawable.sawti_splash_mark_dark
-                    else R.drawable.sawti_splash_mark_light
+                    if (isDark) R.drawable.sawti_wordmark_centered_dark
+                    else R.drawable.sawti_wordmark_centered_light
                 ),
                 contentDescription = "شعار صوتي — SAWTI",
                 modifier = Modifier
                     .width(logoWidth)
                     .aspectRatio(410f / 430f)
+                    .offset(y = (-8).dp)
                     .alpha(reveal.value),
                 contentScale = ContentScale.Fit,
             )
