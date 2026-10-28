@@ -2,6 +2,7 @@ package com.sawti.presentation.splash
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -10,39 +11,44 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -50,282 +56,300 @@ import androidx.compose.ui.unit.sp
 import com.sawti.R
 import com.sawti.presentation.theme.LocalIsDark
 import com.sawti.presentation.theme.LocalPerformanceMode
-import kotlin.math.sin
 import kotlinx.coroutines.delay
-
-/** Verified startup timings, shared with regression tests. */
-const val SAWTI_AURORA_ENTRANCE_MS = 720
-const val SAWTI_AURORA_HOLD_MS = 1600L
-const val SAWTI_AURORA_REDUCED_MOTION_MS = 1500L
+import kotlinx.coroutines.launch
+import kotlin.math.sin
 
 /**
- * New Sawti Aurora welcome screen.
+ * Approved Sawti conversation welcome:
+ * photo illustration of three conversing adults, independently rendered text,
+ * flat responsive CTA, continuously flowing brand ribbons and a staged entrance.
  *
- * No old splash bitmaps or extracted tracing assets are used: the emblem is the
- * actual vector artwork already used by the launcher. All other shapes are drawn
- * directly at device resolution, avoiding the artifacts of upscaled raster logos.
- * No database, audio or navigation state is mutated during the welcome animation.
+ * No two-second auto-navigation. Continue is the only way to dismiss the screen.
+ * Window insets and viewport-based sizing avoid overlapping system UI.
  */
+const val SAWTI_WELCOME_BACKGROUND_ENTER_MS = 1100
+const val SAWTI_WELCOME_SCENE_ENTER_MS = 1050
+const val SAWTI_WELCOME_COPY_ENTER_MS = 700
+const val SAWTI_WELCOME_CTA_ENTER_MS = 600
+
 @Composable
 fun SawtiAuroraSplash(onFinished: () -> Unit) {
     val dark = LocalIsDark.current
     val reducedMotion = LocalPerformanceMode.current
-    val currentFinish by rememberUpdatedState(onFinished)
-    val entrance = remember { Animatable(0f) }
+    val latestOnFinish by rememberUpdatedState(onFinished)
+    var continued by remember { mutableStateOf(false) }
+    val backdrop = remember { Animatable(if (reducedMotion) 1f else 0f) }
+    val scene = remember { Animatable(if (reducedMotion) 1f else 0f) }
+    val typography = remember { Animatable(if (reducedMotion) 1f else 0f) }
+    val controls = remember { Animatable(if (reducedMotion) 1f else 0f) }
 
     LaunchedEffect(reducedMotion) {
-        entrance.snapTo(if (reducedMotion) 1f else 0f)
-        if (!reducedMotion) {
-            entrance.animateTo(1f, animationSpec = tween(SAWTI_AURORA_ENTRANCE_MS, easing = FastOutSlowInEasing))
+        if (reducedMotion) {
+            backdrop.snapTo(1f)
+            scene.snapTo(1f)
+            typography.snapTo(1f)
+            controls.snapTo(1f)
+        } else {
+            backdrop.snapTo(0f)
+            scene.snapTo(0f)
+            typography.snapTo(0f)
+            controls.snapTo(0f)
+            launch {
+                backdrop.animateTo(1f, tween(SAWTI_WELCOME_BACKGROUND_ENTER_MS, easing = FastOutSlowInEasing))
+            }
+            launch {
+                delay(170)
+                scene.animateTo(1f, tween(SAWTI_WELCOME_SCENE_ENTER_MS, easing = FastOutSlowInEasing))
+            }
+            launch {
+                delay(420)
+                typography.animateTo(1f, tween(SAWTI_WELCOME_COPY_ENTER_MS, easing = FastOutSlowInEasing))
+            }
+            launch {
+                delay(780)
+                controls.animateTo(1f, tween(SAWTI_WELCOME_CTA_ENTER_MS, easing = FastOutSlowInEasing))
+            }
         }
-        delay(if (reducedMotion) SAWTI_AURORA_REDUCED_MOTION_MS else SAWTI_AURORA_HOLD_MS)
-        currentFinish()
     }
 
-    // In performance mode there is no infinite animation or unnecessary redraw.
-    val breath = if (reducedMotion) 0.5f else {
-        val transition = rememberInfiniteTransition(label = "brand-breath")
-        val value by transition.animateFloat(
+    val motion = if (reducedMotion) 0f else {
+        val loop = rememberInfiniteTransition(label = "communication-waves")
+        val phase by loop.animateFloat(
             initialValue = 0f,
-            targetValue = 1f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(1800, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse,
-            ),
-            label = "brand-breath-fraction",
+            targetValue = 6.2831855f,
+            animationSpec = infiniteRepeatable(tween(7800, easing = LinearEasing), RepeatMode.Restart),
+            label = "wave-phase"
         )
-        value
+        phase
     }
 
-    val title = if (dark) Color(0xFFF5F5FF) else Color(0xFF172B5C)
-    val secondary = if (dark) Color(0xFFB5C5E3) else Color(0xFF40588F)
-    val highlight = if (dark) Color(0xFFEAC17C) else Color(0xFF6E53DC)
+    val navy = Color(0xFF0D245F)
+    val lilac = Color(0xFF7552F2)
+    val ice = Color(0xFF33BFF3)
+    val ink = if (dark) Color(0xFFE8EDFF) else Color(0xFF23366C)
+    val footerInk = if (dark) Color(0xFFD1DAF4) else Color(0xFF334C88)
+    val footerBackground = if (dark) Color(0xFF17234C) else Color(0xFFECF1FF)
 
     Box(Modifier.fillMaxSize()) {
         Canvas(Modifier.fillMaxSize()) {
             val w = size.width
             val h = size.height
-
             drawRect(
                 brush = Brush.linearGradient(
-                    colors = if (dark) {
-                        listOf(Color(0xFF071527), Color(0xFF102B48), Color(0xFF101C39))
-                    } else {
-                        listOf(Color(0xFFEAFBFF), Color(0xFFCADFFF), Color(0xFFEAE5FF))
-                    },
-                    start = Offset(0f, 0f),
-                    end = Offset(w, h),
+                    colors = if (dark)
+                        listOf(Color(0xFF061632), Color(0xFF22316D), Color(0xFF1E235C))
+                    else
+                        listOf(Color(0xFF102E74), Color(0xFF344BCD), Color(0xFF7152DE)),
+                    start = Offset.Zero,
+                    end = Offset(w, h * .78f)
                 )
             )
-
-            // A soft, fully procedural aurora halo; no big phone-shaped background PNG.
-            drawCircle(
-                brush = Brush.radialGradient(
-                    colors = if (dark) {
-                        listOf(
-                            Color(0xFF4D8CC8).copy(alpha = 0.20f),
-                            Color(0xFF7758D7).copy(alpha = 0.12f),
-                            Color.Transparent,
-                        )
-                    } else {
-                        listOf(
-                            Color(0xFF9AA8FF).copy(alpha = 0.55f),
-                            Color(0xFF78DDF5).copy(alpha = 0.17f),
-                            Color.Transparent,
-                        )
-                    },
-                    center = Offset(w * 0.5f, h * 0.42f),
-                    radius = h * 0.48f,
-                ),
-                center = Offset(w * 0.5f, h * 0.42f),
-                radius = h * 0.48f,
-            )
-
-            // Two smooth ribbons echo the sound waves inside Sawti's icon.
-            val highWave = Path().apply {
-                moveTo(0f, h * 0.21f)
-                cubicTo(w * 0.22f, h * 0.12f, w * 0.57f, h * 0.30f, w, h * 0.16f)
+            // Thin translucent ribbons enter from opposite corners and gently drift.
+            val offset = sin(motion) * w * .034f
+            val top = Path().apply {
+                moveTo(0f, 0f)
+                cubicTo(w * .33f, h * .07f, w * .38f + offset, h * .13f, w, h * .03f)
                 lineTo(w, 0f)
-                lineTo(0f, 0f)
                 close()
             }
             drawPath(
-                path = highWave,
-                brush = Brush.linearGradient(
-                    colors = if (dark) {
-                        listOf(Color(0xFF164563).copy(alpha = 0.44f), Color(0xFF3E347A).copy(alpha = 0.31f))
-                    } else {
-                        listOf(Color(0xFF62D8EC).copy(alpha = 0.32f), Color(0xFF9E94F5).copy(alpha = 0.31f))
-                    },
-                    start = Offset.Zero,
-                    end = Offset(w, h * 0.24f),
+                top,
+                Brush.linearGradient(
+                    listOf(Color(0xFF36C8F2).copy(alpha = .42f * backdrop.value),
+                        Color(0xFF966EFF).copy(alpha = .42f * backdrop.value)),
+                    start = Offset.Zero, end = Offset(w, h * .2f)
                 )
             )
-
-            val lowWave = Path().apply {
-                moveTo(0f, h * 0.78f)
-                cubicTo(w * 0.27f, h * 0.70f, w * 0.58f, h * 0.93f, w, h * 0.81f)
+            val lower = Path().apply {
+                moveTo(0f, h * .70f + offset * .12f)
+                cubicTo(w * .25f, h * .59f, w * .48f, h * .84f, w, h * .67f)
                 lineTo(w, h)
                 lineTo(0f, h)
                 close()
             }
             drawPath(
-                path = lowWave,
-                brush = Brush.linearGradient(
-                    colors = if (dark) {
-                        listOf(Color(0xFF1F3557).copy(alpha = 0.36f), Color(0xFF503A8D).copy(alpha = 0.27f))
-                    } else {
-                        listOf(Color(0xFFB9B7FF).copy(alpha = 0.24f), Color(0xFF9DDCF7).copy(alpha = 0.38f))
-                    },
-                    start = Offset(0f, h * 0.76f),
-                    end = Offset(w, h),
+                lower,
+                brush = Brush.verticalGradient(
+                    colors = if (dark)
+                        listOf(Color(0xFF6351C8), Color(0xFF263364), footerBackground)
+                    else
+                        listOf(Color(0xFF6F62EE), Color(0xFFC6D6FF), footerBackground),
+                    startY = h * .68f,
+                    endY = h
+                )
+            )
+            val bottomCurve = Path().apply {
+                moveTo(0f, h * .80f)
+                cubicTo(w * .27f, h * .75f, w * .75f, h * .88f, w, h * .80f)
+                lineTo(w, h)
+                lineTo(0f, h)
+                close()
+            }
+            drawPath(
+                bottomCurve,
+                Brush.verticalGradient(
+                    listOf(footerBackground.copy(alpha = .65f), footerBackground),
+                    startY = h * .78f, endY = h
                 )
             )
         }
 
         BoxWithConstraints(
-            modifier = Modifier
-                .fillMaxSize()
-                .windowInsetsPadding(WindowInsets.safeDrawing),
-            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing)
         ) {
-            val compact = maxHeight < 540.dp || maxWidth < 330.dp
-            val orb = minOf(
-                maxWidth * 0.58f,
-                maxHeight * (if (compact) 0.34f else 0.32f),
-                if (compact) 178.dp else 238.dp,
-            )
+            val compact = maxHeight < 660.dp || maxWidth < 340.dp
+            val topSpacing = if (compact) 12.dp else 22.dp
+            val sceneWidth = minOf(maxWidth - 16.dp, if (maxWidth >= 620.dp) 540.dp else 460.dp)
+            val sceneHeight = minOf(sceneWidth * (444f / 512f), maxHeight * (if (compact) .37f else .42f))
+            val footerSpacing = if (compact) 8.dp else 13.dp
 
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
                 modifier = Modifier
-                    .graphicsLayer {
-                        alpha = entrance.value
-                        translationY = (1f - entrance.value) * 26.dp.toPx()
-                        scaleX = 0.94f + entrance.value * 0.06f
-                        scaleY = scaleX
-                    },
+                    .fillMaxSize()
+                    .padding(horizontal = 17.dp)
+                    .padding(top = topSpacing, bottom = 9.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Box(
-                    modifier = Modifier.size(orb + 40.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Canvas(Modifier.fillMaxSize()) {
-                        val center = Offset(size.width / 2, size.height / 2)
-                        val radius = size.minDimension / 2
-                        val ringColor = if (dark) Color(0xFFB1C6ED) else Color(0xFF6258C9)
-                        drawCircle(
-                            color = ringColor.copy(alpha = 0.14f + breath * 0.11f),
-                            radius = radius * (0.90f + breath * 0.03f),
-                            center = center,
-                            style = Stroke(width = 1.5.dp.toPx()),
-                        )
-                        drawCircle(
-                            color = ringColor.copy(alpha = 0.12f),
-                            radius = radius * 0.81f,
-                            center = center,
-                            style = Stroke(width = 1.dp.toPx()),
-                        )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.graphicsLayer {
+                        alpha = typography.value
+                        translationY = (1f - typography.value) * 22.dp.toPx()
                     }
+                ) {
+                    // Every letter stays crisp because these are native Compose text layers.
+                    Text(
+                        text = "صوتي",
+                        color = Color.White,
+                        fontSize = if (compact) 48.sp else 61.sp,
+                        fontWeight = FontWeight.Black,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1
+                    )
+                    Text(
+                        text = "S A W T I",
+                        color = Color(0xFFD6DFFF),
+                        fontSize = if (compact) 13.sp else 15.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1
+                    )
+                    Spacer(Modifier.height(if (compact) 3.dp else 9.dp))
+                    Text(
+                        text = "كلمات تُعيد التواصل",
+                        color = Color(0xFFF2F5FF),
+                        fontSize = if (compact) 14.sp else 17.sp,
+                        fontWeight = FontWeight.Medium,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1
+                    )
+                }
 
-                    Box(
-                        modifier = Modifier
-                            .size(orb)
-                            .clip(CircleShape)
-                            .background(
-                                Brush.linearGradient(
-                                    colors = if (dark) {
-                                        listOf(Color(0xFF1E4164), Color(0xFF152744), Color(0xFF24285D))
-                                    } else {
-                                        listOf(Color(0xFF727BEB), Color(0xFF6865D9), Color(0xFF3D9CD4))
-                                    }
-                                )
-                            )
-                            .border(
-                                width = 1.5.dp,
-                                brush = Brush.linearGradient(
-                                    colors = if (dark) {
-                                        listOf(Color(0xFFB5CBF0).copy(alpha = 0.45f), Color.White.copy(alpha = 0.06f))
-                                    } else {
-                                        listOf(Color.White.copy(alpha = 0.83f), Color(0xFFC0C9FF).copy(alpha = 0.37f))
-                                    }
-                                ),
-                                shape = CircleShape,
-                            ),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Canvas(Modifier.fillMaxSize()) {
-                            drawCircle(
-                                brush = Brush.radialGradient(
-                                    colors = listOf(
-                                        (if (dark) Color(0xFFEDC47D) else Color.White)
-                                            .copy(alpha = 0.08f + breath * 0.11f),
-                                        Color.Transparent,
-                                    ),
-                                    radius = size.minDimension * 0.52f,
-                                ),
-                            )
+                Box(
+                    modifier = Modifier
+                        .width(sceneWidth)
+                        .height(sceneHeight)
+                        .graphicsLayer {
+                            alpha = scene.value
+                            translationY = (1f - scene.value) * 38.dp.toPx()
+                            scaleX = 1.08f - .08f * scene.value
+                            scaleY = scaleX
+                            translationX = sin(motion) * 3.dp.toPx()
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.sawti_welcome_people),
+                        contentDescription = "رجل مسن وشاب بلحية وامرأة محجبة يتواصلون معاً",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Fit
+                    )
+                    Canvas(Modifier.fillMaxSize()) {
+                        val w = size.width
+                        val h = size.height
+                        val shift = sin(motion) * 7.dp.toPx()
+                        val central = Path().apply {
+                            moveTo(w * .10f, h * .22f + shift)
+                            cubicTo(w * .28f, h * .12f, w * .42f, h * .34f + shift, w * .56f, h * .24f)
+                            cubicTo(w * .76f, h * .14f, w * .82f, h * .27f - shift, w * .94f, h * .18f)
                         }
-                        Image(
-                            painter = painterResource(R.drawable.ic_launcher_foreground),
-                            contentDescription = null,
-                            contentScale = ContentScale.Fit,
-                            modifier = Modifier.size(orb * 0.94f),
+                        drawPath(
+                            central,
+                            brush = Brush.horizontalGradient(
+                                listOf(ice.copy(alpha = .0f), ice.copy(alpha = .38f),
+                                    lilac.copy(alpha = .37f), lilac.copy(alpha = .0f))
+                            ),
+                            style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.dp.toPx())
                         )
                     }
                 }
 
-                Spacer(Modifier.height(if (compact) 10.dp else 16.dp))
-                Text(
-                    text = "صوتي",
-                    fontSize = if (compact) 38.sp else 48.sp,
-                    fontWeight = FontWeight.Black,
-                    color = title,
-                    textAlign = TextAlign.Center,
-                    maxLines = 1,
-                )
-                Spacer(Modifier.height(2.dp))
-                Text(
-                    text = "SAWTI",
-                    fontSize = if (compact) 13.sp else 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = 5.sp,
-                    color = highlight,
-                    textAlign = TextAlign.Center,
-                    maxLines = 1,
-                )
-
-                Spacer(Modifier.height(if (compact) 14.dp else 26.dp))
-                Text(
-                    text = "التواصل يبدأ بكلمة",
-                    fontSize = if (compact) 13.sp else 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = secondary,
-                    textAlign = TextAlign.Center,
-                    maxLines = 1,
-                )
-
-                Spacer(Modifier.height(if (compact) 14.dp else 24.dp))
-                Canvas(Modifier.size(width = 100.dp, height = 26.dp)) {
-                    val widths = 5.dp.toPx()
-                    val gap = 9.dp.toPx()
-                    val centerX = size.width / 2f
-                    val midY = size.height / 2f
-                    for (index in 0 until 7) {
-                        val phase = index.toFloat() * 0.9f
-                        val amplitude = if (reducedMotion) 0.50f else {
-                            0.35f + 0.65f * ((sin(phase + breath * 3.1415927f) + 1f) / 2f)
-                        }
-                        val height = (7f + (9f - kotlin.math.abs(index - 3) * 1.15f) * amplitude)
-                            .dp.toPx()
-                        drawRoundRect(
-                            color = highlight.copy(alpha = 0.35f + amplitude * 0.55f),
-                            topLeft = Offset(centerX + (index - 3) * (widths + gap) - widths / 2f, midY - height / 2f),
-                            size = Size(widths, height),
-                            cornerRadius = CornerRadius(widths / 2f),
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                        .graphicsLayer {
+                            alpha = controls.value
+                            translationY = (1f - controls.value) * 20.dp.toPx()
+                        },
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Flat, accessible brand-gradient button; no baked button pixels.
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(if (compact) 52.dp else 60.dp)
+                            .clip(RoundedCornerShape(22.dp))
+                            .background(Brush.horizontalGradient(listOf(Color(0xFF268CF5), Color(0xFF6D3DEB))))
+                            .clickable(
+                                enabled = !continued,
+                                role = Role.Button,
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = ripple(color = Color.White),
+                            ) {
+                                if (!continued) {
+                                    continued = true
+                                    latestOnFinish()
+                                }
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            "متابعة",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = if (compact) 21.sp else 25.sp
+                        )
+                        Text(
+                            "›",
+                            color = Color.White,
+                            modifier = Modifier.align(Alignment.CenterEnd).padding(end = 20.dp),
+                            fontSize = 34.sp,
+                            fontWeight = FontWeight.Normal
                         )
                     }
+                    Spacer(Modifier.height(footerSpacing))
+                    Text(
+                        text = "المطور : إسماعيل بن سالم",
+                        color = footerInk,
+                        fontSize = if (compact) 11.sp else 13.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(Modifier.height(2.dp))
+                    Text(
+                        "ismail92sa@gmail.com",
+                        color = footerInk,
+                        fontSize = if (compact) 11.sp else 13.sp,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(Modifier.height(3.dp))
+                    Text(
+                        "© 2026 جميع الحقوق محفوظة",
+                        color = footerInk.copy(alpha = .8f),
+                        fontSize = if (compact) 10.sp else 12.sp,
+                        textAlign = TextAlign.Center
+                    )
                 }
             }
         }
