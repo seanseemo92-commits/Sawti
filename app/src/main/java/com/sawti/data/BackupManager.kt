@@ -17,6 +17,13 @@ import java.util.zip.ZipInputStream
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 
+/**
+ * Restoring the old files after a failed swap does not reopen a previously closed
+ * Room instance. The caller must block further database use until process restart.
+ */
+class RestoreRequiresRestartException(message: String, cause: Throwable) :
+    IllegalStateException(message, cause)
+
 /** Offline, user-selected ZIP backups. No broad storage permission or network access. */
 class BackupManager(private val context: Context, private val database: AppDatabase) {
     private val dbName = "my_words.db"
@@ -249,6 +256,7 @@ class BackupManager(private val context: Context, private val database: AppDatab
             val previous = File(state, "previous")
             val incoming = File(state, "incoming")
             require(state.mkdirs() && previous.mkdirs() && incoming.mkdirs()) { "تعذّر تجهيز الاسترجاع الآمن" }
+            var closeAttempted = false
             try {
                 stagedDb.copyTo(File(incoming, "0"))
                 val stagedPrefs = File(stage, "preferences/settings.xml")
@@ -266,6 +274,7 @@ class BackupManager(private val context: Context, private val database: AppDatab
                     stream.fd.sync()
                 }
                 require(temp.renameTo(File(state, "journal"))) { "تعذّر بدء استرجاع آمن" }
+                closeAttempted = true
                 database.close()
                 live.forEachIndexed { index, file ->
                     if (file.exists()) {
@@ -285,9 +294,20 @@ class BackupManager(private val context: Context, private val database: AppDatab
                     output.fd.sync()
                 }
             } catch (error: Exception) {
-                // If a failure occurs, restore old data. If rollback itself fails, retain
-                // the durable journal for recovery on next app launch.
-                recoverIfInterrupted(context)
+                // Roll back the files, but never reuse Room if closing it was attempted.
+                // A failed rollback leaves the journal for recovery on next launch.
+                val recoveryError = runCatching { recoverIfInterrupted(context) }.exceptionOrNull()
+                if (recoveryError != null) error.addSuppressed(recoveryError)
+                if (closeAttempted) {
+                    throw RestoreRequiresRestartException(
+                        if (recoveryError == null)
+                            "تعذّر الاسترجاع؛ تمت محاولة إعادة البيانات السابقة. أغلق التطبيق وافتحه مجدداً."
+                        else
+                            "تعذّر الاسترجاع وإعادة البيانات السابقة بالكامل. أغلق التطبيق لبدء الاسترداد الآمن عند التشغيل.",
+                        error,
+                    )
+                }
+                if (recoveryError != null) throw recoveryError
                 throw error
             }
         } finally {

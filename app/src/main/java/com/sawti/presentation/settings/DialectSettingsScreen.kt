@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sawti.domain.model.ArabicDialect
 import com.sawti.speech.SpeechManager
+import com.sawti.audio.AudioDispatcher
 import com.sawti.speech.ArabicTtsLocalePolicy
 import java.util.Locale
 
@@ -37,6 +38,7 @@ import java.util.Locale
 fun DialectSettingsRoute(
     settingsVm: SettingsViewModel,
     speech: SpeechManager,
+    audio: AudioDispatcher,
     modifier: Modifier = Modifier,
 ) {
     val settings by settingsVm.settings.collectAsStateWithLifecycle()
@@ -108,7 +110,7 @@ fun DialectSettingsRoute(
                         Text("اختيار الصوت تلقائياً")
                     }
                 }
-                Button(onClick = { speech.speak(settings.dialect.sample) }, modifier = Modifier.fillMaxWidth()) {
+                Button(onClick = { audio.say(settings.dialect.sample) }, modifier = Modifier.fillMaxWidth()) {
                     Text("استمع إلى تجربة هذه اللهجة")
                 }
                 OutlinedButton(onClick = {

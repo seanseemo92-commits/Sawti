@@ -2,6 +2,7 @@ package com.sawti.presentation.navigation
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.os.Process
 import android.speech.tts.TextToSpeech
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -75,6 +76,11 @@ fun AppRoot(
     var route by rememberSaveable { mutableStateOf(HOME) }
     var manageCategories by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
+    val operations = (context.applicationContext as SawtiApp).container.backupOperations
+    val backup by operations.state.collectAsStateWithLifecycle()
+    val backupLocked = backup.busy || backup.restartRequired
+    // Read the live state in click handlers; a rapid second tap must not beat recomposition.
+    val navigationLocked = { operations.state.value.let { it.busy || it.restartRequired } }
     // one-shot messages, e.g. "favourites are full"
     LaunchedEffect(Unit) {
         library.messages.collect { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
@@ -88,7 +94,16 @@ fun AppRoot(
         state.categories.firstOrNull { it.id == route.removePrefix(CATEGORY_PREFIX) }
     } else null
 
-    BackHandler(enabled = route != HOME) { route = HOME }
+    // A deleted custom-category route must not leave the back arrow on a Home screen.
+    LaunchedEffect(state.categories, route) {
+        if (route.startsWith(CATEGORY_PREFIX) && state.categories.isNotEmpty() && category == null) {
+            route = HOME
+        }
+    }
+
+    BackHandler(enabled = route != HOME || backupLocked) {
+        if (!navigationLocked()) route = HOME
+    }
 
     val title = when {
         route == PRACTICE -> stringResource(R.string.practice_title)
@@ -107,10 +122,10 @@ fun AppRoot(
                     title = title,
                     showBack = route != HOME,
                     caregiverMode = state.caregiverMode,
-                    onBack = { route = HOME },
-                    onPractice = { route = PRACTICE },
-                    onDialects = { route = DIALECT },
-                    onToggleCaregiver = library::toggleCaregiver,
+                    onBack = { if (!navigationLocked()) route = HOME },
+                    onPractice = { if (!navigationLocked()) route = PRACTICE },
+                    onDialects = { if (!navigationLocked()) route = DIALECT },
+                    onToggleCaregiver = { if (!navigationLocked()) library.toggleCaregiver() },
                 )
                 if (settings.sentenceStripEnabled && (route == HOME || category != null)) {
                     SentenceStrip(
@@ -122,14 +137,14 @@ fun AppRoot(
                     )
                 }
                 if (route == HOME && state.caregiverMode) {
-                    TextButton(onClick = { manageCategories = true }) {
+                    TextButton(onClick = { if (!navigationLocked()) manageCategories = true }) {
                         Text("إدارة الأقسام المخصصة +")
                     }
                 }
                 if (state.caregiverMode) {
                     CaregiverBanner(
-                        onOpenProgress = { route = PROGRESS },
-                        onOpenSettings = { route = SETTINGS },
+                        onOpenProgress = { if (!navigationLocked()) route = PROGRESS },
+                        onOpenSettings = { if (!navigationLocked()) route = SETTINGS },
                     )
                 }
                 state.speechIssue?.let { issue ->
@@ -153,18 +168,44 @@ fun AppRoot(
                     route == PRACTICE -> PracticeRoute(practice)
                     route == PROGRESS && state.caregiverMode -> ProgressRoute(progress)
                     route == SETTINGS && state.caregiverMode -> SettingsRoute(settingsVm)
-                    route == DIALECT -> DialectSettingsRoute(settingsVm, (context.applicationContext as SawtiApp).container.speech)
+                    route == DIALECT -> DialectSettingsRoute(
+                        settingsVm,
+                        (context.applicationContext as SawtiApp).container.speech,
+                        (context.applicationContext as SawtiApp).container.audioDispatcher,
+                    )
                     category != null -> CategoryScreen(category, state, library)
                     else -> HomeScreen(
                         categories = state.categories,
                         speakingItemId = state.playbackVisual.activeWordId.takeIf { state.playbackVisual.isSpeaking },
-                        onOpen = { id -> route = CATEGORY_PREFIX + id },
+                        onOpen = { id -> if (!navigationLocked()) route = CATEGORY_PREFIX + id },
                     )
                 }
             }
         }
     }
-    if (manageCategories && state.caregiverMode) {
+    // Modal dialogs block ALL touch navigation, including the top bar, throughout a
+    // restore. These live at the app root so they survive Settings destination removal.
+    if (backup.busy) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = {},
+            title = { Text(if (backup.restoring) "جارٍ استرجاع البيانات" else "جارٍ إنشاء النسخة الاحتياطية") },
+            text = { Text("جاري المعالجة. لا تغلق التطبيق حتى تكتمل العملية.") },
+            confirmButton = {},
+        )
+    }
+    if (backup.restartRequired) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = {},
+            title = { Text(if (backup.restoreSucceeded) "تم الاسترجاع بنجاح" else "تعذّر الاسترجاع") },
+            text = { Text(backup.message ?: "يلزم إغلاق التطبيق وفتحه مجدداً لتحميل البيانات بأمان.") },
+            confirmButton = {
+                TextButton(onClick = { Process.killProcess(Process.myPid()) }) {
+                    Text("إغلاق التطبيق")
+                }
+            },
+        )
+    }
+    if (manageCategories && state.caregiverMode && !backupLocked) {
         CustomCategoryManager(
             categories = state.categories,
             onCreate = library::createCategory,
@@ -173,7 +214,7 @@ fun AppRoot(
             onDismiss = { manageCategories = false },
         )
     }
-    state.errorMessage?.let { error ->
+    if (!backupLocked) state.errorMessage?.let { error ->
         androidx.compose.material3.AlertDialog(
             onDismissRequest = library::clearError,
             title = { Text("تعذّر إكمال العملية") },

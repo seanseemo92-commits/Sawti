@@ -26,6 +26,7 @@ import com.sawti.domain.repository.WordRepository
 import com.sawti.speech.SpeechIssue
 import com.sawti.speech.SpeechManager
 import com.sawti.state.CaregiverMode
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -35,6 +36,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -120,7 +122,7 @@ class LibraryViewModel(
             }
         }
         viewModelScope.launch {
-            repository.observeCategories().collect { list ->
+            repository.observeCategories().catch { report(it) }.collect { list ->
                 val favorites = list.flatMap { c ->
                     c.items.filter { it.isFavorite }.map { FavoriteEntry(it, c.palette) }
                 }.take(MAX_FAVORITES)
@@ -217,6 +219,19 @@ class LibraryViewModel(
         _uiState.update { it.copy(errorMessage = error.message ?: "تعذر حفظ التغيير") }
     }
 
+    /** Keep failures in editor operations visible without swallowing coroutine cancellation. */
+    private fun launchSafe(action: suspend () -> Unit) {
+        viewModelScope.launch {
+            try {
+                action()
+            } catch (cancel: CancellationException) {
+                throw cancel
+            } catch (error: Exception) {
+                report(error)
+            }
+        }
+    }
+
     /** Caregiver-only operations, checked again inside asynchronous coroutines. */
     fun createCategory(title: String, palette: Int, sortOrder: Int) {
         if (!canEdit()) return
@@ -224,7 +239,8 @@ class LibraryViewModel(
             try {
                 if (!canEdit()) return@launch
                 repository.addCustomCategory(title, palette, sortOrder)
-            } catch (e: Exception) { report(e) }
+            } catch (cancel: CancellationException) { throw cancel }
+              catch (e: Exception) { report(e) }
         }
     }
     fun editCategory(id: String, title: String, palette: Int, sortOrder: Int) {
@@ -233,7 +249,8 @@ class LibraryViewModel(
             try {
                 if (!canEdit()) return@launch
                 repository.editCustomCategory(id, title, palette, sortOrder)
-            } catch (e: Exception) { report(e) }
+            } catch (cancel: CancellationException) { throw cancel }
+              catch (e: Exception) { report(e) }
         }
     }
     fun deleteCategory(id: String) {
@@ -242,7 +259,8 @@ class LibraryViewModel(
             try {
                 if (!canEdit()) return@launch
                 repository.deleteEmptyCustomCategory(id)
-            } catch (e: Exception) { report(e) }
+            } catch (cancel: CancellationException) { throw cancel }
+              catch (e: Exception) { report(e) }
         }
     }
     override fun addCustomCard(categoryId: String, title: String, spoken: String) {
@@ -252,7 +270,8 @@ class LibraryViewModel(
                 if (!canEdit()) return@launch
                 val id = repository.addCustomCard(categoryId, title, spoken)
                 if (canEdit()) _uiState.update { it.copy(editingItemId = id) }
-            } catch (e: Exception) { report(e) }
+            } catch (cancel: CancellationException) { throw cancel }
+              catch (e: Exception) { report(e) }
         }
     }
     override fun deleteCustomCard(id: Long) {
@@ -262,7 +281,8 @@ class LibraryViewModel(
                 if (!canEdit()) return@launch
                 repository.deleteCustomCard(id)
                 _uiState.update { it.copy(editingItemId = null) }
-            } catch (e: Exception) { report(e) }
+            } catch (cancel: CancellationException) { throw cancel }
+              catch (e: Exception) { report(e) }
         }
     }
 
@@ -273,7 +293,8 @@ class LibraryViewModel(
                 if (!canEdit()) return@launch
                 repository.moveCardToCustomCategory(id, destinationId)
                 _uiState.update { it.copy(editingItemId = null) }
-            } catch (e: Exception) { report(e) }
+            } catch (cancel: CancellationException) { throw cancel }
+              catch (e: Exception) { report(e) }
         }
     }
 
@@ -348,7 +369,7 @@ class LibraryViewModel(
                 return
             }
         }
-        viewModelScope.launch { repository.setFavorite(item.id, !item.isFavorite) }
+        launchSafe { repository.setFavorite(item.id, !item.isFavorite) }
     }
 
     private fun emit(@StringRes message: Int) {
@@ -370,8 +391,8 @@ class LibraryViewModel(
     override fun addFamilyMember(name: String, group: String, phone: String) {
         if (!canEdit() || name.isBlank() || _uiState.value.addingFamilyGroup != group ||
             !FamilyRelationships.validPeopleGroup(group)) return
-        viewModelScope.launch {
-            if (!canEdit()) return@launch
+        launchSafe {
+            if (!canEdit()) return@launchSafe
             val id = repository.addFamilyMember(name, group, phone)
             _uiState.update { it.copy(addingFamilyGroup = null, editingItemId = id) }
         }
@@ -386,7 +407,7 @@ class LibraryViewModel(
         voice.stop()
         _uiState.update { it.copy(editingItemId = null, previewItemId = null,
             focusItemId = null, recordingItemId = null) }
-        viewModelScope.launch { if (canEdit()) repository.deleteFamilyMember(id) }
+        launchSafe { if (canEdit()) repository.deleteFamilyMember(id) }
     }
 
     override fun closeEditor() {
@@ -405,10 +426,10 @@ class LibraryViewModel(
         val finalTts = TtsEndings.normalize(enteredTts)
         val finalCue = cue.ifBlank { PhonemicCue.derive(finalTts) }
         val finalSentence = sentence.ifBlank { null } // blank removes the 💬 button for this card
-        viewModelScope.launch {
-            if (!canEdit()) return@launch
+        launchSafe {
+            if (!canEdit()) return@launchSafe
             repository.updateDetails(id, finalDisplay, finalTts, finalCue, finalSentence, phone)
-            if (current.categoryId == com.sawti.domain.model.CategoryIds.FAMILY) {
+            if (current.categoryId == CategoryIds.FAMILY) {
                 repository.updateFamilyGroup(id, group)
             }
             closeEditor()
@@ -460,7 +481,7 @@ class LibraryViewModel(
 
     override fun removePhoto(itemId: Long) {
         if (!canEdit()) return
-        viewModelScope.launch { if (canEdit()) repository.clearPhoto(itemId) }
+        launchSafe { if (canEdit()) repository.clearPhoto(itemId) }
     }
 
     /** The UI must have RECORD_AUDIO granted before calling this. */
@@ -478,8 +499,13 @@ class LibraryViewModel(
         }
         val file = recorder.stop()
         _uiState.update { it.copy(recordingItemId = null) }
-        if (file != null) viewModelScope.launch {
-            if (canEdit()) repository.setAudio(itemId, file) else file.delete()
+        if (file != null) launchSafe {
+            try {
+                if (canEdit()) repository.setAudio(itemId, file) else file.delete()
+            } catch (error: Exception) {
+                file.delete()
+                throw error
+            }
         }
     }
 
@@ -490,7 +516,7 @@ class LibraryViewModel(
     override fun deleteRecording(itemId: Long) {
         if (!canEdit()) return
         voice.stop()
-        viewModelScope.launch { if (canEdit()) repository.clearAudio(itemId) }
+        launchSafe { if (canEdit()) repository.clearAudio(itemId) }
     }
 
     private fun find(id: Long): WordItem? =

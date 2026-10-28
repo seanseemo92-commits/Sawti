@@ -1,6 +1,7 @@
 package com.sawti.presentation.progress
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -8,6 +9,7 @@ import com.sawti.SawtiApp
 import com.sawti.domain.model.ProgressSummary
 import com.sawti.domain.repository.ProgressRepository
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -16,6 +18,7 @@ import kotlinx.coroutines.launch
 class ProgressViewModel(private val repository: ProgressRepository) : ViewModel() {
 
     val summary: StateFlow<ProgressSummary> = repository.observeSummary()
+        .catch { Log.e("SawtiProgress", "Progress observation failed", it) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ProgressSummary())
 
     fun clear() {
