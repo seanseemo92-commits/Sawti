@@ -3,10 +3,4 @@
     <color name="ic_launcher_background">#0F172A</color>
     <color name="sawti_logo_primary">#FFF3D8A3</color>
     <color name="sawti_logo_accent">#FFD4A45A</color>
-    <color name="sawti_splash_background">#0F172A</color>
-    <color name="splash_bg_start">#070D18</color>
-    <color name="splash_bg_mid">#0F172A</color>
-    <color name="splash_bg_end">#1E293B</color>
-    <color name="splash_text_primary">#F8FAFC</color>
-    <color name="splash_text_footer">#94A3B8</color>
 </resources>
