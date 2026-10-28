@@ -7,6 +7,7 @@ import com.sawti.audio.SoftChime
 import com.sawti.audio.VoiceRecorder
 import com.sawti.audio.AudioDispatcher
 import com.sawti.data.BackupManager
+import com.sawti.data.BackupOperations
 import com.sawti.data.RoomProgressRepository
 import com.sawti.data.SettingsRepository
 import com.sawti.data.RoomWordRepository
@@ -24,6 +25,7 @@ import kotlinx.coroutines.withContext
 /** Hand-rolled DI: one shared instance of everything the ViewModels need. Swap for Hilt if you prefer. */
 class AppContainer(private val app: Application) {
     val database by lazy { AppDatabase.build(app) }
+    val backupOperations by lazy { BackupOperations(app, database) }
     val audioFocus by lazy { AudioFocusController(app) }
     val speech by lazy { SpeechManager(app, audioFocus) }
     val player by lazy { AudioPlayer(audioFocus) }
