@@ -31,9 +31,10 @@ import com.sawti.presentation.theme.LocalIsDark
 /** Two seconds from app launch to the main screen, with no onboarding gate. */
 const val SAWTI_SPLASH_DURATION_MS = 2_000L
 
-/** Brand-aligned startup. Uses app day/night setting and respects compact screen insets.
- * The full source artwork and density icons are in the user-supplied branding archive;
- * the existing source-control vector mark is retained as a safe no-binary fallback.
+/** Brand-aligned startup using artwork supplied in sawti_branding_assets.zip.
+ * The original PNG artwork is committed alongside transparent, edge-cleaned variants
+ * used for gradient compositing; logo proportions and developer credits are preserved.
+ * Full day/night handling respects in-app theme/system preference and window insets.
  */
 @Composable
 fun SawtiWelcomeScreen() {
@@ -47,32 +48,26 @@ fun SawtiWelcomeScreen() {
     val footerColor = if (dark) Color(0xFF94A3B8) else Color(0xFFE2E8F0)
     BoxWithConstraints(Modifier.fillMaxSize().background(background)) {
         val compact = maxHeight < 540.dp
-        val markSize = (maxHeight * if (compact) 0.22f else 0.27f).coerceIn(90.dp, 184.dp)
+        val preferredMarkSize = (maxHeight * if (compact) 0.38f else 0.48f)
+            .coerceIn(160.dp, 340.dp)
+        val markSize = preferredMarkSize
+            .coerceAtMost((maxWidth - 40.dp).coerceAtLeast(90.dp))
+            .coerceAtMost((maxHeight - if (compact) 145.dp else 190.dp).coerceAtLeast(90.dp))
         Column(
             modifier = Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding()
                 .padding(horizontal = 20.dp, vertical = if (compact) 8.dp else 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_launcher_foreground),
-                        contentDescription = "شعار صوتي",
-                        modifier = Modifier.size(markSize),
-                        contentScale = ContentScale.Fit,
-                    )
-                    Text(
-                        "صوتي", color = textColor,
-                        fontSize = if (compact) 31.sp else 40.sp,
-                        fontWeight = FontWeight.Black, maxLines = 1,
-                        textAlign = TextAlign.Center,
-                    )
-                    Text(
-                        "SAWTI", color = footerColor,
-                        fontSize = if (compact) 15.sp else 19.sp,
-                        letterSpacing = 3.sp, maxLines = 1,
-                    )
-                }
+                Image(
+                    painter = painterResource(
+                        if (dark) R.drawable.sawti_splash_mark_dark
+                        else R.drawable.sawti_splash_mark_light
+                    ),
+                    contentDescription = "صوتي SAWTI: حرف ص وموجات صوتية",
+                    modifier = Modifier.size(markSize),
+                    contentScale = ContentScale.Fit,
+                )
             }
             Column(
                 modifier = Modifier.fillMaxWidth().padding(bottom = if (compact) 0.dp else 16.dp),
