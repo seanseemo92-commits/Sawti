@@ -21,6 +21,7 @@ data class BackupOperationState(
     val busy: Boolean = false,
     val restoring: Boolean = false,
     val restartRequired: Boolean = false,
+    val restoreSucceeded: Boolean = false,
     val message: String? = null,
 )
 
@@ -61,10 +62,12 @@ class BackupOperations(context: Context, database: AppDatabase) {
             try {
                 manager.restore(uri)
                 // Do not let any UI reopen Room after the restored files replace its database.
-                _state.value = BackupOperationState(restartRequired = true)
+                _state.value = BackupOperationState(restartRequired = true, restoreSucceeded = true)
             } catch (cancel: CancellationException) {
                 _state.value = BackupOperationState(message = "توقفت عملية الاسترجاع؛ راجع حالة البيانات بعد إعادة فتح التطبيق.")
                 throw cancel
+            } catch (error: RestoreRequiresRestartException) {
+                _state.value = BackupOperationState(restartRequired = true, message = error.message)
             } catch (error: Exception) {
                 _state.value = BackupOperationState(
                     message = "تعذّر الاسترجاع: ${error.message ?: "خطأ غير معروف"}"
