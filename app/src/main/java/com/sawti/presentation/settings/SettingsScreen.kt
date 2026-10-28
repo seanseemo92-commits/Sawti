@@ -18,13 +18,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import com.sawti.SawtiApp
-import com.sawti.data.BackupManager
-import kotlinx.coroutines.launch
-import android.os.Process
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -53,24 +49,11 @@ import com.sawti.presentation.theme.cardElevation
 fun SettingsRoute(viewModel: SettingsViewModel) {
     val settings by viewModel.settings.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val manager = remember { BackupManager(context.applicationContext, (context.applicationContext as SawtiApp).container.database) }
-    var message by remember { mutableStateOf<String?>(null) }
+    val operations = remember { (context.applicationContext as SawtiApp).container.backupOperations }
+    val backup by operations.state.collectAsStateWithLifecycle()
     var pendingRestore by remember { mutableStateOf<android.net.Uri?>(null) }
-    var restoreCompleted by remember { mutableStateOf(false) }
-    var busy by remember { mutableStateOf(false) }
     val exportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/zip")) { uri ->
-        if (uri != null) scope.launch {
-            busy = true
-            try {
-                val receipt = manager.export(uri)
-                val kib = (receipt.sizeBytes + 1023) / 1024
-                message = "تم حفظ النسخة الاحتياطية والتحقق منها بنجاح ($kib كيلوبايت، ${receipt.payloadFiles} ملفات)."
-            } catch (e: Exception) {
-                message = "فشل إنشاء النسخة الاحتياطية: ${e.message ?: "خطأ غير معروف"}. لم يتم حفظ نسخة صالحة؛ لا تستخدم ملفاً فارغاً للاسترجاع."
-            }
-            finally { busy = false }
-        }
+        if (uri != null) operations.export(uri)
     }
     val importLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri != null) pendingRestore = uri
@@ -84,32 +67,10 @@ fun SettingsRoute(viewModel: SettingsViewModel) {
                 TextButton(onClick = {
                     val uri = pendingRestore ?: return@TextButton
                     pendingRestore = null
-                    scope.launch {
-                        busy = true
-                        try {
-                            manager.restore(uri)
-                            // Do not abruptly terminate the app: allow the user to read
-                            // the success message before the old Room process is closed.
-                            restoreCompleted = true
-                        } catch (e: Exception) {
-                            message = "تعذّر الاسترجاع: ${e.message ?: "خطأ غير معروف"}"
-                        } finally { busy = false }
-                    }
+                    operations.restore(uri)
                 }) { Text("استرجاع واستبدال") }
             },
             dismissButton = { TextButton(onClick = { pendingRestore = null }) { Text("إلغاء") } },
-        )
-    }
-    if (restoreCompleted) {
-        AlertDialog(
-            onDismissRequest = { /* Old Room handles must not be used after restore. */ },
-            title = { Text("تم الاسترجاع بنجاح") },
-            text = { Text("تمت استعادة البيانات. يلزم إغلاق التطبيق وفتحه مجدداً لتحميل الكلمات والصور والتسجيلات المسترجعة بأمان.") },
-            confirmButton = {
-                TextButton(onClick = { Process.killProcess(Process.myPid()) }) {
-                    Text("إغلاق التطبيق")
-                }
-            },
         )
     }
     Column(
@@ -121,14 +82,13 @@ fun SettingsRoute(viewModel: SettingsViewModel) {
     ) {
         SettingBlock("النسخ الاحتياطي والاسترجاع") {
             Text("احفظ كلماتك وصورك وتسجيلاتك في ملف ZIP على جهازك. الملف غير مشفّر؛ احتفظ به في مكان آمن.")
-            Button(enabled = !busy, onClick = { exportLauncher.launch("Sawti-backup.zip") }) {
+            Button(enabled = !backup.busy && !backup.restartRequired, onClick = { exportLauncher.launch("Sawti-backup.zip") }) {
                 Text("إنشاء نسخة احتياطية")
             }
-            Button(enabled = !busy, onClick = { importLauncher.launch(arrayOf("application/zip", "application/octet-stream")) }) {
+            Button(enabled = !backup.busy && !backup.restartRequired, onClick = { importLauncher.launch(arrayOf("application/zip", "application/octet-stream")) }) {
                 Text("استرجاع نسخة احتياطية")
             }
-            if (busy) Text("جاري المعالجة، يرجى الانتظار…")
-            message?.let { Text(it) }
+            backup.message?.let { Text(it) }
         }
         SettingBlock("اللهجة والصوت") {
             Text("اللهجة الحالية: ${settings.dialect.label}. يمكن تغيير اللهجة واختيار الصوت من أيقونة اللغة أعلى الشاشة.")
