@@ -194,7 +194,7 @@ fun OnboardingScreen(
                     Spacer(Modifier.height(22.dp))
                     Text(
                         when (page) {
-                            0 -> "صوتي"
+                            0 -> "صوتي SAWTI"
                             1 -> "عبّر عن جملتك"
                             2 -> "إعدادات محمية"
                             else -> "لهجتك أقرب لك"
@@ -222,6 +222,16 @@ fun OnboardingScreen(
                         Spacer(Modifier.height(20.dp))
                         Text("تواصل بثقة وخصوصية، خطوة بعد خطوة.",
                             textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Spacer(Modifier.height(18.dp))
+                        Text("تطوير: إسماعيل بن سالم",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 13.sp, textAlign = TextAlign.Center)
+                        Text("Ismail92sa@gmail.com",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 12.sp, textAlign = TextAlign.Center)
+                        Text("الإصدار 1.0.0 • صُنع بحب في ليبيا 🇱🇾",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 11.sp, textAlign = TextAlign.Center)
                     }
                     if (page == 1) {
                         Spacer(Modifier.height(18.dp))

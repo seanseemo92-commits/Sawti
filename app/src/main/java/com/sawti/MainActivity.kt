@@ -9,6 +9,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import kotlinx.coroutines.delay
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sawti.presentation.category.LibraryViewModel
 import com.sawti.presentation.navigation.AppRoot
@@ -16,6 +21,7 @@ import com.sawti.presentation.practice.PracticeViewModel
 import com.sawti.presentation.progress.ProgressViewModel
 import com.sawti.presentation.settings.SettingsViewModel
 import com.sawti.presentation.theme.SawtiTheme
+import com.sawti.presentation.splash.SawtiWelcomeScreen
 
 class MainActivity : ComponentActivity() {
 
@@ -39,12 +45,18 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val settings by settingsVm.settings.collectAsStateWithLifecycle()
+            var showBrandWelcome by rememberSaveable { mutableStateOf(true) }
+            LaunchedEffect(Unit) {
+                delay(1900)
+                showBrandWelcome = false
+            }
             SawtiTheme(
                 themeMode = settings.themeMode,
                 performanceMode = settings.performanceMode,
                 hapticsEnabled = settings.hapticsEnabled,
             ) {
-                AppRoot(libraryVm, practiceVm, progressVm, settingsVm)
+                if (showBrandWelcome) SawtiWelcomeScreen()
+                else AppRoot(libraryVm, practiceVm, progressVm, settingsVm)
             }
         }
     }
