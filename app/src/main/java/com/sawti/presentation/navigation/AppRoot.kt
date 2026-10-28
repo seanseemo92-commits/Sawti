@@ -193,8 +193,8 @@ fun AppRoot(
     if (backup.restartRequired) {
         androidx.compose.material3.AlertDialog(
             onDismissRequest = {},
-            title = { Text("تم الاسترجاع بنجاح") },
-            text = { Text("اكتمل الاسترجاع. يلزم إغلاق التطبيق وفتحه مجدداً لتحميل البيانات بأمان.") },
+            title = { Text(if (backup.restoreSucceeded) "تم الاسترجاع بنجاح" else "تعذّر الاسترجاع") },
+            text = { Text(backup.message ?: "يلزم إغلاق التطبيق وفتحه مجدداً لتحميل البيانات بأمان.") },
             confirmButton = {
                 TextButton(onClick = { Process.killProcess(Process.myPid()) }) {
                     Text("إغلاق التطبيق")
