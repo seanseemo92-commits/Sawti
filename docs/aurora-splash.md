@@ -1,40 +1,37 @@
-# Sawti — approved responsive Light & Dark welcome
+# Sawti welcome: light reference button and protected footer
 
-The welcome now renders the two **approved** original compositions:
-- `drawable-nodpi/sawti_welcome_light.webp`
-- `drawable-nodpi/sawti_welcome_dark.webp`
+The original 941×1600 light and dark WebP scenes are retained unchanged.
+`SawtiAuroraSplash` selects the scene with `LocalIsDark.current`.
 
-The two user-approved layouts include the actual communication illustration,
-Arabic/English titles, glowing conversation bubbles, waves, flat Continue
-button and developer credits. These are not recomposed or changed to a new
-layout.
+## Shared Continue appearance
 
-The source generated images were 941x1672 px. The top 72 px that contained
-mock status/notification chrome were removed so Android shows a real clock.
-The delivered images are 941x1600 high-quality WebP (quality 95).
-This preserves original image detail, without claiming super-resolution.
+The LIGHT artwork is the reference: source bounds (119, 1236)–(822, 1353).
+Dark mode replaces the old, smaller painted pill during rendering. A cached
+`WelcomeButtonArtwork` overlay retains the light reference's actual gradient,
+Arabic lettering and arrow. Its blue shadow is alpha-matted against the light
+backdrop; the white panel is not copied into the dark scene. A small sampled
+dark backing removes the old pill's residual edge. The source assets, faces,
+wordmark and developer credits are not rewritten.
 
-`SawtiAuroraSplash.kt` chooses its image based on `LocalIsDark.current`,
-so Sawti's in-app LIGHT/DARK/SYSTEM preference is honored independently of
-Android's current system theme. The art is fit at its own aspect ratio inside
-`WindowInsets.safeDrawing`, keeping the people, title, button and credits
-visible on small phones and tablets. Matching gradient extends into the
-unused area on unusually tall or wide screens.
+Both themes share one hit rectangle and one clipped 115 ms press glow, without
+a second Material ripple. Absolute positioning keeps this image-coordinate
+hit target aligned in RTL as well as LTR. An accepted click produces one short
+Android VIRTUAL_KEY haptic before navigation. System touch-feedback settings
+are respected; no VIBRATE permission or override flags are used. The existing
+single-navigation guard prevents rapid repeated clicks from repeating either
+the navigation or the haptic. Physical feedback depends on device hardware.
 
-On first entering the welcome, the complete scene fades/zooms in, the
-communication area reveals slightly later, and the footer follows. There is
-**no timed navigation**. A transparent, accessibility-enabled Compose button
-overlays the painted "متابعة" button, and navigation occurs only after a
-real tap. Rapid repeated taps cannot navigate more than once. Low-performance
-mode skips animation.
+## Responsive geometry
 
-The former single-theme file `sawti_approved_reference.webp` was removed;
-launcher icons, Room, backup and other app functionality remain unchanged.
+Only source strips 0–70, 1090–1200 and 1570–1600 absorb additional height.
+The entire 1200–1570 footer is scaled uniformly. The old boundary at 1540
+intersected the light copyright line and elongated its lower glyphs on tall
+phones. The new boundary leaves the complete text and copyright symbol intact.
+The title, people and CTA also retain their original proportions.
 
-## Verification
+## Validation
 
-The Android CI workflow checks that both theme resources are present and
-the old illustration is absent, then compiles Debug + R8 Release and runs
-unit tests and Lint. A successful CI build does **not** substitute for
-manual visual checks on phones and tablets, especially varied aspect
-ratios and dark/light preference switching.
+Geometry tests cover the reference size, tall phones, tablets and landscape,
+including each row across the former copyright stretch boundary. CI compiles
+Debug and R8 Release, runs unit tests and Android lint. Device checks remain
+necessary for physical haptic feel and final on-device rendering.

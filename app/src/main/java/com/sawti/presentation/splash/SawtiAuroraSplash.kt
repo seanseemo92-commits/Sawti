@@ -5,7 +5,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -13,7 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
@@ -28,13 +27,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.platform.LocalView
+import android.view.HapticFeedbackConstants
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.semantics.Role
@@ -67,6 +71,7 @@ fun SawtiAuroraSplash(
     onFinished: () -> Unit,
     preparingMain: Boolean = false,
 ) {
+    val view = LocalView.current
     val dark = LocalIsDark.current
     val reducedMotion = LocalPerformanceMode.current
     val currentFinish by rememberUpdatedState(onFinished)
@@ -90,6 +95,14 @@ fun SawtiAuroraSplash(
     val art = ImageBitmap.imageResource(
         if (dark) R.drawable.sawti_welcome_dark else R.drawable.sawti_welcome_light
     )
+
+    val lightReference = ImageBitmap.imageResource(R.drawable.sawti_welcome_light)
+    val referenceOverlay = remember(lightReference, dark) {
+        if (dark) WelcomeButtonArtwork.referenceOverlay(lightReference) else null
+    }
+    val darkBacking = remember(art, dark) {
+        if (dark) WelcomeButtonArtwork.darkBacking(art) else null
+    }
 
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize(),
@@ -136,6 +149,36 @@ fun SawtiAuroraSplash(
                     )
                 }
 
+                if (dark && referenceOverlay != null && darkBacking != null) {
+                    // The entire CTA is in an unstretched slice. Work in the
+                    // original artwork coordinates, independent of density/RTL.
+                    withTransform({
+                        translate(g.left, g.y(1200f))
+                        scale(g.scale, g.scale, pivot = androidx.compose.ui.geometry.Offset.Zero)
+                        translate(0f, -1200f)
+                    }) {
+                        val oldPill = Path().apply {
+                            addRoundRect(RoundRect(Rect(132f, 1239f, 810f, 1358f), CornerRadius(59.5f)))
+                        }
+                        clipPath(oldPill) {
+                            drawImage(
+                                image = darkBacking,
+                                dstOffset = IntOffset(132, 1239),
+                                dstSize = IntSize(678, 119),
+                                filterQuality = FilterQuality.Low,
+                            )
+                        }
+                        drawImage(
+                            image = referenceOverlay,
+                            dstOffset = IntOffset(
+                                WelcomeButtonArtwork.LEFT, WelcomeButtonArtwork.TOP
+                            ),
+                            dstSize = IntSize(WelcomeButtonArtwork.WIDTH, WelcomeButtonArtwork.HEIGHT),
+                            filterQuality = FilterQuality.High,
+                        )
+                    }
+                }
+
                 // The original illustration is never hidden. The following
                 // brief ambient tint and cyan ribbon provide a restrained,
                 // non-looping arrival without flashing dark frames or moving
@@ -160,10 +203,9 @@ fun SawtiAuroraSplash(
                 }
             }
 
-            // The approved button is painted into the photograph.
-            // Its interactive hitbox is now measured from the actual colored
-            // pill separately for Light and Dark: no oversized grey outline.
-            val actualButton = with(WelcomeArtLayout) { geo.buttonOnScreen(dark) }
+            // Both appearances share the light reference's exact hit target
+            // and the same restrained, clipped press glow.
+            val actualButton = with(WelcomeArtLayout) { geo.buttonOnScreen() }
             val pressSource = remember { MutableInteractionSource() }
             val pressed by pressSource.collectIsPressedAsState()
             val pressOpacity by animateFloatAsState(
@@ -173,7 +215,7 @@ fun SawtiAuroraSplash(
             )
             Box(
                 modifier = Modifier
-                    .offset(x = actualButton.left.dp, y = actualButton.top.dp)
+                    .absoluteOffset(x = actualButton.left.dp, y = actualButton.top.dp)
                     .width(actualButton.width.dp)
                     .height(actualButton.height.dp)
                     .clip(RoundedCornerShape(percent = 50))
@@ -202,6 +244,10 @@ fun SawtiAuroraSplash(
                     ) {
                         if (!clicked) {
                             clicked = true
+                            // A single short system haptic, respecting the user's
+                            // touch-feedback setting; no vibration permission or
+                            // flags that bypass device preferences.
+                            view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
                             currentFinish()
                         }
                     },
@@ -220,3 +266,4 @@ fun SawtiAuroraSplash(
         }
     }
 }
+
