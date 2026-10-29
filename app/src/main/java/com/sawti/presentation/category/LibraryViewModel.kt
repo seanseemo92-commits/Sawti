@@ -500,12 +500,9 @@ class LibraryViewModel(
         val file = recorder.stop()
         _uiState.update { it.copy(recordingItemId = null) }
         if (file != null) launchSafe {
-            try {
-                if (canEdit()) repository.setAudio(itemId, file) else file.delete()
-            } catch (error: Exception) {
-                file.delete()
-                throw error
-            }
+            // Once handed to the repository, only its reference-aware cleanup may delete
+            // this recording: cancellation can be delivered after a successful DB commit.
+            if (canEdit()) repository.setAudio(itemId, file) else file.delete()
         }
     }
 
@@ -544,3 +541,4 @@ class LibraryViewModel(
         private const val HIGHLIGHT_MS = 1200L
     }
 }
+

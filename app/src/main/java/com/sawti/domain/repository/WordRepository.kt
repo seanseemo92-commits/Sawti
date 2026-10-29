@@ -39,6 +39,7 @@ interface WordRepository {
     suspend fun setFavorite(id: Long, favorite: Boolean)
     suspend fun setPhoto(id: Long, image: InputStream)
     suspend fun clearPhoto(id: Long)
+    /** Transfers a finished private recording to the repository; callers must not delete it on failure. */
     suspend fun setAudio(id: Long, file: File)
     suspend fun importAudio(id: Long, input: InputStream, extension: String)
     suspend fun clearAudio(id: Long)
@@ -50,3 +51,4 @@ interface ProgressRepository {
     fun observeSummary(): Flow<ProgressSummary>
     suspend fun clear()
 }
+
