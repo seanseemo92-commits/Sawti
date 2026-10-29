@@ -1,35 +1,40 @@
-# Sawti welcome — approved visual reference
+# Sawti — approved responsive Light & Dark welcome
 
-The welcome screen now uses the **exact user-approved composition** as a
-single reference artwork resource:
-`app/src/main/res/drawable-nodpi/sawti_approved_reference.webp`.
+The welcome now renders the two **approved** original compositions:
+- `drawable-nodpi/sawti_welcome_light.webp`
+- `drawable-nodpi/sawti_welcome_dark.webp`
 
-The image has only the top 57 screenshot pixels removed so Android can display
-its **real clock and status indicators**, avoiding duplicate or frozen system
-icons. The source artwork otherwise retains the precise positions and styling
-of the title, three conversation partners, speech bubbles, flowing ribbons,
-flat purple-blue button, developer credit, email, and copyright.
+The two user-approved layouts include the actual communication illustration,
+Arabic/English titles, glowing conversation bubbles, waves, flat Continue
+button and developer credits. These are not recomposed or changed to a new
+layout.
 
-`SawtiAuroraSplash.kt` fits the artwork without cropping and stages a light
-cinematic fade/zoom, separate conversation-scene reveal and footer reveal.
-**No timer starts navigation**. A real accessible Compose clickable surface
-with label `متابعة` is positioned on top of the painted button; this
-prevents double navigation and supports actual touch and accessibility input.
-The idle screen is identical to the approved artwork.
+The source generated images were 941x1672 px. The top 72 px that contained
+mock status/notification chrome were removed so Android shows a real clock.
+The delivered images are 941x1600 high-quality WebP (quality 95).
+This preserves original image detail, without claiming super-resolution.
 
-This is an intentionally image-led design because **strict screenshot fidelity**
-was explicitly requested. Responsive image fitting avoids portrait cropping on
-smaller devices, though wider tablets may have side gutters. Text in the artwork
-is raster, so future copy changes need the layered source design rather than
-editing Kotlin strings. The app's main screen, local Room data, recording and
-backup code were not changed.
+`SawtiAuroraSplash.kt` chooses its image based on `LocalIsDark.current`,
+so Sawti's in-app LIGHT/DARK/SYSTEM preference is honored independently of
+Android's current system theme. The art is fit at its own aspect ratio inside
+`WindowInsets.safeDrawing`, keeping the people, title, button and credits
+visible on small phones and tablets. Matching gradient extends into the
+unused area on unusually tall or wide screens.
 
-## QA
+On first entering the welcome, the complete scene fades/zooms in, the
+communication area reveals slightly later, and the footer follows. There is
+**no timed navigation**. A transparent, accessibility-enabled Compose button
+overlays the painted "متابعة" button, and navigation occurs only after a
+real tap. Rapid repeated taps cannot navigate more than once. Low-performance
+mode skips animation.
 
-- On the user's portrait phone, verify that the approved image fills the safe
-  area, with the real status clock on top and no duplicate screenshot icons.
-- Verify the Continue tap and TalkBack activation, including during animation.
-- Keep the welcome visible indefinitely until the user explicitly continues.
-- Check both performance modes and device theme modes.
-- Confirm short-screen portrait and tablet fit without cropping any credits.
-- Verify no old low-resolution people cut-out resource remains.
+The former single-theme file `sawti_approved_reference.webp` was removed;
+launcher icons, Room, backup and other app functionality remain unchanged.
+
+## Verification
+
+The Android CI workflow checks that both theme resources are present and
+the old illustration is absent, then compiles Debug + R8 Release and runs
+unit tests and Lint. A successful CI build does **not** substitute for
+manual visual checks on phones and tablets, especially varied aspect
+ratios and dark/light preference switching.
