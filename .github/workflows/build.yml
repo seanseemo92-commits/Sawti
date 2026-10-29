@@ -38,6 +38,13 @@ jobs:
           # Prevent accidental resurrection of stale splash screens/resources.
           test -f app/src/main/java/com/sawti/presentation/splash/SawtiAuroraSplash.kt
           grep -q 'SawtiAuroraSplash(onFinished' app/src/main/java/com/sawti/MainActivity.kt
+          # Approved images for both app-selected light and dark appearance.
+          test -s app/src/main/res/drawable-nodpi/sawti_welcome_light.webp
+          test -s app/src/main/res/drawable-nodpi/sawti_welcome_dark.webp
+          test ! -f app/src/main/res/drawable-nodpi/sawti_approved_reference.webp
+          grep -q 'LocalIsDark.current' app/src/main/java/com/sawti/presentation/splash/SawtiAuroraSplash.kt
+          grep -q 'sawti_welcome_light' app/src/main/java/com/sawti/presentation/splash/SawtiAuroraSplash.kt
+          grep -q 'sawti_welcome_dark' app/src/main/java/com/sawti/presentation/splash/SawtiAuroraSplash.kt
           test -f app/src/main/res/drawable/ic_launcher_foreground.xml
           test -f app/src/main/res/drawable/sawti_aurora_window.xml
           test -f app/src/main/res/drawable-night/sawti_aurora_window.xml
