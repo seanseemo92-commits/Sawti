@@ -42,7 +42,7 @@ class SharedMediaSafetyTest {
         repo = RoomWordRepository(db, context, SettingsRepository(context))
         dao.insertCategories(listOf(
             CategoryEntity("family", "العائلة", 0, false, 0),
-            CategoryEntity("custom_test", "خاص", 0, false, 1),
+            CategoryEntity("custom_media_test", "خاص", 0, false, 1),
         ))
     }
 
@@ -53,7 +53,7 @@ class SharedMediaSafetyTest {
 
     private suspend fun card(
         photo: String? = null, audio: String? = null,
-        category: String = "custom_test", group: String = "",
+        category: String = "custom_media_test", group: String = "",
     ) = dao.insertItem(WordItemEntity(
         categoryId = category, subgroup = group, displayText = "بطاقة",
         ttsPrompt = "بطاقة", phonemicCue = "", photoPath = photo, audioPath = audio,
