@@ -40,15 +40,17 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.sawti.R
+import com.sawti.presentation.theme.LocalIsDark
 import com.sawti.presentation.theme.LocalPerformanceMode
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
- * Pixel-aligned implementation of the user-approved welcome artwork.
+ * Pixel-aligned implementation of the two user-approved welcome artworks.
  *
- * The whole composition (people, title, luminous ribbons, button and credits)
- * is the exact approved reference. It is not recomposed from cut-out images.
+ * Both complete compositions (people, title, dialogue, ribbons, button and credits)
+ * are the exact approved light/dark artwork, not reconstructed from cutouts.
+ * The app theme selection (Light, Dark or System) determines the matching art.
  * The reference is cropped only at the top to exclude the screenshot's fake
  * clock and phone icons. Android renders its OWN live status bar.
  *
@@ -61,11 +63,12 @@ const val SAWTI_WELCOME_SCENE_ENTER_MS = 950
 const val SAWTI_WELCOME_COPY_ENTER_MS = 650
 const val SAWTI_WELCOME_CTA_ENTER_MS = 600
 
-private const val REFERENCE_ASPECT = 691f / 1479f
+private const val REFERENCE_ASPECT = 941f / 1600f
 
 @Composable
 fun SawtiAuroraSplash(onFinished: () -> Unit) {
     val reducedMotion = LocalPerformanceMode.current
+    val dark = LocalIsDark.current
     val latestOnFinished by rememberUpdatedState(onFinished)
     var continued by remember { mutableStateOf(false) }
 
@@ -105,10 +108,13 @@ fun SawtiAuroraSplash(onFinished: () -> Unit) {
         }
     }
 
-    val reference = painterResource(R.drawable.sawti_approved_reference)
+    val reference = painterResource(
+        if (dark) R.drawable.sawti_welcome_dark else R.drawable.sawti_welcome_light
+    )
 
     Box(
-        modifier = Modifier.fillMaxSize().background(Color(0xFF0E2C6B)),
+        modifier = Modifier.fillMaxSize()
+            .background(if (dark) Color(0xFF071632) else Color(0xFF0957AD)),
         contentAlignment = Alignment.Center
     ) {
         BoxWithConstraints(
@@ -117,7 +123,7 @@ fun SawtiAuroraSplash(onFinished: () -> Unit) {
         ) {
             // Fitting the reference without cropping means both the button and
             // developer credits remain visible on short phones and on tablets.
-            // On the reference phone (691x1536) these values are pixel-aligned.
+            // The images use the same 941x1600 frame after removing mock system bars.
             val imageWidth = minOf(maxWidth, maxHeight * REFERENCE_ASPECT)
             val imageHeight = imageWidth / REFERENCE_ASPECT
 
@@ -184,16 +190,16 @@ fun SawtiAuroraSplash(onFinished: () -> Unit) {
                 // The button artwork is part of the approved image, but this
                 // transparent overlay is a real Android control with TalkBack
                 // semantics and ripple feedback. Its bounds correspond to
-                // x=70..621 and y=1178..1280 of the 691x1536 reference image.
+                // x≈107..827 and y≈1209..1345 of the 941x1600 image.
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopStart)
                         .offset(
-                            x = imageWidth * (70f / 691f),
-                            y = imageHeight * (1121f / 1479f)
+                            x = imageWidth * (107f / 941f),
+                            y = imageHeight * (1209f / 1600f)
                         )
-                        .width(imageWidth * (551f / 691f))
-                        .height(imageHeight * (102f / 1479f))
+                        .width(imageWidth * (720f / 941f))
+                        .height(imageHeight * (136f / 1600f))
                         .clip(RoundedCornerShape(100.dp))
                         .semantics { contentDescription = "متابعة" }
                         .clickable(
