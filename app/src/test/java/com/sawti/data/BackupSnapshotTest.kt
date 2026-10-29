@@ -214,4 +214,18 @@ class BackupSnapshotTest {
             assertFalse(File(folder, "files").exists())
         }
     }
+
+    @Test fun checkpointFallbackCopiesCommittedWalDataUnderWriterGate() = runBlocking {
+        db.openHelper.setWriteAheadLoggingEnabled(true)
+        val id = card()
+        repo.updateDetails(id, "آخر تعديل", "نطق", "", null, "")
+        val snapshot = File(context.cacheDir, "fallback.db")
+        db.storage.access { BackupManager(context, db).createCheckpointSnapshot(snapshot) }
+        SQLiteDatabase.openDatabase(snapshot.path, null, SQLiteDatabase.OPEN_READONLY).use { sqlite ->
+            sqlite.rawQuery("SELECT displayText FROM word_items WHERE id=?", arrayOf(id.toString())).use {
+                assertTrue(it.moveToFirst())
+                assertEquals("آخر تعديل", it.getString(0))
+            }
+        }
+    }
 }

@@ -1,6 +1,6 @@
 # Restore validation and first-start recovery
 
-Restore accepts the existing version-1 ZIP format and database versions 3–5.
+Restore accepts ZIP format versions 1–2 and database versions 3–5. See consistent-backups.md for version-2 relative media paths and export coordination.
 Before closing the live Room instance it verifies archive bounds/hashes, rejects
 persistent SQL triggers/views, removes the *staged* Room identity table, and opens
 the staged database using the same generated Room schema and migrations as the app.

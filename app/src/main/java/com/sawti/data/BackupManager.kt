@@ -155,15 +155,20 @@ class BackupManager(private val context: Context, private val database: AppDatab
             if ("syntax" !in cause && "near \"into\"" !in cause) {
                 throw IllegalStateException("تعذّر أخذ نسخة من قاعدة البيانات: ${error.message}", error)
             }
-            // Older SQLite versions have no VACUUM INTO. Checkpoint WAL and reject an
-            // incomplete checkpoint; verify the copied snapshot's integrity afterwards.
-            room.query("PRAGMA wal_checkpoint(FULL)").use { cursor ->
-                require(cursor.moveToFirst() && cursor.getInt(0) == 0) {
-                    "قاعدة البيانات مشغولة؛ حاول مرة أخرى"
-                }
-            }
-            live.copyTo(destination)
+            createCheckpointSnapshot(destination)
         }
+    }
+
+    /** Older SQLite fallback. Caller must hold database.storage for the complete copy. */
+    internal fun createCheckpointSnapshot(destination: File) {
+        val room = database.openHelper.writableDatabase
+        room.query("PRAGMA wal_checkpoint(FULL)").use { cursor ->
+            require(cursor.moveToFirst() && cursor.getInt(0) == 0) {
+                "قاعدة البيانات مشغولة؛ حاول مرة أخرى"
+            }
+        }
+        context.getDatabasePath(dbName).copyTo(destination)
+        validateDatabaseSnapshot(destination)
     }
 
     private fun validateDatabaseSnapshot(snapshot: File) {

@@ -81,7 +81,7 @@ fun SettingsRoute(viewModel: SettingsViewModel) {
         verticalArrangement = Arrangement.spacedBy(18.dp),
     ) {
         SettingBlock("النسخ الاحتياطي والاسترجاع") {
-            Text("احفظ كلماتك وصورك وتسجيلاتك في ملف ZIP على جهازك. الملف غير مشفّر؛ احتفظ به في مكان آمن.")
+            Text("احفظ كلماتك وصورك وتسجيلاتك في ملف ZIP على جهازك. الملف غير مشفّر؛ احتفظ به في مكان آمن. لاسترجاع النسخ الجديدة على جهاز آخر، حدّث تطبيق صوتي عليه أولاً.")
             Button(enabled = !backup.busy && !backup.restartRequired, onClick = { exportLauncher.launch("Sawti-backup.zip") }) {
                 Text("إنشاء نسخة احتياطية")
             }
@@ -201,3 +201,4 @@ private fun <T> ChoiceRow(options: List<Pair<T, String>>, selected: T, onSelect:
         }
     }
 }
+
