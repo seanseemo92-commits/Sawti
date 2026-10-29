@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android 12+ native splash matches the opening area of welcome art. -->
+    <color name="sawti_native_splash_background">#081934</color>
+</resources>

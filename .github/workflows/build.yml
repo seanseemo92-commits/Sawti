@@ -46,6 +46,22 @@ jobs:
           grep -q 'sawti_welcome_light' app/src/main/java/com/sawti/presentation/splash/SawtiAuroraSplash.kt
           grep -q 'sawti_welcome_dark' app/src/main/java/com/sawti/presentation/splash/SawtiAuroraSplash.kt
           test -f app/src/main/res/drawable/ic_launcher_foreground.xml
+          # Native launcher + Android 12 system splash must use the NEW
+          # communication-symbol vectors (day/night), never the old ص art.
+          test -s app/src/main/res/drawable/sawti_adaptive_brand.xml
+          test -s app/src/main/res/drawable-night/sawti_adaptive_brand.xml
+          grep -q 'sawti_adaptive_brand' app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          grep -q 'sawti_adaptive_brand' app/src/main/res/values-v31/themes.xml
+          grep -q 'sawti_adaptive_brand' app/src/main/res/values-night-v31/themes.xml
+          test ! -f app/src/main/res/drawable-nodpi/sawti_adaptive_brand.png
+          test ! -f app/src/main/res/drawable-night-nodpi/sawti_adaptive_brand.png
+          for dpi in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+            for kind in ic_launcher ic_launcher_round; do
+              test -s "app/src/main/res/mipmap-${dpi}/${kind}.png"
+              test -s "app/src/main/res/mipmap-${dpi}/${kind}_night.png"
+              test -s "app/src/main/res/mipmap-night-${dpi}/${kind}.png"
+            done
+          done
           test -f app/src/main/res/drawable/sawti_aurora_window.xml
           test -f app/src/main/res/drawable-night/sawti_aurora_window.xml
           test ! -f app/src/main/java/com/sawti/presentation/splash/SawtiSplashScreen.kt

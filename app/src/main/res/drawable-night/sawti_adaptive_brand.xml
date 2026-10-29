@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Full native vector: three conversations + luminous communication wave.
+     No ص glyph, inset frame or baked-in rounded launcher mask.
+     Foreground stays within Android adaptive icon's safe area. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Subtle depth behind the three voices. -->
+    <path android:fillColor="#061434" android:fillAlpha="0.33"
+        android:pathData="M29,40 C21,40 18,45 18,52 C18,59 22,62 29,63 L29,69 L37,63 L45,63 C50,63 52,58 52,53 L52,51 C52,45 46,40 40,40 Z"/>
+    <!-- Cyan conversation: two sound pulses, left. -->
+    <path android:fillColor="#16CCFF"
+        android:pathData="M27,36 C20,36 17,42 17,49 L17,52 C17,58 21,62 28,62 L29,68 L38,62 L43,62 C48,62 50,58 50,52 L50,48 C50,41 45,36 38,36 Z"/>
+    <path android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFF" android:strokeWidth="2.7"
+        android:strokeLineCap="round"
+        android:pathData="M25,49 L25,53 M31,44 L31,56 M37,47 L37,53"/>
+    <!-- Middle conversation: three white dialogue dots. -->
+    <path android:fillColor="#9C6BFF"
+        android:pathData="M49,25 L63,25 C71,25 76,31 76,39 L76,46 C76,54 70,58 63,58 L57,58 L50,65 L50,58 L49,58 C41,58 36,54 36,46 L36,39 C36,31 41,25 49,25 Z"/>
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M47,41 a2.5,2.5 0,1 0,5 0 a2.5,2.5 0,1 0,-5 0 Z M55,41 a2.5,2.5 0,1 0,5 0 a2.5,2.5 0,1 0,-5 0 Z M63,41 a2.5,2.5 0,1 0,5 0 a2.5,2.5 0,1 0,-5 0 Z"/>
+    <!-- Pink voice on the right. -->
+    <path android:fillColor="#FF90C4"
+        android:pathData="M74,39 C67,39 63,44 63,50 L63,54 C63,61 68,65 74,65 L76,65 L84,71 L84,65 C90,64 93,60 93,54 L93,50 C93,44 89,39 82,39 Z"/>
+    <path android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFF" android:strokeWidth="2.6"
+        android:strokeLineCap="round"
+        android:pathData="M73,51 L73,55 M79,47 L79,58 M85,50 L85,55"/>
+    <!-- The flowing ribbon from the welcome screen, contained in safe zone. -->
+    <path android:fillColor="@android:color/transparent"
+        android:strokeColor="#49B7FF" android:strokeWidth="4.5"
+        android:strokeLineCap="round"
+        android:pathData="M23,78 C35,67 44,68 55,77 C64,85 73,77 84,70"/>
+    <path android:fillColor="@android:color/transparent"
+        android:strokeColor="#BB83FF" android:strokeWidth="2.2"
+        android:strokeLineCap="round"
+        android:pathData="M29,84 C40,76 45,77 54,83 C64,89 72,84 79,79"/>
+</vector>
