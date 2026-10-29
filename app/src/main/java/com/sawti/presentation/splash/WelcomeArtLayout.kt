@@ -13,11 +13,12 @@ internal object WelcomeArtLayout {
     const val SOURCE_WIDTH = 941
     const val SOURCE_HEIGHT = 1600
 
-    // Stretch zones: upper decorative background, pause between tagline
-    // and bubbles, the broad lower aurora ribbon, and empty bottom gradient.
-    // Content-heavy intervals (logo/people/CTA/credits) keep their shape.
-    val boundaries = intArrayOf(0, 70, 370, 420, 1090, 1200, 1540, 1600)
-    val extraWeights = floatArrayOf(0.25f, 0f, 0.15f, 0f, 0.35f, 0f, 0.25f)
+    // Stretch ONLY the first decorative sky strip, lower aurora ribbon,
+    // and bottom empty gradient. The phrase under SAWTI extends through
+    // y=420: stretching any part of it visibly warps the Arabic lettering.
+    // All title, faces, speech bubbles, button and footer stay uniform.
+    val boundaries = intArrayOf(0, 70, 1090, 1200, 1540, 1600)
+    val extraWeights = floatArrayOf(0.30f, 0f, 0.40f, 0f, 0.30f)
 
     data class Geometry(
         val scale: Float,
