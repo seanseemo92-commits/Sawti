@@ -196,6 +196,11 @@ class BackupManager(private val context: Context, private val database: AppDatab
                                 if (name == "manifest.json") require(target.length() + n <= 1024 * 1024) {
                                     "فهرس النسخة كبير جداً"
                                 }
+                                if (name == "preferences/settings.xml") {
+                                    require(target.length() + n <= RestoreSettingsValidator.MAX_BYTES) {
+                                        "ملف الإعدادات كبير جداً"
+                                    }
+                                }
                                 output.write(buffer, 0, n)
                             }
                         }
@@ -217,19 +222,10 @@ class BackupManager(private val context: Context, private val database: AppDatab
                 }
             }
             val stagedDb = File(stage, "database/$dbName")
-            SQLiteDatabase.openDatabase(stagedDb.path, null, SQLiteDatabase.OPEN_READONLY).use { sqlite ->
-                sqlite.rawQuery("PRAGMA integrity_check", null).use { cursor ->
-                    require(cursor.moveToFirst() && cursor.getString(0) == "ok") { "قاعدة البيانات تالفة" }
-                }
-                val version = sqlite.version
-                require(version in 3..5) { "إصدار قاعدة البيانات غير مدعوم" }
-                val expectedTables = listOf("categories", "word_items", "progress_records")
-                expectedTables.forEach { name ->
-                    sqlite.rawQuery("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", arrayOf(name)).use {
-                        require(it.moveToFirst()) { "بنية قاعدة البيانات غير متوافقة" }
-                    }
-                }
-            }
+            // Validate actual Room schema (including migrations), never trust an imported identity hash.
+            RestoreDatabaseValidator.validateAndMigrate(context, stagedDb)
+            val stagedPrefs = File(stage, "preferences/settings.xml")
+            val validatedPrefs = if (stagedPrefs.isFile) RestoreSettingsValidator.canonicalXml(stagedPrefs) else null
             SQLiteDatabase.openDatabase(stagedDb.path, null, SQLiteDatabase.OPEN_READWRITE).use { sqlite ->
                 if (sqlite.version >= 2) {
                     for (folder in folders) {
@@ -239,18 +235,16 @@ class BackupManager(private val context: Context, private val database: AppDatab
                                 val oldPath = cursor.getString(1)
                                 val filename = File(oldPath).name
                                 val newPath = File(context.filesDir, "$folder/$filename").absolutePath
-                                if (validMediaName(filename) && File(stage, "files/$folder/$filename").isFile) {
-                                    sqlite.execSQL("UPDATE word_items SET $column=? WHERE id=?", arrayOf(newPath, cursor.getLong(0)))
-                                } else {
-                                    sqlite.execSQL("UPDATE word_items SET $column=NULL WHERE id=?", arrayOf(cursor.getLong(0)))
+                                require(validMediaName(filename) && File(stage, "files/$folder/$filename").isFile) {
+                                    "النسخة تفتقد صورة أو تسجيلاً مرتبطاً ببطاقة؛ لم تتغير بياناتك الحالية"
                                 }
+                                sqlite.execSQL("UPDATE word_items SET $column=? WHERE id=?", arrayOf(newPath, cursor.getLong(0)))
                             }
                         }
                     }
                 }
             }
             // The incoming replacement must be prepared completely before any live file moves.
-            val liveDb = context.getDatabasePath(dbName)
             val live = livePaths(context)
             val state = stateDir(context)
             val previous = File(state, "previous")
@@ -259,8 +253,11 @@ class BackupManager(private val context: Context, private val database: AppDatab
             var closeAttempted = false
             try {
                 stagedDb.copyTo(File(incoming, "0"))
-                val stagedPrefs = File(stage, "preferences/settings.xml")
-                if (stagedPrefs.isFile) stagedPrefs.copyTo(File(incoming, "5"))
+                if (validatedPrefs != null) File(incoming, "5").writeText(validatedPrefs)
+                // Wait for pending apply() writes before moving the old preference files.
+                require(context.getSharedPreferences("settings", Context.MODE_PRIVATE).edit().commit()) {
+                    "تعذّر حفظ الإعدادات الحالية"
+                }
                 folders.forEachIndexed { index, folder ->
                     val source = File(stage, "files/$folder")
                     if (source.isDirectory) require(source.copyRecursively(File(incoming, "${index + 3}")))
@@ -287,16 +284,16 @@ class BackupManager(private val context: Context, private val database: AppDatab
                     destination.parentFile?.mkdirs()
                     require(replacement.renameTo(destination)) { "تعذّر تثبيت البيانات المسترجعة" }
                 }
-                // Commit marker lives OUTSIDE the rollback directory; cleanup interruption
-                // cannot accidentally turn a successful restore back into a rollback.
-                FileOutputStream(committedMarker(context)).use { output ->
+                // Keep previous files until a NEW process successfully opens the installed
+                // database and validates settings. Installation alone is not a commit.
+                FileOutputStream(File(state, "installed")).use { output ->
                     output.write(1)
                     output.fd.sync()
                 }
             } catch (error: Exception) {
                 // Roll back the files, but never reuse Room if closing it was attempted.
                 // A failed rollback leaves the journal for recovery on next launch.
-                val recoveryError = runCatching { recoverIfInterrupted(context) }.exceptionOrNull()
+                val recoveryError = runCatching { rollback(context) }.exceptionOrNull()
                 if (recoveryError != null) error.addSuppressed(recoveryError)
                 if (closeAttempted) {
                     throw RestoreRequiresRestartException(
@@ -356,7 +353,10 @@ class BackupManager(private val context: Context, private val database: AppDatab
             val db = context.getDatabasePath("my_words.db")
             return listOf(db, File(db.path + "-wal"), File(db.path + "-shm"),
                 File(context.filesDir, "photos"), File(context.filesDir, "custom_audio"),
-                File(context.applicationInfo.dataDir, "shared_prefs/settings.xml"))
+                File(context.applicationInfo.dataDir, "shared_prefs/settings.xml"),
+                // Append only: older journals use the first six indices.
+                File(context.applicationInfo.dataDir, "shared_prefs/settings.xml.bak"),
+                File(db.path + "-journal"))
         }
 
         /** Call synchronously from Application.onCreate BEFORE opening Room/SharedPreferences. */
@@ -369,7 +369,34 @@ class BackupManager(private val context: Context, private val database: AppDatab
                 require(committed.delete()) { "تعذّر إغلاق سجل الاسترجاع" }
                 return
             }
+            if (File(state, "installed").exists()) {
+                try {
+                    // This is called before any application Room/SharedPreferences consumer.
+                    RestoreDatabaseValidator.validateAndMigrate(context, context.getDatabasePath("my_words.db"))
+                    val settings = File(context.applicationInfo.dataDir, "shared_prefs/settings.xml")
+                    if (settings.exists()) RestoreSettingsValidator.canonicalXml(settings)
+                } catch (_: Exception) {
+                    // Bad installed data never destroys the retained original. No app stores
+                    // have been opened yet, so the normal startup can safely use the originals.
+                    rollback(context)
+                    return
+                }
+                // Only after a real Room open has succeeded may cleanup become irreversible.
+                FileOutputStream(committed).use { it.write(1); it.fd.sync() }
+                require(state.deleteRecursively()) { "تعذّر تنظيف سجل الاسترجاع" }
+                require(committed.delete()) { "تعذّر إغلاق سجل الاسترجاع" }
+                return
+            }
+            rollback(context)
+        }
+
+        private fun rollback(context: Context) {
+            val state = stateDir(context)
             if (!state.exists()) return
+            // A retry after interruption must resume rollback, never validate a mixture of
+            // restored originals and incoming files as a successful new installation.
+            val installed = File(state, "installed")
+            if (installed.exists()) require(installed.delete()) { "تعذّر بدء إعادة البيانات السابقة" }
             val journal = File(state, "journal")
             if (!journal.exists()) {
                 require(state.deleteRecursively()) { "تعذّر تنظيف ملفات الاسترجاع المؤقتة" }
@@ -396,3 +423,4 @@ class BackupManager(private val context: Context, private val database: AppDatab
         }
     }
 }
+

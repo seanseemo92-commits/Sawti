@@ -88,9 +88,12 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        fun build(context: Context): AppDatabase =
-            Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "my_words.db")
+        fun build(context: Context): AppDatabase = builder(context, "my_words.db").build()
+
+        /** Same migrations as production; isolated restore validation must never use a fallback. */
+        internal fun builder(context: Context, name: String): RoomDatabase.Builder<AppDatabase> =
+            Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, name)
                 .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
-                .build()
     }
 }
+
