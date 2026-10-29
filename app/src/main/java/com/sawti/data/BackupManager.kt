@@ -4,6 +4,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteDatabase
 import android.net.Uri
+import android.util.Xml
 import com.sawti.data.db.AppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -43,22 +44,38 @@ class BackupManager(private val context: Context, private val database: AppDatab
         require(stage.mkdirs()) { "تعذّر تجهيز مساحة للنسخ الاحتياطي" }
         try {
             val db = File(stage, dbName)
-            createDatabaseSnapshot(db)
-            validateDatabaseSnapshot(db)
-
-            val entries = linkedMapOf<String, File>("database/$dbName" to db)
-            // Force the most recent preference changes to disk before reading the XML.
-            require(context.getSharedPreferences("settings", Context.MODE_PRIVATE).edit().commit()) {
-                "تعذّر حفظ الإعدادات"
-            }
-            val prefs = File(context.applicationInfo.dataDir, "shared_prefs/settings.xml")
-            if (prefs.isFile) entries["preferences/settings.xml"] = prefs
-            folders.forEach { folder ->
-                File(context.filesDir, folder).listFiles()?.filter { it.isFile }?.forEach { file ->
-                    require(validMediaName(file.name)) { "اسم مرفق غير صالح" }
-                    entries["files/$folder/${file.name}"] = file
+            val entries = database.storage.access {
+                createDatabaseSnapshot(db)
+                validateDatabaseSnapshot(db)
+                val staged = linkedMapOf<String, File>("database/$dbName" to db)
+                // getAll() is one in-memory settings snapshot; never zip a live XML file
+                // while SharedPreferences may atomically replace it on another thread.
+                val values = context.getSharedPreferences("settings", Context.MODE_PRIVATE).all
+                val prefs = File(stage, "settings.xml")
+                prefs.outputStream().use { output ->
+                    val xml = Xml.newSerializer()
+                    xml.setOutput(output, "UTF-8")
+                    xml.startDocument("UTF-8", true)
+                    xml.startTag(null, "map")
+                    values.forEach { (key, value) ->
+                        when (value) {
+                            is Boolean -> xml.startTag(null, "boolean").attribute(null, "name", key)
+                                .attribute(null, "value", value.toString()).endTag(null, "boolean")
+                            is String -> xml.startTag(null, "string").attribute(null, "name", key)
+                                .text(value).endTag(null, "string")
+                            else -> error("نوع إعداد غير مدعوم في النسخة")
+                        }
+                    }
+                    xml.endTag(null, "map")
+                    xml.endDocument()
                 }
+                prefs.writeText(RestoreSettingsValidator.canonicalXml(prefs))
+                staged["preferences/settings.xml"] = prefs
+                BackupMediaSnapshot.stage(context, db, stage, staged, maxBytes, maxEntries)
+                staged
             }
+            // All subsequent hashing/ZIP/SAF work uses only immutable staging files.
+            // Repository writes may resume without changing this backup's contents.
             require(entries.size + 1 <= maxEntries) { "عدد ملفات النسخة كبير جداً" }
             val hashes = JSONObject()
             var bytes = 0L
@@ -69,7 +86,7 @@ class BackupManager(private val context: Context, private val database: AppDatab
             }
             val manifest = JSONObject()
                 .put("format", "sawti-backup")
-                .put("version", 1)
+                .put("version", 2)
                 .put("package", context.packageName)
                 .put("createdAt", System.currentTimeMillis())
                 .put("sha256", hashes)
@@ -166,8 +183,16 @@ class BackupManager(private val context: Context, private val database: AppDatab
      * recovery journal permits rollback if the process/device stops halfway through.
      * Caller should restart the app after success, to reload Room and preferences.
      */
-    suspend fun restore(uri: Uri) = withContext(Dispatchers.IO) {
-        recoverIfInterrupted(context)
+    suspend fun restore(uri: Uri) = database.storage.access {
+        withContext(Dispatchers.IO) { restoreLocked(uri) }
+    }
+
+    private fun restoreLocked(uri: Uri) {
+        // Startup recovery happens before application stores open. Never finalize another
+        // restore from a process that still has old Room/preferences instances.
+        require(!stateDir(context).exists() && !committedMarker(context).exists()) {
+            "أعد تشغيل التطبيق لإكمال الاسترجاع السابق"
+        }
         val stage = File(context.cacheDir, "restore_${System.nanoTime()}").apply {
             require(mkdirs()) { "تعذّر تجهيز مساحة الاسترجاع" }
         }
@@ -210,7 +235,8 @@ class BackupManager(private val context: Context, private val database: AppDatab
             } ?: error("تعذّر فتح ملف النسخة")
             require("manifest.json" in seen) { "ملف النسخة يفتقد الفهرس" }
             val manifest = JSONObject(File(stage, "manifest.json").readText())
-            require(manifest.getString("format") == "sawti-backup" && manifest.getInt("version") == 1)
+            val formatVersion = manifest.getInt("version")
+            require(manifest.getString("format") == "sawti-backup" && formatVersion in 1..2)
             require(manifest.getString("package") == context.packageName)
             val hashes = manifest.getJSONObject("sha256")
             require(hashes.has("database/$dbName")) { "ملف النسخة يفتقد قاعدة البيانات" }
@@ -227,19 +253,20 @@ class BackupManager(private val context: Context, private val database: AppDatab
             val stagedPrefs = File(stage, "preferences/settings.xml")
             val validatedPrefs = if (stagedPrefs.isFile) RestoreSettingsValidator.canonicalXml(stagedPrefs) else null
             SQLiteDatabase.openDatabase(stagedDb.path, null, SQLiteDatabase.OPEN_READWRITE).use { sqlite ->
-                if (sqlite.version >= 2) {
-                    for (folder in folders) {
-                        val column = if (folder == "photos") "photoPath" else "audioPath"
-                        sqlite.rawQuery("SELECT id, $column FROM word_items WHERE $column IS NOT NULL", null).use { cursor ->
-                            while (cursor.moveToNext()) {
-                                val oldPath = cursor.getString(1)
-                                val filename = File(oldPath).name
-                                val newPath = File(context.filesDir, "$folder/$filename").absolutePath
-                                require(validMediaName(filename) && File(stage, "files/$folder/$filename").isFile) {
-                                    "النسخة تفتقد صورة أو تسجيلاً مرتبطاً ببطاقة؛ لم تتغير بياناتك الحالية"
-                                }
-                                sqlite.execSQL("UPDATE word_items SET $column=? WHERE id=?", arrayOf(newPath, cursor.getLong(0)))
+                for ((column, oldFolder) in listOf("photoPath" to "photos", "audioPath" to "custom_audio")) {
+                    sqlite.rawQuery("SELECT id, $column FROM word_items WHERE $column IS NOT NULL", null).use { cursor ->
+                        while (cursor.moveToNext()) {
+                            val oldPath = cursor.getString(1)
+                            val relative = if (formatVersion == 1) "$oldFolder/${File(oldPath).name}" else oldPath
+                            val parts = relative.split('/')
+                            require(parts.size == 2 && parts[0] in folders && validMediaName(parts[1])) {
+                                "مسار مرفق غير صالح في النسخة"
                             }
+                            require(File(stage, "files/$relative").isFile) {
+                                "النسخة تفتقد صورة أو تسجيلاً مرتبطاً ببطاقة؛ لم تتغير بياناتك الحالية"
+                            }
+                            val newPath = File(context.filesDir, relative).absolutePath
+                            sqlite.execSQL("UPDATE word_items SET $column=? WHERE id=?", arrayOf(newPath, cursor.getLong(0)))
                         }
                     }
                 }
@@ -272,6 +299,7 @@ class BackupManager(private val context: Context, private val database: AppDatab
                 }
                 require(temp.renameTo(File(state, "journal"))) { "تعذّر بدء استرجاع آمن" }
                 closeAttempted = true
+                database.storage.retire()
                 database.close()
                 live.forEachIndexed { index, file ->
                     if (file.exists()) {

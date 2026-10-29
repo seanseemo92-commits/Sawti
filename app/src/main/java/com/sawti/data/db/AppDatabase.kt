@@ -23,6 +23,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
+    internal val storage = com.sawti.data.StorageCoordinator()
     abstract fun wordDao(): WordDao
     abstract fun progressDao(): ProgressDao
 

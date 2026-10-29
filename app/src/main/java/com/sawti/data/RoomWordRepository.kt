@@ -23,8 +23,6 @@ import java.io.FilterInputStream
 import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.withContext
@@ -64,7 +62,11 @@ class RoomWordRepository(
             }
         }
 
-    override suspend fun seedOrUpdateDefaults() {
+    override suspend fun seedOrUpdateDefaults() = db.storage.cleanupIfActive {
+        seedOrUpdateDefaultsUnlocked()
+    }
+
+    private suspend fun seedOrUpdateDefaultsUnlocked() {
         if (dao.categoryCount() == 0) {
             db.withTransaction {
                 dao.insertCategories(WordSeed.categoryEntities())
@@ -221,7 +223,11 @@ class RoomWordRepository(
 
     private fun isCustomId(id: String) = CustomCategoryRules.canManage(id)
 
-    override suspend fun addCustomCategory(title: String, palette: Int, sortOrder: Int): String {
+    override suspend fun addCustomCategory(title: String, palette: Int, sortOrder: Int): String = db.storage.access {
+        addCustomCategoryUnlocked(title, palette, sortOrder)
+    }
+
+    private suspend fun addCustomCategoryUnlocked(title: String, palette: Int, sortOrder: Int): String {
         val name = title.trim().take(70)
         require(name.isNotBlank()) { "اسم القسم مطلوب" }
         require(CustomCategoryRules.validPalette(palette) && CustomCategoryRules.validSortOrder(sortOrder)) { "إعدادات القسم غير صالحة" }
@@ -232,7 +238,11 @@ class RoomWordRepository(
         return id
     }
 
-    override suspend fun editCustomCategory(id: String, title: String, palette: Int, sortOrder: Int) {
+    override suspend fun editCustomCategory(id: String, title: String, palette: Int, sortOrder: Int) = db.storage.access {
+        editCustomCategoryUnlocked(id, title, palette, sortOrder)
+    }
+
+    private suspend fun editCustomCategoryUnlocked(id: String, title: String, palette: Int, sortOrder: Int) {
         require(isCustomId(id)) { "الأقسام الافتراضية غير قابلة للتعديل" }
         val name = title.trim().take(70)
         require(name.isNotBlank() && CustomCategoryRules.validPalette(palette) && CustomCategoryRules.validSortOrder(sortOrder))
@@ -242,7 +252,11 @@ class RoomWordRepository(
         }
     }
 
-    override suspend fun deleteEmptyCustomCategory(id: String) {
+    override suspend fun deleteEmptyCustomCategory(id: String) = db.storage.access {
+        deleteEmptyCustomCategoryUnlocked(id)
+    }
+
+    private suspend fun deleteEmptyCustomCategoryUnlocked(id: String) {
         require(isCustomId(id)) { "حذف الأقسام الافتراضية ممنوع" }
         db.withTransaction {
             require(CustomCategoryRules.canDelete(id, dao.countItemsInCategory(id))) {
@@ -252,7 +266,11 @@ class RoomWordRepository(
         }
     }
 
-    override suspend fun addCustomCard(categoryId: String, displayText: String, spokenText: String): Long {
+    override suspend fun addCustomCard(categoryId: String, displayText: String, spokenText: String): Long = db.storage.access {
+        addCustomCardUnlocked(categoryId, displayText, spokenText)
+    }
+
+    private suspend fun addCustomCardUnlocked(categoryId: String, displayText: String, spokenText: String): Long {
         require(isCustomId(categoryId)) { "يمكن إضافة بطاقات مخصصة إلى الأقسام المخصصة فقط" }
         val display = displayText.trim().take(100)
         require(display.isNotBlank()) { "نص البطاقة مطلوب" }
@@ -266,7 +284,11 @@ class RoomWordRepository(
         }
     }
 
-    override suspend fun moveCardToCustomCategory(itemId: Long, destinationId: String) {
+    override suspend fun moveCardToCustomCategory(itemId: Long, destinationId: String) = db.storage.access {
+        moveCardToCustomCategoryUnlocked(itemId, destinationId)
+    }
+
+    private suspend fun moveCardToCustomCategoryUnlocked(itemId: Long, destinationId: String) {
         require(isCustomId(destinationId)) { "الوجهة يجب أن تكون قسمًا مخصصًا" }
         db.withTransaction {
             require(dao.categoryById(destinationId) != null) { "قسم الوجهة غير موجود" }
@@ -290,7 +312,11 @@ class RoomWordRepository(
     }
 
     /** New family cards use the ordinary word/media model; no schema duplication. */
-    override suspend fun addFamilyMember(name: String, group: String, phone: String): Long {
+    override suspend fun addFamilyMember(name: String, group: String, phone: String): Long = db.storage.access {
+        addFamilyMemberUnlocked(name, group, phone)
+    }
+
+    private suspend fun addFamilyMemberUnlocked(name: String, group: String, phone: String): Long {
         val cleanName = name.trim().take(100)
         require(cleanName.isNotBlank()) { "اسم الشخص مطلوب" }
         require(com.sawti.domain.model.FamilyRelationships.validPeopleGroup(group)) {
@@ -309,7 +335,11 @@ class RoomWordRepository(
         )
     }
 
-    override suspend fun updateFamilyGroup(id: Long, group: String) {
+    override suspend fun updateFamilyGroup(id: Long, group: String) = db.storage.access {
+        updateFamilyGroupUnlocked(id, group)
+    }
+
+    private suspend fun updateFamilyGroupUnlocked(id: Long, group: String) {
         val old = dao.familyItemById(id) ?: return
         if (old.subgroup == com.sawti.domain.model.FamilyRelationships.RELATIVES) return
         if (group.isNotBlank() && group != com.sawti.domain.model.FamilyRelationships.RELATIVES) {
@@ -331,11 +361,22 @@ class RoomWordRepository(
     override suspend fun updateDetails(
         id: Long, displayText: String, ttsPrompt: String, phonemicCue: String,
         sentencePrompt: String?, phone: String,
+    ) = db.storage.access {
+        updateDetailsUnlocked(id, displayText, ttsPrompt, phonemicCue, sentencePrompt, phone)
+    }
+
+    private suspend fun updateDetailsUnlocked(
+        id: Long, displayText: String, ttsPrompt: String, phonemicCue: String,
+        sentencePrompt: String?, phone: String,
     ) {
         dao.updateDetails(id, displayText, ttsPrompt, phonemicCue, sentencePrompt, phone)
     }
 
-    override suspend fun setFavorite(id: Long, favorite: Boolean) {
+    override suspend fun setFavorite(id: Long, favorite: Boolean) = db.storage.access {
+        setFavoriteUnlocked(id, favorite)
+    }
+
+    private suspend fun setFavoriteUnlocked(id: Long, favorite: Boolean) {
         dao.setFavorite(id, favorite)
     }
 
@@ -397,7 +438,7 @@ class RoomWordRepository(
     }
 
     /**
-     * Serialize all attachment assignments/deletions across repository instances. Cleanup
+     * Serialize attachment writes with backup snapshots and all other repository writes. Cleanup
      * runs AFTER the transaction, and rechecks references under the same lock. If another
      * operation attaches the file between commit and cleanup, that reference keeps it alive.
      * Cancellation after a commit must not delete a newly referenced file.
@@ -410,12 +451,12 @@ class RoomWordRepository(
         recording?.let { candidates.add(it.absolutePath) }
         try {
             return withContext(Dispatchers.IO) {
-                mediaMutex.withLock { action(candidates) }
+                db.storage.access { action(candidates) }
             }
         } finally {
             if (candidates.isNotEmpty()) {
                 withContext(NonCancellable + Dispatchers.IO) {
-                    mediaMutex.withLock { deleteUnreferencedMedia(candidates) }
+                    db.storage.cleanupIfActive { deleteUnreferencedMedia(candidates) }
                 }
             }
         }
@@ -446,7 +487,6 @@ class RoomWordRepository(
     }
 
     private companion object {
-        val mediaMutex = Mutex()
         const val KEY_SEED_VERSION = "seed_version"
     }
 }

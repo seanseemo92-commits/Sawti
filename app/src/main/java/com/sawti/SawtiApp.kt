@@ -33,7 +33,7 @@ class AppContainer(private val app: Application) {
     val audioDispatcher by lazy { AudioDispatcher(speech, player) }
     val caregiver = CaregiverMode()
     val wordRepository: WordRepository by lazy { RoomWordRepository(database, app, settingsRepository) }
-    val progressRepository: ProgressRepository by lazy { RoomProgressRepository(database.progressDao()) }
+    val progressRepository: ProgressRepository by lazy { RoomProgressRepository(database) }
     val chime by lazy { SoftChime() }
     val settingsRepository by lazy { SettingsRepository(app) }
 }
@@ -61,3 +61,4 @@ class SawtiApp : Application() {
         }
     }
 }
+
