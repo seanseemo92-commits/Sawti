@@ -13,6 +13,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
  *  v2  unified categories + word_items          (MIGRATION_1_2 copies the family members, photos, phones, recordings)
  *  v3  favourites, sentence prompt, progress    (MIGRATION_2_3 only ALTERs / CREATEs)
  *  v5  stable image keys                       (MIGRATION_4_5 only ALTERs)
+ *  v6  personal text override flags            (MIGRATION_5_6 adds metadata, preserves values)
  * There is NO destructive fallback: an unsupported path fails loudly instead of wiping data.
  * New vocabulary is added at startup by WordRepository.seedOrUpdateDefaults() because Room's onCreate
  * callback does not run for upgraded installs.

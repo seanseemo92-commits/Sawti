@@ -165,4 +165,22 @@ class DialectEditingTest {
         assertTrue(personal.isFavorite); assertEquals("/personal/voice.m4a", personal.audioPath)
         assertEquals("/personal/photo.jpg", personal.photoPath); assertEquals("123", personal.phone)
     }
+
+    @Test fun customTextMetadataSurvivesBackupAndRestore() = runBlocking {
+        db.wordDao().updatePhoto(id, null)
+        db.wordDao().updateAudio(id, null)
+        val before = CardDetails.from(saved().toDomain())
+        save(before, before.copy(speech = "نطق محفوظ", sentence = "جملة محفوظة"))
+        val expected = saved()
+        val archive = java.io.File(context.cacheDir, "custom-text.zip")
+        val manager = BackupManager(context, db)
+        manager.export(android.net.Uri.fromFile(archive))
+        manager.restore(android.net.Uri.fromFile(archive))
+        BackupManager.recoverIfInterrupted(context)
+        db = AppDatabase.build(context)
+        assertEquals(expected, saved())
+        val shown = DialectCatalog.localize(saved().toDomain(), ArabicDialect.EGYPTIAN)
+        assertEquals("نطق محفوظ", shown.ttsPrompt)
+        assertEquals("جملة محفوظة", shown.sentencePrompt)
+    }
 }
