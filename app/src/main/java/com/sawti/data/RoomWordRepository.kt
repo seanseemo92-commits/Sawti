@@ -19,8 +19,12 @@ import com.sawti.domain.model.CustomCategoryRules
 import com.sawti.domain.repository.WordRepository
 import java.io.File
 import java.io.InputStream
+import java.io.FilterInputStream
 import java.util.UUID
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.withContext
@@ -276,19 +280,12 @@ class RoomWordRepository(
     }
 
     /** Permanently removes only a caregiver-selected card from a custom category. */
-    override suspend fun deleteCustomCard(itemId: Long) {
-        val item = db.withTransaction {
+    override suspend fun deleteCustomCard(itemId: Long) = withMediaMutation { retired ->
+        db.withTransaction {
             val current = dao.wordById(itemId) ?: error("البطاقة غير موجودة")
             require(isCustomId(current.categoryId)) { "لا يمكن حذف بطاقة من قسم افتراضي" }
-            dao.deleteItem(itemId)
-            current
-        }
-        // Backups may contain rows with shared media references. Only remove an app-private
-        // attachment if NO other word still refers to it.
-        listOfNotNull(item.photoPath, item.audioPath).distinct().forEach { path ->
-            if (dao.mediaReferenceCount(path) == 0) {
-                withContext(Dispatchers.IO) { deletePrivateMedia(path) }
-            }
+            retired.addAll(listOfNotNull(current.photoPath, current.audioPath))
+            check(dao.deleteItem(itemId) == 1)
         }
     }
 
@@ -321,23 +318,13 @@ class RoomWordRepository(
     }
 
     /** Permanently deletes only a caregiver-selected custom family card and its OWN media. */
-    override suspend fun deleteFamilyMember(id: Long) {
-        val old = dao.familyItemById(id) ?: return
-        // Preset relationship words are not a removable person's card.
-        if (old.subgroup == com.sawti.domain.model.FamilyRelationships.RELATIVES) return
-        db.withTransaction { dao.deleteItem(id) }
-        // Never delete files beyond app-private storage (legacy rows may contain an external URI).
-        listOfNotNull(old.photoPath, old.audioPath).forEach { raw ->
-            withContext(Dispatchers.IO) {
-                runCatching {
-                    val file = File(raw).canonicalFile
-                    val base = filesDir.canonicalFile
-                    if (file.parentFile == File(base, "photos") ||
-                        file.parentFile == File(base, "custom_audio") ||
-                        file.parentFile == File(base, "recordings")
-                    ) file.delete()
-                }
-            }
+    override suspend fun deleteFamilyMember(id: Long) = withMediaMutation { retired ->
+        db.withTransaction {
+            val old = dao.familyItemById(id) ?: return@withTransaction
+            // Preset relationship words are not a removable person's card.
+            if (old.subgroup == com.sawti.domain.model.FamilyRelationships.RELATIVES) return@withTransaction
+            retired.addAll(listOfNotNull(old.photoPath, old.audioPath))
+            check(dao.deleteItem(id) == 1)
         }
     }
 
@@ -354,78 +341,113 @@ class RoomWordRepository(
 
     /** Copies the picked image into app storage so it survives even if the gallery item moves. */
     override suspend fun setPhoto(id: Long, image: InputStream) {
-        withContext(Dispatchers.IO) {
-            val dir = File(filesDir, "photos").apply { require(isDirectory || mkdirs()) }
-            val target = File(dir, "word_${id}_${System.nanoTime()}.jpg")
-            // Stream to a bounded temporary file, sample-decode, rotate using EXIF, and
-            // store only a compressed app-private JPEG. Old media stays until DB succeeds.
-            SafePhotoProcessor.import(image, target)
-            try {
-                val old = dao.photoPath(id)
-                dao.updatePhoto(id, target.absolutePath)
-                deletePrivateMedia(old)
-            } catch (e: Exception) {
-                target.delete()
-                throw e
+        image.use { source ->
+            withMediaMutation { retired ->
+                val dir = File(filesDir, "photos").apply { require(isDirectory || mkdirs()) }
+                val target = File(dir, "word_${id}_${UUID.randomUUID()}.jpg")
+                retired.add(target.absolutePath)
+                SafePhotoProcessor.import(source.borrowed(), target)
+                replaceMedia(id, target.absolutePath, photo = true, retired = retired)
             }
         }
     }
 
-    override suspend fun clearPhoto(id: Long) {
-        withContext(Dispatchers.IO) {
-            deletePrivateMedia(dao.photoPath(id))
-            dao.updatePhoto(id, null)
-        }
+    override suspend fun clearPhoto(id: Long) = withMediaMutation { retired ->
+        replaceMedia(id, null, photo = true, retired = retired)
     }
 
-    override suspend fun setAudio(id: Long, file: File) {
-        withContext(Dispatchers.IO) {
-            val old = dao.audioPath(id)
-            dao.updateAudio(id, file.absolutePath)
-            if (old != file.absolutePath) deletePrivateMedia(old)
-        }
+    /** Takes responsibility for the finished private recording, including failure/cancellation. */
+    override suspend fun setAudio(id: Long, file: File) = withMediaMutation(file) { retired ->
+        val target = privateMedia(file.absolutePath)
+        require(target != null && target.isFile && target.length() > 0L) { "ملف التسجيل غير صالح" }
+        replaceMedia(id, target.absolutePath, photo = false, retired = retired)
     }
 
     /** Copies a picked audio file into filesDir/custom_audio/ and stores its absolute path. */
     override suspend fun importAudio(id: Long, input: InputStream, extension: String) {
-        withContext(Dispatchers.IO) {
-            SafeMediaImport.checkAudioExtension(extension)
-            val dir = File(filesDir, "custom_audio").apply { require(isDirectory || mkdirs()) }
-            val target = File(dir, "word_${id}_${System.nanoTime()}.$extension")
-            SafeMediaImport.copy(input, target, SafeMediaImport.MAX_AUDIO_BYTES)
-            try {
-                val old = dao.audioPath(id)
-                dao.updateAudio(id, target.absolutePath)
-                if (old != target.absolutePath) deletePrivateMedia(old)
-            } catch (e: Exception) {
-                target.delete()
-                throw e
+        input.use { source ->
+            withMediaMutation { retired ->
+                SafeMediaImport.checkAudioExtension(extension)
+                val dir = File(filesDir, "custom_audio").apply { require(isDirectory || mkdirs()) }
+                val target = File(dir, "word_${id}_${UUID.randomUUID()}.$extension")
+                retired.add(target.absolutePath)
+                SafeMediaImport.copy(source.borrowed(), target, SafeMediaImport.MAX_AUDIO_BYTES)
+                replaceMedia(id, target.absolutePath, photo = false, retired = retired)
             }
         }
     }
 
-    override suspend fun clearAudio(id: Long) {
-        withContext(Dispatchers.IO) {
-            deletePrivateMedia(dao.audioPath(id))
-            dao.updateAudio(id, null)
+    override suspend fun clearAudio(id: Long) = withMediaMutation { retired ->
+        replaceMedia(id, null, photo = false, retired = retired)
+    }
+
+    // The public import owns the stream, including validation failure/cancellation before
+    // copying starts. Helpers borrow it so it is closed exactly once by the outer use block.
+    private fun InputStream.borrowed(): InputStream = object : FilterInputStream(this) {
+        override fun close() = Unit
+    }
+
+    private suspend fun replaceMedia(id: Long, path: String?, photo: Boolean, retired: MutableSet<String>) {
+        db.withTransaction {
+            val item = dao.wordById(id) ?: error("البطاقة غير موجودة")
+            (if (photo) item.photoPath else item.audioPath)?.let { retired.add(it) }
+            val updated = if (photo) dao.updatePhoto(id, path) else dao.updateAudio(id, path)
+            check(updated == 1) { "تعذّر تحديث البطاقة" }
         }
     }
 
-    /** Never delete arbitrary paths from a database imported through a user-selected backup. */
-    private fun deletePrivateMedia(raw: String?) {
-        if (raw.isNullOrBlank()) return
-        runCatching {
-            val file = File(raw).canonicalFile
-            val root = filesDir.canonicalFile
-            val allowed = setOf("photos", "custom_audio", "recordings")
-            if (file.isFile && file.parentFile?.parentFile == root &&
-                file.parentFile?.name in allowed) {
-                file.delete()
+    /**
+     * Serialize all attachment assignments/deletions across repository instances. Cleanup
+     * runs AFTER the transaction, and rechecks references under the same lock. If another
+     * operation attaches the file between commit and cleanup, that reference keeps it alive.
+     * Cancellation after a commit must not delete a newly referenced file.
+     */
+    private suspend fun <T> withMediaMutation(
+        recording: File? = null,
+        action: suspend (MutableSet<String>) -> T,
+    ): T {
+        val candidates = linkedSetOf<String>()
+        recording?.let { candidates.add(it.absolutePath) }
+        try {
+            return withContext(Dispatchers.IO) {
+                mediaMutex.withLock { action(candidates) }
             }
+        } finally {
+            if (candidates.isNotEmpty()) {
+                withContext(NonCancellable + Dispatchers.IO) {
+                    mediaMutex.withLock { deleteUnreferencedMedia(candidates) }
+                }
+            }
+        }
+    }
+
+    /** DB/query/path failures deliberately retain files; cleanup must never undo a valid save. */
+    private suspend fun deleteUnreferencedMedia(candidates: Set<String>) {
+        try {
+            // Compare canonical paths across BOTH columns. Legacy/imported aliases can refer
+            // to one file even when a raw SQL string count says they are different paths.
+            val referenced = dao.mediaPaths().map { File(it).canonicalPath }.toSet()
+            for (raw in candidates) {
+                val file = privateMedia(raw) ?: continue
+                if (file.canonicalPath !in referenced && file.isFile) file.delete()
+            }
+        } catch (_: Exception) {
+            // Prefer an unreferenced private file to deleting a potentially referenced one.
+        }
+    }
+
+    /** Never delete external files, content URIs, directories, or symlinks escaping storage. */
+    private fun privateMedia(raw: String): File? {
+        val file = File(raw).canonicalFile
+        val root = filesDir.canonicalFile
+        return file.takeIf {
+            it.parentFile?.parentFile == root && it.parentFile?.name in setOf("photos", "custom_audio", "recordings")
         }
     }
 
     private companion object {
+        val mediaMutex = Mutex()
         const val KEY_SEED_VERSION = "seed_version"
     }
 }
+
