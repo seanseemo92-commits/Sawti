@@ -8,7 +8,8 @@ import androidx.activity.ComponentActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeOut
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
@@ -92,7 +93,14 @@ class MainActivity : ComponentActivity() {
                         visible = !continueRequested || !readyToEnter,
                         modifier = Modifier.fillMaxSize(),
                         enter = EnterTransition.None,
-                        exit = fadeOut(animationSpec = tween(durationMillis = 460)),
+                        // The previous full-screen fade blended the people,
+                        // captions and Continue button with the Home grid,
+                        // creating obvious double images in video frames.
+                        // A fully opaque upward reveal avoids ghosting.
+                        exit = slideOutVertically(
+                            targetOffsetY = { fullHeight -> -fullHeight },
+                            animationSpec = tween(durationMillis = 420, easing = FastOutSlowInEasing),
+                        ),
                     ) {
                         SawtiAuroraSplash(
                             onFinished = { continueRequested = true },
