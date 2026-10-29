@@ -68,7 +68,7 @@ internal object RestoreSettingsValidator {
                             if (kind == "boolean") {
                                 val value = parser.getAttributeValue(null, "value")
                                 require(value == "true" || value == "false") { "قيمة الإعداد غير صالحة" }
-                                values[name] = kind to value
+                                values[name] = kind to requireNotNull(value)
                             }
                         }
                     }

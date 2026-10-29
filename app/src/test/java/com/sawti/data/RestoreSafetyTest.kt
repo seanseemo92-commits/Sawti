@@ -145,6 +145,20 @@ class RestoreSafetyTest {
         assertOriginalUntouched()
     }
 
+    @Test fun unsupportedVersionAndOrphanedCardAreRejected() {
+        sql(source) { it.version = 99 }
+        assertThrows(Exception::class.java) { restore(archive()) }
+        assertOriginalUntouched()
+        sql(source) { db ->
+            db.version = 5
+            db.execSQL("PRAGMA foreign_keys=OFF")
+            db.execSQL("""INSERT INTO word_items(categoryId,subgroup,displayText,ttsPrompt,phonemicCue,
+                phone,emoji,sortOrder) VALUES('missing-category','','بطاقة','بطاقة','','','',0)""")
+        }
+        assertThrows(Exception::class.java) { restore(archive()) }
+        assertOriginalUntouched()
+    }
+
     @Test fun validRestoreRetainsOriginalUntilStartupValidationSucceeds() {
         restore(archive("""<map><boolean name="haptics" value="true"/></map>"""))
         assertEquals("restored", title(liveFile))
@@ -195,6 +209,30 @@ class RestoreSafetyTest {
         assertFalse(File(prefs.path + ".bak").exists())
         BackupManager.recoverIfInterrupted(context)
         assertTrue(prefs.readText().contains("true"))
+    }
+
+    @Test fun interruptedRollbackResumesWithoutCommittingMixedFiles() {
+        restore(archive("""<map><boolean name="haptics" value="true"/></map>"""))
+        // Simulate termination after rollback restored only the original database.
+        assertTrue(File(state, "installed").delete())
+        assertTrue(liveFile.delete())
+        assertTrue(File(state, "previous/0").renameTo(liveFile))
+        BackupManager.recoverIfInterrupted(context)
+        assertEquals("original", title(liveFile))
+        assertEquals("original photo", oldPhoto.readText())
+        assertTrue(prefs.readText().contains("false"))
+        assertFalse(state.exists())
+    }
+
+    @Test fun committedCleanupNeverRollsBackAfterPartialDeletion() {
+        restore(archive("<map/>"))
+        // Also covers the committed marker written by pre-hardening app versions.
+        File(context.noBackupFilesDir, "sawti_restore_committed").writeText("1")
+        File(state, "previous/0").delete()
+        BackupManager.recoverIfInterrupted(context)
+        assertEquals("restored", title(liveFile))
+        assertFalse(state.exists())
+        assertFalse(File(context.noBackupFilesDir, "sawti_restore_committed").exists())
     }
 
     @Test fun supportedVersionThreeAndFourMigrateWithoutLosingCustomCard() {
