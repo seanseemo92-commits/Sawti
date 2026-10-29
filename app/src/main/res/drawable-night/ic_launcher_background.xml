@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Full-bleed adaptive background; Android supplies the final mask. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <gradient android:angle="315"
-        android:startColor="#070D18"
-        android:centerColor="#0F172A"
-        android:endColor="#1E293B" />
+        android:startColor="#071A38"
+        android:centerColor="#172757"
+        android:endColor="#35226A" />
 </shape>
