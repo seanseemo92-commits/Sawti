@@ -23,6 +23,8 @@ class WelcomeArtLayoutTest {
         assertEquals(960f, g.y(1600f), 0.001f)
         // Title, people, CTA and credits are all scaled at the same aspect.
         assertEquals(300f * g.scale, g.y(370f) - g.y(70f), 0.001f)
+        // No stretching of the Arabic subtitle or luminous text baseline.
+        assertEquals(350f * g.scale, g.y(420f) - g.y(70f), 0.001f)
         assertEquals(670f * g.scale, g.y(1090f) - g.y(420f), 0.001f)
         assertEquals(340f * g.scale, g.y(1540f) - g.y(1200f), 0.001f)
         assertTrue(g.y(1209f) >= 0f)
