@@ -1,12 +1,14 @@
 package com.sawti.presentation.splash
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +17,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,7 +27,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
@@ -157,25 +160,45 @@ fun SawtiAuroraSplash(
                 }
             }
 
-            // The source CTA is not retyped/replaced; this is an overlay on
-            // its painted bounds with native Android touch and accessibility.
-            // Both references share the same 941x1600 composition and CTA.
-            val left = (geo.left + 107f * geo.scale).dp
-            val top = geo.y(1209f).dp
-            val buttonWidth = (720f * geo.scale).dp
-            val buttonHeight = (136f * geo.scale).dp
+            // The approved button is painted into the photograph.
+            // Its interactive hitbox is now measured from the actual colored
+            // pill separately for Light and Dark: no oversized grey outline.
+            val actualButton = with(WelcomeArtLayout) { geo.buttonOnScreen(dark) }
+            val pressSource = remember { MutableInteractionSource() }
+            val pressed by pressSource.collectIsPressedAsState()
+            val pressOpacity by animateFloatAsState(
+                targetValue = if (pressed) 0.12f else 0f,
+                animationSpec = tween(durationMillis = 115),
+                label = "welcome-button-press",
+            )
             Box(
                 modifier = Modifier
-                    .offset(x = left, y = top)
-                    .width(buttonWidth)
-                    .height(buttonHeight)
-                    .clip(RoundedCornerShape(100.dp))
+                    .offset(x = actualButton.left.dp, y = actualButton.top.dp)
+                    .width(actualButton.width.dp)
+                    .height(actualButton.height.dp)
+                    .clip(RoundedCornerShape(percent = 50))
+                    .drawBehind {
+                        // A tiny brand-colored glow INSIDE the existing pill.
+                        // Compose's default ripple was painting a second,
+                        // larger grey rounded rectangle over the artwork.
+                        if (pressOpacity > 0.001f) {
+                            drawRoundRect(
+                                brush = Brush.horizontalGradient(
+                                    listOf(
+                                        Color(0xFF21B7F5).copy(alpha = pressOpacity),
+                                        Color(0xFFBFA6FF).copy(alpha = pressOpacity * 0.8f),
+                                    )
+                                ),
+                                cornerRadius = CornerRadius(size.height / 2f),
+                            )
+                        }
+                    }
                     .semantics { contentDescription = "متابعة" }
                     .clickable(
                         enabled = !clicked,
                         role = Role.Button,
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = ripple(color = Color.White)
+                        interactionSource = pressSource,
+                        indication = null,
                     ) {
                         if (!clicked) {
                             clicked = true
