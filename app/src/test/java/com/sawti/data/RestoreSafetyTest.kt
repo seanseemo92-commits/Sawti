@@ -150,7 +150,7 @@ class RestoreSafetyTest {
         assertThrows(Exception::class.java) { restore(archive()) }
         assertOriginalUntouched()
         sql(source) { db ->
-            db.version = 5
+            db.version = 6
             db.execSQL("PRAGMA foreign_keys=OFF")
             db.execSQL("""INSERT INTO word_items(categoryId,subgroup,displayText,ttsPrompt,phonemicCue,
                 phone,emoji,sortOrder) VALUES('missing-category','','بطاقة','بطاقة','','','',0)""")
@@ -255,7 +255,7 @@ class RestoreSafetyTest {
             }
             RestoreDatabaseValidator.validateAndMigrate(context, file)
             sql(file) { db ->
-                assertEquals(5, db.version)
+                assertEquals(6, db.version)
                 db.rawQuery("SELECT displayText,sentencePrompt,isFavorite,semanticKey FROM word_items", null).use {
                     assertTrue(it.moveToFirst())
                     assertEquals("شخص مخصص", it.getString(0))

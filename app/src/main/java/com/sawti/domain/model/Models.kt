@@ -25,6 +25,8 @@ data class WordItem(
     val phone: String,
     val emoji: String,
     val semanticKey: String? = null,
+    val customTextFields: Int = 0,
+    val sourceDetails: CardDetails? = null,
 ) {
     /** Speech-only channel backed by the existing Room ttsPrompt column. */
     val speechText: String get() = ttsPrompt
@@ -72,3 +74,4 @@ object CategoryIds {
     const val FAMILY = "family"
     const val DAILY = "daily"
 }
+

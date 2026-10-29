@@ -19,7 +19,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
  */
 @Database(
     entities = [CategoryEntity::class, WordItemEntity::class, ProgressRecordEntity::class],
-    version = 5,
+    version = 6,
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -89,12 +89,37 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        /** v5→v6: additive customization metadata; never rewrite existing card values. */
+        val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE word_items ADD COLUMN customTextFields INTEGER NOT NULL DEFAULT 0")
+                val defaults = WordSeed.itemEntities()
+                val byKey = defaults.filter { it.semanticKey != null }.associateBy { Triple(it.categoryId, it.subgroup, it.semanticKey) }
+                val byName = defaults.associateBy { Triple(it.categoryId, it.subgroup, it.displayText) }
+                db.query("SELECT id,categoryId,subgroup,displayText,ttsPrompt,phonemicCue,sentencePrompt,semanticKey FROM word_items").use { rows ->
+                    while (rows.moveToNext()) {
+                        val original = byKey[Triple(rows.getString(1), rows.getString(2), rows.getString(7))]
+                            ?: byName[Triple(rows.getString(1), rows.getString(2), rows.getString(3))]
+                        // Unknown/renamed historical cards are personal data: preserve all text.
+                        var flags = if (original == null) 15 else 0
+                        if (original != null) {
+                            if (rows.getString(3) != original.displayText) flags = flags or 1
+                            if (rows.getString(4) != original.ttsPrompt) flags = flags or 2
+                            if (rows.getString(5) != original.phonemicCue) flags = flags or 4
+                            if (rows.getString(6) != original.sentencePrompt) flags = flags or 8
+                        }
+                        db.execSQL("UPDATE word_items SET customTextFields=? WHERE id=?", arrayOf(flags, rows.getLong(0)))
+                    }
+                }
+            }
+        }
+
         fun build(context: Context): AppDatabase = builder(context, "my_words.db").build()
 
         /** Same migrations as production; isolated restore validation must never use a fallback. */
         internal fun builder(context: Context, name: String): RoomDatabase.Builder<AppDatabase> =
             Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, name)
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
     }
 }
 

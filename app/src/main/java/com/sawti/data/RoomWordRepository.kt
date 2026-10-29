@@ -9,6 +9,8 @@ import com.sawti.data.db.WordItemEntity
 import com.sawti.data.db.WordSeed
 import com.sawti.data.db.toDomain
 import com.sawti.domain.model.Category
+import com.sawti.domain.model.CardDetails
+import com.sawti.domain.model.FamilyRelationships
 import com.sawti.domain.model.DialectCatalog
 import com.sawti.domain.model.TtsEndings
 import com.sawti.domain.model.PhonemicCue
@@ -360,16 +362,23 @@ class RoomWordRepository(
 
     override suspend fun updateDetails(
         id: Long, displayText: String, ttsPrompt: String, phonemicCue: String,
-        sentencePrompt: String?, phone: String,
+        sentencePrompt: String?, phone: String, baseline: CardDetails?, group: String?,
     ) = db.storage.access {
-        updateDetailsUnlocked(id, displayText, ttsPrompt, phonemicCue, sentencePrompt, phone)
-    }
-
-    private suspend fun updateDetailsUnlocked(
-        id: Long, displayText: String, ttsPrompt: String, phonemicCue: String,
-        sentencePrompt: String?, phone: String,
-    ) {
-        dao.updateDetails(id, displayText, ttsPrompt, phonemicCue, sentencePrompt, phone)
+        db.withTransaction {
+            val current = dao.wordById(id) ?: error("البطاقة غير موجودة")
+            val saved = CardDetails.from(current.toDomain())
+            val before = baseline ?: saved
+            val edited = CardDetails(displayText, ttsPrompt, phonemicCue, sentencePrompt, phone, group ?: before.group)
+            val merged = saved.merge(before, edited)
+            require(merged.display.isNotBlank() && merged.speech.isNotBlank()) { "اسم البطاقة والنطق مطلوبان" }
+            if (merged.group != saved.group) {
+                require(current.categoryId == CategoryIds.FAMILY && saved.group != FamilyRelationships.RELATIVES &&
+                    FamilyRelationships.validPeopleGroup(merged.group)) { "قسم العائلة غير صالح" }
+            }
+            check(dao.updateEditedItem(current.copy(displayText = merged.display, ttsPrompt = merged.speech,
+                phonemicCue = merged.cue, sentencePrompt = merged.sentence, phone = merged.phone,
+                subgroup = merged.group, customTextFields = current.customTextFields or before.changedTextFields(edited))) == 1)
+        }
     }
 
     override suspend fun setFavorite(id: Long, favorite: Boolean) = db.storage.access {

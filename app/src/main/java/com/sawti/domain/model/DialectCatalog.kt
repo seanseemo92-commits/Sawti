@@ -104,19 +104,25 @@ object DialectCatalog {
 
     fun hasVariant(original: String): Boolean = words.containsKey(original)
 
-    fun localize(item: WordItem, dialect: ArabicDialect): WordItem {
+    fun localize(value: WordItem, dialect: ArabicDialect): WordItem {
+        val item = value.forEditing()
+        fun custom(flag: Int) = item.customTextFields and flag != 0
         if (item.categoryId.startsWith("custom_") || item.categoryId == "family" ||
             item.categoryId == RegionalDishesCatalog.CATEGORY_ID) return item
-        val visible = words[item.displayText]?.get(dialect.ordinal) ?: item.displayText
+        val visible = if (custom(CardDetails.LABEL)) item.displayText
+            else words[item.displayText]?.get(dialect.ordinal) ?: item.displayText
         if (item.semanticKey == null && !words.containsKey(item.displayText)) return item
         if (item.semanticKey == null && dialect == ArabicDialect.LIBYAN &&
             visible == item.displayText) return item
-        val speech = DialectSpeechCatalog.spoken(item.displayText, visible, item.ttsPrompt, dialect)
+        val speech = if (custom(CardDetails.SPEECH)) item.ttsPrompt
+            else DialectSpeechCatalog.spoken(item.displayText, visible, item.ttsPrompt, dialect)
         return item.copy(
             displayText = visible,
             ttsPrompt = speech,
-            phonemicCue = PhonemicCue.derive(speech),
-            sentencePrompt = if (dialect == ArabicDialect.LIBYAN) item.sentencePrompt else null,
+            phonemicCue = if (custom(CardDetails.CUE)) item.phonemicCue else PhonemicCue.derive(speech),
+            sentencePrompt = if (custom(CardDetails.SENTENCE) || dialect == ArabicDialect.LIBYAN) item.sentencePrompt else null,
+            sourceDetails = CardDetails.from(item),
         )
     }
 }
+
