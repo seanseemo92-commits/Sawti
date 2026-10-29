@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
@@ -215,6 +216,7 @@ fun SawtiAuroraSplash(
             )
             Box(
                 modifier = Modifier
+                    .align(AbsoluteAlignment.TopLeft)
                     .absoluteOffset(x = actualButton.left.dp, y = actualButton.top.dp)
                     .width(actualButton.width.dp)
                     .height(actualButton.height.dp)
