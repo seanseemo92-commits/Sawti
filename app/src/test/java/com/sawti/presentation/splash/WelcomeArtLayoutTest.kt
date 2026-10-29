@@ -31,6 +31,38 @@ class WelcomeArtLayoutTest {
         assertTrue(g.y(1345f) <= 960f)
     }
 
+    @Test fun theContinueHitboxMatchesPaintedPillForEachTheme() {
+        val reference = WelcomeArtLayout.measure(941f, 1600f)
+        val light = with(WelcomeArtLayout) { reference.buttonOnScreen(dark = false) }
+        val dark = with(WelcomeArtLayout) { reference.buttonOnScreen(dark = true) }
+        assertEquals(119f, light.left, 0.001f)
+        assertEquals(1236f, light.top, 0.001f)
+        assertEquals(703f, light.width, 0.001f)
+        assertEquals(117f, light.height, 0.001f)
+        assertEquals(135f, dark.left, 0.001f)
+        assertEquals(1242f, dark.top, 0.001f)
+        assertEquals(672f, dark.width, 0.001f)
+        assertEquals(113f, dark.height, 0.001f)
+        // No old 720-wide grey hitbox may be painted outside the pill.
+        assertTrue(light.width < 720f)
+        assertTrue(dark.width < light.width)
+    }
+
+    @Test fun lightAndDarkContinueRemainInsideEveryPhoneViewport() {
+        for ((width, height) in listOf(360f to 800f, 432f to 960f, 720f to 1280f)) {
+            val g = WelcomeArtLayout.measure(width, height)
+            for (mode in listOf(true, false)) {
+                val rect = with(WelcomeArtLayout) { g.buttonOnScreen(dark = mode) }
+                assertTrue(rect.left >= 0f)
+                assertTrue(rect.top >= 0f)
+                assertTrue(rect.width > 0f)
+                assertTrue(rect.height > 0f)
+                assertTrue(rect.left + rect.width <= width)
+                assertTrue(rect.top + rect.height <= height)
+            }
+        }
+    }
+
     @Test fun tabletLandscapeHasNoVerticalCropOrNegativeGeometry() {
         val g = WelcomeArtLayout.measure(960f, 540f)
         assertTrue(g.left >= 0f)
