@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
@@ -114,7 +115,15 @@ fun SawtiAuroraSplash(onFinished: () -> Unit) {
 
     Box(
         modifier = Modifier.fillMaxSize()
-            .background(if (dark) Color(0xFF071632) else Color(0xFF0957AD)),
+            .background(
+                Brush.verticalGradient(
+                    if (dark) listOf(
+                        Color(0xFF06112E), Color(0xFF101C4F), Color(0xFF06112E)
+                    ) else listOf(
+                        Color(0xFF0756AA), Color(0xFF6A69E4), Color(0xFFF0F9FF)
+                    )
+                )
+            ),
         contentAlignment = Alignment.Center
     ) {
         BoxWithConstraints(
