@@ -1,31 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Monochrome Android themed launcher icon. -->
+<!-- Android themed icon: the same three communication bubbles, without ص. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp" android:height="108dp"
     android:viewportWidth="108" android:viewportHeight="108">
-    <!-- The waveform at the left of ص -->
+    <path android:fillColor="@android:color/transparent" android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="3.4" android:strokeLineJoin="round"
+        android:pathData="M27,36 C20,36 17,42 17,49 L17,52 C17,58 21,62 28,62 L29,68 L38,62 L43,62 C48,62 50,58 50,52 L50,48 C50,41 45,36 38,36 Z"/>
+    <path android:fillColor="@android:color/transparent" android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="3.4" android:strokeLineJoin="round"
+        android:pathData="M49,25 L63,25 C71,25 76,31 76,39 L76,46 C76,54 70,58 63,58 L57,58 L50,65 L50,58 L49,58 C41,58 36,54 36,46 L36,39 C36,31 41,25 49,25 Z"/>
+    <path android:fillColor="@android:color/transparent" android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="3.4" android:strokeLineJoin="round"
+        android:pathData="M74,39 C67,39 63,44 63,50 L63,54 C63,61 68,65 74,65 L76,65 L84,71 L84,65 C90,64 93,60 93,54 L93,50 C93,44 89,39 82,39 Z"/>
     <path android:fillColor="@android:color/transparent"
-        android:strokeColor="#FFFFFFFF" android:strokeWidth="2.0"
-        android:strokeLineCap="round"
-        android:pathData="M17,55 L20,55 M21.5,51 L21.5,59"/>
-    <path android:fillColor="@android:color/transparent"
-        android:strokeColor="#FFFFFFFF" android:strokeWidth="3.1"
-        android:strokeLineCap="round" android:strokeLineJoin="round"
-        android:pathData="M25,55 L27,55 L29,40 L32,69 L35,46 L38,57 L40,49 L43,55"/>
-    <!-- Letter sad: loop, bowl and sweeping finish -->
-    <path android:fillColor="@android:color/transparent"
-        android:strokeColor="#FFFFFFFF" android:strokeWidth="7.2"
-        android:strokeLineCap="round" android:strokeLineJoin="round"
-        android:pathData="M43,65 C49,59 51,52 60,50 C68,47 76,51 77,58 C79,65 73,69 65,69 L49,69 C45,69 44,73 41,78 C38,82 34,81 32,78"/>
-    <path android:fillColor="@android:color/transparent"
-        android:strokeColor="#FFFFFFFF" android:strokeWidth="2.4"
-        android:strokeLineCap="round"
-        android:pathData="M52,71 C60,75 71,74 78,67"/>
-    <!-- Small sound pulses above the mark -->
-    <path android:fillColor="@android:color/transparent" android:strokeColor="#FFFFFFFF" android:strokeWidth="2.9"
-        android:strokeLineCap="round" android:pathData="M59,30 L59,35 M66,25 L66,36 M73,30 L73,35"/>
-    <path android:fillColor="@android:color/transparent" android:strokeColor="#FFFFFFFF" android:strokeWidth="2.7"
-        android:strokeLineCap="round" android:pathData="M82,53 L82,59 M86,50 L86,62"/>
-    <path android:fillColor="@android:color/transparent" android:strokeColor="#FFFFFFFF" android:strokeWidth="1.8"
-        android:strokeLineCap="round" android:pathData="M90,56 L93,56"/>
+        android:strokeColor="#FFFFFFFF" android:strokeLineCap="round" android:strokeWidth="2.4"
+        android:pathData="M25,49 L25,53 M31,44 L31,56 M37,47 L37,53 M73,51 L73,55 M79,47 L79,58 M85,50 L85,55"/>
+    <path android:fillColor="#FFFFFFFF"
+        android:pathData="M47,41 a2.5,2.5 0,1 0,5 0 a2.5,2.5 0,1 0,-5 0 Z M55,41 a2.5,2.5 0,1 0,5 0 a2.5,2.5 0,1 0,-5 0 Z M63,41 a2.5,2.5 0,1 0,5 0 a2.5,2.5 0,1 0,-5 0 Z"/>
+    <path android:fillColor="@android:color/transparent" android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="4" android:strokeLineCap="round"
+        android:pathData="M23,78 C35,67 44,68 55,77 C64,85 73,77 84,70"/>
 </vector>
