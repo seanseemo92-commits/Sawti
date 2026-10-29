@@ -37,7 +37,7 @@ jobs:
           grep -q 'android:allowBackup="false"' app/src/main/AndroidManifest.xml
           # Prevent accidental resurrection of stale splash screens/resources.
           test -f app/src/main/java/com/sawti/presentation/splash/SawtiAuroraSplash.kt
-          grep -q 'SawtiAuroraSplash(onFinished' app/src/main/java/com/sawti/MainActivity.kt
+          grep -q 'SawtiAuroraSplash(' app/src/main/java/com/sawti/MainActivity.kt
           # Approved images for both app-selected light and dark appearance.
           test -s app/src/main/res/drawable-nodpi/sawti_welcome_light.webp
           test -s app/src/main/res/drawable-nodpi/sawti_welcome_dark.webp

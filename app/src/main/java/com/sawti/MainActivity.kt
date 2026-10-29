@@ -5,6 +5,13 @@ import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -23,7 +30,6 @@ import com.sawti.presentation.practice.PracticeViewModel
 import com.sawti.presentation.progress.ProgressViewModel
 import com.sawti.presentation.settings.SettingsViewModel
 import com.sawti.presentation.theme.SawtiTheme
-import com.sawti.presentation.theme.LocalIsDark
 import com.sawti.presentation.splash.SawtiAuroraSplash
 
 class MainActivity : ComponentActivity() {
@@ -59,7 +65,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val settings by settingsVm.settings.collectAsStateWithLifecycle()
-            var showBrandWelcome by rememberSaveable { mutableStateOf(true) }
+            var continueRequested by rememberSaveable { mutableStateOf(false) }
+            val libraryState by libraryVm.uiState.collectAsStateWithLifecycle()
             SawtiTheme(
                 themeMode = settings.themeMode,
                 performanceMode = settings.performanceMode,
@@ -68,13 +75,31 @@ class MainActivity : ComponentActivity() {
                 // Contrast follows Sawti's chosen theme, not just the phone system theme.
                 // The new welcome is dark across its top edge in both themes; use light
                 // status icons over it and the dark app bar to retain contrast.
-                val dark = LocalIsDark.current
                 SideEffect {
                     WindowInsetsControllerCompat(window, window.decorView)
                         .isAppearanceLightStatusBars = false
                 }
-                if (showBrandWelcome) SawtiAuroraSplash(onFinished = { showBrandWelcome = false })
-                else AppRoot(libraryVm, practiceVm, progressVm, settingsVm)
+                // Prepare Home underneath the welcome only after Continue.
+                // Keep the illustration visible until the seeded categories
+                // arrive, avoiding the dark loading screen from HomeScreen.
+                val readyToEnter = libraryState.categories.isNotEmpty() ||
+                    libraryState.errorMessage != null
+                Box(Modifier.fillMaxSize()) {
+                    if (continueRequested) {
+                        AppRoot(libraryVm, practiceVm, progressVm, settingsVm)
+                    }
+                    AnimatedVisibility(
+                        visible = !continueRequested || !readyToEnter,
+                        modifier = Modifier.fillMaxSize(),
+                        enter = EnterTransition.None,
+                        exit = fadeOut(animationSpec = tween(durationMillis = 460)),
+                    ) {
+                        SawtiAuroraSplash(
+                            onFinished = { continueRequested = true },
+                            preparingMain = continueRequested && !readyToEnter,
+                        )
+                    }
+                }
             }
         }
     }
