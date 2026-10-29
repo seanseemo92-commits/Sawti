@@ -62,4 +62,11 @@ class CardDetailsTest {
         val baseline = CardDetails.from(word).copy(sentence = "جملة")
         assertEquals(CardDetails.SENTENCE, baseline.changedTextFields(baseline.copy(sentence = null)))
     }
+
+    @Test fun labelOnlyOverrideCannotRetargetUneditedSpeechToAnotherDictionaryWord() {
+        val renamed = word.copy(displayText = "مية", customTextFields = CardDetails.LABEL)
+        ArabicDialect.entries.forEach {
+            assertEquals(word.ttsPrompt, DialectCatalog.localize(renamed, it).ttsPrompt)
+        }
+    }
 }

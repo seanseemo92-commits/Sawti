@@ -114,7 +114,9 @@ object DialectCatalog {
         if (item.semanticKey == null && !words.containsKey(item.displayText)) return item
         if (item.semanticKey == null && dialect == ArabicDialect.LIBYAN &&
             visible == item.displayText) return item
-        val speech = if (custom(CardDetails.SPEECH)) item.ttsPrompt
+        // A personal label may happen to match another dictionary word. Do not change
+        // its unedited pronunciation into that other word's curated speech.
+        val speech = if (custom(CardDetails.SPEECH) || custom(CardDetails.LABEL)) item.ttsPrompt
             else DialectSpeechCatalog.spoken(item.displayText, visible, item.ttsPrompt, dialect)
         return item.copy(
             displayText = visible,
