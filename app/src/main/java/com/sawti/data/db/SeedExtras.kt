@@ -1,14 +1,11 @@
 package com.sawti.data.db
 
 /**
- * Functional cloze prompts ("نَأْكُلُ الـ...") and the default quick-access favourites.
+ * Functional cloze prompts ("نَأْكُلُ الـ...") for sentence hints.
  * Keys are "categoryId/displayText" exactly as in WordSeed. A word with no entry falls back to
  * its category default; words in [noPrompt] have no 💬 button.
  */
 object SeedExtras {
-
-    /** Favourites are defaulted once, by the top-up that introduces them (see RoomWordRepository). */
-    const val FAVORITES_SINCE_VERSION = 4
 
     private val categoryDefault = mapOf(
         "vegetables" to "نَطْبُخُ الـ...",
