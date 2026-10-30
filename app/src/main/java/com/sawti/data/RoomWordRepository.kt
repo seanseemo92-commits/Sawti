@@ -203,12 +203,11 @@ class RoomWordRepository(
 
             val kept = existing.filter { e -> obsolete.none { it.id == e.id } }
                 .associateBy { Triple(it.categoryId, it.subgroup, it.displayText) }
-            val applyFavorites = previousVersion < SeedExtras.FAVORITES_SINCE_VERSION
             val missing = mutableListOf<WordItemEntity>()
             for (item in seedItems) {
                 val match = kept[Triple(item.categoryId, item.subgroup, item.displayText)]
                 if (match == null) {
-                    missing += if (applyFavorites) item else item.copy(isFavorite = false)
+                    missing += item.copy(isFavorite = false)
                 } else {
                     dao.updateSort(match.id, item.sortOrder)
                     // words migrated from the first app version only have the plain name as TTS text
@@ -216,7 +215,6 @@ class RoomWordRepository(
                         dao.updateTtsAndCue(match.id, item.ttsPrompt, item.phonemicCue)
                     }
                     item.sentencePrompt?.let { dao.fillSentencePrompt(match.id, it) }
-                    if (applyFavorites && item.isFavorite) dao.setFavorite(match.id, true)
                 }
             }
             if (missing.isNotEmpty()) dao.insertItems(missing)
