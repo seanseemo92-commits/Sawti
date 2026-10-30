@@ -381,15 +381,7 @@ class RoomWordRepository(
         }
     }
 
-    override suspend fun setFavorite(id: Long, favorite: Boolean) = db.storage.access {
-        setFavoriteUnlocked(id, favorite)
-    }
 
-    private suspend fun setFavoriteUnlocked(id: Long, favorite: Boolean) {
-        dao.setFavorite(id, favorite)
-    }
-
-    /** Copies the picked image into app storage so it survives even if the gallery item moves. */
     override suspend fun setPhoto(id: Long, image: InputStream) {
         image.use { source ->
             withMediaMutation { retired ->
