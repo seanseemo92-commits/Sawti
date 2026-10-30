@@ -36,7 +36,6 @@ data class WordItemEntity(
     val ttsPrompt: String,
     val phonemicCue: String,
     val sentencePrompt: String? = null,
-    @ColumnInfo(defaultValue = "0") val isFavorite: Boolean = false,
     val audioPath: String? = null,
     val photoPath: String? = null,
     val phone: String = "",
@@ -49,7 +48,7 @@ data class WordItemEntity(
 fun WordItemEntity.toDomain() = WordItem(
     id = id, categoryId = categoryId, subgroup = subgroup, displayText = displayText,
     ttsPrompt = ttsPrompt, phonemicCue = phonemicCue, sentencePrompt = sentencePrompt,
-    isFavorite = isFavorite, audioPath = audioPath,
+    audioPath = audioPath,
     photoPath = photoPath, phone = phone, emoji = emoji, semanticKey = semanticKey, customTextFields = customTextFields,
 )
 
