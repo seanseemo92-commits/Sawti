@@ -83,10 +83,8 @@ import com.sawti.domain.model.CategoryIds
 import com.sawti.domain.model.FamilyRelationships
 import com.sawti.domain.model.ViewMode
 import com.sawti.domain.model.WordItem
-import com.sawti.domain.search.ArabicSearch
 import com.sawti.presentation.common.ActionPill
 import com.sawti.presentation.common.EditBadge
-import com.sawti.presentation.common.FavoriteStar
 import com.sawti.presentation.common.HintButton
 import com.sawti.presentation.common.PhraseHintButton
 import com.sawti.presentation.common.ItemImage
@@ -102,7 +100,7 @@ import com.sawti.presentation.theme.categoryBannerColor
 import kotlinx.coroutines.launch
 
 @Composable
-fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryActions, searchQuery: String = "") {
+fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryActions) {
     val palette = paletteOf(category.palette)
     val isFamily = category.id == CategoryIds.FAMILY
     val isCustom = category.id.startsWith("custom_")
@@ -118,14 +116,10 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
     LaunchedEffect(category.id, subgroups) {
         if (subgroup !in subgroups && subgroups.isNotEmpty()) subgroup = subgroups.first()
     }
-    val searching = searchQuery.isNotBlank()
-    // Search across *all* tabs, including names in hidden family subgroups.
-    val items = if (searching) category.items.filter {
-        ArabicSearch.matches(it.displayText, it.ttsPrompt, searchQuery)
-    } else if (isFamily) category.items.filter { it.subgroup == subgroup }
+    val items = if (isFamily) category.items.filter { it.subgroup == subgroup }
         else if (subgroups.isEmpty()) category.items
         else category.items.filter { it.subgroup == subgroup }
-    val isPeopleGroup = !searching && isFamily && subgroup != FamilyRelationships.RELATIVES
+    val isPeopleGroup = isFamily && subgroup != FamilyRelationships.RELATIVES
 
     val context = LocalContext.current
     val onCall: (String) -> Unit = { phone ->
@@ -139,7 +133,7 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
     ) {
     Column(Modifier.fillMaxSize()) {
         // Always show the relationship vocabulary first; person groups exist even when empty.
-        if (!searching && subgroups.isNotEmpty()) {
+        if (subgroups.isNotEmpty()) {
             SubgroupTabs(
                 subgroups = subgroups,
                 selected = subgroup,
@@ -149,7 +143,7 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
                     .padding(start = 16.dp, end = 16.dp, top = 16.dp),
             )
         }
-        if (!searching) ViewModeToggle(
+        ViewModeToggle(
             mode = mode,
             palette = palette,
             onChange = { mode = it },
@@ -158,11 +152,7 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
                 .padding(horizontal = 16.dp, vertical = 10.dp),
         )
         Box(Modifier.weight(1f)) {
-            if (searching && items.isEmpty()) {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("ما لقيناش كلمات تطابق البحث")
-                }
-            } else if (isPeopleGroup && items.isEmpty()) {
+            if (isPeopleGroup && items.isEmpty()) {
                 Column(
                     Modifier.fillMaxSize().padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -180,14 +170,14 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
                     Text(stringResource(if (state.caregiverMode) R.string.family_empty_caregiver else R.string.family_empty_patient), fontSize = 16.sp,
                         textAlign = TextAlign.Center)
                 }
-            } else when (if (searching) ViewMode.GRID else mode) {
+            } else when (mode) {
                 ViewMode.GRID -> WordGrid(items, category, palette, state, actions)
                 ViewMode.FLASHCARD -> key(subgroup) {
                     FlashcardCarousel(items, category, palette, state, actions, onCall)
                 }
             }
         }
-        if (isCustom && state.caregiverMode && !searching) {
+        if (isCustom && state.caregiverMode) {
             Button(
                 onClick = { addingCustomWord = true },
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)
@@ -350,39 +340,6 @@ private fun WordGrid(
  * editing without obstructing a real image. The long-press action stays untouched.
  */
 @Composable
-private fun WordCardContextActions(
-    item: WordItem,
-    caregiverMode: Boolean,
-    onHint: () -> Unit,
-    onSentenceHint: () -> Unit,
-    onToggleFavorite: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    var expanded by androidx.compose.runtime.remember(item.id) { mutableStateOf(false) }
-    Box(modifier) {
-        IconButton(
-            onClick = { expanded = true },
-            modifier = Modifier.size(44.dp).alpha(0.42f),
-        ) {
-            Icon(Icons.Filled.MoreVert, contentDescription = "خيارات البطاقة",
-                tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(21.dp))
-        }
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            DropdownMenuItem(
-                text = { Text("تلميح بداية النطق") },
-                onClick = { expanded = false; onHint() },
-            )
-            if (!item.sentencePrompt.isNullOrBlank()) {
-                DropdownMenuItem(
-                    text = { Text("تلميح الجملة") },
-                    onClick = { expanded = false; onSentenceHint() },
-                )
-            }
-        }
-    }
-}
-
-@Composable
 internal fun WordCard(
     item: WordItem,
     palette: CategoryPalette,
@@ -448,14 +405,15 @@ internal fun WordCard(
                     overflow = TextOverflow.Ellipsis,
                 )
             }
-            WordCardContextActions(
-                item = item,
-                caregiverMode = caregiverMode,
-                onHint = onHint,
-                onSentenceHint = onSentenceHint,
-                onToggleFavorite = onToggleFavorite,
-                modifier = Modifier.align(Alignment.TopEnd).padding(3.dp),
-            )
+            Row(
+                modifier = Modifier.align(Alignment.TopEnd).padding(6.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                HintButton(onClick = onHint)
+                if (!item.sentencePrompt.isNullOrBlank()) {
+                    PhraseHintButton(onClick = onSentenceHint)
+                }
+            }
         }
     }
 }
@@ -568,14 +526,15 @@ private fun FlashcardPage(
                     modifier = Modifier.fillMaxSize().padding(22.dp),
                     crop = category.previewOnTap,
                 )
-                WordCardContextActions(
-                    item = item,
-                    caregiverMode = state.caregiverMode,
-                    onHint = { actions.onHint(item) },
-                    onSentenceHint = { actions.onSentenceHint(item) },
-                    onToggleFavorite = { actions.onToggleFavorite(item) },
-                    modifier = Modifier.align(Alignment.TopEnd).padding(10.dp),
-                )
+                Row(
+                modifier = Modifier.align(Alignment.TopEnd).padding(6.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                HintButton(onClick = onHint)
+                if (!item.sentencePrompt.isNullOrBlank()) {
+                    PhraseHintButton(onClick = onSentenceHint)
+                }
+            }
             }
             Text(
                 item.displayText,
