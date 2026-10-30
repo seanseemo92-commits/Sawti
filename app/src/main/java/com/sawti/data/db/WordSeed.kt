@@ -415,7 +415,6 @@ object WordSeed {
                     ttsPrompt = spoken,
                     phonemicCue = w.cue ?: PhonemicCue.derive(spoken),
                     sentencePrompt = SeedExtras.sentencePrompt(c.id, w.display),
-                    isFavorite = SeedExtras.isFavorite(c.id, w.display),
                     emoji = w.emoji,
                     sortOrder = w.sort ?: i,
                     semanticKey = WordImageCatalog.keyForSeed(c.id, w.display, w.subgroup),
