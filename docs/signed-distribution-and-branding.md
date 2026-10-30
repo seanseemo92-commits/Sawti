@@ -7,9 +7,9 @@ a manifest permission, a signing flag, or by changing the app's icon.
 ## Stable signing (required for production updates)
 
 The existing CI workflow continues to build **debug** and **unsigned release**
-artifacts for validation. A separate manual GitHub Actions workflow
+artifacts for validation. A separate GitHub Actions workflow
 `.github/workflows/release-signed.yml` produces a signed Release APK and
-AAB when the repository owner provides a private, long-lived upload keystore.
+AAB using the existing private publisher keystore in repository secrets. It runs when the app build configuration changes on main, or by manual dispatch.
 
 Configure these GitHub **Actions repository secrets** securely:
 - `SAWTI_RELEASE_KEYSTORE_BASE64`: base64 of the keystore binary, as **one line**
@@ -22,7 +22,7 @@ chat, or print their contents in workflow logs. Keep an offline recovery copy
 of the key and passwords. All future direct APK updates must use the same
 release signing certificate; the debug certificate is **different**.
 
-After configuring the secrets, run **Actions → Sawti signed release (manual) →
+After configuring the secrets, run **Actions → Sawti signed release →
 Run workflow** on `main`. The job verifies the signed APK and produces a
 signed AAB for Play Console. It refuses to publish a release if secrets are absent.
 The normal build workflow never claims that its unsigned Release APK is installable.
@@ -44,14 +44,12 @@ first, and only reinstall when the restore/restart workflow has been tested.
 
 ## Artwork and theme validation
 
-The daytime launcher resources remain unchanged. The dark launcher uses a
-foreground **without a second internal rounded card**, allowing Android's
-adaptive mask to own the crop. The previous raster welcome artwork was retired in favor of the new
-**Sawti Aurora** native Compose screen. Its emblem uses the same scalable
-`ic_launcher_foreground.xml` as the app icon; the new Arabic/English title
-is real Android text instead of an upscaled PNG. See
-`docs/aurora-splash.md` for startup/animation and visual QA.
+The welcome screen uses the approved light/dark WebP artwork rendered in Compose.
+The button artwork and developer credits are embedded in those images; the interactive
+hit target and press feedback are native Compose. Dark mode uses the light button
+reference, and the copyright strip scales uniformly. See `docs/aurora-splash.md`.
 
 Test on real devices: Android 7/8/13+, light and dark phone themes, app theme
 overrides, circular launchers, home and word cards from each category, long
 press, touch dwell, speech aura, and accessibility text sizes.
+
