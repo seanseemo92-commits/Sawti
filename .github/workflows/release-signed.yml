@@ -72,14 +72,17 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          trap 'echo "::error::Release verification failed at line $LINENO"' ERR
           APK=app/build/outputs/apk/release/app-release.apk
           AAB=app/build/outputs/bundle/release/app-release.aab
           BUILD_TOOLS=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
           "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$APK" > "$RUNNER_TEMP/new-cert.txt"
+          cat "$RUNNER_TEMP/new-cert.txt"
           grep -q 'Verified using v2 scheme.*true' "$RUNNER_TEMP/new-cert.txt"
           mkdir -p "$RUNNER_TEMP/previous-release"
           gh release download v4.4 --repo "$GITHUB_REPOSITORY" --pattern 'Sawti-v4.4-Release.apk' --dir "$RUNNER_TEMP/previous-release"
           "$BUILD_TOOLS/apksigner" verify --print-certs "$RUNNER_TEMP/previous-release/Sawti-v4.4-Release.apk" > "$RUNNER_TEMP/old-cert.txt"
+          cat "$RUNNER_TEMP/old-cert.txt"
           NEW_CERT=$(sed -n 's/^Signer #1 certificate SHA-256 digest: //p' "$RUNNER_TEMP/new-cert.txt")
           OLD_CERT=$(sed -n 's/^Signer #1 certificate SHA-256 digest: //p' "$RUNNER_TEMP/old-cert.txt")
           test "$NEW_CERT" = "754b679c29b0c8acf7c61ca265813d9528c0d0c3afe912b9319a6354cbd31b21"
@@ -87,8 +90,10 @@ jobs:
           "$BUILD_TOOLS/aapt" dump badging "$APK" > "$RUNNER_TEMP/apk-badging.txt"
           python3 scripts/verify_release.py "$RUNNER_TEMP/apk-badging.txt"
           jarsigner -verify "$AAB" > "$RUNNER_TEMP/aab-verification.txt"
+          cat "$RUNNER_TEMP/aab-verification.txt"
           grep -q 'jar verified' "$RUNNER_TEMP/aab-verification.txt"
           keytool -printcert -jarfile "$AAB" > "$RUNNER_TEMP/aab-cert.txt"
+          cat "$RUNNER_TEMP/aab-cert.txt"
           AAB_CERT=$(sed -n 's/.*SHA256: //p' "$RUNNER_TEMP/aab-cert.txt" | head -n 1 | tr -d ':' | tr '[:upper:]' '[:lower:]')
           test "$AAB_CERT" = "$NEW_CERT"
           unzip -t "$AAB" > /dev/null
