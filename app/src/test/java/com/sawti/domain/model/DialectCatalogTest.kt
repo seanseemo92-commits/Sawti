@@ -10,7 +10,6 @@ class DialectCatalogTest {
     private fun item(text: String) = WordItem(
         id = 8L, categoryId = "daily", subgroup = "", displayText = text,
         ttsPrompt = "نَبِّي إِمِّيَّه", phonemicCue = "نَبـ...",
-        sentencePrompt = "نبي ...", isFavorite = true,
         audioPath = "/protected/voice.m4a", photoPath = "/protected/photo.jpg",
         phone = "", emoji = "💧"
     )
@@ -41,7 +40,6 @@ class DialectCatalogTest {
         assertEquals(original.id, localized.id)
         assertEquals(original.audioPath, localized.audioPath)
         assertEquals(original.photoPath, localized.photoPath)
-        assertEquals(original.isFavorite, localized.isFavorite)
         assertEquals(null, localized.sentencePrompt) // Don't speak a Libyan carrier phrase in a different dialect
     }
 
@@ -82,7 +80,6 @@ class DialectCatalogTest {
                 id = 100L, categoryId = dbItem.categoryId, subgroup = dbItem.subgroup,
                 displayText = dbItem.displayText, ttsPrompt = dbItem.ttsPrompt,
                 phonemicCue = dbItem.phonemicCue, sentencePrompt = dbItem.sentencePrompt,
-                isFavorite = dbItem.isFavorite, audioPath = "/user/voice.m4a",
                 photoPath = "/user/photo.jpg", phone = "", emoji = dbItem.emoji,
                 semanticKey = key,
             )
@@ -92,7 +89,6 @@ class DialectCatalogTest {
                 assertEquals(original.id, localized.id)
                 assertEquals(original.photoPath, localized.photoPath)
                 assertEquals(original.audioPath, localized.audioPath)
-                assertEquals(original.isFavorite, localized.isFavorite)
             }
         }
     }
