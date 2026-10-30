@@ -530,9 +530,9 @@ private fun FlashcardPage(
                 modifier = Modifier.align(Alignment.TopEnd).padding(6.dp),
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                HintButton(onClick = onHint)
+                HintButton(onClick = { actions.onHint(item) })
                 if (!item.sentencePrompt.isNullOrBlank()) {
-                    PhraseHintButton(onClick = onSentenceHint)
+                    PhraseHintButton(onClick = { actions.onSentenceHint(item) })
                 }
             }
             }
