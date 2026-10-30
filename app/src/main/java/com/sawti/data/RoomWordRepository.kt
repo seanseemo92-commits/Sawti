@@ -293,9 +293,8 @@ class RoomWordRepository(
         db.withTransaction {
             require(dao.categoryById(destinationId) != null) { "قسم الوجهة غير موجود" }
             val item = dao.wordById(itemId) ?: error("البطاقة غير موجودة")
-            require(item.categoryId != CategoryIds.FAMILY ||
-                item.subgroup != com.sawti.domain.model.FamilyRelationships.RELATIVES) {
-                "بطاقات صلات العائلة الافتراضية لا يمكن نقلها"
+            require(isCustomId(item.categoryId)) {
+                "يمكن نقل البطاقات التي أنشأها المستخدم داخل الأقسام المخصصة فقط"
             }
             dao.moveWord(itemId, destinationId)
         }
