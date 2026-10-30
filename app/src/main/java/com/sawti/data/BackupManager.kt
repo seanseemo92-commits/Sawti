@@ -294,8 +294,11 @@ class BackupManager(private val context: Context, private val database: AppDatab
                     val source = File(stage, "files/$folder")
                     if (source.isDirectory) require(source.copyRecursively(File(incoming, "${index + 3}")))
                 }
-                // Record which paths existed BEFORE changing anything. Atomic marker rename avoids
-                // an incomplete journal being interpreted as a valid recovery transaction.
+                // Close Room first: SQLite may checkpoint and remove WAL/SHM files.
+                // Journal only paths that actually remain available for moving.
+                closeAttempted = true
+                database.storage.retire()
+                database.close()
                 val existing = live.indices.filter { live[it].exists() }.joinToString(",")
                 val temp = File(state, "journal.tmp")
                 FileOutputStream(temp).use { stream ->
@@ -303,9 +306,6 @@ class BackupManager(private val context: Context, private val database: AppDatab
                     stream.fd.sync()
                 }
                 require(temp.renameTo(File(state, "journal"))) { "تعذّر بدء استرجاع آمن" }
-                closeAttempted = true
-                database.storage.retire()
-                database.close()
                 live.forEachIndexed { index, file ->
                     if (file.exists()) {
                         require(file.renameTo(File(previous, "$index"))) { "تعذّر نقل البيانات القديمة بأمان" }
