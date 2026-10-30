@@ -573,25 +573,6 @@ fun PhraseHintButton(onClick: () -> Unit, modifier: Modifier = Modifier, size: I
 }
 
 @Composable
-fun FavoriteStar(isFavorite: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Box(
-        modifier
-            .size(44.dp)
-            .clip(CircleShape)
-            .background(Color.White.copy(alpha = 0.92f))
-            .bounceClick(onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
-            contentDescription = stringResource(if (isFavorite) R.string.favorite_unpin else R.string.favorite_pin),
-            tint = HintAmber,
-            modifier = Modifier.size(26.dp),
-        )
-    }
-}
-
-@Composable
 fun EditBadge(modifier: Modifier = Modifier) {
     Icon(
         Icons.Filled.Edit,
