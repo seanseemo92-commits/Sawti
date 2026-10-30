@@ -330,8 +330,8 @@ private fun WordGrid(
 }
 
 /**
- * Hidden secondary actions preserve phonemic/sentence hints, favourites and caregiver
- * editing without obstructing a real image. The long-press action stays untouched.
+ * Direct, accessible phonemic and sentence hint controls on every word card.
+ * Long-press caregiver editing remains separate from the patient hint actions.
  */
 @Composable
 internal fun WordCard(
