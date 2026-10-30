@@ -35,7 +35,7 @@ class DialectEditingTest {
         settings = SettingsRepository(context)
         repo = RoomWordRepository(db, context, settings)
         db.wordDao().insertCategory(CategoryEntity(seed.categoryId, "قسم", 0, false, 0))
-        id = db.wordDao().insertItem(seed.copy(sentencePrompt = "جملة شخصية", isFavorite = true,
+        id = db.wordDao().insertItem(seed.copy(sentencePrompt = "جملة شخصية",
             photoPath = "/personal/photo.jpg", audioPath = "/personal/voice.m4a"))
     }
 
@@ -75,7 +75,6 @@ class DialectEditingTest {
         ArabicDialect.entries.forEach {
             assertEquals("نطق شخصي", DialectCatalog.localize(row.toDomain(), it).ttsPrompt)
         }
-        assertTrue(row.isFavorite)
         assertEquals("/personal/photo.jpg", row.photoPath)
         assertEquals("/personal/voice.m4a", row.audioPath)
     }
@@ -96,15 +95,14 @@ class DialectEditingTest {
         assertEquals(CardDetails.SENTENCE, saved().customTextFields)
     }
 
-    @Test fun staleEditorPreservesNewFavoriteMediaAndUneditedText() = runBlocking {
+    @Test fun staleEditorPreservesNewMediaAndUneditedText() = runBlocking {
         val before = CardDetails.from(saved().toDomain())
         save(before, before.copy(speech = "أحدث نطق"))
-        db.wordDao().setFavorite(id, false)
         db.wordDao().updatePhoto(id, "/personal/new.jpg")
         save(before, before.copy(phone = "123"))
         val row = saved()
         assertEquals("أحدث نطق", row.ttsPrompt); assertEquals("123", row.phone)
-        assertFalse(row.isFavorite); assertEquals("/personal/new.jpg", row.photoPath)
+        assertEquals("/personal/new.jpg", row.photoPath)
     }
 
     @Test fun conflictingSaveFailsAtomically() = runBlocking {
@@ -162,7 +160,7 @@ class DialectEditingTest {
         assertEquals(CardDetails.SPEECH, personal.customTextFields)
         assertEquals("تسجيل نص قديم مخصص", personal.ttsPrompt)
         assertEquals(seed.sentencePrompt, personal.sentencePrompt)
-        assertTrue(personal.isFavorite); assertEquals("/personal/voice.m4a", personal.audioPath)
+        assertEquals("/personal/voice.m4a", personal.audioPath)
         assertEquals("/personal/photo.jpg", personal.photoPath); assertEquals("123", personal.phone)
     }
 
