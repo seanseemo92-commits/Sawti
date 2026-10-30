@@ -80,7 +80,7 @@ class DialectCatalogTest {
                 id = 100L, categoryId = dbItem.categoryId, subgroup = dbItem.subgroup,
                 displayText = dbItem.displayText, ttsPrompt = dbItem.ttsPrompt,
                 phonemicCue = dbItem.phonemicCue, sentencePrompt = dbItem.sentencePrompt,
-                photoPath = "/user/photo.jpg", phone = "", emoji = dbItem.emoji,
+                audioPath = "/user/voice.m4a", photoPath = "/user/photo.jpg", phone = "", emoji = dbItem.emoji,
                 semanticKey = key,
             )
             for (dialect in ArabicDialect.entries) {
