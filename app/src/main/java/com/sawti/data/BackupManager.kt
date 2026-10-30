@@ -414,6 +414,10 @@ class BackupManager(private val context: Context, private val database: AppDatab
                     rollback(context)
                     return
                 }
+                // A restored database may contain older seed content than the current install.
+                // Reset the independent seed marker so the next launch reconciles missing words.
+                require(context.getSharedPreferences("seed", Context.MODE_PRIVATE).edit()
+                    .remove("seed_version").commit()) { "تعذّر إعادة تهيئة إصدار المفردات" }
                 // Only after a real Room open has succeeded may cleanup become irreversible.
                 FileOutputStream(committed).use { it.write(1); it.fd.sync() }
                 require(state.deleteRecursively()) { "تعذّر تنظيف سجل الاسترجاع" }
