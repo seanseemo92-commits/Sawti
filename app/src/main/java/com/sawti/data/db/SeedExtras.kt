@@ -125,5 +125,11 @@ object SeedExtras {
 
 
     /** Test-only contract: every explicitly configured key must match current seed vocabulary. */
+    fun sentencePrompt(categoryId: String, display: String): String? {
+        val key = "$categoryId/$display"
+        if (categoryId == "actions" || key in noPrompt) return null
+        return overrides[key] ?: categoryDefault[categoryId]
+    }
+
     internal fun configuredKeys(): Set<String> = noPrompt + overrides.keys
 }
