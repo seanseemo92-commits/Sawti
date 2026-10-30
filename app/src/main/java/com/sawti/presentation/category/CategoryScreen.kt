@@ -328,7 +328,6 @@ private fun WordGrid(
                 onLongClick = { actions.onItemLongPressed(item) },
                 onHint = { actions.onHint(item) },
                 onSentenceHint = { actions.onSentenceHint(item) },
-                onToggleFavorite = { actions.onToggleFavorite(item) },
             )
             }
         }
@@ -351,7 +350,6 @@ internal fun WordCard(
     onLongClick: () -> Unit,
     onHint: () -> Unit,
     onSentenceHint: () -> Unit,
-    onToggleFavorite: () -> Unit,
 ) {
     val fontScale = LocalDensity.current.fontScale
     val extendedLabel = item.displayText.length > 17 || fontScale > 1.15f
