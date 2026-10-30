@@ -7,17 +7,16 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 
 class SeedExtrasConsistencyTest {
-    @Test fun everyConfiguredPromptAndFavoriteMatchesCurrentSeed() {
+    @Test fun everyConfiguredPromptMatchesCurrentSeed() {
         val keys = WordSeed.itemEntities().map { "${it.categoryId}/${it.displayText}" }.toSet()
         val stale = SeedExtras.configuredKeys() - keys
         assertTrue("Old key(s) found in SeedExtras: $stale", stale.isEmpty())
     }
 
-    @Test fun freshInstallKeepsLibyanDailyFavoriteAndValidHint() {
+    @Test fun freshInstallKeepsLibyanDailyValidHint() {
         val shahi = WordSeed.itemEntities().single {
             it.categoryId == "daily" && it.displayText == "نبي شاهي"
         }
-        assertTrue(shahi.isFavorite)
         assertEquals("نَشْرَبُ الـ...", shahi.sentencePrompt)
     }
 
