@@ -207,7 +207,7 @@ class RoomWordRepository(
             for (item in seedItems) {
                 val match = kept[Triple(item.categoryId, item.subgroup, item.displayText)]
                 if (match == null) {
-                    missing += item.copy(isFavorite = false)
+                    missing += item
                 } else {
                     dao.updateSort(match.id, item.sortOrder)
                     // words migrated from the first app version only have the plain name as TTS text
