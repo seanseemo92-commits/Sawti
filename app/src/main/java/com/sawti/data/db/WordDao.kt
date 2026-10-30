@@ -78,8 +78,6 @@ interface WordDao {
     @Update
     suspend fun updateEditedItem(item: WordItemEntity): Int
 
-    @Query("UPDATE word_items SET isFavorite = :favorite WHERE id = :id")
-    suspend fun setFavorite(id: Long, favorite: Boolean)
 
     /** Only fills a missing prompt, so caregiver edits are never overwritten. */
     @Query("UPDATE word_items SET sentencePrompt = :prompt WHERE id = :id AND sentencePrompt IS NULL AND (customTextFields & 8) = 0")
