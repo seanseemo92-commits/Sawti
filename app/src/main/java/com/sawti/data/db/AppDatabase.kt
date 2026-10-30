@@ -115,12 +115,40 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        /** v6→v7: rebuild word_items without the unused favorite flag, preserving all user data. */
+        val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS word_items_new (" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "categoryId TEXT NOT NULL, subgroup TEXT NOT NULL, " +
+                        "displayText TEXT NOT NULL, ttsPrompt TEXT NOT NULL, " +
+                        "phonemicCue TEXT NOT NULL, sentencePrompt TEXT, " +
+                        "audioPath TEXT, photoPath TEXT, phone TEXT NOT NULL, " +
+                        "emoji TEXT NOT NULL, sortOrder INTEGER NOT NULL, " +
+                        "semanticKey TEXT, customTextFields INTEGER NOT NULL DEFAULT 0, " +
+                        "FOREIGN KEY(categoryId) REFERENCES categories(id) ON UPDATE NO ACTION ON DELETE CASCADE)"
+                )
+                db.execSQL(
+                    "INSERT INTO word_items_new (id,categoryId,subgroup,displayText,ttsPrompt," +
+                        "phonemicCue,sentencePrompt,audioPath,photoPath,phone,emoji,sortOrder," +
+                        "semanticKey,customTextFields) " +
+                        "SELECT id,categoryId,subgroup,displayText,ttsPrompt,phonemicCue," +
+                        "sentencePrompt,audioPath,photoPath,phone,emoji,sortOrder,semanticKey," +
+                        "customTextFields FROM word_items"
+                )
+                db.execSQL("DROP TABLE word_items")
+                db.execSQL("ALTER TABLE word_items_new RENAME TO word_items")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_word_items_categoryId ON word_items(categoryId)")
+            }
+        }
+
         fun build(context: Context): AppDatabase = builder(context, "my_words.db").build()
 
         /** Same migrations as production; isolated restore validation must never use a fallback. */
         internal fun builder(context: Context, name: String): RoomDatabase.Builder<AppDatabase> =
             Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, name)
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
     }
 }
 
