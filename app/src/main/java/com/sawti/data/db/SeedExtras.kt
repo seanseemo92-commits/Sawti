@@ -123,18 +123,7 @@ object SeedExtras {
         putAll(group("فِي السَّمَاءِ تَطِيرُ الـ...", "animals", "حمامة"))
     }
 
-    private val favorites = setOf(
-        "daily/نبي مية", "daily/نبي شاهي", "daily/نبي دوايا", "daily/نبي الحمام", "daily/نبي نرتاح",
-        "clothes/نظارة")
-
-    fun sentencePrompt(categoryId: String, display: String): String? {
-        val key = "$categoryId/$display"
-        if (categoryId == "actions" || key in noPrompt) return null
-        return overrides[key] ?: categoryDefault[categoryId]
-    }
-
-    fun isFavorite(categoryId: String, display: String): Boolean = "$categoryId/$display" in favorites
 
     /** Test-only contract: every explicitly configured key must match current seed vocabulary. */
-    internal fun configuredKeys(): Set<String> = noPrompt + overrides.keys + favorites
+    internal fun configuredKeys(): Set<String> = noPrompt + overrides.keys
 }
