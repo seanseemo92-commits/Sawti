@@ -42,12 +42,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-/** A pinned card for the quick-access bar, with its category colour. */
-data class FavoriteEntry(val item: WordItem, val palette: Int)
-
 data class LibraryUiState(
     val categories: List<Category> = emptyList(),
-    val favorites: List<FavoriteEntry> = emptyList(),
     val caregiverMode: Boolean = false,
     val activeItemId: Long? = null,     // card highlighted after a tap
     val playbackVisual: PlaybackVisual = PlaybackVisual(),
@@ -72,7 +68,6 @@ interface LibraryActions {
     fun moveCardToCustomCategory(id: Long, destinationId: String)
     fun deleteCustomCard(id: Long)
     fun onSpeakAgain(item: WordItem)
-    fun onToggleFavorite(item: WordItem)
     fun closePreview()
     fun closeFocus()
     fun closeEditor()
@@ -124,10 +119,7 @@ class LibraryViewModel(
         }
         viewModelScope.launch {
             repository.observeCategories().catch { report(it) }.collect { list ->
-                val favorites = list.flatMap { c ->
-                    c.items.filter { it.isFavorite }.map { FavoriteEntry(it, c.palette) }
-                }.take(MAX_FAVORITES)
-                _uiState.update { it.copy(categories = list, favorites = favorites) }
+                _uiState.update { it.copy(categories = list) }
             }
         }
         viewModelScope.launch {
@@ -360,19 +352,6 @@ class LibraryViewModel(
         }
     }
 
-    // ---- Favourites -----------------------------------------------------
-
-    override fun onToggleFavorite(item: WordItem) {
-        if (!item.isFavorite) {
-            val pinned = _uiState.value.categories.sumOf { c -> c.items.count { it.isFavorite } }
-            if (pinned >= MAX_FAVORITES) {
-                emit(R.string.favorites_full)
-                return
-            }
-        }
-        launchSafe { repository.setFavorite(item.id, !item.isFavorite) }
-    }
-
     private fun emit(@StringRes message: Int) {
         _messages.tryEmit(message)
     }
@@ -534,7 +513,6 @@ class LibraryViewModel(
     }
 
     companion object {
-        const val MAX_FAVORITES = 8
         private const val DEBOUNCE_MS = 500L
         private const val CARD_LATCH_MS = 1200L
         private const val HIGHLIGHT_MS = 1200L
