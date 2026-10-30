@@ -97,14 +97,21 @@ abstract class AppDatabase : RoomDatabase() {
                 val defaults = WordSeed.itemEntities()
                 val byKey = defaults.filter { it.semanticKey != null }.associateBy { Triple(it.categoryId, it.subgroup, it.semanticKey) }
                 val byName = defaults.associateBy { Triple(it.categoryId, it.subgroup, it.displayText) }
+                // Historical built-in labels are not personal edits. They predate semantic keys.
+                val historicalNames = WordSeed.renames.mapNotNull { (category, oldName, newName) ->
+                    defaults.firstOrNull { it.categoryId == category && it.displayText == newName }
+                        ?.let { Triple(category, it.subgroup, oldName) to it }
+                }.toMap()
                 db.query("SELECT id,categoryId,subgroup,displayText,ttsPrompt,phonemicCue,sentencePrompt,semanticKey FROM word_items").use { rows ->
                     while (rows.moveToNext()) {
+                        val signature = Triple(rows.getString(1), rows.getString(2), rows.getString(3))
+                        val historical = historicalNames[signature]
                         val original = byKey[Triple(rows.getString(1), rows.getString(2), rows.getString(7))]
-                            ?: byName[Triple(rows.getString(1), rows.getString(2), rows.getString(3))]
+                            ?: byName[signature] ?: historical
                         // Unknown/renamed historical cards are personal data: preserve all text.
                         var flags = if (original == null) 15 else 0
                         if (original != null) {
-                            if (rows.getString(3) != original.displayText) flags = flags or 1
+                            if (historical == null && rows.getString(3) != original.displayText) flags = flags or 1
                             if (rows.getString(4) != original.ttsPrompt) flags = flags or 2
                             if (rows.getString(5) != original.phonemicCue) flags = flags or 4
                             if (rows.getString(6) != original.sentencePrompt) flags = flags or 8
