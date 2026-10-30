@@ -8,6 +8,7 @@ class WordImageCatalogTest {
     private fun card(category: String, label: String): WordItem = WordItem(
         id = 88L, categoryId = category, subgroup = "", displayText = label,
         ttsPrompt = label, phonemicCue = "", sentencePrompt = null,
+        audioPath = null, photoPath = null, phone = "", emoji = "",
         semanticKey = WordImageCatalog.keyForSeed(category, label),
     )
 
