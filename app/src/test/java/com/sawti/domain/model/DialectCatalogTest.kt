@@ -9,7 +9,7 @@ import org.junit.Test
 class DialectCatalogTest {
     private fun item(text: String) = WordItem(
         id = 8L, categoryId = "daily", subgroup = "", displayText = text,
-        ttsPrompt = "نَبِّي إِمِّيَّه", phonemicCue = "نَبـ...",
+        ttsPrompt = "نَبِّي إِمِّيَّه", phonemicCue = "نَبـ...", sentencePrompt = "نبي ...",
         audioPath = "/protected/voice.m4a", photoPath = "/protected/photo.jpg",
         phone = "", emoji = "💧"
     )
