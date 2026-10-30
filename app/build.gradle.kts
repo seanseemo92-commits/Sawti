@@ -13,8 +13,8 @@ android {
         applicationId = "com.sawti"
         minSdk = 24
         targetSdk = 35
-        versionCode = 10
-        versionName = "1.0.0"
+        versionCode = 11
+        versionName = "4.6.0"
     }
 
     // The production key is supplied only at release time by GitHub Actions secrets.
