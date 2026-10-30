@@ -4,7 +4,7 @@ Signed production APK and AAB; application ID `com.sawti`, versionCode `11`.
 
 Includes welcome-button parity and copyright geometry fixes, app-aware touch feedback, validated restore with first-start rollback, shared-media protection, consistent backup snapshots including legacy recordings, and canonical editing with preserved personal pronunciation across nine dialects.
 
-Room schema 6 uses additive migrations. Personal text, photos, recordings and favorites are preserved. The signed build runs unit tests and Android lint, validates APK metadata and its v2 signature, and compares APK/AAB publisher certificates to the previously published v4.4 APK. SHA256 checksums and source commit information are attached.
+Room schema 6 uses additive migrations. Personal text, photos, recordings and favorites are preserved. The signed build runs unit tests and Android lint, validates APK metadata and its v2 signature, and compares APK/AAB publisher certificates to the pinned original publisher fingerprint and the previously published v4.4 APK. The original private backup is used when repository signing secrets have not yet been configured; private signing material is never published. SHA256 checksums and source commit information are attached.
 
 Update compatibility requires the same package and publisher certificate. Debug-signed builds and older `com.mywords` installations cannot be updated in place with this APK. Keep existing data and backups; do not uninstall an app merely to bypass a signature error.
 

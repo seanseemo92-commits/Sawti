@@ -9,7 +9,7 @@ a manifest permission, a signing flag, or by changing the app's icon.
 The existing CI workflow continues to build **debug** and **unsigned release**
 artifacts for validation. A separate GitHub Actions workflow
 `.github/workflows/release-signed.yml` produces a signed Release APK and
-AAB using the existing private publisher keystore in repository secrets. It runs when the app build configuration changes on main, or by manual dispatch.
+AAB using the original private publisher keystore. Repository secrets are preferred; when all four are absent, the workflow reuses the private backup from run 40346497322, exactly as the previous v4.4 release did. Its certificate must match the pinned publisher fingerprint and v4.4 APK. Partial secret configuration fails closed. It runs when the app build configuration changes on main, or by manual dispatch.
 
 Configure these GitHub **Actions repository secrets** securely:
 - `SAWTI_RELEASE_KEYSTORE_BASE64`: base64 of the keystore binary, as **one line**
@@ -24,7 +24,7 @@ release signing certificate; the debug certificate is **different**.
 
 After configuring the secrets, run **Actions → Sawti signed release →
 Run workflow** on `main`. The job verifies the signed APK and produces a
-signed AAB for Play Console. It refuses to publish a release if secrets are absent.
+signed AAB for Play Console. It refuses to publish if neither a complete secret configuration nor the original private backup is available. The backup artifact expires on 2027-01-24; migrate the same key into the four secrets before then. No private key is uploaded in release artifacts.
 The normal build workflow never claims that its unsigned Release APK is installable.
 
 ## Avoid repeated Play Protect prompts through official Google Play testing

@@ -17,7 +17,7 @@ JDK 17، Gradle 8.9، AGP 8.7.3، Kotlin 2.0.21.
 
 `gradle --no-daemon :app:assembleDebug :app:assembleRelease :app:testDebugUnitTest :app:lintRelease`
 
-فحوص PR تبني Release غير موقّع. سير عمل `release-signed.yml` يبني APK وAAB بمفتاح الناشر المحفوظ في GitHub Secrets، ويتحقق من شهادة APK مقارنة بإصدار v4.4، ومن رقم الإصدار وهوية التطبيق، قبل نشر الملفات مع SHA256. لا يُستخدم مفتاح Debug عند غياب أسرار التوقيع.
+فحوص PR تبني Release غير موقّع. سير عمل `release-signed.yml` يبني APK وAAB بمفتاح الناشر الأصلي من GitHub Secrets أو نسخة GitHub Actions الخاصة المستخدمة في إصدار v4.4، ويتحقق من شهادة APK مقارنة بإصدار v4.4، ومن رقم الإصدار وهوية التطبيق، قبل نشر الملفات مع SHA256. لا يُستخدم مفتاح Debug عند تعذر استرجاع مفتاح الناشر.
 
 ## التحديث والخصوصية
 الإصدار يحافظ على `com.sawti` ويزيد versionCode عن 10. النسخ القديمة ذات هوية `com.mywords` أو شهادة Debug مختلفة لا تقبل التحديث المباشر بهذا الملف؛ احتفظ بها وبنسختها الاحتياطية، ولا تحذف بياناتها لتجاوز خطأ التثبيت.

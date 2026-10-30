@@ -3,9 +3,10 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: [app/build.gradle.kts]
+    paths: [app/build.gradle.kts, .github/workflows/release-signed.yml]
 permissions:
   contents: write
+  actions: read
 concurrency:
   group: sawti-production-release
   cancel-in-progress: false
@@ -27,6 +28,7 @@ jobs:
         run: python3 scripts/verify_release.py
       - name: Recover private release key (required, never commit it)
         env:
+          GH_TOKEN: ${{ github.token }}
           KEYSTORE_BASE64: ${{ secrets.SAWTI_RELEASE_KEYSTORE_BASE64 }}
           STORE_PASSWORD: ${{ secrets.SAWTI_RELEASE_STORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.SAWTI_RELEASE_KEY_ALIAS }}
@@ -34,12 +36,25 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [[ -z "$KEYSTORE_BASE64" || -z "$STORE_PASSWORD" || -z "$KEY_ALIAS" || -z "$KEY_PASSWORD" ]]; then
-            echo "::error::Required Sawti signing secrets are missing; no unsigned production artifact will be published."
+          umask 077
+          if [[ -n "$KEYSTORE_BASE64" && -n "$STORE_PASSWORD" && -n "$KEY_ALIAS" && -n "$KEY_PASSWORD" ]]; then
+            printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/sawti-release.jks"
+          elif [[ -z "$KEYSTORE_BASE64" && -z "$STORE_PASSWORD" && -z "$KEY_ALIAS" && -z "$KEY_PASSWORD" ]]; then
+            # Same private publisher backup used by the verified v4.4 release.
+            # It is downloaded only inside the trusted main-branch runner.
+            mkdir -p "$RUNNER_TEMP/sawti-private-key"
+            gh run download 40346497322 --repo "$GITHUB_REPOSITORY" --name PRIVATE-MyWords-Publisher-Key-BACKUP --dir "$RUNNER_TEMP/sawti-private-key"
+            test -s "$RUNNER_TEMP/sawti-private-key/mywords-publisher.p12"
+            STORE_PASSWORD=$(sed -n 's/^Store and key password: //p' "$RUNNER_TEMP/sawti-private-key/KEEP_PRIVATE_SIGNING_INSTRUCTIONS.txt" | head -n 1 | tr -d '\r')
+            test -n "$STORE_PASSWORD"
+            echo "::add-mask::$STORE_PASSWORD"
+            KEY_PASSWORD="$STORE_PASSWORD"
+            KEY_ALIAS=mywords-release
+            cp "$RUNNER_TEMP/sawti-private-key/mywords-publisher.p12" "$RUNNER_TEMP/sawti-release.jks"
+          else
+            echo "::error::Signing secrets are only partially configured; refusing to guess a signing identity."
             exit 1
           fi
-          umask 077
-          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/sawti-release.jks"
           test -s "$RUNNER_TEMP/sawti-release.jks"
           {
             echo "SAWTI_KEYSTORE_PATH=$RUNNER_TEMP/sawti-release.jks"
@@ -67,7 +82,7 @@ jobs:
           "$BUILD_TOOLS/apksigner" verify --print-certs "$RUNNER_TEMP/previous-release/Sawti-v4.4-Release.apk" > "$RUNNER_TEMP/old-cert.txt"
           NEW_CERT=$(sed -n 's/^Signer #1 certificate SHA-256 digest: //p' "$RUNNER_TEMP/new-cert.txt")
           OLD_CERT=$(sed -n 's/^Signer #1 certificate SHA-256 digest: //p' "$RUNNER_TEMP/old-cert.txt")
-          test -n "$NEW_CERT"
+          test "$NEW_CERT" = "754b679c29b0c8acf7c61ca265813d9528c0d0c3afe912b9319a6354cbd31b21"
           test "$NEW_CERT" = "$OLD_CERT"
           "$BUILD_TOOLS/aapt" dump badging "$APK" > "$RUNNER_TEMP/apk-badging.txt"
           python3 scripts/verify_release.py "$RUNNER_TEMP/apk-badging.txt"
@@ -100,5 +115,7 @@ jobs:
           gh release create "v${RELEASE_VERSION}" dist/* --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "صوتي | Sawti v${RELEASE_VERSION}" --notes-file docs/release-4.6.0.md
       - name: Clean signing material
         if: always()
-        run: rm -f "$RUNNER_TEMP/sawti-release.jks"
+        run: |
+          rm -f "$RUNNER_TEMP/sawti-release.jks"
+          rm -rf "$RUNNER_TEMP/sawti-private-key"
 
