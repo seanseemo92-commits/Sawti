@@ -11,7 +11,7 @@ internal object RestoreDatabaseValidator {
     fun validateAndMigrate(context: Context, file: File) {
         require(file.isFile && file.length() > 0) { "قاعدة بيانات النسخة مفقودة" }
         SQLiteDatabase.openDatabase(file.path, null, SQLiteDatabase.OPEN_READWRITE).use { sqlite ->
-            require(sqlite.version in 3..6) { "إصدار قاعدة البيانات غير مدعوم" }
+            require(sqlite.version in 3..7) { "إصدار قاعدة البيانات غير مدعوم" }
             sqlite.rawQuery("PRAGMA integrity_check", null).use {
                 require(it.moveToFirst() && it.getString(0) == "ok") { "قاعدة البيانات تالفة" }
             }
