@@ -179,7 +179,7 @@ class BackupManager(private val context: Context, private val database: AppDatab
                     "قاعدة البيانات غير سليمة"
                 }
             }
-            require(sqlite.version == 6) { "إصدار قاعدة البيانات غير مدعوم" }
+            require(sqlite.version == 7) { "إصدار قاعدة البيانات غير مدعوم" }
         }
     }
 
