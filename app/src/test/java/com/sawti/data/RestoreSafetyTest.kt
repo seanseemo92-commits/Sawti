@@ -249,8 +249,11 @@ class RestoreSafetyTest {
                 db.execSQL("CREATE INDEX index_word_items_categoryId ON word_items(categoryId)")
                 db.execSQL("CREATE TABLE progress_records(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, wordId INTEGER NOT NULL, timestamp INTEGER NOT NULL, mode TEXT NOT NULL, outcome TEXT NOT NULL)")
                 db.execSQL("INSERT INTO categories VALUES('family','عائلتي',0,1,0)")
+                db.execSQL("INSERT INTO categories VALUES('home','المنزل',0,1,1)")
                 db.execSQL("""INSERT INTO word_items(categoryId,subgroup,displayText,ttsPrompt,phonemicCue,phone,emoji,sortOrder,sentencePrompt,isFavorite)
                     VALUES('family','الأبناء','شخص مخصص','نطق مخصص','','','',0,'جملة مخصصة',1)""")
+                db.execSQL("""INSERT INTO word_items(categoryId,subgroup,displayText,ttsPrompt,phonemicCue,phone,emoji,sortOrder)
+                    VALUES('home','','ملعقة','ملعقة','','','',0)""")
                 db.version = version
             }
             RestoreDatabaseValidator.validateAndMigrate(context, file)
@@ -261,6 +264,10 @@ class RestoreSafetyTest {
                     assertEquals("شخص مخصص", it.getString(0))
                     assertEquals("جملة مخصصة", it.getString(1))
                     assertTrue(it.isNull(2))
+                }
+                db.rawQuery("SELECT customTextFields FROM word_items WHERE categoryId='home' AND displayText='ملعقة'", null).use {
+                    assertTrue(it.moveToFirst())
+                    assertEquals(0, it.getInt(0) and 1)
                 }
             }
         }
