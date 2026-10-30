@@ -255,13 +255,12 @@ class RestoreSafetyTest {
             }
             RestoreDatabaseValidator.validateAndMigrate(context, file)
             sql(file) { db ->
-                assertEquals(6, db.version)
-                db.rawQuery("SELECT displayText,sentencePrompt,isFavorite,semanticKey FROM word_items", null).use {
+                assertEquals(7, db.version)
+                db.rawQuery("SELECT displayText,sentencePrompt,semanticKey FROM word_items", null).use {
                     assertTrue(it.moveToFirst())
                     assertEquals("شخص مخصص", it.getString(0))
                     assertEquals("جملة مخصصة", it.getString(1))
-                    assertEquals(1, it.getInt(2))
-                    assertTrue(it.isNull(3))
+                    assertTrue(it.isNull(2))
                 }
             }
         }
