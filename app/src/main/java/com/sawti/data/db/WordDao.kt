@@ -3,6 +3,7 @@ package com.sawti.data.db
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 /** Lightweight row used when topping up the seed on an existing install. */
@@ -63,8 +64,8 @@ interface WordDao {
     @Query("UPDATE word_items SET categoryId = :categoryId, subgroup = '' WHERE id = :id")
     suspend fun moveWord(id: Long, categoryId: String)
 
-    @Query("SELECT COUNT(*) FROM word_items WHERE photoPath = :path OR audioPath = :path")
-    suspend fun mediaReferenceCount(path: String): Int
+    @Query("SELECT photoPath FROM word_items WHERE photoPath IS NOT NULL UNION SELECT audioPath FROM word_items WHERE audioPath IS NOT NULL")
+    suspend fun mediaPaths(): List<String>
 
     /** Custom family members are never seeded. Editing/deleting is caregiver-only in the UI. */
     @Query("SELECT * FROM word_items WHERE id = :id AND categoryId = 'family'")
@@ -74,30 +75,27 @@ interface WordDao {
     suspend fun updateFamilyGroup(id: Long, group: String)
 
 
-    @Query(
-        "UPDATE word_items SET displayText = :display, ttsPrompt = :tts, phonemicCue = :cue, " +
-            "sentencePrompt = :sentence, phone = :phone WHERE id = :id"
-    )
-    suspend fun updateDetails(id: Long, display: String, tts: String, cue: String, sentence: String?, phone: String)
+    @Update
+    suspend fun updateEditedItem(item: WordItemEntity): Int
 
     @Query("UPDATE word_items SET isFavorite = :favorite WHERE id = :id")
     suspend fun setFavorite(id: Long, favorite: Boolean)
 
     /** Only fills a missing prompt, so caregiver edits are never overwritten. */
-    @Query("UPDATE word_items SET sentencePrompt = :prompt WHERE id = :id AND sentencePrompt IS NULL")
+    @Query("UPDATE word_items SET sentencePrompt = :prompt WHERE id = :id AND sentencePrompt IS NULL AND (customTextFields & 8) = 0")
     suspend fun fillSentencePrompt(id: Long, prompt: String)
 
     @Query("SELECT photoPath FROM word_items WHERE id = :id")
     suspend fun photoPath(id: Long): String?
 
     @Query("UPDATE word_items SET photoPath = :path WHERE id = :id")
-    suspend fun updatePhoto(id: Long, path: String?)
+    suspend fun updatePhoto(id: Long, path: String?): Int
 
     @Query("SELECT audioPath FROM word_items WHERE id = :id")
     suspend fun audioPath(id: Long): String?
 
     @Query("UPDATE word_items SET audioPath = :path WHERE id = :id")
-    suspend fun updateAudio(id: Long, path: String?)
+    suspend fun updateAudio(id: Long, path: String?): Int
 
     @Query("SELECT * FROM word_items WHERE semanticKey IS NULL")
     suspend fun itemsWithoutSemanticKeys(): List<WordItemEntity>
@@ -119,26 +117,28 @@ interface WordDao {
     suspend fun updateSort(id: Long, sort: Int)
 
     @Query("DELETE FROM word_items WHERE id = :id")
-    suspend fun deleteItem(id: Long)
+    suspend fun deleteItem(id: Long): Int
 
-    @Query("UPDATE word_items SET ttsPrompt = :tts WHERE id = :id")
+    @Query("UPDATE word_items SET ttsPrompt = :tts WHERE id = :id AND (customTextFields & 2) = 0")
     suspend fun updateTts(id: Long, tts: String)
 
     /** Renames a default word in place; photo, audio, phone and favourite flag are NOT touched. */
     @Query(
-        "UPDATE word_items SET displayText = :display, ttsPrompt = :tts, phonemicCue = :cue, " +
-            "sentencePrompt = :sentence WHERE id = :id"
+        "UPDATE word_items SET displayText = :display, ttsPrompt = CASE WHEN (customTextFields & 2) = 0 THEN :tts ELSE ttsPrompt END, " +
+            "phonemicCue = CASE WHEN (customTextFields & 4) = 0 THEN :cue ELSE phonemicCue END, " +
+            "sentencePrompt = CASE WHEN (customTextFields & 8) = 0 THEN :sentence ELSE sentencePrompt END WHERE id = :id AND (customTextFields & 1) = 0"
     )
     suspend fun renameItem(id: Long, display: String, tts: String, cue: String, sentence: String?)
 
-    @Query("UPDATE word_items SET ttsPrompt = :tts, phonemicCue = :cue WHERE id = :id")
+    @Query("UPDATE word_items SET ttsPrompt = :tts, phonemicCue = CASE WHEN (customTextFields & 4) = 0 THEN :cue ELSE phonemicCue END WHERE id = :id AND (customTextFields & 2) = 0")
     suspend fun updateTtsAndCue(id: Long, tts: String, cue: String)
     /** Fix only the historical placeholder on the known built-in melon card. */
     @Query("UPDATE word_items SET emoji = '🍈' WHERE categoryId = 'fruits' AND displayText = 'قلعاوي' AND emoji = '??'")
     suspend fun correctMelonPlaceholder()
 
     /** Remove only obsolete built-in action hints, not other user-written phrases. */
-    @Query("UPDATE word_items SET sentencePrompt = NULL WHERE categoryId = 'actions' AND sentencePrompt = 'أُرِيدُ الـ...'")
+    @Query("UPDATE word_items SET sentencePrompt = NULL WHERE categoryId = 'actions' AND sentencePrompt = 'أُرِيدُ الـ...' AND (customTextFields & 8) = 0")
     suspend fun clearLegacyActionPlaceholder()
 
 }
+

@@ -1,8 +1,14 @@
-name: Sawti signed release (manual)
+name: Sawti signed release
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [app/build.gradle.kts]
 permissions:
-  contents: read
+  contents: write
+concurrency:
+  group: sawti-production-release
+  cancel-in-progress: false
 jobs:
   signed-release:
     if: github.ref == 'refs/heads/main'
@@ -17,6 +23,8 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
+      - name: Read canonical release version
+        run: python3 scripts/verify_release.py
       - name: Recover private release key (required, never commit it)
         env:
           KEYSTORE_BASE64: ${{ secrets.SAWTI_RELEASE_KEYSTORE_BASE64 }}
@@ -43,34 +51,54 @@ jobs:
           echo "::add-mask::$KEY_PASSWORD"
       - name: Build signed Release APK and AAB
         run: gradle --no-daemon :app:assembleRelease :app:bundleRelease :app:testDebugUnitTest :app:lintRelease
-      - name: Verify the signed APK and Bundle are present
+      - name: Verify identity, version, publisher certificate and release files
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
           APK=app/build/outputs/apk/release/app-release.apk
           AAB=app/build/outputs/bundle/release/app-release.aab
-          test -s "$APK"
-          test -s "$AAB"
-          APKSIGNER="$ANDROID_HOME/build-tools/35.0.0/apksigner"
-          if [[ ! -x "$APKSIGNER" ]]; then
-            APKSIGNER=$(find "$ANDROID_HOME/build-tools" -maxdepth 2 -name apksigner -type f | sort -V | tail -n 1)
-          fi
-          "$APKSIGNER" verify --verbose "$APK"
+          BUILD_TOOLS=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
+          "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$APK" > "$RUNNER_TEMP/new-cert.txt"
+          grep -q 'Verified using v2 scheme.*true' "$RUNNER_TEMP/new-cert.txt"
+          mkdir -p "$RUNNER_TEMP/previous-release"
+          gh release download v4.4 --repo "$GITHUB_REPOSITORY" --pattern 'Sawti-v4.4-Release.apk' --dir "$RUNNER_TEMP/previous-release"
+          "$BUILD_TOOLS/apksigner" verify --print-certs "$RUNNER_TEMP/previous-release/Sawti-v4.4-Release.apk" > "$RUNNER_TEMP/old-cert.txt"
+          NEW_CERT=$(sed -n 's/^Signer #1 certificate SHA-256 digest: //p' "$RUNNER_TEMP/new-cert.txt")
+          OLD_CERT=$(sed -n 's/^Signer #1 certificate SHA-256 digest: //p' "$RUNNER_TEMP/old-cert.txt")
+          test -n "$NEW_CERT"
+          test "$NEW_CERT" = "$OLD_CERT"
+          "$BUILD_TOOLS/aapt" dump badging "$APK" > "$RUNNER_TEMP/apk-badging.txt"
+          python3 scripts/verify_release.py "$RUNNER_TEMP/apk-badging.txt"
+          jarsigner -verify "$AAB" > "$RUNNER_TEMP/aab-verification.txt"
+          grep -q 'jar verified' "$RUNNER_TEMP/aab-verification.txt"
+          keytool -printcert -jarfile "$AAB" > "$RUNNER_TEMP/aab-cert.txt"
+          AAB_CERT=$(sed -n 's/.*SHA256: //p' "$RUNNER_TEMP/aab-cert.txt" | head -n 1 | tr -d ':' | tr '[:upper:]' '[:lower:]')
+          test "$AAB_CERT" = "$NEW_CERT"
           unzip -t "$AAB" > /dev/null
-      - name: Upload signed Release APK
+          mkdir -p dist
+          cp "$APK" "dist/Sawti-v${RELEASE_VERSION}-Release.apk"
+          cp "$AAB" "dist/Sawti-v${RELEASE_VERSION}-Release.aab"
+          cp "$RUNNER_TEMP/new-cert.txt" dist/APK-SIGNATURE.txt
+          printf 'commit=%s\nversionName=%s\nversionCode=%s\npackage=com.sawti\n' "$GITHUB_SHA" "$RELEASE_VERSION" "$RELEASE_CODE" > dist/BUILD-INFO.txt
+          (cd dist && sha256sum *.apk *.aab > SHA256SUMS.txt)
+      - name: Upload verified signed release
         uses: actions/upload-artifact@v4
         with:
-          name: Sawti-signed-release-apk
-          path: app/build/outputs/apk/release/app-release.apk
+          name: Sawti-v${{ env.RELEASE_VERSION }}-signed-release
+          path: dist/*
           if-no-files-found: error
-          retention-days: 30
-      - name: Upload signed AAB for Google Play Internal Testing
-        uses: actions/upload-artifact@v4
-        with:
-          name: Sawti-signed-play-aab
-          path: app/build/outputs/bundle/release/app-release.aab
-          if-no-files-found: error
-          retention-days: 30
+          retention-days: 90
+      - name: Publish versioned release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Never overwrite an existing version or attach files to a different commit.
+          gh release create "v${RELEASE_VERSION}" dist/* --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "صوتي | Sawti v${RELEASE_VERSION}" --notes-file docs/release-4.6.0.md
       - name: Clean signing material
         if: always()
         run: rm -f "$RUNNER_TEMP/sawti-release.jks"
+

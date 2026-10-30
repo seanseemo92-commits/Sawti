@@ -1,5 +1,6 @@
 package com.sawti.domain.repository
 
+import com.sawti.domain.model.CardDetails
 import com.sawti.domain.model.Category
 import com.sawti.domain.model.PracticeMode
 import com.sawti.domain.model.PracticeOutcome
@@ -35,10 +36,13 @@ interface WordRepository {
         phonemicCue: String,
         sentencePrompt: String?,
         phone: String,
+        baseline: CardDetails? = null,
+        group: String? = null,
     )
     suspend fun setFavorite(id: Long, favorite: Boolean)
     suspend fun setPhoto(id: Long, image: InputStream)
     suspend fun clearPhoto(id: Long)
+    /** Transfers a finished private recording to the repository; callers must not delete it on failure. */
     suspend fun setAudio(id: Long, file: File)
     suspend fun importAudio(id: Long, input: InputStream, extension: String)
     suspend fun clearAudio(id: Long)
@@ -50,3 +54,4 @@ interface ProgressRepository {
     fun observeSummary(): Flow<ProgressSummary>
     suspend fun clear()
 }
+

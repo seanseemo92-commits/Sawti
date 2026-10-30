@@ -43,13 +43,14 @@ data class WordItemEntity(
     val emoji: String = "",
     val sortOrder: Int = 0,
     val semanticKey: String? = null,
+    @ColumnInfo(defaultValue = "0") val customTextFields: Int = 0,
 )
 
 fun WordItemEntity.toDomain() = WordItem(
     id = id, categoryId = categoryId, subgroup = subgroup, displayText = displayText,
     ttsPrompt = ttsPrompt, phonemicCue = phonemicCue, sentencePrompt = sentencePrompt,
     isFavorite = isFavorite, audioPath = audioPath,
-    photoPath = photoPath, phone = phone, emoji = emoji, semanticKey = semanticKey,
+    photoPath = photoPath, phone = phone, emoji = emoji, semanticKey = semanticKey, customTextFields = customTextFields,
 )
 
 /** One practice record (added in DB v3). Stored as plain strings so the history survives enum changes. */
@@ -61,3 +62,4 @@ data class ProgressRecordEntity(
     val mode: String,
     val outcome: String,
 )
+

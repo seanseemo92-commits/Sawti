@@ -1,7 +1,7 @@
 package com.sawti.data
 
 import com.sawti.data.db.ProgressRecordEntity
-import com.sawti.data.db.ProgressDao
+import com.sawti.data.db.AppDatabase
 import com.sawti.domain.model.CuedWordStat
 import com.sawti.domain.model.PracticeMode
 import com.sawti.domain.model.PracticeOutcome
@@ -10,9 +10,10 @@ import com.sawti.domain.repository.ProgressRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
-class RoomProgressRepository(private val dao: ProgressDao) : ProgressRepository {
+class RoomProgressRepository(private val db: AppDatabase) : ProgressRepository {
+    private val dao = db.progressDao()
 
-    override suspend fun log(wordId: Long, mode: PracticeMode, outcome: PracticeOutcome) {
+    override suspend fun log(wordId: Long, mode: PracticeMode, outcome: PracticeOutcome) = db.storage.cleanupIfActive {
         dao.insertAttempt(
             ProgressRecordEntity(
                 wordId = wordId,
@@ -40,5 +41,6 @@ class RoomProgressRepository(private val dao: ProgressDao) : ProgressRepository 
             )
         }
 
-    override suspend fun clear() = dao.clearAttempts()
+    override suspend fun clear() = db.storage.cleanupIfActive { dao.clearAttempts() }
 }
+

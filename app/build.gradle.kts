@@ -13,8 +13,8 @@ android {
         applicationId = "com.sawti"
         minSdk = 24
         targetSdk = 35
-        versionCode = 10
-        versionName = "1.0.0"
+        versionCode = 11
+        versionName = "4.6.0"
     }
 
     // The production key is supplied only at release time by GitHub Actions secrets.
@@ -43,6 +43,7 @@ android {
     }
     kotlinOptions { jvmTarget = "17" }
     buildFeatures { compose = true }
+    testOptions { unitTests.isIncludeAndroidResources = true }
 }
 
 dependencies {
@@ -69,4 +70,8 @@ dependencies {
     implementation("androidx.exifinterface:exifinterface:1.3.7")
 }
 
-dependencies { testImplementation("junit:junit:4.13.2") }
+dependencies {
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.robolectric:robolectric:4.14.1")
+}
+

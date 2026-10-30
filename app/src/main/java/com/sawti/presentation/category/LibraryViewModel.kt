@@ -20,8 +20,9 @@ import com.sawti.domain.model.Category
 import com.sawti.domain.model.FamilyRelationships
 import com.sawti.domain.model.CategoryIds
 import com.sawti.domain.model.PhonemicCue
-import com.sawti.domain.model.TtsEndings
 import com.sawti.domain.model.WordItem
+import com.sawti.domain.model.CardDetails
+import com.sawti.domain.model.forEditing
 import com.sawti.domain.repository.WordRepository
 import com.sawti.speech.SpeechIssue
 import com.sawti.speech.SpeechManager
@@ -79,7 +80,7 @@ interface LibraryActions {
     fun closeAddFamilyMember()
     fun addFamilyMember(name: String, group: String, phone: String)
     fun deleteFamilyMember(id: Long)
-    fun saveDetails(id: Long, displayText: String, ttsPrompt: String, cue: String, sentence: String, phone: String, group: String)
+    fun saveDetails(id: Long, displayText: String, ttsPrompt: String, cue: String, sentence: String, phone: String, group: String, baseline: CardDetails)
     fun onPhotoPicked(itemId: Long, uri: Uri)
     fun onAudioPicked(itemId: Long, uri: Uri)
     fun removePhoto(itemId: Long)
@@ -416,22 +417,20 @@ class LibraryViewModel(
         _uiState.update { it.copy(editingItemId = null, recordingItemId = null) }
     }
 
-    override fun saveDetails(id: Long, displayText: String, ttsPrompt: String, cue: String, sentence: String, phone: String, group: String) {
+    override fun saveDetails(id: Long, displayText: String, ttsPrompt: String, cue: String, sentence: String, phone: String, group: String, baseline: CardDetails) {
         if (!canEdit()) return
-        val current = find(id) ?: return
-        val finalDisplay = displayText.ifBlank { current.displayText }
-        val enteredTts = if (current.ttsPrompt == current.displayText &&
-            ttsPrompt == current.ttsPrompt && finalDisplay != current.displayText
-        ) finalDisplay else ttsPrompt.ifBlank { current.ttsPrompt }
-        val finalTts = TtsEndings.normalize(enteredTts)
-        val finalCue = cue.ifBlank { PhonemicCue.derive(finalTts) }
-        val finalSentence = sentence.ifBlank { null } // blank removes the 💬 button for this card
+        val current = find(id)?.forEditing() ?: return
+        val finalDisplay = displayText.ifBlank { baseline.display }
+        val enteredTts = if (baseline.speech == baseline.display && ttsPrompt == baseline.speech &&
+            finalDisplay != baseline.display) finalDisplay else ttsPrompt.ifBlank { baseline.speech }
+        // A no-op save must not normalize/replace any original text or empty cue.
+        val finalTts = enteredTts
+        val finalCue = if (cue == baseline.cue) baseline.cue else cue.ifBlank { PhonemicCue.derive(finalTts) }
+        val finalSentence = if (sentence == baseline.sentence.orEmpty()) baseline.sentence else sentence.ifBlank { null }
         launchSafe {
             if (!canEdit()) return@launchSafe
-            repository.updateDetails(id, finalDisplay, finalTts, finalCue, finalSentence, phone)
-            if (current.categoryId == CategoryIds.FAMILY) {
-                repository.updateFamilyGroup(id, group)
-            }
+            repository.updateDetails(id, finalDisplay, finalTts, finalCue, finalSentence, phone,
+                baseline = baseline, group = if (current.categoryId == CategoryIds.FAMILY) group else baseline.group)
             closeEditor()
         }
     }
@@ -500,12 +499,9 @@ class LibraryViewModel(
         val file = recorder.stop()
         _uiState.update { it.copy(recordingItemId = null) }
         if (file != null) launchSafe {
-            try {
-                if (canEdit()) repository.setAudio(itemId, file) else file.delete()
-            } catch (error: Exception) {
-                file.delete()
-                throw error
-            }
+            // Once handed to the repository, only its reference-aware cleanup may delete
+            // this recording: cancellation can be delivered after a successful DB commit.
+            if (canEdit()) repository.setAudio(itemId, file) else file.delete()
         }
     }
 
@@ -544,3 +540,4 @@ class LibraryViewModel(
         private const val HIGHLIGHT_MS = 1200L
     }
 }
+

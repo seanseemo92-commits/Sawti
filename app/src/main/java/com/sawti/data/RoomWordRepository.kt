@@ -9,6 +9,8 @@ import com.sawti.data.db.WordItemEntity
 import com.sawti.data.db.WordSeed
 import com.sawti.data.db.toDomain
 import com.sawti.domain.model.Category
+import com.sawti.domain.model.CardDetails
+import com.sawti.domain.model.FamilyRelationships
 import com.sawti.domain.model.DialectCatalog
 import com.sawti.domain.model.TtsEndings
 import com.sawti.domain.model.PhonemicCue
@@ -19,8 +21,10 @@ import com.sawti.domain.model.CustomCategoryRules
 import com.sawti.domain.repository.WordRepository
 import java.io.File
 import java.io.InputStream
+import java.io.FilterInputStream
 import java.util.UUID
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.withContext
@@ -60,7 +64,11 @@ class RoomWordRepository(
             }
         }
 
-    override suspend fun seedOrUpdateDefaults() {
+    override suspend fun seedOrUpdateDefaults() = db.storage.cleanupIfActive {
+        seedOrUpdateDefaultsUnlocked()
+    }
+
+    private suspend fun seedOrUpdateDefaultsUnlocked() {
         if (dao.categoryCount() == 0) {
             db.withTransaction {
                 dao.insertCategories(WordSeed.categoryEntities())
@@ -217,7 +225,11 @@ class RoomWordRepository(
 
     private fun isCustomId(id: String) = CustomCategoryRules.canManage(id)
 
-    override suspend fun addCustomCategory(title: String, palette: Int, sortOrder: Int): String {
+    override suspend fun addCustomCategory(title: String, palette: Int, sortOrder: Int): String = db.storage.access {
+        addCustomCategoryUnlocked(title, palette, sortOrder)
+    }
+
+    private suspend fun addCustomCategoryUnlocked(title: String, palette: Int, sortOrder: Int): String {
         val name = title.trim().take(70)
         require(name.isNotBlank()) { "اسم القسم مطلوب" }
         require(CustomCategoryRules.validPalette(palette) && CustomCategoryRules.validSortOrder(sortOrder)) { "إعدادات القسم غير صالحة" }
@@ -228,7 +240,11 @@ class RoomWordRepository(
         return id
     }
 
-    override suspend fun editCustomCategory(id: String, title: String, palette: Int, sortOrder: Int) {
+    override suspend fun editCustomCategory(id: String, title: String, palette: Int, sortOrder: Int) = db.storage.access {
+        editCustomCategoryUnlocked(id, title, palette, sortOrder)
+    }
+
+    private suspend fun editCustomCategoryUnlocked(id: String, title: String, palette: Int, sortOrder: Int) {
         require(isCustomId(id)) { "الأقسام الافتراضية غير قابلة للتعديل" }
         val name = title.trim().take(70)
         require(name.isNotBlank() && CustomCategoryRules.validPalette(palette) && CustomCategoryRules.validSortOrder(sortOrder))
@@ -238,7 +254,11 @@ class RoomWordRepository(
         }
     }
 
-    override suspend fun deleteEmptyCustomCategory(id: String) {
+    override suspend fun deleteEmptyCustomCategory(id: String) = db.storage.access {
+        deleteEmptyCustomCategoryUnlocked(id)
+    }
+
+    private suspend fun deleteEmptyCustomCategoryUnlocked(id: String) {
         require(isCustomId(id)) { "حذف الأقسام الافتراضية ممنوع" }
         db.withTransaction {
             require(CustomCategoryRules.canDelete(id, dao.countItemsInCategory(id))) {
@@ -248,7 +268,11 @@ class RoomWordRepository(
         }
     }
 
-    override suspend fun addCustomCard(categoryId: String, displayText: String, spokenText: String): Long {
+    override suspend fun addCustomCard(categoryId: String, displayText: String, spokenText: String): Long = db.storage.access {
+        addCustomCardUnlocked(categoryId, displayText, spokenText)
+    }
+
+    private suspend fun addCustomCardUnlocked(categoryId: String, displayText: String, spokenText: String): Long {
         require(isCustomId(categoryId)) { "يمكن إضافة بطاقات مخصصة إلى الأقسام المخصصة فقط" }
         val display = displayText.trim().take(100)
         require(display.isNotBlank()) { "نص البطاقة مطلوب" }
@@ -262,7 +286,11 @@ class RoomWordRepository(
         }
     }
 
-    override suspend fun moveCardToCustomCategory(itemId: Long, destinationId: String) {
+    override suspend fun moveCardToCustomCategory(itemId: Long, destinationId: String) = db.storage.access {
+        moveCardToCustomCategoryUnlocked(itemId, destinationId)
+    }
+
+    private suspend fun moveCardToCustomCategoryUnlocked(itemId: Long, destinationId: String) {
         require(isCustomId(destinationId)) { "الوجهة يجب أن تكون قسمًا مخصصًا" }
         db.withTransaction {
             require(dao.categoryById(destinationId) != null) { "قسم الوجهة غير موجود" }
@@ -276,24 +304,21 @@ class RoomWordRepository(
     }
 
     /** Permanently removes only a caregiver-selected card from a custom category. */
-    override suspend fun deleteCustomCard(itemId: Long) {
-        val item = db.withTransaction {
+    override suspend fun deleteCustomCard(itemId: Long) = withMediaMutation { retired ->
+        db.withTransaction {
             val current = dao.wordById(itemId) ?: error("البطاقة غير موجودة")
             require(isCustomId(current.categoryId)) { "لا يمكن حذف بطاقة من قسم افتراضي" }
-            dao.deleteItem(itemId)
-            current
-        }
-        // Backups may contain rows with shared media references. Only remove an app-private
-        // attachment if NO other word still refers to it.
-        listOfNotNull(item.photoPath, item.audioPath).distinct().forEach { path ->
-            if (dao.mediaReferenceCount(path) == 0) {
-                withContext(Dispatchers.IO) { deletePrivateMedia(path) }
-            }
+            retired.addAll(listOfNotNull(current.photoPath, current.audioPath))
+            check(dao.deleteItem(itemId) == 1)
         }
     }
 
     /** New family cards use the ordinary word/media model; no schema duplication. */
-    override suspend fun addFamilyMember(name: String, group: String, phone: String): Long {
+    override suspend fun addFamilyMember(name: String, group: String, phone: String): Long = db.storage.access {
+        addFamilyMemberUnlocked(name, group, phone)
+    }
+
+    private suspend fun addFamilyMemberUnlocked(name: String, group: String, phone: String): Long {
         val cleanName = name.trim().take(100)
         require(cleanName.isNotBlank()) { "اسم الشخص مطلوب" }
         require(com.sawti.domain.model.FamilyRelationships.validPeopleGroup(group)) {
@@ -312,7 +337,11 @@ class RoomWordRepository(
         )
     }
 
-    override suspend fun updateFamilyGroup(id: Long, group: String) {
+    override suspend fun updateFamilyGroup(id: Long, group: String) = db.storage.access {
+        updateFamilyGroupUnlocked(id, group)
+    }
+
+    private suspend fun updateFamilyGroupUnlocked(id: Long, group: String) {
         val old = dao.familyItemById(id) ?: return
         if (old.subgroup == com.sawti.domain.model.FamilyRelationships.RELATIVES) return
         if (group.isNotBlank() && group != com.sawti.domain.model.FamilyRelationships.RELATIVES) {
@@ -321,107 +350,148 @@ class RoomWordRepository(
     }
 
     /** Permanently deletes only a caregiver-selected custom family card and its OWN media. */
-    override suspend fun deleteFamilyMember(id: Long) {
-        val old = dao.familyItemById(id) ?: return
-        // Preset relationship words are not a removable person's card.
-        if (old.subgroup == com.sawti.domain.model.FamilyRelationships.RELATIVES) return
-        db.withTransaction { dao.deleteItem(id) }
-        // Never delete files beyond app-private storage (legacy rows may contain an external URI).
-        listOfNotNull(old.photoPath, old.audioPath).forEach { raw ->
-            withContext(Dispatchers.IO) {
-                runCatching {
-                    val file = File(raw).canonicalFile
-                    val base = filesDir.canonicalFile
-                    if (file.parentFile == File(base, "photos") ||
-                        file.parentFile == File(base, "custom_audio") ||
-                        file.parentFile == File(base, "recordings")
-                    ) file.delete()
-                }
-            }
+    override suspend fun deleteFamilyMember(id: Long) = withMediaMutation { retired ->
+        db.withTransaction {
+            val old = dao.familyItemById(id) ?: return@withTransaction
+            // Preset relationship words are not a removable person's card.
+            if (old.subgroup == com.sawti.domain.model.FamilyRelationships.RELATIVES) return@withTransaction
+            retired.addAll(listOfNotNull(old.photoPath, old.audioPath))
+            check(dao.deleteItem(id) == 1)
         }
     }
 
     override suspend fun updateDetails(
         id: Long, displayText: String, ttsPrompt: String, phonemicCue: String,
-        sentencePrompt: String?, phone: String,
-    ) {
-        dao.updateDetails(id, displayText, ttsPrompt, phonemicCue, sentencePrompt, phone)
+        sentencePrompt: String?, phone: String, baseline: CardDetails?, group: String?,
+    ) = db.storage.access {
+        db.withTransaction {
+            val current = dao.wordById(id) ?: error("البطاقة غير موجودة")
+            val saved = CardDetails.from(current.toDomain())
+            val before = baseline ?: saved
+            val edited = CardDetails(displayText, ttsPrompt, phonemicCue, sentencePrompt, phone, group ?: before.group)
+            val merged = saved.merge(before, edited)
+            require(merged.display.isNotBlank() && merged.speech.isNotBlank()) { "اسم البطاقة والنطق مطلوبان" }
+            if (merged.group != saved.group) {
+                require(current.categoryId == CategoryIds.FAMILY && saved.group != FamilyRelationships.RELATIVES &&
+                    FamilyRelationships.validPeopleGroup(merged.group)) { "قسم العائلة غير صالح" }
+            }
+            check(dao.updateEditedItem(current.copy(displayText = merged.display, ttsPrompt = merged.speech,
+                phonemicCue = merged.cue, sentencePrompt = merged.sentence, phone = merged.phone,
+                subgroup = merged.group, customTextFields = current.customTextFields or before.changedTextFields(edited))) == 1)
+        }
     }
 
-    override suspend fun setFavorite(id: Long, favorite: Boolean) {
+    override suspend fun setFavorite(id: Long, favorite: Boolean) = db.storage.access {
+        setFavoriteUnlocked(id, favorite)
+    }
+
+    private suspend fun setFavoriteUnlocked(id: Long, favorite: Boolean) {
         dao.setFavorite(id, favorite)
     }
 
     /** Copies the picked image into app storage so it survives even if the gallery item moves. */
     override suspend fun setPhoto(id: Long, image: InputStream) {
-        withContext(Dispatchers.IO) {
-            val dir = File(filesDir, "photos").apply { require(isDirectory || mkdirs()) }
-            val target = File(dir, "word_${id}_${System.nanoTime()}.jpg")
-            // Stream to a bounded temporary file, sample-decode, rotate using EXIF, and
-            // store only a compressed app-private JPEG. Old media stays until DB succeeds.
-            SafePhotoProcessor.import(image, target)
-            try {
-                val old = dao.photoPath(id)
-                dao.updatePhoto(id, target.absolutePath)
-                deletePrivateMedia(old)
-            } catch (e: Exception) {
-                target.delete()
-                throw e
+        image.use { source ->
+            withMediaMutation { retired ->
+                val dir = File(filesDir, "photos").apply { require(isDirectory || mkdirs()) }
+                val target = File(dir, "word_${id}_${UUID.randomUUID()}.jpg")
+                retired.add(target.absolutePath)
+                SafePhotoProcessor.import(source.borrowed(), target)
+                replaceMedia(id, target.absolutePath, photo = true, retired = retired)
             }
         }
     }
 
-    override suspend fun clearPhoto(id: Long) {
-        withContext(Dispatchers.IO) {
-            deletePrivateMedia(dao.photoPath(id))
-            dao.updatePhoto(id, null)
-        }
+    override suspend fun clearPhoto(id: Long) = withMediaMutation { retired ->
+        replaceMedia(id, null, photo = true, retired = retired)
     }
 
-    override suspend fun setAudio(id: Long, file: File) {
-        withContext(Dispatchers.IO) {
-            val old = dao.audioPath(id)
-            dao.updateAudio(id, file.absolutePath)
-            if (old != file.absolutePath) deletePrivateMedia(old)
-        }
+    /** Takes responsibility for the finished private recording, including failure/cancellation. */
+    override suspend fun setAudio(id: Long, file: File) = withMediaMutation(file) { retired ->
+        val target = privateMedia(file.absolutePath)
+        require(target != null && target.isFile && target.length() > 0L) { "ملف التسجيل غير صالح" }
+        replaceMedia(id, target.absolutePath, photo = false, retired = retired)
     }
 
     /** Copies a picked audio file into filesDir/custom_audio/ and stores its absolute path. */
     override suspend fun importAudio(id: Long, input: InputStream, extension: String) {
-        withContext(Dispatchers.IO) {
-            SafeMediaImport.checkAudioExtension(extension)
-            val dir = File(filesDir, "custom_audio").apply { require(isDirectory || mkdirs()) }
-            val target = File(dir, "word_${id}_${System.nanoTime()}.$extension")
-            SafeMediaImport.copy(input, target, SafeMediaImport.MAX_AUDIO_BYTES)
-            try {
-                val old = dao.audioPath(id)
-                dao.updateAudio(id, target.absolutePath)
-                if (old != target.absolutePath) deletePrivateMedia(old)
-            } catch (e: Exception) {
-                target.delete()
-                throw e
+        input.use { source ->
+            withMediaMutation { retired ->
+                SafeMediaImport.checkAudioExtension(extension)
+                val dir = File(filesDir, "custom_audio").apply { require(isDirectory || mkdirs()) }
+                val target = File(dir, "word_${id}_${UUID.randomUUID()}.$extension")
+                retired.add(target.absolutePath)
+                SafeMediaImport.copy(source.borrowed(), target, SafeMediaImport.MAX_AUDIO_BYTES)
+                replaceMedia(id, target.absolutePath, photo = false, retired = retired)
             }
         }
     }
 
-    override suspend fun clearAudio(id: Long) {
-        withContext(Dispatchers.IO) {
-            deletePrivateMedia(dao.audioPath(id))
-            dao.updateAudio(id, null)
+    override suspend fun clearAudio(id: Long) = withMediaMutation { retired ->
+        replaceMedia(id, null, photo = false, retired = retired)
+    }
+
+    // The public import owns the stream, including validation failure/cancellation before
+    // copying starts. Helpers borrow it so it is closed exactly once by the outer use block.
+    private fun InputStream.borrowed(): InputStream = object : FilterInputStream(this) {
+        override fun close() = Unit
+    }
+
+    private suspend fun replaceMedia(id: Long, path: String?, photo: Boolean, retired: MutableSet<String>) {
+        db.withTransaction {
+            val item = dao.wordById(id) ?: error("البطاقة غير موجودة")
+            (if (photo) item.photoPath else item.audioPath)?.let { retired.add(it) }
+            val updated = if (photo) dao.updatePhoto(id, path) else dao.updateAudio(id, path)
+            check(updated == 1) { "تعذّر تحديث البطاقة" }
         }
     }
 
-    /** Never delete arbitrary paths from a database imported through a user-selected backup. */
-    private fun deletePrivateMedia(raw: String?) {
-        if (raw.isNullOrBlank()) return
-        runCatching {
-            val file = File(raw).canonicalFile
-            val root = filesDir.canonicalFile
-            val allowed = setOf("photos", "custom_audio", "recordings")
-            if (file.isFile && file.parentFile?.parentFile == root &&
-                file.parentFile?.name in allowed) {
-                file.delete()
+    /**
+     * Serialize attachment writes with backup snapshots and all other repository writes. Cleanup
+     * runs AFTER the transaction, and rechecks references under the same lock. If another
+     * operation attaches the file between commit and cleanup, that reference keeps it alive.
+     * Cancellation after a commit must not delete a newly referenced file.
+     */
+    private suspend fun <T> withMediaMutation(
+        recording: File? = null,
+        action: suspend (MutableSet<String>) -> T,
+    ): T {
+        val candidates = linkedSetOf<String>()
+        recording?.let { candidates.add(it.absolutePath) }
+        try {
+            return withContext(Dispatchers.IO) {
+                db.storage.access { action(candidates) }
             }
+        } finally {
+            if (candidates.isNotEmpty()) {
+                withContext(NonCancellable + Dispatchers.IO) {
+                    db.storage.cleanupIfActive { deleteUnreferencedMedia(candidates) }
+                }
+            }
+        }
+    }
+
+    /** DB/query/path failures deliberately retain files; cleanup must never undo a valid save. */
+    private suspend fun deleteUnreferencedMedia(candidates: Set<String>) {
+        try {
+            // Compare canonical paths across BOTH columns. Legacy/imported aliases can refer
+            // to one file even when a raw SQL string count says they are different paths.
+            val referenced = dao.mediaPaths().map { File(it).canonicalPath }.toSet()
+            for (raw in candidates) {
+                val file = privateMedia(raw) ?: continue
+                if (file.canonicalPath !in referenced && file.isFile) file.delete()
+            }
+        } catch (_: Exception) {
+            // Prefer an unreferenced private file to deleting a potentially referenced one.
+        }
+    }
+
+    /** Never delete external files, content URIs, directories, or symlinks escaping storage. */
+    private fun privateMedia(raw: String): File? {
+        val file = File(raw).canonicalFile
+        val root = filesDir.canonicalFile
+        return file.takeIf {
+            it.parentFile?.parentFile == root && it.parentFile?.name in setOf("photos", "custom_audio", "recordings")
         }
     }
 
@@ -429,3 +499,4 @@ class RoomWordRepository(
         const val KEY_SEED_VERSION = "seed_version"
     }
 }
+

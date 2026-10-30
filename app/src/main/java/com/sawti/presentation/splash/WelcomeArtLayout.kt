@@ -17,14 +17,16 @@ internal object WelcomeArtLayout {
     // and bottom empty gradient. The phrase under SAWTI extends through
     // y=420: stretching any part of it visibly warps the Arabic lettering.
     // All title, faces, speech bubbles, button and footer stay uniform.
-    val boundaries = intArrayOf(0, 70, 1090, 1200, 1540, 1600)
+    // Light copyright glyphs cross y=1540. Keep the entire footer, including
+    // descenders and the copyright symbol, above the final stretch boundary.
+    const val FOOTER_END = 1570
+    val boundaries = intArrayOf(0, 70, 1090, 1200, FOOTER_END, 1600)
     val extraWeights = floatArrayOf(0.30f, 0f, 0.40f, 0f, 0.30f)
 
     /**
      * Actual PAINTED bounds of Continue, measured in the approved 941x1600
-     * light/dark artwork. The former hitbox (107..827, 1209..1345) was
-     * significantly larger than the ink and produced a grey outside halo.
-     * Keep separate theme coordinates: dark artwork has a narrower pill.
+     * LIGHT reference artwork. Both themes use this one geometry for drawing
+     * and hit testing. The old dark pill is replaced when rendering.
      */
     internal data class SourceButton(
         val left: Float,
@@ -33,9 +35,7 @@ internal object WelcomeArtLayout {
         val bottom: Float,
     )
 
-    internal fun buttonBounds(dark: Boolean): SourceButton =
-        if (dark) SourceButton(135f, 1242f, 807f, 1355f)
-        else SourceButton(119f, 1236f, 822f, 1353f)
+    internal val referenceButton = SourceButton(119f, 1236f, 822f, 1353f)
 
     internal data class ButtonOnScreen(
         val left: Float,
@@ -44,8 +44,8 @@ internal object WelcomeArtLayout {
         val height: Float,
     )
 
-    internal fun Geometry.buttonOnScreen(dark: Boolean): ButtonOnScreen {
-        val r = buttonBounds(dark)
+    internal fun Geometry.buttonOnScreen(): ButtonOnScreen {
+        val r = referenceButton
         return ButtonOnScreen(
             left = left + r.left * scale,
             top = y(r.top),
@@ -84,3 +84,5 @@ internal object WelcomeArtLayout {
         return Geometry(scale, width, viewportHeight, (viewportWidth - width) / 2f, extra)
     }
 }
+
+

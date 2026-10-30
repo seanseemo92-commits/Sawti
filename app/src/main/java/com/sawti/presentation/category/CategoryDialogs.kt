@@ -1,5 +1,7 @@
 package com.sawti.presentation.category
 
+import com.sawti.domain.model.CardDetails
+
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -238,6 +240,8 @@ fun AddFamilyMemberDialog(group: String, actions: LibraryActions) {
 /** Caregiver Mode editor: label, TTS text, cue, phone (family), photo and voice recording. */
 @Composable
 fun WordEditorDialog(item: WordItem, isRecording: Boolean, actions: LibraryActions, availableCategories: List<Category> = emptyList()) {
+    val baseline = remember(item.id) { CardDetails.from(item) }
+    fun edited(value: String, saved: String) = if (value == saved) saved else value.trim()
     var display by remember(item.id) { mutableStateOf(item.displayText) }
     var tts by remember(item.id) { mutableStateOf(item.ttsPrompt) }
     var cue by remember(item.id) { mutableStateOf(item.phonemicCue) }
@@ -264,6 +268,8 @@ fun WordEditorDialog(item: WordItem, isRecording: Boolean, actions: LibraryActio
                 Modifier.verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
+                Text("تُعدّل هنا النصوص الأصلية للبطاقة. النص أو النطق الذي تخصّصه يبقى كما حفظته عند تغيير اللهجة.",
+                    style = MaterialTheme.typography.bodySmall)
                 OutlinedTextField(
                     value = display, onValueChange = { display = it },
                     readOnly = isRelationship,
@@ -364,7 +370,9 @@ fun WordEditorDialog(item: WordItem, isRecording: Boolean, actions: LibraryActio
         },
         confirmButton = {
             Button(
-                onClick = { actions.saveDetails(item.id, display.trim(), tts.trim(), cue.trim(), sentence.trim(), phone.trim(), group.trim()) },
+                onClick = { actions.saveDetails(item.id, edited(display, baseline.display), edited(tts, baseline.speech),
+                    edited(cue, baseline.cue), edited(sentence, baseline.sentence.orEmpty()),
+                    edited(phone, baseline.phone), edited(group, baseline.group), baseline) },
                 modifier = Modifier.heightIn(min = 52.dp),
             ) { Text(stringResource(R.string.save), fontSize = 18.sp) }
         },
@@ -426,3 +434,4 @@ private fun normalizePhone(raw: String): String = buildString {
         }
     }
 }
+

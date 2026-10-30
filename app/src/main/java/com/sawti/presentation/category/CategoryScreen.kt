@@ -1,5 +1,7 @@
 package com.sawti.presentation.category
 
+import com.sawti.domain.model.forEditing
+
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
@@ -232,7 +234,7 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
         WordFocusDialog(focus, paletteOf(category.palette), actions)
     }
     // Caregiver editor.
-    val editing = state.editingItemId?.let { id -> category.items.firstOrNull { it.id == id } }
+    val editing = state.editingItemId?.let { id -> category.items.firstOrNull { it.id == id }?.forEditing() }
     if (editing != null && state.caregiverMode) {
         WordEditorDialog(editing, isRecording = state.recordingItemId == editing.id,
             actions = actions, availableCategories = state.categories.filter { it.id.startsWith("custom_") })
@@ -607,3 +609,4 @@ private fun FlashcardPage(
         }
     }
 }
+
