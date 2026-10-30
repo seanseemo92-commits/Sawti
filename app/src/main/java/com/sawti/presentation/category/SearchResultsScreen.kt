@@ -60,7 +60,6 @@ fun SearchResultsScreen(
                     onLongClick = { actions.onItemLongPressed(item) },
                     onHint = { actions.onHint(item) },
                     onSentenceHint = { actions.onSentenceHint(item) },
-                    onToggleFavorite = { actions.onToggleFavorite(item) },
                 )
             }
         }
