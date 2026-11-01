@@ -97,7 +97,7 @@ class RegionalDishesCatalogTest {
     @Test fun culturallyDistinctPronunciationsAndCluesStayVerbatim() {
         val examples = mapOf(
             ArabicDialect.TUNISIAN to Triple("كسكسي بالحوت", "كُسْكْسِي بِالحُوتْ", "كُسْـ..."),
-            ArabicDialect.EGYPTIAN to Triple("كباب وحواوشي", "كَبَابْ وَكُفْتَةْ", "كَـ..."),
+            ArabicDialect.EGYPTIAN to Triple("كباب وحواوشي", "كَبَابْ وَحَوَاوْشِي", "كَـ..."),
             ArabicDialect.ALGERIAN to Triple("كسكسي جزائري", "طْعَامْ", "طْعَا..."),
             ArabicDialect.MOROCCAN to Triple("شوا مغربي", "قُطْبَانْ", "قُطْـ..."),
             ArabicDialect.SYRIAN to Triple("كوسا بلبن / شيخ المحشي", "كُوسَا بِلَبَنْ", "كُو..."),

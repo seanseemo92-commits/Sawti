@@ -1,19 +1,15 @@
 package com.sawti.domain.model
 
-/** Builds the "first syllable" prompt used for phonemic cueing, e.g. إِسْمَاعِيلْ → إِسْـ... */
+/** Conservative written cue proposal, not syllabification or a phonetic review. */
 object PhonemicCue {
-    private const val SHADDA = "\u0651"
-    private const val SUKUN = '\u0652'
+    private const val SUKUN = 'ْ'
+    private const val SHADDA = 'ّ'
+    private fun isMark(c: Char) = c in 'ً'..'ٟ' || c == 'ٰ'
+    private fun hasVowel(text: String) = text.any { it in 'ً'..'ِ' || it == 'ٰ' }
 
-    /** fatha, damma, kasra and the tanween marks: a real vowel (sukun and shadda are not). */
-    private fun isVowelMark(c: Char) = c in '\u064B'..'\u0650' || c == '\u0670'
-
-    private fun isMark(c: Char) = c in '\u064B'..'\u065F' || c == '\u0670'
-
-    /** Splits text into letter clusters (a letter plus its diacritics). */
     private fun clusters(text: String): List<String> {
         val out = mutableListOf<StringBuilder>()
-        for (c in text.trim()) {
+        for (c in text) {
             when {
                 isMark(c) && out.isNotEmpty() -> out.last().append(c)
                 c.isLetter() -> out.add(StringBuilder().append(c))
@@ -23,26 +19,31 @@ object PhonemicCue {
     }
 
     fun derive(tts: String): String {
-        val cl = clusters(tts)
+        // Never borrow a consonant or a vowel from the next word in a phrase.
+        val token = tts.trim().split(Regex("\\s+"), limit = 2).firstOrNull().orEmpty()
+        val cl = clusters(token)
         if (cl.isEmpty()) return ""
-        var i = 0
-        // skip the definite article "ال"
-        if (cl.size > 2 && cl[0] == "ا" && cl[1].startsWith("ل")) i = 2
-
-        val first = cl[i]
-        val sb = StringBuilder(first.replace(SHADDA, ""))
-        val next = cl.getOrNull(i + 1)
-        val startsWithAlef = first[0] in "أإآا"
-        val hasVowel = sb.any { isVowelMark(it) }
-        // a letter is always kept together with ALL of its marks (clusters), and a consonant that has
-        // no vowel of its own (bare, or only a sukun) is never left alone: it takes the next syllable letter too
-        if (next != null && (startsWithAlef || !hasVowel || next.contains(SUKUN))) {
-            sb.append(next.replace(SHADDA, ""))
+        val start = if (cl.size > 2 && cl[0][0] in "اٱ" && cl[1][0] == 'ل') 2 else 0
+        val first = cl[start]
+        if (!hasVowel(first) && SUKUN !in first && first[0] != 'آ') return ""
+        val result = StringBuilder(first) // Preserve shadda and the existing vowel marks.
+        val next = cl.getOrNull(start + 1)
+        if (next != null) {
+            val carrier = next.length == 1 && (
+                (next[0] in "اى" && 'َ' in first) ||
+                (next[0] == 'ي' && 'ِ' in first) ||
+                (next[0] == 'و' && 'ُ' in first))
+            when {
+                carrier || SUKUN in next -> result.append(next)
+                // Only the first half of a doubled following consonant closes this cue.
+                SHADDA in next -> result.append(next[0]).append(SUKUN)
+                !hasVowel(first) && hasVowel(next) -> result.append(next)
+            }
         }
-        return sb.toString() + "ـ..."
+        return result.toString() + "ـ..."
     }
 
-    /** TTS should say the sound only, without the tatweel and dots used for display. */
+    /** Decoration is display-only; never rewrite the caregiver's vowels or consonants. */
     fun forSpeech(cue: String): String =
         cue.replace("ـ", "").replace(".", "").replace("…", "").trim()
 }

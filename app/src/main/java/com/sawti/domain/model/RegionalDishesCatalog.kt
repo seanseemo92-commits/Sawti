@@ -5,7 +5,7 @@ package com.sawti.domain.model
  * inside the `cuisine` category. Switching dialects only filters its projection:
  * previously recorded voices, photos and edited strings remain in Room.
  *
- * Pronunciations are curated guidance for Arabic TTS; engine/accent support varies by device.
+ * Written speech candidates are preserved explicitly; none is certified by a native/device review.
  * A missing photograph uses an emoji placeholder rather than a remote image.
  */
 object RegionalDishesCatalog {
@@ -106,7 +106,7 @@ object RegionalDishesCatalog {
             e("dish.egyptian.stuffed_pigeon", "حمام محشي", "حَمَامْ مَحْشِي", "حَـ...", "🍗"),
             e("dish.egyptian.fattah", "فتة بالخل والتوم", "فَتَّةْ بِالخَلِّ وَالتُّومْ", "فَتْـ...", "🍲"),
             e("dish.egyptian.potato_tray", "صينية بطاطس", "صِينِيِّةْ بَطَاطِسْ", "صِيـ...", "🥔"),
-            e("dish.egyptian.kebab_hawawshi", "كباب وحواوشي", "كَبَابْ وَكُفْتَةْ", "كَـ...", "🍖"),
+            e("dish.egyptian.kebab_hawawshi", "كباب وحواوشي", "كَبَابْ وَحَوَاوْشِي", "كَـ...", "🍖"),
             e("dish.egyptian.mahshi", "محشي مشكل", "مَحْشِي كَرُنْبْ", "مَحْـ...", "🥬"),
             e("dish.egyptian.moussaka", "مسقعة بلدي", "مِسَقَّعَةْ", "مِـ...", "🍆"),
             e("dish.egyptian.trotters_fattah", "كوارع وفتة", "كَوَارِعْ", "كَـ...", "🍲"),
@@ -177,11 +177,11 @@ object RegionalDishesCatalog {
             e("dish.arabic.mixed_grill", "مشويات مشكلة", "مَشْوِيَّاتٌ مُشَكَّلَةْ", "مَشْـ...", "🍢"),
             e("dish.arabic.green_salad", "سلطة خضراء", "سَلَطَةٌ خَضْرَاءْ", "سَـ...", "🥗"),
             e("dish.arabic.cooked_fish", "سمك مطهو", "سَمَكٌ مَطْهُوّ", "سَـ...", "🐟"),
-            e("dish.arabic.baked_pastries", "فطائر مخبوزة", "فَطَائِرْ", "فَـ...", "🥟"),
-            e("dish.arabic.vegetable_soup", "حساء خضار", "حِسَاءُ خُضَارْ", "حِـ...", "🍲"),
+            e("dish.arabic.baked_pastries", "فطائر مخبوزة", "فَطَائِرُ مَخْبُوزَة", "فَـ...", "🥟"),
+            e("dish.arabic.vegetable_soup", "حساء خضار", "حَسَاءُ خُضَار", "حَـ...", "🍲"),
             e("dish.arabic.boiled_meat", "لحم مسلوق", "لَحْمٌ مَسْلُوقْ", "لَحْـ...", "🥩"),
-            e("dish.arabic.baked_bread", "خبز مخبوز", "خُبْزٌ طَازَجْ", "خُبْـ...", "🍞"),
-            e("dish.arabic.fruits_legumes", "ثمار وبقوليات", "بُقُولِيَّاتْ", "بُـ...", "🫘"),
+            e("dish.arabic.baked_bread", "خبز مخبوز", "خُبْزٌ مَخْبُوز", "خُبْـ...", "🍞"),
+            e("dish.arabic.fruits_legumes", "ثمار وبقوليات", "ثِمَارٌ وَبُقُولِيَّات", "ثِـ...", "🫘"),
             e("dish.arabic.boiled_eggs", "بيض مسلوق", "بَيْضٌ مَسْلُوقْ", "بَيْـ...", "🥚"),
             e("dish.arabic.dates_milk", "تمر وحليب", "تَمْرٌ وَحَلِيبْ", "تَمْـ...", "🥛"),
             e("dish.arabic.arabic_dessert", "حلوى عربية", "حَلْوَى عَرَبِيَّةْ", "حَلْـ...", "🍰"),

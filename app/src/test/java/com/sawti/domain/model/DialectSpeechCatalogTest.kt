@@ -44,4 +44,61 @@ class DialectSpeechCatalogTest {
             assertEquals(source.phonemicCue, view.phonemicCue)
         }
     }
+
+    @Test fun eggsDoNotLeakTheLibyanLexemeIntoOtherDialects() {
+        for (dialect in listOf(ArabicDialect.SAUDI, ArabicDialect.EGYPTIAN,
+            ArabicDialect.SYRIAN, ArabicDialect.IRAQI, ArabicDialect.MOROCCAN)) {
+            val form = DialectSpeechCatalog.resolve(item("food.eggs"), dialect)
+            assertEquals("بيض", form.displayText)
+            assertFalse(form.speechText.contains("دَحْ"))
+            assertTrue(form.needsNativeReview)
+            assertTrue(form.needsTtsListening)
+        }
+    }
+
+    @Test fun preservedLocalCueMustBelongToTheSpokenWord() {
+        val eggs = DialectSpeechCatalog.resolve(item("food.eggs"), ArabicDialect.LIBYAN)
+        assertEquals("دَحْـ...", eggs.phonemicCue)
+        val trousers = DialectSpeechCatalog.resolve(item("clothing.trousers"), ArabicDialect.LIBYAN)
+        assertEquals("سروال", trousers.displayText)
+        assertEquals("سِرْوَالْ", trousers.speechText)
+        assertEquals("سِرْ...", trousers.phonemicCue)
+    }
+
+    @Test fun missingWrittenSpeechIsExplicitAndDoesNotFabricateVowelsOrForeignCue() {
+        val form = DialectSpeechCatalog.resolve(item("home.water_bottle"), ArabicDialect.MOROCCAN)
+        assertEquals(SpeechSource.UNVOCALIZED_FALLBACK, form.source)
+        assertEquals("قرعة ماء", form.speechText)
+        assertEquals("", form.phonemicCue)
+        assertTrue(form.needsNativeReview)
+        assertTrue(form.needsTtsListening)
+    }
+
+    @Test fun regionalUserSpeechDoesNotReceiveAnUnrelatedRegionalCue() {
+        val source = item("dish.tunisian.lablabi").copy(
+            ttsPrompt = "صَوْتِي", phonemicCue = "صَوْ...", customTextFields = CardDetails.SPEECH)
+        val view = DialectCatalog.localize(source, ArabicDialect.TUNISIAN)
+        assertEquals(source.ttsPrompt, view.ttsPrompt)
+        assertEquals(source.phonemicCue, view.phonemicCue)
+        assertEquals(source, view.forEditing())
+    }
+
+    @Test fun noPhoneticRewritingOfUserLongVowelsShaddaOrConnectedWords() {
+        val source = item("request.water").copy(ttsPrompt = "نَبِّيْ إِمِّيَّهْ، چ گ",
+            phonemicCue = "مِّيـ...", customTextFields = CardDetails.SPEECH or CardDetails.CUE)
+        for (dialect in ArabicDialect.entries) {
+            val form = DialectSpeechCatalog.resolve(source, dialect)
+            assertEquals(source.ttsPrompt, form.speechText)
+            assertEquals(source.phonemicCue, form.phonemicCue)
+        }
+    }
+
+    @Test fun familyFushaHasWrittenSpeechSeparateFromDisplay() {
+        assertEquals("أمي", item("family.mother").displayText)
+        assertEquals("أُمِّي", item("family.mother").ttsPrompt)
+        assertEquals("زَوْجُ ابْنَتِي", item("family.daughter_husband").ttsPrompt)
+        WordSeed.itemEntities().filter { it.categoryId == CategoryIds.FAMILY }.forEach {
+            assertTrue(it.ttsPrompt.any { c -> c in 'ً'..'ٟ' })
+        }
+    }
 }
