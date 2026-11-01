@@ -28,7 +28,7 @@ jobs:
         run: |
           set -euo pipefail
           test -f app/build.gradle.kts
-          test -f app/src/main/java/com/sawti/data/db/LegacyFamilyCleanup.kt
+          test ! -f app/src/main/java/com/sawti/data/db/LegacyFamilyCleanup.kt
           test ! -f app/src/main/java/com/sawti/data/db/LegacyFamilyDefaults.kt
           test -f README.md
           grep -q 'versionName = "4.6.0"' app/build.gradle.kts
@@ -76,6 +76,10 @@ jobs:
           fi
       - name: Compile debug and R8 release, unit tests and Android lint
         run: gradle --no-daemon :app:assembleDebug :app:assembleRelease :app:testDebugUnitTest :app:lintRelease
+      - name: Check exported foundation schema
+        run: |
+          test -s app/schemas/com.sawti.data.db.AppDatabase/1.json
+          git diff --exit-code -- app/schemas
       - name: Summarize pending speech reviews
         run: |
           python3 - <<'PYREPORT'
@@ -99,6 +103,7 @@ jobs:
             app/build/reports/tests/testDebugUnitTest/
             app/build/reports/lint-results-release.*
             app/build/reports/speech-review.tsv
+            app/schemas/
           if-no-files-found: warn
           retention-days: 14
       - name: Upload test APK

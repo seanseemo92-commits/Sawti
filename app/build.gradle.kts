@@ -75,3 +75,8 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.14.1")
 }
 
+
+// Checked-in schema history is the contract for non-destructive future upgrades.
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}

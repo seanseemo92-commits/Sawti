@@ -321,7 +321,7 @@ class RoomWordRepository(
     /** DB/query/path failures deliberately retain files; cleanup must never undo a valid save. */
     private suspend fun deleteUnreferencedMedia(candidates: Set<String>) {
         try {
-            // Compare canonical paths across BOTH columns. Legacy/imported aliases can refer
+            // Compare canonical paths across BOTH columns. Imported aliases can refer
             // to one file even when a raw SQL string count says they are different paths.
             val referenced = dao.mediaPaths().map { File(it).canonicalPath }.toSet()
             for (raw in candidates) {
@@ -338,7 +338,7 @@ class RoomWordRepository(
         val file = File(raw).canonicalFile
         val root = filesDir.canonicalFile
         return file.takeIf {
-            it.parentFile?.parentFile == root && it.parentFile?.name in setOf("photos", "custom_audio", "recordings")
+            it.parentFile?.parentFile == root && it.parentFile?.name in setOf("photos", "custom_audio")
         }
     }
 

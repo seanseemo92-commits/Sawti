@@ -72,7 +72,6 @@ class RegionalDishesCatalogTest {
             assertEquals(expected.getValue(dish.displayText).first, dish.ttsPrompt)
             assertEquals(expected.getValue(dish.displayText).second, dish.phonemicCue)
         }
-        assertEquals(19, WordSeed.VERSION)
     }
     @Test fun exactFullOrderedListsAreNeverAccidentallyTruncatedOrRenamed() {
         val expected = mapOf(

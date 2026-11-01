@@ -61,7 +61,7 @@ class BackupSnapshotTest {
 
     private fun paths(payload: Map<String, ByteArray>): List<Pair<String?, String?>> {
         val file = File(context.cacheDir, "inspect_${System.nanoTime()}.db")
-        file.writeBytes(payload.getValue("database/my_words.db"))
+        file.writeBytes(payload.getValue(BackupFormat.DATABASE_ENTRY))
         return try {
             SQLiteDatabase.openDatabase(file.path, null, SQLiteDatabase.OPEN_READONLY).use { sqlite ->
                 sqlite.rawQuery("SELECT photoPath,audioPath FROM word_items ORDER BY id", null).use { cursor ->
@@ -71,28 +71,32 @@ class BackupSnapshotTest {
         } finally { file.delete() }
     }
 
-    @Test fun legacyAndCurrentRecordingsWithSameNameSurviveRoundTrip() = runBlocking {
-        val legacy = media("recordings", "same.m4a", "legacy voice")
+    @Test fun sameBasenamesInDifferentPrivateFoldersSurviveRoundTrip() = runBlocking {
+        val first = media("photos", "same.m4a", "first voice")
         val current = media("custom_audio", "same.m4a", "current voice")
-        val a = card(audio = legacy.path); val b = card(audio = current.path)
+        val a = card(audio = first.path); val b = card(audio = current.path)
         val archive = export()
         val payload = entries(archive)
-        assertEquals(2, JSONObject(String(payload.getValue("manifest.json"))).getInt("version"))
+        val manifest = JSONObject(String(payload.getValue("manifest.json")))
+        assertEquals(BackupFormat.NAME, manifest.getString("format"))
+        assertEquals(BackupFormat.VERSION, manifest.getInt("version"))
+        assertEquals(AppDatabase.IDENTITY, manifest.getString("databaseIdentity"))
+        assertEquals(AppDatabase.VERSION, manifest.getInt("databaseVersion"))
         val stored = paths(payload).map { requireNotNull(it.second) }
         assertEquals(2, stored.toSet().size)
-        assertEquals(setOf("legacy voice", "current voice"),
+        assertEquals(setOf("first voice", "current voice"),
             stored.map { String(payload.getValue("files/$it")) }.toSet())
-        assertEquals(legacy.path, dao.audioPath(a))
+        assertEquals(first.path, dao.audioPath(a))
         assertEquals(current.path, dao.audioPath(b))
         BackupManager(context, db).restore(Uri.fromFile(archive))
         BackupManager.recoverIfInterrupted(context)
         db = AppDatabase.build(context)
         val restoredA = File(requireNotNull(db.wordDao().audioPath(a)))
         val restoredB = File(requireNotNull(db.wordDao().audioPath(b)))
-        assertEquals("legacy voice", restoredA.readText())
+        assertEquals("first voice", restoredA.readText())
         assertEquals("current voice", restoredB.readText())
         assertNotEquals(restoredA.path, restoredB.path)
-        assertEquals("custom_audio", restoredA.parentFile!!.name)
+        assertEquals("photos", restoredA.parentFile!!.name)
     }
 
     @Test fun aliasesAndCrossColumnSharingExportOneFileAndRestoreOneReference() = runBlocking {
@@ -110,7 +114,7 @@ class BackupSnapshotTest {
     }
 
     @Test fun unreferencedAndInProgressFilesAreExcluded() = runBlocking {
-        card(audio = media("recordings", "saved.m4a", "saved").path)
+        card(audio = media("custom_audio", "saved.m4a", "saved").path)
         media("custom_audio", "still_recording.m4a", "partial")
         media("photos", "orphan.jpg", "orphan")
         val payload = entries(export())
@@ -119,7 +123,7 @@ class BackupSnapshotTest {
     }
 
     @Test fun missingOrExternalReferencedMediaRejectsExportWithoutChangingLiveData() = runBlocking {
-        val missing = File(context.filesDir, "recordings/missing.m4a").path
+        val missing = File(context.filesDir, "custom_audio/missing.m4a").path
         val id = card(audio = missing)
         var failed = false
         try { export() } catch (_: Exception) { failed = true }
@@ -199,13 +203,13 @@ class BackupSnapshotTest {
     }
 
     @Test fun stageRespectsLimitsBeforeCreatingOversizedMediaPayload() = runBlocking {
-        card(audio = media("recordings", "large.m4a", "x".repeat(200)).path)
+        card(audio = media("custom_audio", "large.m4a", "x".repeat(200)).path)
         // Reuse the actual online snapshot path, without any live-path rewriting.
         val folder = File(context.cacheDir, "bounded").apply { mkdirs() }
         val snapshot = File(folder, "copy.db")
         db.storage.access {
             db.openHelper.writableDatabase.execSQL("VACUUM INTO ?", arrayOf(snapshot.path))
-            val files = linkedMapOf("database/my_words.db" to snapshot)
+            val files = linkedMapOf(BackupFormat.DATABASE_ENTRY to snapshot)
             var failed = false
             try {
                 BackupMediaSnapshot.stage(context, snapshot, folder, files, snapshot.length() + 100, 2000)

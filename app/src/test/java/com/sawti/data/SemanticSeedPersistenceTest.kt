@@ -46,7 +46,6 @@ class SemanticSeedPersistenceTest {
         val water = dao.observeItems().first().single { it.semanticKey == "request.water" }
         repo.updateDetails(water.id, "طلبي الخاص", "صوتي الخاص", "تلميحي", "جملتي", "123")
         val expected = requireNotNull(dao.wordById(water.id))
-        context.getSharedPreferences("seed", Context.MODE_PRIVATE).edit().clear().commit()
         repeat(2) { repo.seedOrUpdateDefaults() }
         val rows = dao.observeItems().first()
         assertEquals(WordSeed.itemEntities().size, rows.size)
