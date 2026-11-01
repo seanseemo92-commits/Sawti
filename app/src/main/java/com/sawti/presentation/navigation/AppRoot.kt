@@ -174,6 +174,15 @@ fun AppRoot(
                         (context.applicationContext as SawtiApp).container.audioDispatcher,
                     )
                     category != null -> CategoryScreen(category, state, library)
+                    state.categories.isEmpty() && state.errorMessage != null -> HomeScreen(
+                        categories = state.categories,
+                        speakingItemId = state.playbackVisual.activeWordId.takeIf { state.playbackVisual.isSpeaking },
+                        onOpen = { id -> if (!navigationLocked()) route = CATEGORY_PREFIX + id },
+                        onRetry = {
+                            library.clearError()
+                            library.retryLoad()
+                        },
+                    )
                     else -> HomeScreen(
                         categories = state.categories,
                         speakingItemId = state.playbackVisual.activeWordId.takeIf { state.playbackVisual.isSpeaking },
