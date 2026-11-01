@@ -6,7 +6,7 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class CardDetailsTest {
-    private val word = WordSeed.itemEntities().first { it.displayText == "خبزة" }.toDomain()
+    private val word = WordSeed.itemEntities().first { it.semanticKey == "food.bread" }.toDomain()
 
     @Test fun editorReceivesSavedValuesInEveryDialect() {
         val original = word.copy(sentencePrompt = "جملة شخصية", phonemicCue = "تلميح شخصي")

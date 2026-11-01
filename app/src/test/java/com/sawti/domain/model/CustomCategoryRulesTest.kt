@@ -6,7 +6,7 @@ import org.junit.Test
 
 class CustomCategoryRulesTest {
     @Test fun builtInsCannotBeEditedOrDeleted() {
-        listOf("family", "daily", "fruits", "actions", "libyan").forEach {
+        listOf("family", "daily", "fruits", "actions", "cuisine").forEach {
             assertFalse(CustomCategoryRules.canManage(it))
             assertFalse(CustomCategoryRules.canDelete(it, 0))
         }

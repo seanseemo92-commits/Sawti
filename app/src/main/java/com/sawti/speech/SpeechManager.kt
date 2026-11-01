@@ -28,7 +28,7 @@ data class InstalledArabicVoice(
 
 data class DialectVoiceStatus(
     val initialized: Boolean = false,
-    val requested: ArabicDialect = ArabicDialect.LIBYAN,
+    val requested: ArabicDialect = ArabicDialect.STANDARD,
     val actualTag: String? = null,
     val actualVoice: String? = null,
     val regionalVoiceAvailable: Boolean = false,
@@ -55,7 +55,7 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
     private var tts: TextToSpeech? = null
     private var ready = false
     private var speechRate = 0.85f
-    private var dialect = ArabicDialect.LIBYAN
+    private var dialect = ArabicDialect.STANDARD
     private var preferredVoice: String? = null
     private var pending: (() -> Unit)? = null
     private var pendingCancel: (() -> Unit)? = null

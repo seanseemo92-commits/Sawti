@@ -1,132 +1,117 @@
 package com.sawti.data.db
 
-/**
- * Functional cloze prompts ("نَأْكُلُ الـ...") for sentence hints.
- * Keys are "categoryId/displayText" exactly as in WordSeed. A word with no entry falls back to
- * its category default; words in [noPrompt] have no 💬 button.
- */
+/** Fusha cloze prompts keyed by concept identity, never by a display label. */
 object SeedExtras {
-
     private val categoryDefault = mapOf(
-        "vegetables" to "نَطْبُخُ الـ...",
-        "fruits" to "نَأْكُلُ الـ...",
-        "food" to "نَأْكُلُ الـ...",
-        "clothes" to "نَلْبَسُ الـ...",
-
-        "family" to "أُرِيدُ أَنْ أَتَكَلَّمَ مَعَ ...",
-        "libyan" to "نَأْكُلُ الـ...")
-
-    private val noPrompt = setOf("actions/نفتح", "actions/نسكر", "actions/نسمع")
-
-    private fun group(prompt: String, category: String, vararg names: String) =
-        names.associate { "$category/$it" to prompt }
-
-    private val overrides: Map<String, String> = buildMap {
-        // daily requests
-        put("daily/نبي مية", "نَشْرَبُ الـ...")
-        put("daily/نبي شاهي", "نَشْرَبُ الـ...")
-        put("daily/نبي نرتاح", "عِنْدَمَا أَتْعَبُ أُرِيدُ الـ...")
-        put("daily/نبي دوايا", "فِي المَوْعِدِ آخُذُ الـ...")
-        put("daily/نبي الحمام", "أَذْهَبُ إِلَى الـ...")
-        put("daily/عدّل لي المخدة", "أُرِيدُ تَعْدِيلَ الـ...")
-        // vegetables
-        putAll(group("نَأْكُلُ الـ...", "vegetables", "خيار", "خس", "فجل"))
-        putAll(group("نَضَعُ الـ... فِي الطَّبْخِ", "vegetables", "معدنوس", "كزبرة"))
-        put("vegetables/نعناع", "نَشْرَبُ الشَّايَ بِالـ...")
-        put("vegetables/ليمون", "نَعْصِرُ الـ...")
-        // food & drinks
-        putAll(group("نَشْرَبُ الـ...", "food", "حليب", "شاهي", "قهوة", "عصير", "مية"))
-        put("food/زيت", "نَطْبُخُ بِالـ...")
-        put("food/ملح", "نَضَعُ فِي الطَّعَامِ الـ...")
-        put("food/سكر", "نَضَعُ فِي الشَّايِ الـ...")
-        putAll(group("نَضَعُ عَلَى الخُبْزِ الـ...", "food", "زبدة", "عسل"))
-        put("food/شوربة", "نَتَنَاوَلُ الـ...")
-        // home & furniture
-        put("home/سرير", "نَنَامُ عَلَى الـ...")
-        put("home/مخدة", "نَضَعُ رَأْسَنَا عَلَى الـ...")
-        put("home/ورغان / بطانية", "نَتَغَطَّى بِالـ...")
-        put("home/طاولة", "نَضَعُ الطَّعَامَ عَلَى الـ...")
-        put("home/كرسي", "نَجْلِسُ عَلَى الـ...")
-        put("home/باب", "نَفْتَحُ الـ...")
-        put("home/تلفزيون", "نُشَاهِدُ الـ...")
-        put("home/ثلاجة", "نَحْفَظُ الطَّعَامَ فِي الـ...")
-        put("home/غسالة", "نَغْسِلُ الثِّيَابَ فِي الـ...")
-        put("home/غاز", "نَطْبُخُ عَلَى الـ...")
-        put("home/مكيف", "نُشَغِّلُ الـ...")
-        put("home/مروحة", "نُشَغِّلُ الـ...")
-        put("home/دولاب", "نَضَعُ الثِّيَابَ فِي الـ...")
-        put("home/مفتاح", "نَفْتَحُ البَابَ بِالـ...")
-        put("home/ساعة", "نَنْظُرُ إِلَى الـ... لِنَعْرِفَ الوَقْتَ")
-        put("home/فرشيطة", "نَأْكُلُ بِالـ...")
-        put("home/موس (سكين)", "نَقْطَعُ بِالـ...")
-        put("home/صالون", "نَجْلِسُ عَلَى الـ...")
-        put("home/روشن", "نَنْظُرُ مِنَ الـ...")
-        put("home/بساط / حواشي", "نَمْشِي عَلَى الـ...")
-        put("home/كوجينة", "نَطْبُخُ فِي الـ...")
-        put("home/طاسة", "نَشْرَبُ المَاءَ فِي الـ...")
-        put("home/صونية", "نَضَعُ الأَكْلَ عَلَى الـ...")
-        put("home/كاشيك", "نَأْكُلُ الشُّورْبَةَ بِالـ...")
-        put("home/براد", "نَصُبُّ الشَّايَ مِنَ الـ...")
-        put("home/طنجرة", "نَطْبُخُ الأَكْلَ فِي الـ...")
-        put("home/شيشة", "نَحْفَظُ المَاءَ فِي الـ...")
-        // clothes
-        put("clothes/نظارة", "نَرَى جَيِّدًا بِالـ...")
-        put("clothes/ساعة يد", "نَعْرِفُ الوَقْتَ مِنَ الـ...")
-        put("clothes/شنطة", "نَحْمِلُ الأَغْرَاضَ فِي الـ...")
-        // body parts
-        put("body/عين", "نَرَى بِالـ...")
-        put("body/خشم", "نَشُمُّ بِالـ...")
-        put("body/فم", "نَأْكُلُ بِالـ...")
-        put("body/لسان", "نَتَذَوَّقُ الطَّعْمَ بِالـ...")
-        put("body/ودن", "نَسْمَعُ بِالـ...")
-        put("body/يد", "نُمْسِكُ الكُوبَ بِالـ...")
-        put("body/رجل / كراع", "نَمْشِي عَلَى الـ...")
-        put("body/راس", "نَضَعُ القُبَّعَةَ عَلَى الـ...")
-        put("body/شعر", "نُمَشِّطُ الـ...")
-        put("body/ظهر", "نَسْتَرِيحُ عَلَى الـ...")
-        put("body/بطن", "الطَّعَامُ يَذْهَبُ إِلَى الـ...")
-        put("body/ركبة", "نَثْنِي الـ...")
-        put("body/صبع", "نُشِيرُ بِالـ...")
-        put("body/رقبة", "نَلْبَسُ القِلَادَةَ حَوْلَ الـ...")
-        put("body/صدر", "نَضَعُ يَدَنَا عَلَى الـ...")
-        put("body/وجه", "نَغْسِلُ الـ...")
-
-        put("body/سنة", "نُنَظِّفُ الـ...")
-        put("body/قلب", "نُحِبُّ بِالـ...")
-
-        put("body/كتف", "نَحْمِلُ عَلَى الـ...")
-
-        // Conjugated verbs are complete utterances: a noun-style cloze prompt
-        // ("أُرِيدُ الـ...") is not grammatical for them.
-        // Libyan foods
-        putAll(group("نَشْرَبُ الـ...", "libyan", "شاهي بالنعناع", "قهوة عربية"))
-        putAll(group("نَبِّي نَاكُلْ الـ...", "libyan", "مبطن", "حرايمي", "سفنز", "زميطة", "عيش باللبن"))
-        // routines & faith
-        put("routine/أذان", "نَسْمَعُ الـ...")
-        put("routine/وضوء", "قَبْلَ الصَّلَاةِ نَقُومُ بِالـ...")
-        put("routine/صلاة", "نَقِفُ لِلـ...")
-        put("routine/سجادة", "نُصَلِّي عَلَى الـ...")
-        put("routine/سبحة", "نُسَبِّحُ بِالـ...")
-        put("routine/مصحف", "نَقْرَأُ القُرْآنَ مِنَ الـ...")
-        put("routine/قهوة العشية", "بَعْدَ العَصْرِ نَشْرَبُ الـ...")
-        put("routine/نوم", "فِي اللَّيْلِ نَذْهَبُ إِلَى الـ...")
-        put("routine/راحة", "عِنْدَمَا نَتْعَبُ نَأْخُذُ الـ...")
-        put("routine/مشي", "فِي الصَّبَاحِ نَخْرُجُ لِلـ...")
-        // animals
-        putAll(group("فِي البَيْتِ نَرَى الـ...", "animals", "قطوسة", "كلب", "قنية"))
-        putAll(group("فِي المَزْرَعَةِ نَرَى الـ...", "animals", "خروف", "حصان", "بقرة", "دجاجة", "بطة", "جمل", "سردوك"))
-
-        putAll(group("فِي السَّمَاءِ يَطِيرُ الـ...", "animals", "عصفور"))
-        putAll(group("فِي السَّمَاءِ تَطِيرُ الـ...", "animals", "حمامة"))
-    }
-
-
-    /** Test-only contract: every explicitly configured key must match current seed vocabulary. */
-    fun sentencePrompt(categoryId: String, display: String): String? {
-        val key = "$categoryId/$display"
-        if (categoryId == "actions" || key in noPrompt) return null
-        return overrides[key] ?: categoryDefault[categoryId]
-    }
-
-    internal fun configuredKeys(): Set<String> = noPrompt + overrides.keys
+        "vegetables" to "نَطْبُخُ الـ...", "fruits" to "نَأْكُلُ الـ...",
+        "food" to "نَأْكُلُ الـ...", "clothes" to "نَلْبَسُ الـ...",
+        "family" to "أُرِيدُ أَنْ أَتَكَلَّمَ مَعَ ...", "cuisine" to "نَأْكُلُ الـ...",
+    )
+    private val overrides = mapOf(
+        "request.water" to "نَشْرَبُ الـ...",
+        "request.tea" to "نَشْرَبُ الـ...",
+        "request.rest" to "عِنْدَمَا أَتْعَبُ أُرِيدُ الـ...",
+        "request.medicine" to "فِي المَوْعِدِ آخُذُ الـ...",
+        "request.toilet" to "أَذْهَبُ إِلَى الـ...",
+        "request.adjust_pillow" to "أُرِيدُ تَعْدِيلَ الـ...",
+        "vegetable.cucumber" to "نَأْكُلُ الـ...",
+        "vegetable.lettuce" to "نَأْكُلُ الـ...",
+        "vegetable.radish" to "نَأْكُلُ الـ...",
+        "vegetable.parsley" to "نَضَعُ الـ... فِي الطَّبْخِ",
+        "vegetable.coriander" to "نَضَعُ الـ... فِي الطَّبْخِ",
+        "vegetable.mint" to "نَشْرَبُ الشَّايَ بِالـ...",
+        "vegetable.lemon" to "نَعْصِرُ الـ...",
+        "food.milk" to "نَشْرَبُ الـ...",
+        "food.tea" to "نَشْرَبُ الـ...",
+        "food.coffee" to "نَشْرَبُ الـ...",
+        "food.juice" to "نَشْرَبُ الـ...",
+        "food.water" to "نَشْرَبُ الـ...",
+        "food.oil" to "نَطْبُخُ بِالـ...",
+        "food.salt" to "نَضَعُ فِي الطَّعَامِ الـ...",
+        "food.sugar" to "نَضَعُ فِي الشَّايِ الـ...",
+        "food.butter" to "نَضَعُ عَلَى الخُبْزِ الـ...",
+        "food.honey" to "نَضَعُ عَلَى الخُبْزِ الـ...",
+        "food.soup" to "نَتَنَاوَلُ الـ...",
+        "home.bed" to "نَنَامُ عَلَى الـ...",
+        "home.pillow" to "نَضَعُ رَأْسَنَا عَلَى الـ...",
+        "home.blanket" to "نَتَغَطَّى بِالـ...",
+        "home.table" to "نَضَعُ الطَّعَامَ عَلَى الـ...",
+        "home.chair" to "نَجْلِسُ عَلَى الـ...",
+        "home.door" to "نَفْتَحُ الـ...",
+        "home.television" to "نُشَاهِدُ الـ...",
+        "home.fridge" to "نَحْفَظُ الطَّعَامَ فِي الـ...",
+        "home.washing_machine" to "نَغْسِلُ الثِّيَابَ فِي الـ...",
+        "home.stove" to "نَطْبُخُ عَلَى الـ...",
+        "home.air_conditioner" to "نُشَغِّلُ الـ...",
+        "home.fan" to "نُشَغِّلُ الـ...",
+        "home.wardrobe" to "نَضَعُ الثِّيَابَ فِي الـ...",
+        "home.key" to "نَفْتَحُ البَابَ بِالـ...",
+        "home.clock" to "نَنْظُرُ إِلَى الـ... لِنَعْرِفَ الوَقْتَ",
+        "home.fork" to "نَأْكُلُ بِالـ...",
+        "home.knife" to "نَقْطَعُ بِالـ...",
+        "home.sofa" to "نَجْلِسُ عَلَى الـ...",
+        "home.window" to "نَنْظُرُ مِنَ الـ...",
+        "home.carpet" to "نَمْشِي عَلَى الـ...",
+        "home.kitchen" to "نَطْبُخُ فِي الـ...",
+        "home.cup" to "نَشْرَبُ المَاءَ فِي الـ...",
+        "home.tray" to "نَضَعُ الأَكْلَ عَلَى الـ...",
+        "home.spoon" to "نَأْكُلُ الشُّورْبَةَ بِالـ...",
+        "home.teapot" to "نَصُبُّ الشَّايَ مِنَ الـ...",
+        "home.pot" to "نَطْبُخُ الأَكْلَ فِي الـ...",
+        "home.water_bottle" to "نَحْفَظُ المَاءَ فِي الـ...",
+        "clothing.glasses" to "نَرَى جَيِّدًا بِالـ...",
+        "clothing.watch" to "نَعْرِفُ الوَقْتَ مِنَ الـ...",
+        "clothing.bag" to "نَحْمِلُ الأَغْرَاضَ فِي الـ...",
+        "body.eye" to "نَرَى بِالـ...",
+        "body.nose" to "نَشُمُّ بِالـ...",
+        "body.mouth" to "نَأْكُلُ بِالـ...",
+        "body.tongue" to "نَتَذَوَّقُ الطَّعْمَ بِالـ...",
+        "body.ear" to "نَسْمَعُ بِالـ...",
+        "body.hand" to "نُمْسِكُ الكُوبَ بِالـ...",
+        "body.leg" to "نَمْشِي عَلَى الـ...",
+        "body.head" to "نَضَعُ القُبَّعَةَ عَلَى الـ...",
+        "body.hair" to "نُمَشِّطُ الـ...",
+        "body.back" to "نَسْتَرِيحُ عَلَى الـ...",
+        "body.abdomen" to "الطَّعَامُ يَذْهَبُ إِلَى الـ...",
+        "body.knee" to "نَثْنِي الـ...",
+        "body.finger" to "نُشِيرُ بِالـ...",
+        "body.neck" to "نَلْبَسُ القِلَادَةَ حَوْلَ الـ...",
+        "body.chest" to "نَضَعُ يَدَنَا عَلَى الـ...",
+        "body.face" to "نَغْسِلُ الـ...",
+        "body.tooth" to "نُنَظِّفُ الـ...",
+        "body.heart" to "نُحِبُّ بِالـ...",
+        "body.shoulder" to "نَحْمِلُ عَلَى الـ...",
+        "dish.mint_tea" to "نَشْرَبُ الـ...",
+        "dish.arabic_coffee" to "نَشْرَبُ الـ...",
+        "dish.mbattan" to "أَتَنَاوَلُ الـ...",
+        "dish.hraymi" to "أَتَنَاوَلُ الـ...",
+        "dish.sfinz" to "أَتَنَاوَلُ الـ...",
+        "dish.zmeeta" to "أَتَنَاوَلُ الـ...",
+        "dish.aysh_laban" to "أَتَنَاوَلُ الـ...",
+        "routine.call_to_prayer" to "نَسْمَعُ الـ...",
+        "routine.ablution" to "قَبْلَ الصَّلَاةِ نَقُومُ بِالـ...",
+        "routine.prayer" to "نَقِفُ لِلـ...",
+        "routine.prayer_rug" to "نُصَلِّي عَلَى الـ...",
+        "routine.prayer_beads" to "نُسَبِّحُ بِالـ...",
+        "routine.quran" to "نَقْرَأُ القُرْآنَ مِنَ الـ...",
+        "routine.evening_coffee" to "بَعْدَ العَصْرِ نَشْرَبُ الـ...",
+        "routine.sleep" to "فِي اللَّيْلِ نَذْهَبُ إِلَى الـ...",
+        "routine.rest" to "عِنْدَمَا نَتْعَبُ نَأْخُذُ الـ...",
+        "routine.walk" to "فِي الصَّبَاحِ نَخْرُجُ لِلـ...",
+        "animal.cat" to "فِي البَيْتِ نَرَى الـ...",
+        "animal.dog" to "فِي البَيْتِ نَرَى الـ...",
+        "animal.rabbit" to "فِي البَيْتِ نَرَى الـ...",
+        "animal.sheep" to "فِي المَزْرَعَةِ نَرَى الـ...",
+        "animal.horse" to "فِي المَزْرَعَةِ نَرَى الـ...",
+        "animal.cow" to "فِي المَزْرَعَةِ نَرَى الـ...",
+        "animal.chicken" to "فِي المَزْرَعَةِ نَرَى الـ...",
+        "animal.duck" to "فِي المَزْرَعَةِ نَرَى الـ...",
+        "animal.camel" to "فِي المَزْرَعَةِ نَرَى الـ...",
+        "animal.rooster" to "فِي المَزْرَعَةِ نَرَى الـ...",
+        "animal.sparrow" to "فِي السَّمَاءِ يَطِيرُ الـ...",
+        "animal.pigeon" to "فِي السَّمَاءِ تَطِيرُ الـ...",
+    )
+    fun sentencePrompt(categoryId: String, semanticKey: String): String? =
+        if (categoryId == "actions") null else overrides[semanticKey] ?: categoryDefault[categoryId]
+    internal fun configuredKeys(): Set<String> = overrides.keys
 }

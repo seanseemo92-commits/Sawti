@@ -103,7 +103,7 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
     // Dialect tags on regional dishes are internal storage keys, not visible tabs.
     val subgroups = if (isFamily) FamilyRelationships.tabs + category.subgroups.filter {
         it.isNotBlank() && it !in FamilyRelationships.tabs
-    } else if (category.id == "libyan") emptyList() else category.subgroups
+    } else if (category.id == "cuisine") emptyList() else category.subgroups
     var mode by rememberSaveable(category.id) { mutableStateOf(ViewMode.GRID) }
     var subgroup by rememberSaveable(category.id) {
         mutableStateOf(if (isFamily) FamilyRelationships.RELATIVES else subgroups.firstOrNull().orEmpty())

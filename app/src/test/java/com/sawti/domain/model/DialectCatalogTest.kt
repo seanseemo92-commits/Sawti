@@ -1,112 +1,78 @@
 package com.sawti.domain.model
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotEquals
-import org.junit.Assert.assertTrue
 import com.sawti.data.db.WordSeed
+import com.sawti.data.db.toDomain
+import org.junit.Assert.*
 import org.junit.Test
 
 class DialectCatalogTest {
-    private fun item(text: String) = WordItem(
-        id = 8L, categoryId = "daily", subgroup = "", displayText = text,
-        ttsPrompt = "نَبِّي إِمِّيَّه", phonemicCue = "نَبـ...", sentencePrompt = "نبي ...",
-        audioPath = "/protected/voice.m4a", photoPath = "/protected/photo.jpg",
-        phone = "", emoji = "💧"
-    )
+    private fun item(key: String) = WordSeed.itemEntities().single { it.semanticKey == key }
+        .toDomain().copy(id = 8, photoPath = "/personal/photo.jpg", audioPath = "/personal/voice.m4a")
 
-    @Test fun nineDialectsHaveLocaleAndNonemptySample() {
-        assertEquals(9, ArabicDialect.entries.size)
-        ArabicDialect.entries.forEach {
-            assertTrue(it.localeTag.startsWith("ar"))
-            assertTrue(it.sample.isNotBlank())
-        }
+    @Test fun frequentRequestUsesIdentityAndFushaSource() {
+        val original = item("request.water")
+        assertEquals("أريد ماءً", original.displayText)
+        assertEquals("أُرِيدُ مَاءً", original.ttsPrompt)
+        assertEquals(original, DialectCatalog.localize(original, ArabicDialect.STANDARD))
+        assertEquals("نبي مية", DialectCatalog.localize(original, ArabicDialect.LIBYAN).displayText)
+        assertEquals("بدي مي", DialectCatalog.localize(original, ArabicDialect.SYRIAN).displayText)
+        assertEquals("بغيت الما", DialectCatalog.localize(original, ArabicDialect.MOROCCAN).displayText)
     }
 
-    @Test fun frequentWaterRequestUsesNineLocalizedWrittenVariants() {
-        val variants = ArabicDialect.entries.map { DialectCatalog.text("نبي مية", it) }
-        assertEquals("أريد ماءً", variants[0])
-        assertEquals("نبي إمّيه", variants[1])
-        assertEquals("بغيت الما", variants[7])
-        assertEquals(9, variants.size)
+    @Test fun lookupUsesIdentityRatherThanSavedCaption() {
+        val original = item("food.eggs").copy(displayText = "عنوان مختلف بلا علم تخصيص")
+        assertEquals("دحي", DialectCatalog.localize(original, ArabicDialect.LIBYAN).displayText)
+        val personal = original.copy(customTextFields = CardDetails.LABEL)
+        val view = DialectCatalog.localize(personal, ArabicDialect.LIBYAN)
+        assertEquals(personal.displayText, view.displayText)
+        assertEquals(personal.ttsPrompt, view.ttsPrompt)
     }
 
-    @Test fun localizingDoesNotMutateSavedWordOrMediaReferences() {
-        val original = item("نبي مية")
-        val localized = DialectCatalog.localize(original, ArabicDialect.SYRIAN)
-        assertEquals("نبي مية", original.displayText)
-        assertEquals("بدي مي", localized.displayText)
-        assertEquals("بَدِّيْ مَيّْ", localized.ttsPrompt)
-        assertTrue(DialectSpeechCatalog.isFullyMarked(localized.ttsPrompt))
-        assertEquals(original.id, localized.id)
-        assertEquals(original.audioPath, localized.audioPath)
-        assertEquals(original.photoPath, localized.photoPath)
-        assertEquals(null, localized.sentencePrompt) // Don't speak a Libyan carrier phrase in a different dialect
-    }
-
-    @Test fun unmappedCustomWordsAreNeverSilentlyTranslated() {
-        val original = item("اسم مخصص للعائلة")
-        ArabicDialect.entries.forEach { dialect ->
+    @Test fun customOrUnknownCardsAreNeverGuessedFromMatchingText() {
+        val original = item("food.eggs").copy(semanticKey = null)
+        val unknown = original.copy(semanticKey = "unknown.concept")
+        val custom = item("food.eggs").copy(categoryId = "custom_example")
+        for (dialect in ArabicDialect.entries) {
             assertEquals(original, DialectCatalog.localize(original, dialect))
+            assertEquals(unknown, DialectCatalog.localize(unknown, dialect))
+            assertEquals(custom, DialectCatalog.localize(custom, dialect))
         }
     }
 
-    @Test fun switchoverIsReversible() {
-        val original = item("نبي شاهي")
-        assertNotEquals(original.displayText, DialectCatalog.localize(original, ArabicDialect.EGYPTIAN).displayText)
-        assertEquals(original, DialectCatalog.localize(original, ArabicDialect.LIBYAN))
-    }
-
-    @Test fun approvedCountryLabelsAreExactlyApplied() {
-        val reference = mapOf(
-            "بيض" to listOf("بيض", "دحي", "بيض", "بيض", "بيض", "بيض", "عظام", "بيض", "ولاد الجاج"),
-            "شخاشير" to listOf("جوارب", "شخاشير", "دلاغات", "شرابات", "جرابات", "جواريب", "كلسيطة", "تقاشر", "تقاشر"),
-            "مية" to listOf("ماء", "إمّيه", "ماي", "مية", "مي", "ماي", "ما", "الما", "الما"),
-        )
-        reference.forEach { (seed, expected) ->
-            ArabicDialect.entries.forEachIndexed { index, dialect ->
-                assertEquals("$seed in $dialect", expected[index], DialectCatalog.text(seed, dialect))
-            }
-        }
-    }
-
-    @Test fun localizedSharedCardsKeepTheirPersistentSemanticImagesAcrossAllDialects() {
-        val shared = WordSeed.itemEntities().filter { it.categoryId != RegionalDishesCatalog.CATEGORY_ID }
-        assertTrue(shared.size > 160)
-        shared.forEach { dbItem ->
-            if (dbItem.categoryId == "family") return@forEach
-            val key = WordImageCatalog.keyForSeed(dbItem.categoryId, dbItem.displayText, dbItem.subgroup)
-            assertTrue("Image missing for ${dbItem.categoryId}/${dbItem.displayText}", key != null)
-            val original = WordItem(
-                id = 100L, categoryId = dbItem.categoryId, subgroup = dbItem.subgroup,
-                displayText = dbItem.displayText, ttsPrompt = dbItem.ttsPrompt,
-                phonemicCue = dbItem.phonemicCue, sentencePrompt = dbItem.sentencePrompt,
-                audioPath = "/user/voice.m4a", photoPath = "/user/photo.jpg", phone = "", emoji = dbItem.emoji,
-                semanticKey = key,
-            )
+    @Test fun projectionRetainsIdentityAndUserMediaForEveryConceptAndDialect() {
+        for (entity in WordSeed.itemEntities()) {
+            val source = entity.toDomain().copy(id = 99, photoPath = "/photo", audioPath = "/voice", phone = "123")
             for (dialect in ArabicDialect.entries) {
-                val localized = DialectCatalog.localize(original, dialect)
-                assertEquals("$dialect: ${dbItem.displayText}", key, WordImageCatalog.imageFor(localized))
-                assertEquals(original.id, localized.id)
-                assertEquals(original.photoPath, localized.photoPath)
-                assertEquals(original.audioPath, localized.audioPath)
+                val view = DialectCatalog.localize(source, dialect)
+                assertEquals(source, view.forEditing())
+                assertEquals(source.semanticKey, view.semanticKey)
+                assertEquals(source.id, view.id)
+                assertEquals(source.photoPath, view.photoPath)
+                assertEquals(source.audioPath, view.audioPath)
+                assertEquals(source.phone, view.phone)
+                assertEquals(WordImageCatalog.imageFor(source), WordImageCatalog.imageFor(view))
             }
         }
     }
 
-    @Test fun libyanCommonNamesAreVisibleWithoutChangingSavedWord() {
-        val egg = item("بيض").copy(categoryId = "food", semanticKey = "word_eggs")
-        val view = DialectCatalog.localize(egg, ArabicDialect.LIBYAN)
-        assertEquals("دحي", view.displayText)
-        assertEquals("word_eggs", WordImageCatalog.imageFor(view))
-        assertEquals("بيض", egg.displayText)
-        assertEquals(egg.sentencePrompt, view.sentencePrompt)
+    @Test fun returningFromAnotherDialectRestoresCanonicalSource() {
+        val source = item("food.bread")
+        val egyptian = DialectCatalog.localize(source, ArabicDialect.EGYPTIAN)
+        assertEquals("عيش", egyptian.displayText)
+        assertEquals(source, DialectCatalog.localize(egyptian, ArabicDialect.STANDARD))
+        assertEquals(source, egyptian.forEditing())
     }
 
-    @Test fun customFamilyAndRegionalDishesAreNeverSilentlyTranslated() {
-        for (category in listOf("custom_x", "family", RegionalDishesCatalog.CATEGORY_ID)) {
-            val original = item("بيض").copy(categoryId = category)
-            for (dialect in ArabicDialect.entries)
-                assertEquals(original, DialectCatalog.localize(original, dialect))
-        }
+    @Test fun sentenceHintsRemainAvailableInDefaultFusha() {
+        val source = item("request.tea")
+        assertFalse(source.sentencePrompt.isNullOrBlank())
+        assertEquals(source.sentencePrompt, DialectCatalog.localize(source, ArabicDialect.STANDARD).sentencePrompt)
+    }
+
+    @Test fun relationshipAndPersonalNameAreDistinct() {
+        val father = item("family.father")
+        assertTrue(FamilyRelationships.isBuiltIn(father))
+        assertFalse(FamilyRelationships.isBuiltIn(father.copy(semanticKey = null)))
+        assertFalse(FamilyRelationships.isBuiltIn(father.copy(subgroup = "الوالد")))
     }
 }

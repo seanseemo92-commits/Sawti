@@ -101,7 +101,11 @@ interface WordDao {
     @Query("UPDATE word_items SET semanticKey = :key WHERE id = :id AND semanticKey IS NULL")
     suspend fun setSemanticKeyIfMissing(id: Long, key: String)
 
-    // ---- seed top-up (existing installs) ----
+    /** Content identity only: labels, order and media are user-editable. */
+    @Query("SELECT semanticKey FROM word_items WHERE semanticKey IS NOT NULL")
+    suspend fun semanticKeys(): List<String>
+
+    // ---- historical seed helpers (removed with the old schema in phase 4) ----
     @Query("SELECT id FROM categories")
     suspend fun categoryIds(): List<String>
 

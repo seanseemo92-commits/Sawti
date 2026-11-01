@@ -26,7 +26,7 @@ class DialectEditingTest {
     private lateinit var db: AppDatabase
     private lateinit var repo: RoomWordRepository
     private lateinit var settings: SettingsRepository
-    private val seed = WordSeed.itemEntities().first { it.displayText == "خبزة" }
+    private val seed = WordSeed.itemEntities().first { it.semanticKey == "food.bread" }
     private var id = 0L
 
     @Before fun setup() = runBlocking {

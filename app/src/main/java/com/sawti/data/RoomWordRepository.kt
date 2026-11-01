@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.withTransaction
 import com.sawti.data.db.AppDatabase
 import com.sawti.data.db.CategoryEntity
-import com.sawti.data.db.SeedExtras
 import com.sawti.data.db.WordItemEntity
 import com.sawti.data.db.WordSeed
 import com.sawti.data.db.toDomain
@@ -12,11 +11,9 @@ import com.sawti.domain.model.Category
 import com.sawti.domain.model.CardDetails
 import com.sawti.domain.model.FamilyRelationships
 import com.sawti.domain.model.DialectCatalog
-import com.sawti.domain.model.TtsEndings
 import com.sawti.domain.model.PhonemicCue
 import com.sawti.domain.model.CategoryIds
 import com.sawti.domain.model.RegionalDishesCatalog
-import com.sawti.domain.model.ArabicDialect
 import com.sawti.domain.model.CustomCategoryRules
 import com.sawti.domain.repository.WordRepository
 import java.io.File
@@ -37,7 +34,6 @@ class RoomWordRepository(
 
     private val dao = db.wordDao()
     private val filesDir = context.applicationContext.filesDir
-    private val prefs = context.applicationContext.getSharedPreferences("seed", Context.MODE_PRIVATE)
 
     override fun observeCategories(): Flow<List<Category>> =
         combine(dao.observeCategories(), dao.observeItems(), settingsRepository.state) { categories, items, settings ->
@@ -50,15 +46,12 @@ class RoomWordRepository(
                 Category(
                     id = c.id,
                     title = if (regionalCuisine) RegionalDishesCatalog.forDialect(settings.dialect).title
-                            else DialectCatalog.text(c.title, settings.dialect),
+                            else c.title,
                     palette = c.palette,
                     previewOnTap = c.previewOnTap,
                     sortOrder = c.sortOrder,
-                    // A regional dish has a carefully written TTS prompt; never run the
-                    // generic display-label translator over a customized dish.
                     items = visibleItems.map { item ->
-                        if (regionalCuisine) item.toDomain()
-                        else DialectCatalog.localize(item.toDomain(), settings.dialect)
+                        DialectCatalog.localize(item.toDomain(), settings.dialect)
                     },
                 )
             }
@@ -68,155 +61,20 @@ class RoomWordRepository(
         seedOrUpdateDefaultsUnlocked()
     }
 
+    /** Insert by immutable concept identity. Renamed/customized rows are never rewritten.
+     * One transaction under the shared storage gate also makes post-restore seeding idempotent.
+     * This is the new content foundation, not an upgrade path for historical image-key seeds.
+     */
     private suspend fun seedOrUpdateDefaultsUnlocked() {
-        if (dao.categoryCount() == 0) {
-            db.withTransaction {
-                dao.insertCategories(WordSeed.categoryEntities())
-                dao.insertItems(WordSeed.itemEntities() + regionalSeedItems())
-            }
-            prefs.edit().putInt(KEY_SEED_VERSION, WordSeed.VERSION).apply()
-        } else {
-            val previous = prefs.getInt(KEY_SEED_VERSION, 0)
-            if (previous < WordSeed.VERSION) {
-                if (previous >= 15) {
-                    // v15/v16 -> v17: insert missing regional cuisine words ONLY. No sort, prompt, TTS,
-                    // photo, recording, favourite or other existing value is updated.
-                    topUpCuisineOnly()
-                } else {
-                    topUpSeed(previous)
-                }
-                prefs.edit().putInt(KEY_SEED_VERSION, WordSeed.VERSION).apply()
-            }
-        }
-        // Restore and upgrade compatibility: assigning a key never overwrites personal data.
-        backfillSemanticImageKeys()
-    }
-
-    /**
-     * Assign the shared semantic asset to each existing built-in Room ID.
-     * Match unchanged names first, then legacy renames, then unique category/subgroup/
-     * position with matching default emoji for caregiver-renamed built-in words.
-     * Regional cuisine, custom people and custom cards remain untouched.
-     */
-    private suspend fun backfillSemanticImageKeys() {
         db.withTransaction {
-            val defaults = WordSeed.itemEntities().filter { it.semanticKey != null }
-            val byName = defaults.associateBy { Triple(it.categoryId, it.subgroup, it.displayText) }
-            val byPosition = defaults.groupBy { Triple(it.categoryId, it.subgroup, it.sortOrder) }
-            val historical = WordSeed.renames.mapNotNull { (category, old, current) ->
-                val target = defaults.firstOrNull { it.categoryId == category && it.displayText == current }
-                target?.semanticKey?.let { Triple(category, "", old) to it }
-            }.toMap()
-            for (item in dao.itemsWithoutSemanticKeys()) {
-                val signature = Triple(item.categoryId, item.subgroup, item.displayText)
-                val key = byName[signature]?.semanticKey
-                    ?: historical[signature]
-                    ?: byPosition[Triple(item.categoryId, item.subgroup, item.sortOrder)]
-                        ?.singleOrNull()
-                        ?.takeIf { it.emoji.isNotBlank() && it.emoji == item.emoji }
-                        ?.semanticKey
-                if (key != null) dao.setSemanticKeyIfMissing(item.id, key)
-            }
-        }
-    }
-
-    /** Additional country-specific dishes have independent keys/images, not Libyan ones. */
-    private fun regionalSeedItems(): List<WordItemEntity> =
-        RegionalDishesCatalog.additionalDialects().mapIndexed { index, (dialect, dish) ->
-            WordItemEntity(
-                categoryId = RegionalDishesCatalog.CATEGORY_ID,
-                subgroup = RegionalDishesCatalog.subgroupFor(dialect),
-                displayText = dish.displayText,
-                ttsPrompt = dish.ttsPrompt,
-                phonemicCue = dish.phonemicCue,
-                sentencePrompt = dish.sentencePrompt,
-                emoji = dish.emoji,
-                sortOrder = index % 15,
-            )
-        }
-
-    /**
-     * Insert-only update. Existing personalized cards and recordings are never changed,
-     * and old Libyan cards stay with their original IDs even when changing dialects.
-     */
-    private suspend fun topUpCuisineOnly() {
-        db.withTransaction {
-            val all = dao.itemKeys().map { Triple(it.categoryId, it.subgroup, it.displayText) }.toSet()
-            val newDefaults = WordSeed.itemEntities().filter {
-                it.categoryId == RegionalDishesCatalog.CATEGORY_ID &&
-                    it.displayText in RegionalDishesCatalog.forDialect(ArabicDialect.LIBYAN)
-                        .dishes.map { d -> d.displayText }.toSet()
-            } + regionalSeedItems()
-            val missing = newDefaults.filter {
-                Triple(it.categoryId, it.subgroup, it.displayText) !in all
-            }
-            if (missing.isNotEmpty()) dao.insertItems(missing)
-        }
-    }
-
-    /**
-     * Brings an existing install up to the current vocabulary without touching user data:
-     * photos, recordings, phone numbers and favourites are never deleted. New words are added,
-     * missing sentence prompts are filled in (never overwriting an edited one), and old built-in
-     * words that were never customised and are no longer in the list are removed.
-     * Default favourites are applied only by the update that introduces them. Runs once per version.
-     */
-    private suspend fun topUpSeed(previousVersion: Int) {
-        db.withTransaction {
-            if (previousVersion < 15) {
-                // Update only old built-in placeholders. Photos, voice, phone, IDs and
-                // personalized sentence hints remain untouched.
-                dao.correctMelonPlaceholder()
-                dao.clearLegacyActionPlaceholder()
-            }
-            val seedCategories = WordSeed.categoryEntities()
+            val categories = WordSeed.categoryEntities()
             val existingCategories = dao.categoryIds().toSet()
-            dao.insertCategories(seedCategories.filter { it.id !in existingCategories })
-            seedCategories.filter { it.id in existingCategories }
-                .forEach { dao.updateCategory(it.id, it.title, it.palette, it.previewOnTap, it.sortOrder) }
-
-            val seedItems = WordSeed.itemEntities() + regionalSeedItems()
-            val seedKeys = seedItems.map { Triple(it.categoryId, it.subgroup, it.displayText) }.toSet()
-
-            // 1. old default words that now have a Libyan name are renamed in place (photo/audio/phone kept)
-            for ((category, oldName, newName) in WordSeed.renames) {
-                val target = seedItems.firstOrNull { it.categoryId == category && it.displayText == newName } ?: continue
-                val current = dao.itemKeys()
-                val alreadyThere = current.any { it.categoryId == category && it.displayText == newName }
-                val old = current.firstOrNull { it.categoryId == category && it.displayText == oldName }
-                if (!alreadyThere && old != null) {
-                    dao.renameItem(old.id, target.displayText, target.ttsPrompt, target.phonemicCue, target.sentencePrompt)
-                }
-            }
-            val existing = dao.itemKeys()
-
-            // Never guess that a card is disposable just because its picture and audio
-            // are empty: the caregiver may have edited phone, favourite, cue or sentence.
-            // Explicit deletion belongs in caregiver actions, not in automatic seeding.
-            val obsolete: List<com.sawti.data.db.ItemKey> = emptyList()
-
-            // natural spoken endings (هْ rule) for every remaining word, without touching anything else
-            existing.filter { e -> obsolete.none { it.id == e.id } }.forEach { e ->
-                val fixed = TtsEndings.normalize(e.ttsPrompt)
-                if (fixed != e.ttsPrompt) dao.updateTts(e.id, fixed)
-            }
-
-            val kept = existing.filter { e -> obsolete.none { it.id == e.id } }
-                .associateBy { Triple(it.categoryId, it.subgroup, it.displayText) }
-            val missing = mutableListOf<WordItemEntity>()
-            for (item in seedItems) {
-                val match = kept[Triple(item.categoryId, item.subgroup, item.displayText)]
-                if (match == null) {
-                    missing += item
-                } else {
-                    dao.updateSort(match.id, item.sortOrder)
-                    // words migrated from the first app version only have the plain name as TTS text
-                    if (match.ttsPrompt == match.displayText && item.ttsPrompt != match.ttsPrompt) {
-                        dao.updateTtsAndCue(match.id, item.ttsPrompt, item.phonemicCue)
-                    }
-                    item.sentencePrompt?.let { dao.fillSentencePrompt(match.id, it) }
-                }
-            }
+            dao.insertCategories(categories.filter { it.id !in existingCategories })
+            val defaults = WordSeed.itemEntities()
+            val keys = defaults.map { requireNotNull(it.semanticKey) }
+            check(keys.size == keys.toSet().size) { "معرّف مفهوم مكرر في المفردات الأساسية" }
+            val existingKeys = dao.semanticKeys().toSet()
+            val missing = defaults.filter { it.semanticKey !in existingKeys }
             if (missing.isNotEmpty()) dao.insertItems(missing)
         }
     }
@@ -484,8 +342,5 @@ class RoomWordRepository(
         }
     }
 
-    private companion object {
-        const val KEY_SEED_VERSION = "seed_version"
-    }
 }
 

@@ -21,7 +21,7 @@ interface WordRepository {
     suspend fun moveCardToCustomCategory(itemId: Long, destinationId: String)
     suspend fun deleteCustomCard(itemId: Long)
 
-    /** Inserts the built-in vocabulary on first run and tops it up when the vocabulary version changes. */
+    /** Inserts missing built-in concepts by semantic identity without rewriting user-owned rows. */
     suspend fun seedOrUpdateDefaults()
 
     /** Creates a new, initially blank-photo family card; returns its database identity. */

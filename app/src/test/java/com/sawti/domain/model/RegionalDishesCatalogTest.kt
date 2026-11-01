@@ -1,6 +1,7 @@
 package com.sawti.domain.model
 
 import com.sawti.data.db.WordSeed
+import com.sawti.data.db.toDomain
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -35,7 +36,8 @@ class RegionalDishesCatalogTest {
         assertEquals("أكلات مصرية", RegionalDishesCatalog.forDialect(ArabicDialect.EGYPTIAN).title)
         assertEquals("أكلات سعودية", RegionalDishesCatalog.forDialect(ArabicDialect.SAUDI).title)
         assertEquals("أكلات عربية", RegionalDishesCatalog.forDialect(ArabicDialect.STANDARD).title)
-        assertTrue(RegionalDishesCatalog.visibleForDialect("", ArabicDialect.LIBYAN))
+        assertFalse(RegionalDishesCatalog.visibleForDialect("", ArabicDialect.LIBYAN))
+        assertTrue(RegionalDishesCatalog.visibleForDialect(RegionalDishesCatalog.subgroupFor(ArabicDialect.LIBYAN), ArabicDialect.LIBYAN))
         assertFalse(RegionalDishesCatalog.visibleForDialect("", ArabicDialect.EGYPTIAN))
         for (dialect in ArabicDialect.entries.filter { it != ArabicDialect.LIBYAN }) {
             val tag = RegionalDishesCatalog.subgroupFor(dialect)
@@ -61,15 +63,16 @@ class RegionalDishesCatalogTest {
             assertEquals(expected.getValue(it.displayText).second, it.phonemicCue)
         }
         val saved = WordSeed.itemEntities().filter {
-            it.categoryId == "libyan" && it.displayText in expected.keys
+            it.semanticKey in dishes.map { dish -> dish.semanticKey }
         }
         assertEquals(5, saved.size)
-        assertTrue(saved.all { it.subgroup.isBlank() && !it.sentencePrompt.isNullOrBlank() })
-        saved.forEach { dish ->
+        assertTrue(saved.all { it.subgroup == RegionalDishesCatalog.subgroupFor(ArabicDialect.LIBYAN) && !it.sentencePrompt.isNullOrBlank() })
+        saved.forEach { source ->
+            val dish = DialectCatalog.localize(source.toDomain(), ArabicDialect.LIBYAN)
             assertEquals(expected.getValue(dish.displayText).first, dish.ttsPrompt)
             assertEquals(expected.getValue(dish.displayText).second, dish.phonemicCue)
         }
-        assertEquals(18, WordSeed.VERSION)
+        assertEquals(19, WordSeed.VERSION)
     }
     @Test fun exactFullOrderedListsAreNeverAccidentallyTruncatedOrRenamed() {
         val expected = mapOf(
