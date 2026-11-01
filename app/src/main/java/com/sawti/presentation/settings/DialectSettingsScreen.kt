@@ -21,6 +21,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import com.sawti.data.db.WordSeed
+import com.sawti.data.db.toDomain
+import com.sawti.domain.model.DialectSpeechCatalog
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -44,6 +48,7 @@ fun DialectSettingsRoute(
     val settings by settingsVm.settings.collectAsStateWithLifecycle()
     val voiceStatus by speech.voiceStatus.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val sample = remember { WordSeed.itemEntities().single { it.semanticKey == "request.water" }.toDomain() }
     // Manual voice selection is limited to generic Arabic/ar-SA; regional voices
     // may reintroduce unsupported locale switches despite phonetic speechText.
     val voices = voiceStatus.voices.filter {
@@ -70,7 +75,7 @@ fun DialectSettingsRoute(
                     RadioButton(selected = selected, onClick = { settingsVm.setDialect(dialect) })
                     Column(Modifier.weight(1f)) {
                         Text(dialect.label, fontWeight = FontWeight.SemiBold)
-                        Text(dialect.sample, style = MaterialTheme.typography.bodySmall)
+                        Text(DialectSpeechCatalog.resolve(sample, dialect).displayText, style = MaterialTheme.typography.bodySmall)
                     }
                 }
             }
@@ -81,8 +86,8 @@ fun DialectSettingsRoute(
                 Text(
                     when {
                         !voiceStatus.initialized -> "جارٍ فحص محرك النطق العربي على الجهاز…"
-                        voiceStatus.regionalVoiceAvailable -> "المحرك مضبوط على العربية العامة؛ اختلاف اللهجة يعتمد على التشكيل الصوتي للكلمات، وليس لغة المحرك."
-                        voiceStatus.actualTag != null -> "لا تتوفر العربية العامة في المحرك الحالي. نجرب لغة الجهاز الافتراضية (${voiceStatus.actualTag}) لتفادي توقف الصوت."
+                        voiceStatus.arabicVoiceAvailable -> "الصوت العربي متاح. استمع إلى التجربة؛ قد يختلف نطق اللهجة حسب الصوت المثبّت."
+                        voiceStatus.actualTag != null -> "الصوت الحالي لا يدعم العربية. ثبّت صوتاً عربياً أو استخدم تسجيلاتك."
                         else -> "محرك النطق العربي غير متاح. ثبّت بيانات اللغة العربية أو جرّب صوتاً مسجلاً."
                     },
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -110,7 +115,7 @@ fun DialectSettingsRoute(
                         Text("اختيار الصوت تلقائياً")
                     }
                 }
-                Button(onClick = { audio.say(settings.dialect.sample) }, modifier = Modifier.fillMaxWidth()) {
+                Button(onClick = { audio.say(DialectSpeechCatalog.resolve(sample, settings.dialect).speechText) }, modifier = Modifier.fillMaxWidth()) {
                     Text("استمع إلى تجربة هذه اللهجة")
                 }
                 OutlinedButton(onClick = {
@@ -125,7 +130,7 @@ fun DialectSettingsRoute(
             }
         }
         Text(
-            "ملاحظة: اللهجات تختلف من منطقة لأخرى. هذه مجموعة أولية من العبارات المدققة، وليست ترجمة آلية شاملة. لا يمكن للتطبيق توفير صوت أصلي لكل لهجة إذا لم يكن مثبتاً في جهازك.",
+            "ملاحظة: اللهجات تختلف من منطقة لأخرى. صيغ النطق ما زالت تحتاج مراجعة متحدثين أصليين وتجربتها على محرك النطق. يمكنك استخدام تسجيلاتك للنطق الذي تفضله.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

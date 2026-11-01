@@ -2,17 +2,17 @@ package com.sawti.domain.model
 
 enum class ThemeMode { SYSTEM, LIGHT, DARK }
 
-/** Display vocabulary and preferred regional TTS locale; availability depends on device voices. */
-enum class ArabicDialect(val label: String, val localeTag: String, val sample: String) {
-    STANDARD("العربية الفصحى", "ar", "أريد ماءً من فضلك"),
-    LIBYAN("الليبية", "ar-LY", "نبي مية لو سمحت"),
-    SAUDI("السعودية", "ar-SA", "أبغى موية لو سمحت"),
-    EGYPTIAN("المصرية", "ar-EG", "ممكن مية لو سمحت"),
-    SYRIAN("السورية", "ar-SY", "بدي مي لو سمحت"),
-    IRAQI("العراقية", "ar-IQ", "أريد مي، الله يخليك"),
-    TUNISIAN("التونسية", "ar-TN", "نحب شوية ماء، يعيشك"),
-    MOROCCAN("المغربية", "ar-MA", "بغيت الما عافاك"),
-    ALGERIAN("الجزائرية", "ar-DZ", "نحب نشرب الما، من فضلك"),
+/** Display vocabulary and regional metadata; the engine uses a separate general-Arabic policy. */
+enum class ArabicDialect(val label: String, val localeTag: String) {
+    STANDARD("العربية الفصحى", "ar"),
+    LIBYAN("الليبية", "ar-LY"),
+    SAUDI("السعودية", "ar-SA"),
+    EGYPTIAN("المصرية", "ar-EG"),
+    SYRIAN("السورية", "ar-SY"),
+    IRAQI("العراقية", "ar-IQ"),
+    TUNISIAN("التونسية", "ar-TN"),
+    MOROCCAN("المغربية", "ar-MA"),
+    ALGERIAN("الجزائرية", "ar-DZ"),
 }
 
 /** Card text scaling: Normal / Large / Extra Large. */

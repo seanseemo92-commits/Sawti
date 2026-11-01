@@ -1,45 +1,61 @@
 package com.sawti.speech
 
+import com.sawti.domain.model.AppSettings
 import com.sawti.domain.model.ArabicDialect
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Test
 import java.util.Locale
 
 class ArabicTtsLocalePolicyTest {
-    @Test fun dialectSelectionNeverIntroducesRegionalEngineLocale() {
-        val expected = listOf(
-            Locale.forLanguageTag("ar"),
-            Locale.forLanguageTag("ar-SA"),
-            Locale.forLanguageTag("en-US"),
-        )
-        // No dialect is used as input to this policy: all eight colloquial
-        // options and standard Arabic share exactly these TTS fallbacks.
-        ArabicDialect.entries.forEach { dialect ->
-            assertEquals("Engine locales must stay fixed for $dialect",
-                expected, ArabicTtsLocalePolicy.candidates(Locale.forLanguageTag("en-US")))
+    @Test fun standardArabicIsTheSettingsAndEngineDefault() {
+        assertEquals(ArabicDialect.STANDARD, AppSettings().dialect)
+        assertEquals(ArabicDialect.STANDARD, DialectVoiceStatus().requested)
+        assertEquals("ar", ArabicTtsLocalePolicy.candidates().first().toLanguageTag())
+    }
+
+    @Test fun stopsAtFirstSupportedArabicLocale() {
+        val calls = mutableListOf<String>()
+        val chosen = ArabicTtsLocalePolicy.select { calls += it.toLanguageTag(); true }
+        assertEquals(listOf("ar"), calls)
+        assertEquals("ar", chosen?.toLanguageTag())
+    }
+
+    @Test fun missingGeneralDataTriesOnlyArabicFallback() {
+        val calls = mutableListOf<String>()
+        val chosen = ArabicTtsLocalePolicy.select {
+            calls += it.toLanguageTag()
+            it.country == "SA"
         }
-        assertFalse(expected.any { it.toLanguageTag() in listOf("ar-TN","ar-LY","ar-DZ","ar-MA","ar-IQ") })
+        assertEquals(listOf("ar", "ar-SA"), calls)
+        assertEquals("ar-SA", chosen?.toLanguageTag())
     }
 
-    @Test fun deviceDefaultIsOnlyLastFallbackAndDuplicatesAreRemoved() {
-        assertEquals(
-            listOf(Locale.forLanguageTag("ar"), Locale.forLanguageTag("ar-SA")),
-            ArabicTtsLocalePolicy.candidates(Locale.forLanguageTag("ar-SA")),
-        )
-        assertEquals(
-            listOf(Locale.forLanguageTag("ar"), Locale.forLanguageTag("ar-SA"), Locale.FRANCE),
-            ArabicTtsLocalePolicy.candidates(Locale.FRANCE),
-        )
+    @Test fun unavailableArabicNeverUsesDeviceEnglishOrFrench() {
+        val previous = Locale.getDefault()
+        try {
+            for (device in listOf(Locale.US, Locale.FRANCE, Locale.forLanguageTag("ar-TN"))) {
+                Locale.setDefault(device)
+                val calls = mutableListOf<String>()
+                assertNull(ArabicTtsLocalePolicy.select { calls += it.toLanguageTag(); false })
+                assertEquals(listOf("ar", "ar-SA"), calls)
+            }
+        } finally { Locale.setDefault(previous) }
     }
 
-    @Test fun manuallySelectedVoiceCannotForceCountrySpecificDialect() {
+    @Test fun languageSuccessDoesNotApproveAnObservedForeignVoice() {
+        val selected = Locale.forLanguageTag("ar")
+        assertTrue(ArabicTtsLocalePolicy.canSpeak(selected, "ar-SA"))
+        assertTrue(ArabicTtsLocalePolicy.canSpeak(selected, null))
+        assertFalse(ArabicTtsLocalePolicy.canSpeak(selected, "en-US"))
+        assertFalse(ArabicTtsLocalePolicy.canSpeak(null, "ar-SA"))
+        assertFalse(ArabicTtsLocalePolicy.canSpeak(Locale.US, "ar-SA"))
+    }
+
+    @Test fun manualGenericVoiceFilterDoesNotClaimADialectVoice() {
         assertTrue(ArabicTtsLocalePolicy.isGenericArabic(Locale.forLanguageTag("ar")))
         assertTrue(ArabicTtsLocalePolicy.isGenericArabic(Locale.forLanguageTag("ar-SA")))
-        listOf("ar-LY","ar-TN","ar-MA","ar-IQ","ar-EG","en-US").forEach {
-            assertFalse("A regional voice should not change the base engine language: $it",
-                ArabicTtsLocalePolicy.isGenericArabic(Locale.forLanguageTag(it)))
+        listOf("ar-LY", "ar-TN", "ar-MA", "ar-IQ", "ar-EG", "en-US").forEach {
+            assertFalse(ArabicTtsLocalePolicy.isGenericArabic(Locale.forLanguageTag(it)))
         }
     }
 }

@@ -76,6 +76,31 @@ jobs:
           fi
       - name: Compile debug and R8 release, unit tests and Android lint
         run: gradle --no-daemon :app:assembleDebug :app:assembleRelease :app:testDebugUnitTest :app:lintRelease
+      - name: Summarize pending speech reviews
+        run: |
+          python3 - <<'PYREPORT'
+          import csv
+          from collections import Counter
+          with open('app/build/reports/speech-review.tsv', encoding='utf-8') as report:
+              rows = list(csv.DictReader(report, delimiter='\t'))
+          print(f'Speech review rows: {len(rows)}')
+          for dialect in sorted({row['dialect'] for row in rows}):
+              counts = Counter(row['source'] for row in rows if row['dialect'] == dialect)
+              print(dialect, dict(counts))
+          print('Native-speaker review and device TTS listening: PENDING for every row.')
+          PYREPORT
+      - name: Upload validation and speech review reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sawti-validation-reports
+          path: |
+            app/build/test-results/testDebugUnitTest/
+            app/build/reports/tests/testDebugUnitTest/
+            app/build/reports/lint-results-release.*
+            app/build/reports/speech-review.tsv
+          if-no-files-found: warn
+          retention-days: 14
       - name: Upload test APK
         uses: actions/upload-artifact@v4
         with:
