@@ -35,6 +35,8 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
+      - name: Validate release metadata
+        run: python3 scripts/verify_release.py
       - name: Validate cleaned public-source baseline
         shell: bash
         run: |
@@ -43,7 +45,6 @@ jobs:
           test ! -f app/src/main/java/com/sawti/data/db/LegacyFamilyCleanup.kt
           test ! -f app/src/main/java/com/sawti/data/db/LegacyFamilyDefaults.kt
           test -f README.md
-          grep -q 'versionName = "4.6.0"' app/build.gradle.kts
           grep -q 'rootProject.name = "Sawti"' settings.gradle.kts
           grep -q '<string name="app_name">صوتي</string>' app/src/main/res/values/strings.xml
           grep -q 'android:allowBackup="false"' app/src/main/AndroidManifest.xml
