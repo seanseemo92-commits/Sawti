@@ -212,6 +212,9 @@ class LibraryViewModel(
         _uiState.update { it.copy(errorMessage = error.message ?: "تعذر حفظ التغيير") }
     }
 
+    /** Re-run vocabulary seeding after a failed initial load. */
+    fun retryLoad() = launchSafe { repository.seedOrUpdateDefaults() }
+
     /** Keep failures in editor operations visible without swallowing coroutine cancellation. */
     private fun launchSafe(action: suspend () -> Unit) {
         viewModelScope.launch {
@@ -518,4 +521,3 @@ class LibraryViewModel(
         private const val HIGHLIGHT_MS = 1200L
     }
 }
-
