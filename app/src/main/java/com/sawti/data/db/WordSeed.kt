@@ -210,7 +210,7 @@ object WordSeed {
                 Word("dish.saudi.luqaimat", "لقيمات", "لقيمات", "🍩", subgroup = "regional_cuisine_SAUDI"),
                 Word("dish.arabic.rice_meat", "أرز باللحم", "أَرُزٌّ بِاللَّحْمْ", "🍚", subgroup = "regional_cuisine_STANDARD"),
                 Word("dish.arabic.grilled_chicken", "دجاج مشوي", "دَجَاجٌ مَشْوِي", "🍗", subgroup = "regional_cuisine_STANDARD"),
-                Word("dish.arabic.lentil_soup", "حساء العدس", "حساء العدس", "🍲", subgroup = "regional_cuisine_STANDARD"),
+                Word("dish.arabic.lentil_soup", "حساء العدس", "حَسَاءُ الْعَدَسِ", "🍲", subgroup = "regional_cuisine_STANDARD"),
                 Word("dish.arabic.vegetable_stew", "يخنة خضار", "يَخْنَةُ خُضَارْ", "🥘", subgroup = "regional_cuisine_STANDARD"),
                 Word("dish.arabic.mixed_grill", "مشويات مشكلة", "مَشْوِيَّاتٌ مُشَكَّلَةْ", "🍢", subgroup = "regional_cuisine_STANDARD"),
                 Word("dish.arabic.green_salad", "سلطة خضراء", "سَلَطَةٌ خَضْرَاءْ", "🥗", subgroup = "regional_cuisine_STANDARD"),

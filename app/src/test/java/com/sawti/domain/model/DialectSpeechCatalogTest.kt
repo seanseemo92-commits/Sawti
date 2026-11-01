@@ -101,4 +101,15 @@ class DialectSpeechCatalogTest {
             assertTrue(it.ttsPrompt.any { c -> c in 'ً'..'ٟ' })
         }
     }
+
+    @Test fun allPreservedLibyanSpeechStringsRemainExactNotOnlyTheWaterExample() {
+        val rows = requireNotNull(javaClass.classLoader?.getResourceAsStream("libyan-preserved-speech.tsv"))
+            .bufferedReader().use { it.readLines().drop(1) }
+        assertEquals(194, rows.size)
+        for (line in rows) {
+            val fields = line.split('\t')
+            val form = DialectSpeechCatalog.resolve(item(fields[0]), ArabicDialect.LIBYAN)
+            assertEquals(fields[0], fields[1], form.speechText)
+        }
+    }
 }

@@ -60,7 +60,20 @@ class SpeechReviewCoverageTest {
     @Test fun standardRegionalSpeechCannotDriftAwayFromCanonicalSeed() {
         val seeds = WordSeed.itemEntities().associateBy { it.semanticKey }
         RegionalDishesCatalog.forDialect(ArabicDialect.STANDARD).dishes.forEach {
+            assertEquals(it.semanticKey, seeds.getValue(it.semanticKey).displayText, it.displayText)
             assertEquals(it.semanticKey, seeds.getValue(it.semanticKey).ttsPrompt, it.ttsPrompt)
+        }
+    }
+
+    @Test fun dailyCommunicationAlwaysHasAnExplicitSpeechCandidateAndTargetCue() {
+        val requests = WordSeed.itemEntities().filter { it.categoryId == CategoryIds.DAILY }
+        assertEquals(8, requests.size)
+        for (dialect in ArabicDialect.entries) for (request in requests) {
+            val form = DialectSpeechCatalog.resolve(request.toDomain(), dialect)
+            assertNotEquals("$dialect/${request.semanticKey}", SpeechSource.UNVOCALIZED_FALLBACK, form.source)
+            assertTrue(form.phonemicCue.isNotBlank())
+            assertTrue(form.needsNativeReview)
+            assertTrue(form.needsTtsListening)
         }
     }
 }

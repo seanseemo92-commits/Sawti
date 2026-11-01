@@ -1,0 +1,195 @@
+semantic_key	speech
+food.eggs	دَحْيْ
+food.fish	حُوتْ
+food.bread	خُبْزَهْ
+food.water	إِمِّيَّهْ
+request.water	نَبِّيْ إِمِّيَّهْ
+food.tea	شَاهِي
+food.pasta	مَكَرُونَهْ
+food.yogurt	زَبَادِي
+food.soup	شُرْبَهْ
+food.juice	عَصِيرْ
+fruit.figs	كَرْمُوسْ
+fruit.pear	إِجَّاصْ
+fruit.mandarin	مَنْدَرِينْ
+vegetable.peas	بَازِيلْيَهْ
+vegetable.pumpkin	قَرْعَهْ
+vegetable.cauliflower	قُرْنَبِيطْ
+animal.cat	قَطُّوسَهْ
+animal.rooster	سَرْدُوكْ
+animal.rabbit	قُنَّيَّهْ
+animal.dog	كَلْبْ
+animal.horse	حِصَانْ
+clothing.socks	إِشْخَاشِيرْ
+clothing.belt	سَبْتَهْ
+clothing.shoes	كَنْدْرَهْ
+clothing.high_heels	كَنْدْرِةْ كَعْبْ
+clothing.cap	طَاقِيَّهْ
+body.mouth	فَمْ
+body.nose	خَشْمْ
+body.ear	وِدْنْ
+body.tongue	لِسَانْ
+body.tooth	سِنَّهْ
+body.finger	صُبْعْ
+body.knee	رُكْبَهْ
+body.neck	رَقَبَهْ
+request.tea	نَبِّيْ شَاهِي
+request.medicine	نَبِّيْ إِدْوَايَا
+request.rest	نَبِّيْ نَرْتَاحْ
+request.toilet	نَبِّيْ الحَمَّامْ
+request.adjust_pillow	عَدِّلْ لِي المِخَدَّهْ
+request.headache	رَاسِي يُوجِعْ فِيا
+action.sit	إِنْقَعِّمِزْ
+action.stand	نُوقَفْ
+action.eat	نَاكُلْ
+action.drink	نَشْرَبْ
+action.wash	نَغْسِلْ
+action.speak	نَدْوِي
+action.close	إِنْسَكِّرْ
+action.open	نَفْتَحْ
+action.pray	إِنْصَلِّي
+action.dress	نَلْبِسْ
+action.see	إِنْشُوفْ
+dish.bazin	بَازِينْ
+dish.reshda_kaskas	رِشْدِةْ كِسْكَاسْ
+dish.reshda_borma	رِشْدِةْ بُرْمَهْ
+dish.mbakbaka	مَكَرُونَهْ إِمْبَكْبَكَهْ
+dish.pasta_masqiya	مَكَرُونَهْ مَسْقِيَّهْ
+dish.couscous_fish	كُسْكُسِي بِالحُوتْ
+dish.rice_blaw	رُزْ بِلَاوْ
+dish.libyan_soup	شُرْبَهْ لِيبِيَّهْ
+dish.potato_stew	إِطْبِيخِةْ بَطَاطَا
+dish.osban	عُصْبَانْ
+dish.bourek	بُورِيكْ
+dish.khobz_tajin	خُبْزِةْ طَاجِينْ
+dish.maqroudh	مَقْرُوضْ
+dish.mint_tea	شَاهِي بِالنَّعْنَاعْ
+dish.arabic_coffee	قَهْوَهْ عَرَبِيَّهْ
+routine.call_to_prayer	أَذَانْ
+routine.ablution	وُضُوءْ
+routine.prayer	صَلَاةْ
+routine.prayer_rug	سَجَّادَهْ
+routine.prayer_beads	سُبْحَهْ
+routine.quran	مُصْحَفْ
+routine.evening_coffee	قَهْوِةْ العَشِيَّهْ
+routine.sleep	نَوْمْ
+routine.rest	رَاحَهْ
+routine.walk	مَشْيْ
+vegetable.tomato	طَمَاطِمْ
+vegetable.potato	بَطَاطَا
+vegetable.onion	بَصَلْ
+vegetable.garlic	ثُومْ
+vegetable.carrot	جَزَرْ
+vegetable.cucumber	خِيَارْ
+vegetable.pepper	فُلْفُلْ
+vegetable.eggplant	بَاذِنْجَانْ
+vegetable.zucchini	كُوسَهْ
+vegetable.lettuce	خَسّ
+vegetable.parsley	مَعْدَنُوسْ
+vegetable.coriander	كُزْبُرَهْ
+vegetable.lemon	لِيمُونْ
+vegetable.green_beans	فَاصُولِيَا
+vegetable.spinach	سَبَانِخْ
+vegetable.broccoli	بُرُوكْلِي
+vegetable.radish	فِجِلْ
+vegetable.mint	نَعْنَاعْ
+vegetable.corn	ذُرَهْ
+fruit.apple	تُفَّاحْ
+fruit.banana	مَوْزْ
+fruit.orange	بُرْتُقَالْ
+fruit.grapes	عِنَبْ
+fruit.strawberry	فَرَاوْلَهْ
+fruit.mango	مَانْجُو
+fruit.watermelon	دَلَّاعْ
+fruit.melon	قَلْعَاوِي
+fruit.peach	خَوْخْ
+fruit.apricot	مِشْمِشْ
+fruit.pomegranate	رُمَّانْ
+fruit.dates	تَمْرْ
+fruit.pineapple	أَنَانَاسْ
+fruit.kiwi	كِيوِي
+fruit.cherry	كَرَزْ
+fruit.berries	تُوتْ
+fruit.avocado	أَفُوكَادُو
+fruit.coconut	جَوْزُ الهِنْدْ
+food.milk	حَلِيبْ
+food.cheese	جُبْنَهْ
+food.butter	زُبْدَهْ
+food.rice	رُزّ
+food.meat	لَحْمْ
+food.chicken	دَجَاجْ
+food.olives	زَيْتُونْ
+food.oil	زَيْتْ
+food.coffee	قَهْوَهْ
+food.honey	عَسَلْ
+food.biscuit	بِسْكُوِيتْ
+food.salt	مِلْحْ
+food.sugar	سُكَّرْ
+home.bed	سَرِيرْ
+home.pillow	مِخَدَّهْ
+home.blanket	وِرْغَانْ
+home.table	طَاوْلَهْ
+home.chair	كُرْسِي
+home.sofa	صَالُونْ
+home.door	بَابْ
+home.window	رَوْشَنْ
+home.television	تِلِفِزْيُونْ
+home.fridge	ثَلَّاجَهْ
+home.washing_machine	غَسَّالَهْ
+home.stove	غَازْ
+home.oven	كُوشَهْ
+home.air_conditioner	مُكَيِّفْ
+home.fan	مِرْوَحَهْ
+home.wardrobe	دُولَابْ
+home.key	مَفْتَاحْ
+home.clock	سَاعَهْ
+home.carpet	إِبْسَاطْ
+home.kitchen	كُوجِينَهْ
+home.cup	طَاسَهْ
+home.tray	صُونِيَّهْ
+home.spoon	كَاشِيكْ
+home.fork	فَرْشِيطَهْ
+home.knife	مُوسْ
+home.teapot	بَرَّادْ
+home.pot	طَنْجْرَهْ
+home.water_bottle	شِيشَهْ
+clothing.tshirt	تِيشِرْتْ
+clothing.shirt	قَمِيصْ
+clothing.jacket	جَاكَهْ
+clothing.shorts	شُورْتْ
+clothing.blouse	سُورِيَّهْ
+clothing.dress	فُسْتَانْ
+clothing.robe	رُوبْ
+clothing.abaya	عَبَايَهْ
+clothing.hijab	حِجَابْ
+clothing.scarf	وِشَاحْ
+clothing.coat	كَبُّوطْ
+clothing.glasses	نَظَّارَهْ
+clothing.watch	سَاعِةْ يَدْ
+clothing.bag	شَنْطَهْ
+clothing.sandals	صَنْدَلْ
+clothing.pajamas	بِيجَامَهْ
+clothing.ring	خَاتَمْ
+body.eye	عَيْنْ
+body.hand	يَدْ
+body.leg	إِكْرَاعْ
+body.head	رَاسْ
+body.hair	شَعْرْ
+body.back	ظَهْرْ
+body.abdomen	بَطْنْ
+body.chest	صَدْرْ
+body.face	وَجِهْ
+body.heart	قَلْبْ
+body.shoulder	كَتِفْ
+action.sleep	نُرْقُدْ
+action.walk	نَمْشِي
+action.hear	نَسْمَعْ
+action.read	نَقْرَا
+action.laugh	نَضْحَكْ
+animal.sheep	خَرُوفْ
+animal.cow	بَقَرَهْ
+animal.sparrow	عُصْفُورْ
+animal.pigeon	حَمَامَهْ
+animal.chicken	دَجَاجَهْ
+animal.duck	بَطَّهْ
+animal.camel	جَمَلْ
