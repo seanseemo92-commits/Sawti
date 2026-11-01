@@ -5,6 +5,7 @@ import android.content.Intent
 import android.media.AudioAttributes
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import com.sawti.audio.AudioFocusController
@@ -60,6 +61,7 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
     private var pending: (() -> Unit)? = null
     private var pendingCancel: (() -> Unit)? = null
     private var activeLanguage: Locale? = null
+    private var lastEngineAttemptMs = 0L
 
     private val _issue = MutableStateFlow<SpeechIssue?>(null)
     val issue: StateFlow<SpeechIssue?> = _issue.asStateFlow()
@@ -70,6 +72,7 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
 
     private fun createEngine() {
         ready = false
+        lastEngineAttemptMs = SystemClock.elapsedRealtime()
         tts = runCatching { TextToSpeech(appContext, this) }.getOrNull()
         if (tts == null) reportEngineInitializationFailure()
     }
@@ -77,7 +80,7 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
     override fun onInit(status: Int) {
         // Device TTS callbacks are not guaranteed to arrive on our chosen thread.
         if (Looper.myLooper() != Looper.getMainLooper()) {
-            Handler(Looper.getMainLooper()).post { finishInit(status) }
+            main.post { finishInit(status) }
         } else {
             finishInit(status)
         }
@@ -196,12 +199,14 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
     /**
      * Engine.speak can fail even after successful initialization (e.g. missing voice
      * data). Attempt the next fixed language fallback once, without changing dialect.
+     * If every attempt fails, the engine returns to the language it had before.
      */
     private fun enqueueWithFallback(engine: TextToSpeech, text: String, id: String): Boolean {
         val initial = runCatching {
             engine.speak(text, TextToSpeech.QUEUE_FLUSH, null, id) == TextToSpeech.SUCCESS
         }.getOrDefault(false)
         if (initial) return true
+        val original = activeLanguage
         for (locale in ArabicTtsLocalePolicy.candidates()) {
             if (locale == activeLanguage || !supportedLanguage(engine, locale)) continue
             activeLanguage = locale
@@ -212,6 +217,10 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
             }.getOrDefault(false)
             if (retry) return true
         }
+        // Do not leave a failed fallback language selected for the next utterance.
+        original?.let { supportedLanguage(engine, it) }
+        activeLanguage = original
+        refreshVoiceStatus(engine)
         return false
     }
 
@@ -222,7 +231,14 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
         onCanceled: () -> Unit = onDone,
     ) {
         if (text.isBlank()) { onCanceled(); return }
-        if (tts == null) createEngine()
+        if (tts == null) {
+            // A failing engine must not be re-created on every tap.
+            if (SystemClock.elapsedRealtime() - lastEngineAttemptMs < ENGINE_RETRY_INTERVAL_MS) {
+                onCanceled()
+                return
+            }
+            createEngine()
+        }
         if (tts == null) { onCanceled(); return }
         val action = { speakNow(text, onStart, onDone, onCanceled) }
         if (ready) action() else {
@@ -306,4 +322,7 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
         }
     }
 
+    private companion object {
+        const val ENGINE_RETRY_INTERVAL_MS = 5_000L
+    }
 }
