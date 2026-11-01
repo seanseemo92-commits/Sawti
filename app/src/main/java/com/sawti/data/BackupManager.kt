@@ -42,6 +42,7 @@ class BackupManager(private val context: Context, private val database: AppDatab
     suspend fun export(uri: Uri): ExportReceipt = withContext(Dispatchers.IO) {
         val stage = File(context.cacheDir, "sawti_export_${System.nanoTime()}")
         require(stage.mkdirs()) { "تعذّر تجهيز مساحة للنسخ الاحتياطي" }
+        var destinationOpened = false
         try {
             val db = File(stage, dbName)
             val entries = database.storage.access {
@@ -117,6 +118,8 @@ class BackupManager(private val context: Context, private val database: AppDatab
                 }
             }
 
+            // From here on the destination is modified by us ("wt" truncates it).
+            destinationOpened = true
             // "wt" explicitly truncates providers that support it, "w" is a compatible fallback.
             val output = try {
                 context.contentResolver.openOutputStream(uri, "wt")
@@ -135,13 +138,19 @@ class BackupManager(private val context: Context, private val database: AppDatab
             ExportReceipt(copied, entries.size)
         } catch (error: Exception) {
             // CreateDocument can leave an empty placeholder when an earlier step fails.
-            // Only the freshly-created destination URI is passed to export().
-            try { context.contentResolver.delete(uri, null, null) } catch (_: Exception) { }
+            // Never delete a document we have not written to unless it is verifiably empty.
+            if (destinationOpened || isEmptyDocument(uri)) {
+                try { context.contentResolver.delete(uri, null, null) } catch (_: Exception) { }
+            }
             throw error
         } finally {
             stage.deleteRecursively()
         }
     }
+
+    private fun isEmptyDocument(uri: Uri): Boolean = runCatching {
+        context.contentResolver.openAssetFileDescriptor(uri, "r")?.use { it.length == 0L } ?: false
+    }.getOrDefault(false)
 
     private fun createDatabaseSnapshot(destination: File) {
         val live = context.getDatabasePath(dbName)
@@ -460,4 +469,3 @@ class BackupManager(private val context: Context, private val database: AppDatab
         }
     }
 }
-
