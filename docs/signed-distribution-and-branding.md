@@ -9,7 +9,7 @@ a manifest permission, a signing flag, or by changing the app's icon.
 The existing CI workflow continues to build **debug** and **unsigned release**
 artifacts for validation. A separate GitHub Actions workflow
 `.github/workflows/release-signed.yml` produces a signed Release APK and
-AAB using the original private publisher keystore. Repository secrets are preferred; when all four are absent, the workflow reuses the private backup from run 40346497322, exactly as the previous v4.4 release did. Current validation confirms that the APK and AAB certificates match each other, but it does **not yet enforce an independent, pinned historical publisher fingerprint**. This must be enforced and compared with an earlier trusted release before public distribution. Partial secret configuration fails closed. It runs when the app build configuration changes on main, or by manual dispatch.
+AAB using the original private publisher keystore. Repository secrets are preferred; when all four are absent, the workflow reuses the private backup from run 40346497322, exactly as the previous v4.4 release did. Validation checks that the APK and AAB certificates match each other **and** match the independent historical publisher SHA-256 fingerprint `754b679c29b0c8acf7c61ca265813d9528c0d0c3afe912b9319a6354cbd31b21`, which was verified by the v4.6.0 workflow against the published v4.4 APK. This protects continuity of the signing identity; it does not replace installation and restore tests. Partial secret configuration fails closed. It runs when the app build configuration changes on main, or by manual dispatch.
 
 Configure these GitHub **Actions repository secrets** securely:
 - `SAWTI_RELEASE_KEYSTORE_BASE64`: base64 of the keystore binary, as **one line**
@@ -46,7 +46,7 @@ first, and only reinstall when the restore/restart workflow has been tested.
 
 ## Current verification (2026-11-02)
 
-Signed v1.0 APK/AAB compilation and the APK/AAB cross-certificate check passed on [Actions run 41416103375](https://github.com/seanseemo92-commits/Sawti/actions/runs/41416103375). The signed files were uploaded as private workflow artifacts; the publication step was skipped. The code has not been tested for actual user interactions, speech output, or restore/process-death behavior on a physical device. Android Lint also still reports warnings, and the speech review corpus remains unapproved by native speakers.
+Signed v1.0 APK/AAB compilation and the APK/AAB cross-certificate check passed on [Actions run 41416103375](https://github.com/seanseemo92-commits/Sawti/actions/runs/41416103375). The signed files were uploaded as private workflow artifacts; the publication step was skipped. The newly restored historical-certificate pin must still pass a new signed CI run before final approval. The code has not been tested for actual user interactions, speech output, or restore/process-death behavior on a physical device. Android Lint also still reports warnings, and the speech review corpus remains unapproved by native speakers.
 
 ## Artwork and theme validation
 
