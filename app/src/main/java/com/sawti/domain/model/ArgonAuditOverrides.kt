@@ -860,7 +860,8 @@ internal object ArgonAuditOverrides {
 
     fun applySpeech(item: WordItem, dialect: ArabicDialect, form: SpeechForm): SpeechForm {
         if (item.categoryId.startsWith("custom_")) return form
-        val patch = all[dialect]?.get(item.semanticKey) ?: return form
+        val key = item.semanticKey ?: return form
+        val patch = all[dialect]?.get(key) ?: return form
         fun protected(flag: Int) = item.customTextFields and flag != 0
         val revisedDisplay = select(form.displayText, patch.display, protected(CardDetails.LABEL))
         val revisedSpeech = select(form.speechText, patch.speech,
@@ -876,7 +877,8 @@ internal object ArgonAuditOverrides {
     fun applySentence(original: WordItem, dialect: ArabicDialect, projected: WordItem): WordItem {
         if (original.categoryId.startsWith("custom_")) return projected
         if (original.customTextFields and CardDetails.SENTENCE != 0) return projected
-        val patch = all[dialect]?.get(original.semanticKey)?.sentence ?: return projected
+        val key = original.semanticKey ?: return projected
+        val patch = all[dialect]?.get(key)?.sentence ?: return projected
         val current = projected.sentencePrompt.orEmpty()
         return if (current == patch.expected) projected.copy(sentencePrompt = patch.proposed) else projected
     }
