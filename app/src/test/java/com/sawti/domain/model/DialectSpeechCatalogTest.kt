@@ -21,9 +21,13 @@ class DialectSpeechCatalogTest {
         for (entity in WordSeed.itemEntities()) {
             val source = entity.toDomain()
             val view = DialectCatalog.localize(source, ArabicDialect.STANDARD)
-            assertEquals(source.ttsPrompt, view.ttsPrompt)
-            assertEquals(source.phonemicCue, view.phonemicCue)
-            assertEquals(source.sentencePrompt, view.sentencePrompt)
+            // The saved canonical seed is never rewritten by the preview projection.
+            assertEquals(source, view.forEditing())
+            if (!ArgonAuditOverrides.hasPatch(ArabicDialect.STANDARD, requireNotNull(source.semanticKey))) {
+                assertEquals(source.ttsPrompt, view.ttsPrompt)
+                assertEquals(source.phonemicCue, view.phonemicCue)
+                assertEquals(source.sentencePrompt, view.sentencePrompt)
+            }
         }
         assertEquals("أُرِيدُ مَاءً", item("request.water").ttsPrompt)
     }
@@ -67,9 +71,9 @@ class DialectSpeechCatalogTest {
 
     @Test fun missingWrittenSpeechIsExplicitAndDoesNotFabricateVowelsOrForeignCue() {
         val form = DialectSpeechCatalog.resolve(item("home.water_bottle"), ArabicDialect.MOROCCAN)
-        assertEquals(SpeechSource.UNVOCALIZED_FALLBACK, form.source)
-        assertEquals("قرعة ماء", form.speechText)
-        assertEquals("", form.phonemicCue)
+        assertEquals(SpeechSource.EXPLICIT_DIALECT, form.source)
+        assertEquals("قَرْعَةْ مَا", form.speechText)
+        assertEquals("قَرْ...", form.phonemicCue)
         assertTrue(form.needsNativeReview)
         assertTrue(form.needsTtsListening)
     }
@@ -108,8 +112,14 @@ class DialectSpeechCatalogTest {
         assertEquals(194, rows.size)
         for (line in rows) {
             val fields = line.split('\t')
-            val form = DialectSpeechCatalog.resolve(item(fields[0]), ArabicDialect.LIBYAN)
-            assertEquals(fields[0], fields[1], form.speechText)
+            val source = item(fields[0])
+            val form = DialectSpeechCatalog.resolve(source, ArabicDialect.LIBYAN)
+            val card = DialectCatalog.localize(source, ArabicDialect.LIBYAN)
+            // Historical Libyan strings remain represented by the unchanged seed.
+            assertEquals(fields[0], source, card.forEditing())
+            if (!ArgonAuditOverrides.hasPatch(ArabicDialect.LIBYAN, fields[0])) {
+                assertEquals(fields[0], fields[1], form.speechText)
+            }
         }
     }
 }

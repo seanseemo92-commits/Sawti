@@ -1201,6 +1201,7 @@ object DialectCatalog {
         val item = value.forEditing()
         val key = item.semanticKey ?: return item
         if (item.categoryId.startsWith("custom_")) return item
+        if (dialect == ArabicDialect.STANDARD && !ArgonAuditOverrides.hasPatch(dialect, key)) return item
         val regional = if (dialect == ArabicDialect.STANDARD) null
             else RegionalDishesCatalog.variant(key, dialect)
         if (dialect != ArabicDialect.STANDARD && regional == null && key !in words
