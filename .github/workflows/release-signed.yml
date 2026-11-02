@@ -123,6 +123,15 @@ jobs:
           test -n "$APK_CERT"
           test "$APK_CERT" = "$AAB_CERT"
 
+          # Independently pin the verified historical Sawti publisher identity:
+          # v4.6.0 release checked the same SHA-256 against published v4.4.
+          # A valid APK/AAB pair signed by a *different* key must fail here.
+          EXPECTED_PUBLISHER_SHA256=754b679c29b0c8acf7c61ca265813d9528c0d0c3afe912b9319a6354cbd31b21
+          if [[ "$APK_CERT" != "$EXPECTED_PUBLISHER_SHA256" ]]; then
+            echo "::error::Publisher signing certificate does not match Sawti's verified historical certificate."
+            exit 1
+          fi
+
           unzip -t "$AAB" > /dev/null
 
           mkdir -p dist
