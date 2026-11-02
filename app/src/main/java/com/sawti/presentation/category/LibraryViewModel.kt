@@ -63,7 +63,6 @@ interface LibraryActions {
     fun onItemTapped(item: WordItem, flashcard: Boolean)
     fun onItemLongPressed(item: WordItem)
     fun onHint(item: WordItem)
-    fun onSentenceHint(item: WordItem)
     fun addCustomCard(categoryId: String, title: String, spoken: String)
     fun moveCardToCustomCategory(id: Long, destinationId: String)
     fun deleteCustomCard(id: Long)
@@ -106,7 +105,6 @@ class LibraryViewModel(
         seed = { withContext(Dispatchers.IO) { repository.seedOrUpdateDefaults() } },
         observe = repository::observeCategories,
     )
-
     init {
         viewModelScope.launch {
             voice.playback.collect { playback -> _uiState.update { it.copy(playbackVisual = playback) } }
@@ -118,9 +116,7 @@ class LibraryViewModel(
         }
         viewModelScope.launch {
             categoryLoader.state.collect { load ->
-                _uiState.update {
-                    it.copy(categories = load.categories, isLoadingCategories = load.loading, categoryLoadError = load.error)
-                }
+                _uiState.update { it.copy(categories = load.categories, isLoadingCategories = load.loading, categoryLoadError = load.error) }
             }
         }
         categoryLoader.start()
@@ -128,13 +124,11 @@ class LibraryViewModel(
             caregiver.enabled.collect { on ->
                 if (!on) recorder.cancel()
                 _uiState.update {
-                    it.copy(
-                        caregiverMode = on,
+                    it.copy(caregiverMode = on,
                         editingItemId = if (on) it.editingItemId else null,
                         addingFamilyGroup = if (on) it.addingFamilyGroup else null,
                         previewItemId = if (on) null else it.previewItemId,
-                        recordingItemId = if (on) it.recordingItemId else null,
-                    )
+                        recordingItemId = if (on) it.recordingItemId else null)
                 }
             }
         }
@@ -142,7 +136,6 @@ class LibraryViewModel(
             speech.issue.collect { issue -> _uiState.update { it.copy(speechIssue = issue) } }
         }
     }
-
     fun toggleCaregiver() = caregiver.toggle()
     private fun canEdit(): Boolean = caregiver.enabled.value
     fun onAppBackgrounded() {
@@ -150,7 +143,6 @@ class LibraryViewModel(
         voice.stop()
         _uiState.update { it.copy(recordingItemId = null) }
     }
-
     override fun onItemTapped(item: WordItem, flashcard: Boolean) {
         val state = _uiState.value
         if ((state.caregiverMode || !state.sentenceStripEnabled) && cardLatched()) return
@@ -170,7 +162,6 @@ class LibraryViewModel(
             _uiState.update { it.copy(previewItemId = item.id) }
         }
     }
-
     fun onQuickTap(item: WordItem) {
         val state = _uiState.value
         if ((state.caregiverMode || !state.sentenceStripEnabled) && cardLatched()) return
@@ -205,27 +196,17 @@ class LibraryViewModel(
             catch (error: Exception) { report(error) }
         }
     }
-
     fun createCategory(title: String, palette: Int, sortOrder: Int) {
         if (!canEdit()) return
-        launchSafe {
-            if (!canEdit()) return@launchSafe
-            repository.addCustomCategory(title, palette, sortOrder)
-        }
+        launchSafe { if (!canEdit()) return@launchSafe; repository.addCustomCategory(title, palette, sortOrder) }
     }
     fun editCategory(id: String, title: String, palette: Int, sortOrder: Int) {
         if (!canEdit()) return
-        launchSafe {
-            if (!canEdit()) return@launchSafe
-            repository.editCustomCategory(id, title, palette, sortOrder)
-        }
+        launchSafe { if (!canEdit()) return@launchSafe; repository.editCustomCategory(id, title, palette, sortOrder) }
     }
     fun deleteCategory(id: String) {
         if (!canEdit()) return
-        launchSafe {
-            if (!canEdit()) return@launchSafe
-            repository.deleteEmptyCustomCategory(id)
-        }
+        launchSafe { if (!canEdit()) return@launchSafe; repository.deleteEmptyCustomCategory(id) }
     }
     override fun addCustomCard(categoryId: String, title: String, spoken: String) {
         if (!canEdit()) return
@@ -253,18 +234,12 @@ class LibraryViewModel(
     }
     override fun onItemLongPressed(item: WordItem) {
         if (_uiState.value.caregiverMode) _uiState.update { it.copy(editingItemId = item.id) }
-        else if (_uiState.value.sentenceStripEnabled) {
-            voice.play(item)
-            highlight(item.id)
-        } else _uiState.update { it.copy(focusItemId = item.id) }
+        else if (_uiState.value.sentenceStripEnabled) { voice.play(item); highlight(item.id) }
+        else _uiState.update { it.copy(focusItemId = item.id) }
     }
     override fun onHint(item: WordItem) {
         if (isRepeat("h${item.id}")) return
         voice.hint(item)
-    }
-    override fun onSentenceHint(item: WordItem) {
-        if (isRepeat("s${item.id}")) return
-        voice.sentenceHint(item)
     }
     override fun onSpeakAgain(item: WordItem) = voice.play(item)
     override fun closePreview() {
@@ -290,21 +265,15 @@ class LibraryViewModel(
     private fun highlight(id: Long) {
         highlightJob?.cancel()
         _uiState.update { it.copy(activeItemId = id) }
-        highlightJob = viewModelScope.launch {
-            delay(HIGHLIGHT_MS)
-            _uiState.update { it.copy(activeItemId = null) }
-        }
+        highlightJob = viewModelScope.launch { delay(HIGHLIGHT_MS); _uiState.update { it.copy(activeItemId = null) } }
     }
     private fun emit(@StringRes message: Int) { _messages.tryEmit(message) }
     override fun openAddFamilyMember(group: String) {
-        if (canEdit() && FamilyRelationships.validPeopleGroup(group)) {
-            _uiState.update { it.copy(addingFamilyGroup = group) }
-        }
+        if (canEdit() && FamilyRelationships.validPeopleGroup(group)) _uiState.update { it.copy(addingFamilyGroup = group) }
     }
     override fun closeAddFamilyMember() { _uiState.update { it.copy(addingFamilyGroup = null) } }
     override fun addFamilyMember(name: String, group: String, phone: String) {
-        if (!canEdit() || name.isBlank() || _uiState.value.addingFamilyGroup != group ||
-            !FamilyRelationships.validPeopleGroup(group)) return
+        if (!canEdit() || name.isBlank() || _uiState.value.addingFamilyGroup != group || !FamilyRelationships.validPeopleGroup(group)) return
         launchSafe {
             if (!canEdit()) return@launchSafe
             val id = repository.addFamilyMember(name, group, phone)
@@ -392,9 +361,7 @@ class LibraryViewModel(
         }
         val file = recorder.stop()
         _uiState.update { it.copy(recordingItemId = null) }
-        if (file != null) launchSafe {
-            if (canEdit()) repository.setAudio(itemId, file) else file.delete()
-        }
+        if (file != null) launchSafe { if (canEdit()) repository.setAudio(itemId, file) else file.delete() }
     }
     override fun previewRecording(itemId: Long) { find(itemId)?.audioPath?.let { voice.playFile(it) } }
     override fun deleteRecording(itemId: Long) {
@@ -402,8 +369,7 @@ class LibraryViewModel(
         voice.stop()
         launchSafe { if (canEdit()) repository.clearAudio(itemId) }
     }
-    private fun find(id: Long): WordItem? =
-        _uiState.value.categories.firstNotNullOfOrNull { c -> c.items.firstOrNull { it.id == id } }
+    private fun find(id: Long): WordItem? = _uiState.value.categories.firstNotNullOfOrNull { c -> c.items.firstOrNull { it.id == id } }
     override fun onCleared() { recorder.cancel() }
     class Factory(private val app: Application) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")

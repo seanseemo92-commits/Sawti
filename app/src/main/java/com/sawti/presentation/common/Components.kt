@@ -41,7 +41,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.Lightbulb
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -115,9 +114,7 @@ private const val CascadeStepMillis = 35L
 private const val CascadeMaxRows = 10
 
 @Composable
-fun AdultAccentBar(color: Color) {
-    Box(Modifier.fillMaxWidth().height(3.dp).background(color))
-}
+fun AdultAccentBar(color: Color) { Box(Modifier.fillMaxWidth().height(3.dp).background(color)) }
 
 fun Modifier.bounceClick(onLongClick: (() -> Unit)? = null, onClick: () -> Unit, accent: Color? = null): Modifier = composed {
     val haptic = LocalHapticFeedback.current
@@ -128,26 +125,15 @@ fun Modifier.bounceClick(onLongClick: (() -> Unit)? = null, onClick: () -> Unit,
     var dwellPressed by remember { mutableStateOf(false) }
     val pressed by source.collectIsPressedAsState()
     val performance = LocalPerformanceMode.current
-    val scale by animateFloatAsState(
-        targetValue = if ((pressed || dwellPressed) && !performance) 0.94f else 1f,
-        animationSpec = if (performance) snap() else spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
-        label = "bounce",
-    )
+    val scale by animateFloatAsState(targetValue = if ((pressed || dwellPressed) && !performance) 0.94f else 1f,
+        animationSpec = if (performance) snap() else spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
+        label = "bounce")
     val base = graphicsLayer { scaleX = scale; scaleY = scale }
     if (dwell == TouchDwell.OFF) {
-        base.combinedClickable(
-            role = Role.Button,
-            interactionSource = source,
+        base.combinedClickable(role = Role.Button, interactionSource = source,
             indication = accent?.let { ripple(color = it) },
-            onLongClick = onLongClick?.let { long ->
-                { haptic.performHapticFeedback(HapticFeedbackType.LongPress); long() }
-            },
-            onClick = {
-                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                currentClick()
-            },
-        )
+            onLongClick = onLongClick?.let { long -> { haptic.performHapticFeedback(HapticFeedbackType.LongPress); long() } },
+            onClick = { haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove); currentClick() })
     } else {
         base.semantics(mergeDescendants = true) {
             role = Role.Button
@@ -245,10 +231,8 @@ fun CardImageContent(item: WordItem, accent: Color, isCurrentlyPlaying: Boolean,
         if (item.photoPath != null || resId != null) {
             val photoShape = if (fullBleed) RectangleShape else RoundedCornerShape(16.dp)
             if (isCurrentlyPlaying) VoiceAuraHalo(accent, Modifier.matchParentSize())
-            ItemImage(item = item, accent = accent,
-                modifier = Modifier.fillMaxSize().then(if (isCurrentlyPlaying) {
-                    Modifier.border(2.dp, VoiceAura.copy(alpha = 0.85f), photoShape)
-                } else Modifier),
+            ItemImage(item = item, accent = accent, modifier = Modifier.fillMaxSize().then(
+                if (isCurrentlyPlaying) Modifier.border(2.dp, VoiceAura.copy(alpha = 0.85f), photoShape) else Modifier),
                 crop = crop || fullBleed, glyphScale = 0.45f, fullBleed = fullBleed)
         } else {
             if (fullBleed) Box(Modifier.matchParentSize().background(accent.copy(alpha = if (dark) 0.24f else 0.13f)))
@@ -331,15 +315,6 @@ fun HintButton(onClick: () -> Unit, modifier: Modifier = Modifier, size: Int = 4
 }
 
 @Composable
-fun PhraseHintButton(onClick: () -> Unit, modifier: Modifier = Modifier, size: Int = 44) {
-    Box(modifier.size(size.dp).clip(CircleShape).background(MaterialTheme.colorScheme.surface)
-        .bounceClick(onClick = onClick), contentAlignment = Alignment.Center) {
-        Icon(Icons.Outlined.ChatBubbleOutline, contentDescription = stringResource(R.string.sentence_hint),
-            tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size((size * 0.52f).dp))
-    }
-}
-
-@Composable
 fun EditBadge(modifier: Modifier = Modifier) {
     Icon(Icons.Filled.Edit, contentDescription = null, tint = Color.White,
         modifier = modifier.size(30.dp).background(RecordRed.copy(alpha = 0.9f), CircleShape).padding(6.dp))
@@ -356,8 +331,7 @@ fun ActionPill(label: String, icon: ImageVector, color: Color, onClick: () -> Un
         shadowElevation = cardElevation(if (enabled) 4.dp else 0.dp),
         modifier = modifier.heightIn(min = 56.dp).then(
             if (enabled) Modifier.bounceClick(onClick = onClick)
-            else Modifier.semantics(mergeDescendants = true) { role = Role.Button; disabled() }),
-    ) {
+            else Modifier.semantics(mergeDescendants = true) { role = Role.Button; disabled() })) {
         Row(Modifier.padding(horizontal = 20.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center) {
             Icon(icon, contentDescription = null, modifier = Modifier.size(26.dp))

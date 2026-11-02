@@ -1,9 +1,16 @@
-# Sentence-hint removal: UI batch
+# Sentence-hint removal
 
-Branch: fix/prelaunch-cleanup-hint. User explicitly requested removal of the speech-bubble sentence-hint feature and relocation of the phonemic lightbulb into its slot.
+Branch: fix/prelaunch-cleanup-hint. User explicitly requested deletion of the speech-bubble card hint and relocation of the phonemic lightbulb into its slot. No main, signing, version or publication changes.
 
-This batch removes sentence-hint UI calls/imports from category grid, flashcards, preview and practice. The grid/flashcard lightbulb is the only hint at TopEnd (physical left in Sawti's RTL layout). The editor no longer edits the sentence hint; it passes the original saved baseline value unchanged, avoiding deletion of user data. Sentence composition strip, phonemic hints, playback, recordings, card geometry and version 4.6.1 (12) are preserved.
+## UI batch
+Category grid, flashcards, preview and practice no longer call the removed hint. The lightbulb occupies TopEnd (physical left in the RTL app). The editor no longer offers the retired field and preserves its saved baseline value. Sentence composition remains separate.
 
-Pending next batch: remove PhraseHintButton declaration and its chat icon import, LibraryActions.onSentenceHint and implementation, PracticeActions.sentenceHint and implementation, AudioDispatcher.sentenceHint, obsolete resources/comments/tests as verified. Persisted sentence fields/schema must not be dropped or blanked as part of UI cleanup. Historical documentation can describe the retired feature.
+## Runtime removal batch
+Remove the PhraseHintButton declaration and chat-icon import, LibraryActions.onSentenceHint and its ViewModel implementation, PracticeActions.sentenceHint and its implementation, and AudioDispatcher.sentenceHint. Practice comments now describe only the phonemic cue. Existing playback, recordings, practice scoring, loading/retry, theme fixes and sentence-strip sequencing are retained.
 
-Status: source changes prepared; no compilation, lint, test or physical-device result is asserted here. Verify CI for the actual commit, then complete backend removal. Full removal is NOT complete with this UI batch. No main changes, merge or publishing.
+Add source-guard unit tests checking absence of the four retired runtime symbols and presence of the phonemic hint and sentence-strip playback. Tests have NOT been executed by the assistant; verify CI for the resulting commit.
+
+## Deliberately retained / outstanding
+Persisted sentencePrompt and CardDetails.sentence values, backup/schema/migration support and baseline-preserving save plumbing are kept to avoid deleting user data. These are not an exposed card-hint feature. Historical documentation may mention the retired feature. The unused sentence_hint and field_sentence XML labels still need a separate resource cleanup; no claim that resource cleanup is complete.
+
+Manual checks remain: lamp placement in RTL, phonemic cue playback, editor save preserving data, sentence strip, practice scoring, light/dark and large font. No claim of passed build, tests, lint or UI acceptance until results are verified.
