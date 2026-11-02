@@ -22,7 +22,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-/** Hand-rolled DI: one shared instance of everything the ViewModels need. Swap for Hilt if you prefer. */
 class AppContainer(private val app: Application) {
     val database by lazy { AppDatabase.build(app) }
     val backupOperations by lazy { BackupOperations(app, database) }
@@ -41,18 +40,13 @@ class AppContainer(private val app: Application) {
 class SawtiApp : Application() {
     val container by lazy { AppContainer(this) }
     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-
     override fun onCreate() {
         super.onCreate()
-        // Restore interrupted file swaps before Room or preferences are opened.
+        // Recovery must precede opening Room or preferences.
         BackupManager.recoverIfInterrupted(this)
-        // On startup add public relationship labels and built-in vocabulary, never sample people.
-        appScope.launch { container.wordRepository.seedOrUpdateDefaults() }
-        // Keep voice, region and rate reactive without recreating the TTS engine.
+        // LibraryViewModel owns vocabulary loading, failure reporting and retries.
         appScope.launch {
             container.settingsRepository.state.collect { settings ->
-                // TextToSpeech is owned by the main thread. Never reconfigure the
-                // same engine concurrently from the IO settings collector.
                 withContext(Dispatchers.Main.immediate) {
                     container.speech.setSpeechRate(settings.speechRate.factor)
                     container.speech.setDialect(settings.dialect, settings.preferredVoice)
@@ -61,4 +55,3 @@ class SawtiApp : Application() {
         }
     }
 }
-

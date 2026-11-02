@@ -38,17 +38,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sawti.R
+import com.sawti.SawtiApp
 import com.sawti.presentation.category.CategoryScreen
 import com.sawti.presentation.category.CustomCategoryManager
+import com.sawti.presentation.category.LibraryViewModel
 import com.sawti.presentation.common.SentenceStrip
 import com.sawti.presentation.common.LocalTouchDwell
-import com.sawti.presentation.category.LibraryViewModel
 import com.sawti.presentation.home.HomeScreen
 import com.sawti.presentation.practice.PracticeRoute
 import com.sawti.presentation.practice.PracticeViewModel
 import com.sawti.presentation.progress.ProgressRoute
 import com.sawti.presentation.progress.ProgressViewModel
-import com.sawti.SawtiApp
 import com.sawti.presentation.settings.DialectSettingsRoute
 import com.sawti.presentation.settings.SettingsRoute
 import com.sawti.presentation.settings.SettingsViewModel
@@ -63,14 +63,8 @@ private const val SETTINGS = "settings"
 private const val DIALECT = "dialect"
 private const val CATEGORY_PREFIX = "category:"
 
-/** State-based navigation: home → category (grid / flashcards), practice games, caregiver progress. */
 @Composable
-fun AppRoot(
-    library: LibraryViewModel,
-    practice: PracticeViewModel,
-    progress: ProgressViewModel,
-    settingsVm: SettingsViewModel,
-) {
+fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: ProgressViewModel, settingsVm: SettingsViewModel) {
     val state by library.uiState.collectAsStateWithLifecycle()
     val settings by settingsVm.settings.collectAsStateWithLifecycle()
     var route by rememberSaveable { mutableStateOf(HOME) }
@@ -79,32 +73,22 @@ fun AppRoot(
     val operations = (context.applicationContext as SawtiApp).container.backupOperations
     val backup by operations.state.collectAsStateWithLifecycle()
     val backupLocked = backup.busy || backup.restartRequired
-    // Read the live state in click handlers; a rapid second tap must not beat recomposition.
     val navigationLocked = { operations.state.value.let { it.busy || it.restartRequired } }
-    // one-shot messages, e.g. "favourites are full"
     LaunchedEffect(Unit) {
         library.messages.collect { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
     }
-    // the progress tab is private: leaving Caregiver Mode closes it
     LaunchedEffect(state.caregiverMode, route) {
         if ((route == PROGRESS || route == SETTINGS) && !state.caregiverMode) route = HOME
     }
-
     val category = if (route.startsWith(CATEGORY_PREFIX)) {
         state.categories.firstOrNull { it.id == route.removePrefix(CATEGORY_PREFIX) }
     } else null
-
-    // A deleted custom-category route must not leave the back arrow on a Home screen.
     LaunchedEffect(state.categories, route) {
-        if (route.startsWith(CATEGORY_PREFIX) && state.categories.isNotEmpty() && category == null) {
-            route = HOME
-        }
+        if (route.startsWith(CATEGORY_PREFIX) && state.categories.isNotEmpty() && category == null) route = HOME
     }
-
     BackHandler(enabled = route != HOME || backupLocked) {
         if (!navigationLocked()) route = HOME
     }
-
     val title = when {
         route == PRACTICE -> stringResource(R.string.practice_title)
         route == PROGRESS -> stringResource(R.string.progress_title)
@@ -113,7 +97,6 @@ fun AppRoot(
         category != null -> category.title
         else -> stringResource(R.string.app_title)
     }
-
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
@@ -147,18 +130,22 @@ fun AppRoot(
                         onOpenSettings = { if (!navigationLocked()) route = SETTINGS },
                     )
                 }
+                if (state.categories.isNotEmpty() && state.categoryLoadError != null) {
+                    TextButton(
+                        enabled = !backupLocked && !state.isLoadingCategories,
+                        onClick = { if (!navigationLocked()) library.retryLoad() },
+                    ) { Text("تعذّر تحديث الأقسام — إعادة المحاولة") }
+                }
                 state.speechIssue?.let { issue ->
                     SpeechIssueBanner(issue) {
-                        try {
-                            context.startActivity(Intent(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA))
-                        } catch (_: ActivityNotFoundException) { /* no installer on this device */ }
+                        try { context.startActivity(Intent(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA)) }
+                        catch (_: ActivityNotFoundException) { }
                     }
                 }
             }
         },
     ) { padding ->
         Box(Modifier.padding(padding)) {
-            // card text scaling (Normal / Large / Extra Large) applies to everything below the app bar
             val density = LocalDensity.current
             CompositionLocalProvider(
                 LocalDensity provides Density(density.density, density.fontScale * settings.textSize.factor),
@@ -174,26 +161,19 @@ fun AppRoot(
                         (context.applicationContext as SawtiApp).container.audioDispatcher,
                     )
                     category != null -> CategoryScreen(category, state, library)
-                    state.categories.isEmpty() && state.errorMessage != null -> HomeScreen(
-                        categories = state.categories,
-                        speakingItemId = state.playbackVisual.activeWordId.takeIf { state.playbackVisual.isSpeaking },
-                        onOpen = { id -> if (!navigationLocked()) route = CATEGORY_PREFIX + id },
-                        onRetry = {
-                            library.clearError()
-                            library.retryLoad()
-                        },
-                    )
                     else -> HomeScreen(
                         categories = state.categories,
                         speakingItemId = state.playbackVisual.activeWordId.takeIf { state.playbackVisual.isSpeaking },
                         onOpen = { id -> if (!navigationLocked()) route = CATEGORY_PREFIX + id },
+                        onRetry = { if (!navigationLocked()) library.retryLoad() },
+                        isLoading = state.isLoadingCategories,
+                        loadError = state.categoryLoadError,
+                        retryEnabled = !backupLocked,
                     )
                 }
             }
         }
     }
-    // Modal dialogs block ALL touch navigation, including the top bar, throughout a
-    // restore. These live at the app root so they survive Settings destination removal.
     if (backup.busy) {
         androidx.compose.material3.AlertDialog(
             onDismissRequest = {},
@@ -208,9 +188,7 @@ fun AppRoot(
             title = { Text(if (backup.restoreSucceeded) "تم الاسترجاع بنجاح" else "تعذّر الاسترجاع") },
             text = { Text(backup.message ?: "يلزم إغلاق التطبيق وفتحه مجدداً لتحميل البيانات بأمان.") },
             confirmButton = {
-                TextButton(onClick = { Process.killProcess(Process.myPid()) }) {
-                    Text("إغلاق التطبيق")
-                }
+                TextButton(onClick = { Process.killProcess(Process.myPid()) }) { Text("إغلاق التطبيق") }
             },
         )
     }
@@ -233,23 +211,15 @@ fun AppRoot(
     }
 }
 
-/** Soft amber strip – the only hint that Caregiver Mode is on – with the private progress and settings tabs. */
 @Composable
 private fun CaregiverBanner(onOpenProgress: () -> Unit, onOpenSettings: () -> Unit) {
     Surface(
         color = CaregiverTint,
         shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
     ) {
         Column(Modifier.padding(start = 14.dp, end = 6.dp, top = 6.dp, bottom = 2.dp)) {
-            Text(
-                stringResource(R.string.caregiver_banner),
-                color = CaregiverInk,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.SemiBold,
-            )
+            Text(stringResource(R.string.caregiver_banner), color = CaregiverInk, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
             Row {
                 TextButton(onClick = onOpenProgress, modifier = Modifier.heightIn(min = 44.dp)) {
                     Text(stringResource(R.string.progress_tab), color = CaregiverInk, fontWeight = FontWeight.ExtraBold)
@@ -267,26 +237,20 @@ private fun SpeechIssueBanner(issue: SpeechIssue, onInstall: () -> Unit) {
     Surface(
         color = Color(0xFFFFE0B2),
         shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
     ) {
         Row(
             Modifier.padding(start = 14.dp, end = 8.dp, top = 6.dp, bottom = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                stringResource(
-                    when (issue) {
-                        SpeechIssue.EngineUnavailable -> R.string.tts_unavailable
-                        SpeechIssue.MissingArabicVoice -> R.string.voice_missing
-                        SpeechIssue.PlaybackFailed -> R.string.tts_playback_failed
-                    }
-                ),
-                color = Color(0xFF5D3A00),
-                fontSize = 15.sp,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.weight(1f),
+                stringResource(when (issue) {
+                    SpeechIssue.EngineUnavailable -> R.string.tts_unavailable
+                    SpeechIssue.MissingArabicVoice -> R.string.voice_missing
+                    SpeechIssue.PlaybackFailed -> R.string.tts_playback_failed
+                }),
+                color = Color(0xFF5D3A00), fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f),
             )
             if (issue is SpeechIssue.MissingArabicVoice) {
                 Button(onClick = onInstall, modifier = Modifier.heightIn(min = 44.dp)) {
