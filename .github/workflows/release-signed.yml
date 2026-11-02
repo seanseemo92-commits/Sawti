@@ -9,7 +9,8 @@ on:
       - .github/workflows/release-signed.yml
 
 permissions:
-  contents: write
+  # Testing a signed build never needs permission to publish Releases.
+  contents: read
   actions: read
 
 concurrency:
@@ -140,7 +141,11 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
+      # Publishing is intentionally disabled until the project owner separately
+      # authorizes a public GitHub Release. This gate must be removed in a
+      # separately reviewed change only after approval.
       - name: Publish versioned release
+        if: ${{ false }}
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
