@@ -93,8 +93,13 @@ jobs:
         run: gradle --no-daemon :app:testDebugUnitTest
       - name: Check exported foundation schema
         run: |
+          # The baseline schema must be COMMITTED, not just generated on the runner.
+          # This preserves the exact v1 identity/DDL needed by future migrations.
           test -s app/schemas/com.sawti.data.db.AppDatabase/1.json
+          git ls-files --error-unmatch app/schemas/com.sawti.data.db.AppDatabase/1.json
           git diff --exit-code -- app/schemas
+          # Also catch newly generated but untracked schema versions.
+          test -z "$(git status --porcelain -- app/schemas)"
       - name: Build debug and R8 release APKs and run Android lint (full path only)
         if: ${{ env.FULL_BUILD == 'true' }}
         run: gradle --no-daemon :app:assembleDebug :app:assembleRelease :app:lintRelease
