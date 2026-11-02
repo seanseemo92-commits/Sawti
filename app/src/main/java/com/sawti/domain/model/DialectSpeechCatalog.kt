@@ -54,6 +54,6 @@ object DialectSpeechCatalog {
             source == SpeechSource.UNVOCALIZED_FALLBACK -> ""
             else -> variant?.phonemicCue ?: PhonemicCue.derive(speech)
         }
-        return SpeechForm(visible, speech, cue, source)
+        return ArgonAuditOverrides.applySpeech(item, dialect, SpeechForm(visible, speech, cue, source))
     }
 }

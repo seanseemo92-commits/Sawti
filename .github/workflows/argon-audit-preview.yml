@@ -1,0 +1,43 @@
+name: Sawti Argon corrections preview APK
+on:
+  push:
+    branches:
+      - fix/prelaunch-cleanup-hint
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit-preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build debug APK
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon :app:assembleDebug
+      - name: Test and lint
+        if: always()
+        run: ./gradlew --no-daemon :app:testDebugUnitTest :app:lintDebug --continue
+      - name: Upload Sawti Argon preview APK
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sawti-Argon-preview-debug
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sawti-Argon-preview-test-reports
+          path: |
+            app/build/test-results/
+            app/build/reports/
+          if-no-files-found: warn
