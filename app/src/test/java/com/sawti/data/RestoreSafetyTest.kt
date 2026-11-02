@@ -32,7 +32,7 @@ class RestoreSafetyTest {
     private lateinit var state: File
     private lateinit var oldPhoto: File
     private val prefs get() = File(context.applicationInfo.dataDir, "shared_prefs/settings.xml")
-    private val liveFile get() = context.getDatabasePath("my_words.db")
+    private val liveFile get() = context.getDatabasePath(AppDatabase.NAME)
 
     private fun createRoom(file: File, title: String): AppDatabase {
         val room = AppDatabase.builder(context, file.absolutePath)
@@ -46,9 +46,9 @@ class RestoreSafetyTest {
 
     @Before fun setup() {
         context = RuntimeEnvironment.getApplication()
-        state = File(context.noBackupFilesDir, "sawti_restore_journal")
+        state = File(context.noBackupFilesDir, "sawti_foundation_restore_journal")
         state.deleteRecursively()
-        context.deleteDatabase("my_words.db")
+        context.deleteDatabase(AppDatabase.NAME)
         context.getSharedPreferences("settings", Context.MODE_PRIVATE).edit().clear()
             .putBoolean("haptics", false).commit()
         oldPhoto = File(context.filesDir, "photos/old.jpg").apply {
@@ -80,14 +80,18 @@ class RestoreSafetyTest {
         return value
     }
 
-    private fun archive(settings: String? = null): Uri {
-        val entries = linkedMapOf("database/my_words.db" to source.readBytes())
+    private fun archive(
+        settings: String? = "<map/>", format: String = BackupFormat.NAME,
+        identity: String = AppDatabase.IDENTITY, databaseVersion: Int = AppDatabase.VERSION,
+    ): Uri {
+        val entries = linkedMapOf(BackupFormat.DATABASE_ENTRY to source.readBytes())
         settings?.let { entries["preferences/settings.xml"] = it.toByteArray() }
         val hashes = JSONObject()
         entries.forEach { (name, bytes) ->
             hashes.put(name, MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it) })
         }
-        val manifest = JSONObject().put("format", "sawti-backup").put("version", 1)
+        val manifest = JSONObject().put("format", format).put("version", BackupFormat.VERSION)
+            .put("databaseIdentity", identity).put("databaseVersion", databaseVersion)
             .put("package", context.packageName).put("sha256", hashes)
         val file = File(context.cacheDir, "test-backup.zip")
         ZipOutputStream(file.outputStream()).use { zip ->
@@ -133,7 +137,7 @@ class RestoreSafetyTest {
     @Test fun missingAttachmentRejectedInsteadOfSilentlyErasingItsReference() {
         sql(source) { db ->
             db.execSQL("""INSERT INTO word_items(categoryId,subgroup,displayText,ttsPrompt,phonemicCue,
-                phone,emoji,sortOrder,photoPath) VALUES('family','','أمي','أمي','','','',0,'/old/photos/missing.jpg')""")
+                phone,emoji,sortOrder,photoPath) VALUES('family','','أمي','أمي','','','',0,'photos/missing.jpg')""")
         }
         assertThrows(Exception::class.java) { restore(archive()) }
         assertOriginalUntouched()
@@ -150,7 +154,7 @@ class RestoreSafetyTest {
         assertThrows(Exception::class.java) { restore(archive()) }
         assertOriginalUntouched()
         sql(source) { db ->
-            db.version = 6
+            db.version = AppDatabase.VERSION
             db.execSQL("PRAGMA foreign_keys=OFF")
             db.execSQL("""INSERT INTO word_items(categoryId,subgroup,displayText,ttsPrompt,phonemicCue,
                 phone,emoji,sortOrder) VALUES('missing-category','','بطاقة','بطاقة','','','',0)""")
@@ -226,44 +230,73 @@ class RestoreSafetyTest {
 
     @Test fun committedCleanupNeverRollsBackAfterPartialDeletion() {
         restore(archive("<map/>"))
-        // Also covers the committed marker written by pre-hardening app versions.
-        File(context.noBackupFilesDir, "sawti_restore_committed").writeText("1")
+        // Simulate interrupted cleanup after the durable commit marker.
+        File(context.noBackupFilesDir, "sawti_foundation_restore_committed").writeText("1")
         File(state, "previous/0").delete()
         BackupManager.recoverIfInterrupted(context)
         assertEquals("restored", title(liveFile))
         assertFalse(state.exists())
-        assertFalse(File(context.noBackupFilesDir, "sawti_restore_committed").exists())
+        assertFalse(File(context.noBackupFilesDir, "sawti_foundation_restore_committed").exists())
     }
 
-    @Test fun supportedVersionThreeAndFourMigrateWithoutLosingCustomCard() {
-        for (version in listOf(3, 4)) {
-            val file = File(context.cacheDir, "v$version.db")
-            SQLiteDatabase.openOrCreateDatabase(file, null).use { db ->
-                db.execSQL("CREATE TABLE categories(id TEXT NOT NULL PRIMARY KEY, title TEXT NOT NULL, palette INTEGER NOT NULL, previewOnTap INTEGER NOT NULL, sortOrder INTEGER NOT NULL)")
-                db.execSQL("""CREATE TABLE word_items(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                    categoryId TEXT NOT NULL, subgroup TEXT NOT NULL, displayText TEXT NOT NULL,
-                    ttsPrompt TEXT NOT NULL, phonemicCue TEXT NOT NULL, audioPath TEXT, photoPath TEXT,
-                    phone TEXT NOT NULL, emoji TEXT NOT NULL, sortOrder INTEGER NOT NULL,
-                    sentencePrompt TEXT DEFAULT NULL, isFavorite INTEGER NOT NULL DEFAULT 0,
-                    FOREIGN KEY(categoryId) REFERENCES categories(id) ON UPDATE NO ACTION ON DELETE CASCADE)""")
-                db.execSQL("CREATE INDEX index_word_items_categoryId ON word_items(categoryId)")
-                db.execSQL("CREATE TABLE progress_records(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, wordId INTEGER NOT NULL, timestamp INTEGER NOT NULL, mode TEXT NOT NULL, outcome TEXT NOT NULL)")
-                db.execSQL("INSERT INTO categories VALUES('family','عائلتي',0,1,0)")
-                db.execSQL("""INSERT INTO word_items(categoryId,subgroup,displayText,ttsPrompt,phonemicCue,phone,emoji,sortOrder,sentencePrompt,isFavorite)
-                    VALUES('family','الأبناء','شخص مخصص','نطق مخصص','','','',0,'جملة مخصصة',1)""")
-                db.version = version
-            }
-            RestoreDatabaseValidator.validateAndMigrate(context, file)
-            sql(file) { db ->
-                assertEquals(6, db.version)
-                db.rawQuery("SELECT displayText,sentencePrompt,isFavorite,semanticKey FROM word_items", null).use {
-                    assertTrue(it.moveToFirst())
-                    assertEquals("شخص مخصص", it.getString(0))
-                    assertEquals("جملة مخصصة", it.getString(1))
-                    assertEquals(1, it.getInt(2))
-                    assertTrue(it.isNull(3))
-                }
-            }
+    @Test fun oldFormatsWrongIdentityAndMissingSettingsLeaveLiveDataUntouched() {
+        for (uri in listOf(
+            archive(format = "sawti-backup"),
+        )) {
+            assertThrows(Exception::class.java) { restore(uri) }
+            assertOriginalUntouched()
         }
+        assertThrows(Exception::class.java) { restore(archive(identity = "other-app")) }
+        assertOriginalUntouched()
+        assertThrows(Exception::class.java) { restore(archive(databaseVersion = 7)) }
+        assertOriginalUntouched()
+        assertThrows(Exception::class.java) { restore(archive(settings = null)) }
+        assertOriginalUntouched()
+    }
+
+    @Test fun everyHistoricalDatabaseVersionIsRejectedWithoutMigration() {
+        for (version in 2..7) {
+            sql(source) { it.version = version }
+            assertThrows(Exception::class.java) { restore(archive()) }
+            assertOriginalUntouched()
+            sql(source) { assertEquals(version, it.version) }
+        }
+    }
+
+    @Test fun unexpectedTablesAreRejected() {
+        sql(source) { it.execSQL("CREATE TABLE surprise(secret TEXT)") }
+        assertThrows(Exception::class.java) { restore(archive()) }
+        assertOriginalUntouched()
+    }
+
+    @Test fun forgedIdentityCannotHideMissingUniqueSemanticIndex() {
+        sql(source) { it.execSQL("DROP INDEX index_word_items_semanticKey") }
+        assertThrows(Exception::class.java) { restore(archive()) }
+        assertOriginalUntouched()
+    }
+
+    @Test fun orphanedProgressAndInvalidOverrideFlagsAreRejected() {
+        sql(source) {
+            it.execSQL("PRAGMA foreign_keys=OFF")
+            it.execSQL("INSERT INTO progress_records(wordId,timestamp,mode,outcome) VALUES(999,1,'RECALL','SELF')")
+        }
+        assertThrows(Exception::class.java) { restore(archive()) }
+        assertOriginalUntouched()
+        sql(source) {
+            it.execSQL("DELETE FROM progress_records")
+            it.execSQL("""INSERT INTO word_items(categoryId,subgroup,displayText,ttsPrompt,phonemicCue,
+                phone,emoji,sortOrder,customTextFields) VALUES('family','','بطاقة','بطاقة','','','',0,16)""")
+        }
+        assertThrows(Exception::class.java) { restore(archive()) }
+        assertOriginalUntouched()
+    }
+
+    @Test fun missingInstalledSettingsRollBackInsteadOfCommittingPartialRestore() {
+        restore(archive())
+        assertTrue(prefs.delete())
+        BackupManager.recoverIfInterrupted(context)
+        assertEquals("original", title(liveFile))
+        assertEquals("original photo", oldPhoto.readText())
+        assertTrue(prefs.readText().contains("false"))
     }
 }

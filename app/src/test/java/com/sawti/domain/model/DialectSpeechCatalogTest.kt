@@ -2,70 +2,114 @@ package com.sawti.domain.model
 
 import com.sawti.data.db.WordSeed
 import com.sawti.data.db.toDomain
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Test
 
-/**
- * Covers every bundled shared card in each selectable dialect (including Standard Arabic).
- * Country-specific dishes and user-created family/custom cards are intentionally excluded.
- */
+/** Content contracts only; these tests do not constitute a listening/native-speaker review. */
 class DialectSpeechCatalogTest {
-    @Test fun everyBundledSharedCardHasVocalizedSpeechInEveryDialect() {
-        val defaults = WordSeed.itemEntities()
-            .filter { it.categoryId != RegionalDishesCatalog.CATEGORY_ID &&
-                it.categoryId != CategoryIds.FAMILY }
-        assertTrue(defaults.size >= 175)
-        var checked = 0
-        for (entity in defaults) {
-            val original = entity.toDomain()
-            assertTrue("Missing stable key: " + original.displayText, original.semanticKey != null)
-            for (dialect in ArabicDialect.entries) {
-                val translated = DialectCatalog.localize(original, dialect)
-                val tts = translated.speechText
-                assertTrue("Empty TTS for " + original.displayText + "/" + dialect, tts.isNotBlank())
-                assertTrue("Missing vowel or final pause for " + original.displayText +
-                    "/" + dialect + ": " + tts, DialectSpeechCatalog.isFullyMarked(tts))
-                assertEquals("Image changed for " + original.displayText + "/" + dialect,
-                    original.semanticKey, translated.semanticKey)
-                assertEquals(original.id, translated.id)
-                assertEquals(original.photoPath, translated.photoPath)
-                assertEquals(original.audioPath, translated.audioPath)
-                checked++
-            }
+    private fun item(key: String) = WordSeed.itemEntities().single { it.semanticKey == key }.toDomain()
+
+    @Test fun mandatoryLibyanWaterRequestSurvivesTheCompleteProjection() {
+        val view = DialectCatalog.localize(item("request.water"), ArabicDialect.LIBYAN)
+        assertEquals("نبي مية", view.displayText)
+        assertEquals("نَبِّيْ إِمِّيَّهْ", view.ttsPrompt)
+        assertEquals("إِمْـ...", view.phonemicCue)
+        assertEquals("إِمِّيَّهْ", DialectCatalog.localize(item("food.water"), ArabicDialect.LIBYAN).ttsPrompt)
+    }
+
+    @Test fun canonicalFushaBypassesAutomaticVocalization() {
+        for (entity in WordSeed.itemEntities()) {
+            val source = entity.toDomain()
+            val view = DialectCatalog.localize(source, ArabicDialect.STANDARD)
+            assertEquals(source.ttsPrompt, view.ttsPrompt)
+            assertEquals(source.phonemicCue, view.phonemicCue)
+            assertEquals(source.sentencePrompt, view.sentencePrompt)
         }
-        assertEquals(defaults.size * ArabicDialect.entries.size, checked)
+        assertEquals("أُرِيدُ مَاءً", item("request.water").ttsPrompt)
     }
 
-    @Test fun highRiskColloquialSoundsAreExplicitlyPronounced() {
-        fun speech(label: String, dialect: ArabicDialect) =
-            DialectSpeechCatalog.spoken(label, label, label, dialect)
-        assertEquals("دَحْيْ", speech("بيض", ArabicDialect.LIBYAN))
-        assertEquals("عْظَامْ", speech("بيض", ArabicDialect.TUNISIAN))
-        assertEquals("وْلَادْ الْجَاجْ", speech("بيض", ArabicDialect.ALGERIAN))
-        assertEquals("شْخَاشِيرْ", speech("شخاشير", ArabicDialect.LIBYAN))
-        assertEquals("كَلْسِيطَهْ", speech("شخاشير", ArabicDialect.TUNISIAN))
-        assertEquals("مَيَهْ", DialectSpeechCatalog.fullyMark("مية"))
-        assertEquals("تْشَايْ", speech("شاهي", ArabicDialect.IRAQI))
-        assertEquals("نَبِّيْ إِمِّيَهْ", speech("نبي مية", ArabicDialect.LIBYAN))
+    @Test fun preservedLocalLexemesUseSemanticKeys() {
+        assertEquals("دَحْيْ", DialectCatalog.localize(item("food.eggs"), ArabicDialect.LIBYAN).ttsPrompt)
+        assertEquals("عْظَامْ", DialectCatalog.localize(item("food.eggs"), ArabicDialect.TUNISIAN).ttsPrompt)
+        assertEquals("تْشَايْ", DialectCatalog.localize(item("food.tea"), ArabicDialect.IRAQI).ttsPrompt)
+        assertEquals("نَبِّيْ إِدْوَايَا", DialectCatalog.localize(item("request.medicine"), ArabicDialect.LIBYAN).ttsPrompt)
     }
 
-    @Test fun speechIsDifferentFromVisibleTextAndRetainsCustomMedia() {
-        val card = WordItem(1, "food", "بيض", "دحي", "🥚").copy(
-            semanticKey = "word_eggs", photoPath = "/photos/a.jpg", audioPath = "/audio/a.m4a")
-        val next = DialectCatalog.localize(card, ArabicDialect.LIBYAN)
-        assertEquals("دحي", next.displayText)
-        assertEquals("دَحْيْ", next.speechText)
-        assertEquals(card.photoPath, next.photoPath)
-        assertEquals(card.audioPath, next.audioPath)
-        assertFalse(next.speechText == next.displayText)
-    }
-
-    @Test fun fallbackNeverLeavesAnUnmarkedWord() {
+    @Test fun personalSpeechAndCueOverrideEveryProjectionVerbatim() {
+        val source = item("request.water").copy(ttsPrompt = "نطقي الخاص", phonemicCue = "تلميحي الخاص",
+            customTextFields = CardDetails.SPEECH or CardDetails.CUE)
         for (dialect in ArabicDialect.entries) {
-            val result = DialectSpeechCatalog.spoken("مجهول", "كلمة عادية", "كلمة عادية", dialect)
-            assertTrue(DialectSpeechCatalog.isFullyMarked(result))
+            val view = DialectCatalog.localize(source, dialect)
+            assertEquals(source.ttsPrompt, view.ttsPrompt)
+            assertEquals(source.phonemicCue, view.phonemicCue)
+        }
+    }
+
+    @Test fun eggsDoNotLeakTheLibyanLexemeIntoOtherDialects() {
+        for (dialect in listOf(ArabicDialect.SAUDI, ArabicDialect.EGYPTIAN,
+            ArabicDialect.SYRIAN, ArabicDialect.IRAQI, ArabicDialect.MOROCCAN)) {
+            val form = DialectSpeechCatalog.resolve(item("food.eggs"), dialect)
+            assertEquals("بيض", form.displayText)
+            assertFalse(form.speechText.contains("دَحْ"))
+            assertTrue(form.needsNativeReview)
+            assertTrue(form.needsTtsListening)
+        }
+    }
+
+    @Test fun preservedLocalCueMustBelongToTheSpokenWord() {
+        val eggs = DialectSpeechCatalog.resolve(item("food.eggs"), ArabicDialect.LIBYAN)
+        assertEquals("دَحْـ...", eggs.phonemicCue)
+        val trousers = DialectSpeechCatalog.resolve(item("clothing.trousers"), ArabicDialect.LIBYAN)
+        assertEquals("سروال", trousers.displayText)
+        assertEquals("سِرْوَالْ", trousers.speechText)
+        assertEquals("سِرْ...", trousers.phonemicCue)
+    }
+
+    @Test fun missingWrittenSpeechIsExplicitAndDoesNotFabricateVowelsOrForeignCue() {
+        val form = DialectSpeechCatalog.resolve(item("home.water_bottle"), ArabicDialect.MOROCCAN)
+        assertEquals(SpeechSource.UNVOCALIZED_FALLBACK, form.source)
+        assertEquals("قرعة ماء", form.speechText)
+        assertEquals("", form.phonemicCue)
+        assertTrue(form.needsNativeReview)
+        assertTrue(form.needsTtsListening)
+    }
+
+    @Test fun regionalUserSpeechDoesNotReceiveAnUnrelatedRegionalCue() {
+        val source = item("dish.tunisian.lablabi").copy(
+            ttsPrompt = "صَوْتِي", phonemicCue = "صَوْ...", customTextFields = CardDetails.SPEECH)
+        val view = DialectCatalog.localize(source, ArabicDialect.TUNISIAN)
+        assertEquals(source.ttsPrompt, view.ttsPrompt)
+        assertEquals(source.phonemicCue, view.phonemicCue)
+        assertEquals(source, view.forEditing())
+    }
+
+    @Test fun noPhoneticRewritingOfUserLongVowelsShaddaOrConnectedWords() {
+        val source = item("request.water").copy(ttsPrompt = "نَبِّيْ إِمِّيَّهْ، چ گ",
+            phonemicCue = "مِّيـ...", customTextFields = CardDetails.SPEECH or CardDetails.CUE)
+        for (dialect in ArabicDialect.entries) {
+            val form = DialectSpeechCatalog.resolve(source, dialect)
+            assertEquals(source.ttsPrompt, form.speechText)
+            assertEquals(source.phonemicCue, form.phonemicCue)
+        }
+    }
+
+    @Test fun familyFushaHasWrittenSpeechSeparateFromDisplay() {
+        assertEquals("أمي", item("family.mother").displayText)
+        assertEquals("أُمِّي", item("family.mother").ttsPrompt)
+        assertEquals("زَوْجُ ابْنَتِي", item("family.daughter_husband").ttsPrompt)
+        WordSeed.itemEntities().filter { it.categoryId == CategoryIds.FAMILY }.forEach {
+            assertTrue(it.ttsPrompt.any { c -> c in 'ً'..'ٟ' })
+        }
+    }
+
+    @Test fun allPreservedLibyanSpeechStringsRemainExactNotOnlyTheWaterExample() {
+        val rows = requireNotNull(javaClass.classLoader?.getResourceAsStream("libyan-preserved-speech.tsv"))
+            .bufferedReader().use { it.readLines().drop(1) }
+        assertEquals(194, rows.size)
+        for (line in rows) {
+            val fields = line.split('\t')
+            val form = DialectSpeechCatalog.resolve(item(fields[0]), ArabicDialect.LIBYAN)
+            assertEquals(fields[0], fields[1], form.speechText)
         }
     }
 }

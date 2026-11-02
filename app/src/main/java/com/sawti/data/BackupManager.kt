@@ -27,7 +27,7 @@ class RestoreRequiresRestartException(message: String, cause: Throwable) :
 
 /** Offline, user-selected ZIP backups. No broad storage permission or network access. */
 class BackupManager(private val context: Context, private val database: AppDatabase) {
-    private val dbName = "my_words.db"
+    private val dbName = AppDatabase.NAME
     private val folders = listOf("photos", "custom_audio")
     private val maxBytes = 512L * 1024 * 1024
     private val maxEntries = 2_000
@@ -42,12 +42,13 @@ class BackupManager(private val context: Context, private val database: AppDatab
     suspend fun export(uri: Uri): ExportReceipt = withContext(Dispatchers.IO) {
         val stage = File(context.cacheDir, "sawti_export_${System.nanoTime()}")
         require(stage.mkdirs()) { "تعذّر تجهيز مساحة للنسخ الاحتياطي" }
+        var destinationOpened = false
         try {
             val db = File(stage, dbName)
             val entries = database.storage.access {
                 createDatabaseSnapshot(db)
                 validateDatabaseSnapshot(db)
-                val staged = linkedMapOf<String, File>("database/$dbName" to db)
+                val staged = linkedMapOf<String, File>(BackupFormat.DATABASE_ENTRY to db)
                 // getAll() is one in-memory settings snapshot; never zip a live XML file
                 // while SharedPreferences may atomically replace it on another thread.
                 val values = context.getSharedPreferences("settings", Context.MODE_PRIVATE).all
@@ -85,8 +86,10 @@ class BackupManager(private val context: Context, private val database: AppDatab
                 hashes.put(name, sha256(file))
             }
             val manifest = JSONObject()
-                .put("format", "sawti-backup")
-                .put("version", 2)
+                .put("format", BackupFormat.NAME)
+                .put("version", BackupFormat.VERSION)
+                .put("databaseIdentity", AppDatabase.IDENTITY)
+                .put("databaseVersion", AppDatabase.VERSION)
                 .put("package", context.packageName)
                 .put("createdAt", System.currentTimeMillis())
                 .put("sha256", hashes)
@@ -115,6 +118,8 @@ class BackupManager(private val context: Context, private val database: AppDatab
                 }
             }
 
+            // From here on the destination is modified by us ("wt" truncates it).
+            destinationOpened = true
             // "wt" explicitly truncates providers that support it, "w" is a compatible fallback.
             val output = try {
                 context.contentResolver.openOutputStream(uri, "wt")
@@ -133,13 +138,19 @@ class BackupManager(private val context: Context, private val database: AppDatab
             ExportReceipt(copied, entries.size)
         } catch (error: Exception) {
             // CreateDocument can leave an empty placeholder when an earlier step fails.
-            // Only the freshly-created destination URI is passed to export().
-            try { context.contentResolver.delete(uri, null, null) } catch (_: Exception) { }
+            // Never delete a document we have not written to unless it is verifiably empty.
+            if (destinationOpened || isEmptyDocument(uri)) {
+                try { context.contentResolver.delete(uri, null, null) } catch (_: Exception) { }
+            }
             throw error
         } finally {
             stage.deleteRecursively()
         }
     }
+
+    private fun isEmptyDocument(uri: Uri): Boolean = runCatching {
+        context.contentResolver.openAssetFileDescriptor(uri, "r")?.use { it.length == 0L } ?: false
+    }.getOrDefault(false)
 
     private fun createDatabaseSnapshot(destination: File) {
         val live = context.getDatabasePath(dbName)
@@ -179,7 +190,7 @@ class BackupManager(private val context: Context, private val database: AppDatab
                     "قاعدة البيانات غير سليمة"
                 }
             }
-            require(sqlite.version == 6) { "إصدار قاعدة البيانات غير مدعوم" }
+            require(sqlite.version == AppDatabase.VERSION) { "إصدار قاعدة البيانات غير مدعوم" }
         }
     }
 
@@ -240,11 +251,14 @@ class BackupManager(private val context: Context, private val database: AppDatab
             } ?: error("تعذّر فتح ملف النسخة")
             require("manifest.json" in seen) { "ملف النسخة يفتقد الفهرس" }
             val manifest = JSONObject(File(stage, "manifest.json").readText())
-            val formatVersion = manifest.getInt("version")
-            require(manifest.getString("format") == "sawti-backup" && formatVersion in 1..2)
+            require(manifest.getString("format") == BackupFormat.NAME &&
+                manifest.getInt("version") == BackupFormat.VERSION) { "صيغة النسخة غير مدعومة في صوتي الجديد" }
+            require(manifest.getString("databaseIdentity") == AppDatabase.IDENTITY &&
+                manifest.getInt("databaseVersion") == AppDatabase.VERSION) { "مخطط النسخة غير مدعوم" }
             require(manifest.getString("package") == context.packageName)
             val hashes = manifest.getJSONObject("sha256")
-            require(hashes.has("database/$dbName")) { "ملف النسخة يفتقد قاعدة البيانات" }
+            require(hashes.has(BackupFormat.DATABASE_ENTRY)) { "ملف النسخة يفتقد قاعدة البيانات" }
+            require(hashes.has("preferences/settings.xml")) { "ملف النسخة يفتقد الإعدادات" }
             val names = hashes.keys().asSequence().toSet()
             require(names + "manifest.json" == seen) { "ملف النسخة ناقص أو يحتوي ملفات غير متوقعة" }
             names.forEach { name ->
@@ -252,17 +266,16 @@ class BackupManager(private val context: Context, private val database: AppDatab
                     "فشل التحقق من سلامة النسخة"
                 }
             }
-            val stagedDb = File(stage, "database/$dbName")
-            // Validate actual Room schema (including migrations), never trust an imported identity hash.
-            RestoreDatabaseValidator.validateAndMigrate(context, stagedDb)
+            val stagedDb = File(stage, BackupFormat.DATABASE_ENTRY)
+            // Validate the new Room schema, never trust an imported identity hash.
+            RestoreDatabaseValidator.validate(context, stagedDb)
             val stagedPrefs = File(stage, "preferences/settings.xml")
-            val validatedPrefs = if (stagedPrefs.isFile) RestoreSettingsValidator.canonicalXml(stagedPrefs) else null
+            val validatedPrefs = RestoreSettingsValidator.canonicalXml(stagedPrefs)
             SQLiteDatabase.openDatabase(stagedDb.path, null, SQLiteDatabase.OPEN_READWRITE).use { sqlite ->
-                for ((column, oldFolder) in listOf("photoPath" to "photos", "audioPath" to "custom_audio")) {
+                for (column in listOf("photoPath", "audioPath")) {
                     sqlite.rawQuery("SELECT id, $column FROM word_items WHERE $column IS NOT NULL", null).use { cursor ->
                         while (cursor.moveToNext()) {
-                            val oldPath = cursor.getString(1)
-                            val relative = if (formatVersion == 1) "$oldFolder/${File(oldPath).name}" else oldPath
+                            val relative = cursor.getString(1)
                             val parts = relative.split('/')
                             require(parts.size == 2 && parts[0] in folders && validMediaName(parts[1])) {
                                 "مسار مرفق غير صالح في النسخة"
@@ -285,7 +298,7 @@ class BackupManager(private val context: Context, private val database: AppDatab
             var closeAttempted = false
             try {
                 stagedDb.copyTo(File(incoming, "0"))
-                if (validatedPrefs != null) File(incoming, "5").writeText(validatedPrefs)
+                File(incoming, "5").writeText(validatedPrefs)
                 // Wait for pending apply() writes before moving the old preference files.
                 require(context.getSharedPreferences("settings", Context.MODE_PRIVATE).edit().commit()) {
                     "تعذّر حفظ الإعدادات الحالية"
@@ -294,8 +307,11 @@ class BackupManager(private val context: Context, private val database: AppDatab
                     val source = File(stage, "files/$folder")
                     if (source.isDirectory) require(source.copyRecursively(File(incoming, "${index + 3}")))
                 }
-                // Record which paths existed BEFORE changing anything. Atomic marker rename avoids
-                // an incomplete journal being interpreted as a valid recovery transaction.
+                // Close Room first: SQLite may checkpoint and remove WAL/SHM files.
+                // Journal only paths that actually remain available for moving.
+                closeAttempted = true
+                database.storage.retire()
+                database.close()
                 val existing = live.indices.filter { live[it].exists() }.joinToString(",")
                 val temp = File(state, "journal.tmp")
                 FileOutputStream(temp).use { stream ->
@@ -303,9 +319,6 @@ class BackupManager(private val context: Context, private val database: AppDatab
                     stream.fd.sync()
                 }
                 require(temp.renameTo(File(state, "journal"))) { "تعذّر بدء استرجاع آمن" }
-                closeAttempted = true
-                database.storage.retire()
-                database.close()
                 live.forEachIndexed { index, file ->
                     if (file.exists()) {
                         require(file.renameTo(File(previous, "$index"))) { "تعذّر نقل البيانات القديمة بأمان" }
@@ -346,7 +359,7 @@ class BackupManager(private val context: Context, private val database: AppDatab
     }
 
     private fun isAllowed(name: String): Boolean {
-        if (name == "manifest.json" || name == "database/my_words.db" || name == "preferences/settings.xml") return true
+        if (name == "manifest.json" || name == BackupFormat.DATABASE_ENTRY || name == "preferences/settings.xml") return true
         val parts = name.split('/')
         return parts.size == 3 && parts[0] == "files" && parts[1] in folders && validMediaName(parts[2])
     }
@@ -380,14 +393,14 @@ class BackupManager(private val context: Context, private val database: AppDatab
     }
 
     companion object {
-        private fun stateDir(context: Context) = File(context.noBackupFilesDir, "sawti_restore_journal")
-        private fun committedMarker(context: Context) = File(context.noBackupFilesDir, "sawti_restore_committed")
+        private fun stateDir(context: Context) = File(context.noBackupFilesDir, "sawti_foundation_restore_journal")
+        private fun committedMarker(context: Context) = File(context.noBackupFilesDir, "sawti_foundation_restore_committed")
         private fun livePaths(context: Context): List<File> {
-            val db = context.getDatabasePath("my_words.db")
+            val db = context.getDatabasePath(AppDatabase.NAME)
             return listOf(db, File(db.path + "-wal"), File(db.path + "-shm"),
                 File(context.filesDir, "photos"), File(context.filesDir, "custom_audio"),
                 File(context.applicationInfo.dataDir, "shared_prefs/settings.xml"),
-                // Append only: older journals use the first six indices.
+                // Keep these indices stable for every future foundation release.
                 File(context.applicationInfo.dataDir, "shared_prefs/settings.xml.bak"),
                 File(db.path + "-journal"))
         }
@@ -405,9 +418,9 @@ class BackupManager(private val context: Context, private val database: AppDatab
             if (File(state, "installed").exists()) {
                 try {
                     // This is called before any application Room/SharedPreferences consumer.
-                    RestoreDatabaseValidator.validateAndMigrate(context, context.getDatabasePath("my_words.db"))
+                    RestoreDatabaseValidator.validate(context, context.getDatabasePath(AppDatabase.NAME))
                     val settings = File(context.applicationInfo.dataDir, "shared_prefs/settings.xml")
-                    if (settings.exists()) RestoreSettingsValidator.canonicalXml(settings)
+                    RestoreSettingsValidator.canonicalXml(settings)
                 } catch (_: Exception) {
                     // Bad installed data never destroys the retained original. No app stores
                     // have been opened yet, so the normal startup can safely use the originals.
@@ -456,4 +469,3 @@ class BackupManager(private val context: Context, private val database: AppDatab
         }
     }
 }
-

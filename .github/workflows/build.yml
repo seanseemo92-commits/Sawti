@@ -5,12 +5,24 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      full_build:
+        description: 'Also build debug/release APKs and run Android lint'
+        type: boolean
+        default: false
 permissions:
   contents: read
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   android:
     runs-on: ubuntu-latest
     timeout-minutes: 35
+    env:
+      # Fast path (PRs): validation + unit tests + schema check only.
+      # Full path (push to main, or manual dispatch with full_build): also APKs and lint.
+      FULL_BUILD: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.full_build) }}
     steps:
       - name: Checkout Sawti source
         uses: actions/checkout@v4
@@ -23,15 +35,18 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
+      - name: Validate release metadata
+        run: python3 scripts/verify_release.py
       - name: Validate cleaned public-source baseline
         shell: bash
         run: |
           set -euo pipefail
           test -f app/build.gradle.kts
-          test -f app/src/main/java/com/sawti/data/db/LegacyFamilyCleanup.kt
+          test ! -f app/src/main/java/com/sawti/data/db/LegacyFamilyCleanup.kt
           test ! -f app/src/main/java/com/sawti/data/db/LegacyFamilyDefaults.kt
           test -f README.md
-          grep -q 'versionName = "4.6.0"' app/build.gradle.kts
+          grep -q 'versionName = "1.0"' app/build.gradle.kts
+          grep -q 'versionCode = 1' app/build.gradle.kts
           grep -q 'rootProject.name = "Sawti"' settings.gradle.kts
           grep -q '<string name="app_name">صوتي</string>' app/src/main/res/values/strings.xml
           grep -q 'android:allowBackup="false"' app/src/main/AndroidManifest.xml
@@ -74,20 +89,58 @@ jobs:
             echo "::error::Signing key found in source; aborting"
             exit 1
           fi
-      - name: Compile debug and R8 release, unit tests and Android lint
-        run: gradle --no-daemon :app:assembleDebug :app:assembleRelease :app:testDebugUnitTest :app:lintRelease
-      - name: Upload test APK
+      - name: Compile and run unit tests (fast path)
+        run: gradle --no-daemon :app:testDebugUnitTest
+      - name: Check exported foundation schema
+        run: |
+          test -s app/schemas/com.sawti.data.db.AppDatabase/1.json
+          git diff --exit-code -- app/schemas
+      - name: Build debug and R8 release APKs and run Android lint (full path only)
+        if: ${{ env.FULL_BUILD == 'true' }}
+        run: gradle --no-daemon :app:assembleDebug :app:assembleRelease :app:lintRelease
+      - name: Summarize pending speech reviews
+        run: |
+          python3 - <<'PYREPORT'
+          import csv, os
+          from collections import Counter
+          path = 'app/build/reports/speech-review.tsv'
+          if not os.path.exists(path):
+              print('Speech review report was not generated in this run.')
+              raise SystemExit(0)
+          with open(path, encoding='utf-8') as report:
+              rows = list(csv.DictReader(report, delimiter='\t'))
+          print(f'Speech review rows: {len(rows)}')
+          for dialect in sorted({row['dialect'] for row in rows}):
+              counts = Counter(row['source'] for row in rows if row['dialect'] == dialect)
+              print(dialect, dict(counts))
+          print('Native-speaker review and device TTS listening: PENDING for every row.')
+          PYREPORT
+      - name: Upload validation and speech review reports
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Sawti-v4.6.0-debug-ci
+          name: Sawti-validation-reports
+          path: |
+            app/build/test-results/testDebugUnitTest/
+            app/build/reports/tests/testDebugUnitTest/
+            app/build/reports/lint-results-release.*
+            app/build/reports/speech-review.tsv
+            app/schemas/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Upload test APK (full path only)
+        if: ${{ env.FULL_BUILD == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sawti-v1.0-debug-ci
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 7
-      - name: Upload unsigned R8 Release APK for validation only
+      - name: Upload unsigned R8 Release APK for validation only (full path only)
+        if: ${{ env.FULL_BUILD == 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: Sawti-v4.6.0-unsigned-release-ci
+          name: Sawti-v1.0-unsigned-release-ci
           path: app/build/outputs/apk/release/app-release-unsigned.apk
           if-no-files-found: error
           retention-days: 7
-

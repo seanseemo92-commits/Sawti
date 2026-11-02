@@ -24,7 +24,7 @@ fun drawableResourceId(resourceName: String?): Int? {
 }
 
 fun categoryDrawableName(categoryId: String): String? = when (categoryId) {
-    "libyan" -> "img_cat_cuisine"
+    "cuisine" -> "img_cat_cuisine"
     "family" -> "img_cat_family"
     "daily" -> "img_cat_daily"
     "routine" -> "img_cat_routine"

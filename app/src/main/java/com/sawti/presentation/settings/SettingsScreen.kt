@@ -42,6 +42,7 @@ import com.sawti.domain.model.TextSize
 import com.sawti.domain.model.ThemeMode
 import com.sawti.domain.model.TouchDwell
 import com.sawti.presentation.theme.AppBarBlue
+import com.sawti.presentation.theme.LocalIsDark
 import com.sawti.presentation.theme.cardElevation
 
 /** Caregiver-only display settings: theme, card text size and Performance Mode. */
@@ -74,10 +75,7 @@ fun SettingsRoute(viewModel: SettingsViewModel) {
         )
     }
     Column(
-        Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
+        Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(18.dp),
     ) {
         SettingBlock("النسخ الاحتياطي والاسترجاع") {
@@ -124,11 +122,7 @@ fun SettingsRoute(viewModel: SettingsViewModel) {
         SettingBlock("زمن تثبيت اللمس") {
             Text("لتخفيف الضغطات غير المقصودة الناتجة عن ارتعاش اليد: اضغط مع الاستمرار على البطاقة قبل رفع الإصبع. السحب للتمرير يلغي الضغطة.")
             ChoiceRow(
-                options = listOf(
-                    TouchDwell.OFF to "معطل",
-                    TouchDwell.NORMAL to "عادي 300ms",
-                    TouchDwell.LONG to "طويل 500ms",
-                ),
+                options = listOf(TouchDwell.OFF to "معطل", TouchDwell.NORMAL to "عادي 300ms", TouchDwell.LONG to "طويل 500ms"),
                 selected = settings.touchDwell,
                 onSelect = viewModel::setTouchDwell,
             )
@@ -146,23 +140,15 @@ fun SettingsRoute(viewModel: SettingsViewModel) {
         }
         SettingBlock(stringResource(R.string.settings_haptics)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    stringResource(R.string.settings_haptics_desc),
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.weight(1f),
-                )
+                Text(stringResource(R.string.settings_haptics_desc), fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.weight(1f))
                 Switch(checked = settings.hapticsEnabled, onCheckedChange = viewModel::setHapticsEnabled)
             }
         }
         SettingBlock(stringResource(R.string.settings_performance)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    stringResource(R.string.settings_performance_desc),
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.weight(1f),
-                )
+                Text(stringResource(R.string.settings_performance_desc), fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.weight(1f))
                 Switch(checked = settings.performanceMode, onCheckedChange = viewModel::setPerformanceMode)
             }
         }
@@ -173,7 +159,7 @@ fun SettingsRoute(viewModel: SettingsViewModel) {
 private fun SettingBlock(title: String, content: @Composable () -> Unit) {
     Surface(shape = RoundedCornerShape(24.dp), color = MaterialTheme.colorScheme.surface, shadowElevation = cardElevation(2.dp)) {
         Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(title, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold, color = AppBarBlue)
+            Text(title, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colorScheme.onSurface)
             content()
         }
     }
@@ -181,18 +167,17 @@ private fun SettingBlock(title: String, content: @Composable () -> Unit) {
 
 @Composable
 private fun <T> ChoiceRow(options: List<Pair<T, String>>, selected: T, onSelect: (T) -> Unit) {
+    val dark = LocalIsDark.current
+    val selectedContainer = if (dark) MaterialTheme.colorScheme.primaryContainer else AppBarBlue
+    val selectedContent = if (dark) MaterialTheme.colorScheme.onPrimaryContainer else Color.White
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         options.forEach { (value, label) ->
             val on = value == selected
             Surface(
                 shape = RoundedCornerShape(22.dp),
-                color = if (on) AppBarBlue else MaterialTheme.colorScheme.surfaceVariant,
-                contentColor = if (on) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(48.dp)
-                    .clip(RoundedCornerShape(22.dp))
-                    .clickable { onSelect(value) },
+                color = if (on) selectedContainer else MaterialTheme.colorScheme.surfaceVariant,
+                contentColor = if (on) selectedContent else MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.weight(1f).height(48.dp).clip(RoundedCornerShape(22.dp)).clickable { onSelect(value) },
             ) {
                 Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
                     Text(label, fontSize = 15.sp, fontWeight = FontWeight.ExtraBold, maxLines = 1)
@@ -201,4 +186,3 @@ private fun <T> ChoiceRow(options: List<Pair<T, String>>, selected: T, onSelect:
         }
     }
 }
-

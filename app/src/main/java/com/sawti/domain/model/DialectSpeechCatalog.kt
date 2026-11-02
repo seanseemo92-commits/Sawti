@@ -1,284 +1,59 @@
 package com.sawti.domain.model
 
-/** Spoken phonetics separate from user-visible labels and persisted semantic image keys.
- * High-risk colloquial terms are manually specified. Remaining words are fully marked
- * by a deterministic approximation, which needs a native-speaker/engine listening pass.
- */
+/** A missing speech candidate is explicit; never fill it with guessed vowels. */
+data class DialectForm(
+    val displayText: String,
+    val speechText: String? = null,
+    val phonemicCue: String? = null,
+)
+
+enum class SpeechSource { CANONICAL, EXPLICIT_DIALECT, REGIONAL, UNVOCALIZED_FALLBACK, USER }
+
+data class SpeechForm(
+    val displayText: String,
+    val speechText: String,
+    val phonemicCue: String,
+    val source: SpeechSource,
+) {
+    // There is no recorded native-speaker or device listening evidence for this release.
+    // These flags must not be derived from diacritic coverage or unit-test success.
+    val needsNativeReview: Boolean get() = source != SpeechSource.USER
+    val needsTtsListening: Boolean get() = source != SpeechSource.USER
+}
+
 object DialectSpeechCatalog {
-    private val curated: Map<ArabicDialect, Map<String, String>> = mapOf(
-        ArabicDialect.LIBYAN to mapOf(
-            "بيض" to "دَحْيْ",
-            "حوت (سمك)" to "حُوتْ",
-            "خبزة" to "خُبْزَهْ",
-            "مية" to "إِمِّيَهْ",
-            "نبي مية" to "نَبِّي إِمِّيَهْ",
-            "شاهي" to "شَاهِيْ",
-            "مكرونة" to "مَكَرُونَهْ",
-            "زبادي" to "زْبَادِيْ",
-            "شوربة" to "شُورْبَهْ",
-            "عصير" to "عَصِيرْ",
-            "كرموس" to "كَرْمُوسْ",
-            "إجاص" to "إِجَّاصْ",
-            "مندرين" to "مَنْدَرِينْ",
-            "بازيليه" to "بَازِيلْيَا",
-            "قرعة" to "قَرْعَهْ",
-            "قرنبيط" to "قَرْنَبِيطْ",
-            "قطوسة" to "قَطُّوسَهْ",
-            "سردوك" to "سَرْدُوكْ",
-            "قنية" to "قْنِيَّهْ",
-            "كلب" to "كَلْبْ",
-            "حصان" to "حْصَانْ",
-            "شخاشير" to "شْخَاشِيرْ",
-            "سبتة" to "سَبْتَهْ",
-            "كندرة" to "كُنْدْرَهْ",
-            "كندرة كعب" to "كُنْدْرَهْ كَعْبْ",
-            "طاقية" to "طَاقِيَّهْ",
-            "فم" to "فَمْ",
-            "خشم" to "خَشْمْ",
-            "ودن" to "وِدْنْ",
-            "لسان" to "لْسَانْ",
-            "سنة" to "سْنُونْ",
-            "صبع" to "صُبُعْ",
-            "ركبة" to "رُكْبَهْ",
-            "رقبة" to "رَقَبَهْ",
-            "نبي شاهي" to "نَبِّي شَاهِيْ",
-            "نبي دوايا" to "نَبِّي دَوَايَا",
-            "نبي نرتاح" to "نَبِّي نِرْتَاحْ",
-            "نبي الحمام" to "نَبِّي الْحَمَّامْ",
-            "عدّل لي المخدة" to "عَدِّلْ لِي الْمَخَدَّهْ",
-            "راسي يوجع" to "رَاسِي يُوجَعْ",
-            "سقعانة" to "سَقْعَانَهْ",
-            "نقعمز" to "نْقَعْمَزْ",
-            "نوقف" to "نُوقَفْ",
-            "ناكل" to "نَاكُلْ",
-            "نشرب" to "نِشْرَبْ",
-            "نغسل" to "نْغْسِلْ",
-            "ندوي" to "نْدْوِيْ",
-            "نسكر" to "نْسَكِّرْ",
-            "نفتح" to "نِفْتَحْ",
-            "نصلي" to "نْصَلِّيْ",
-            "نلبس" to "نِلْبَسْ",
-            "نشوف" to "نْشُوفْ",
-        ),
-        ArabicDialect.TUNISIAN to mapOf(
-            "بيض" to "عْظَامْ",
-            "حوت (سمك)" to "حُوتْ",
-            "شاهي" to "تَايْ",
-            "كرموس" to "كَرْمُوسْ",
-            "إجاص" to "أَنْجَاصْ",
-            "بازيليه" to "جِلْبَانَهْ",
-            "قرنبيط" to "شَفْلُورْ",
-            "قطوسة" to "قَطُّوسَهْ",
-            "سردوك" to "سَرْدُوكْ",
-            "قنية" to "قْنِيَّهْ",
-            "شخاشير" to "كَلْسِيطَهْ",
-            "كندرة" to "سْبَادْرِيْ",
-            "طاقية" to "كَاسْكِيطَهْ",
-            "نبي مية" to "نْحِبْ مَاءْ",
-            "نبي شاهي" to "نْحِبْ تَايْ",
-            "نبي دوايا" to "حَاجْتِي بْدْوَايَا",
-            "نقعمز" to "نُقْعُدْ",
-            "ندوي" to "نِحْكِيْ",
-            "نشوف" to "نْغْزُرْ",
-            "نسكر" to "نْسَكِّرْ",
-        ),
-        ArabicDialect.ALGERIAN to mapOf(
-            "بيض" to "وْلَادْ الْجَاجْ",
-            "حوت (سمك)" to "حُوتْ",
-            "شاهي" to "تَايْ",
-            "قرعة" to "كَابُويَا",
-            "طماطم" to "طْمَاطِيشْ",
-            "بازيليه" to "جِلْبَانَهْ",
-            "مندرين" to "مَنْدَارِينْ",
-            "عصفور" to "زَاوْشْ",
-            "شخاشير" to "تْقَاشِرْ",
-            "كندرة" to "بَسْكِيطْ",
-            "طاقية" to "كَاسْكِيطَهْ",
-            "نبي مية" to "رَانِي حَابْ مَاءْ",
-            "نبي دوايا" to "بَاغِي دْوَايَا",
-            "نقعمز" to "نُقْعُدْ",
-            "ندوي" to "نْهْدَرْ",
-            "نسكر" to "نْبَلَّعْ",
-            "نشوف" to "نْشُوفْ",
-        ),
-        ArabicDialect.MOROCCAN to mapOf(
-            "بيض" to "بَيْضْ",
-            "حوت (سمك)" to "حُوتْ",
-            "شاهي" to "أَتَايْ",
-            "طماطم" to "مَطِيشَهْ",
-            "إجاص" to "بُوعْوَيْدْ",
-            "زبادي" to "دَانُونْ",
-            "دجاج" to "فَرُّوجْ",
-            "شخاشير" to "تْقَاشِرْ",
-            "سبتة" to "سَمْطَهْ",
-            "كندرة" to "سْبَرْدِيلَهْ",
-            "نظارة" to "نْضَاضْرْ",
-            "نبي شاهي" to "بْغِيتْ أَتَايْ",
-            "نبي دوايا" to "بْغِيتْ دْوَايَا",
-            "نقعمز" to "نْجْلْسْ",
-            "ندوي" to "نْهْضَرْ",
-            "نسكر" to "نْسَدْ",
-            "نشوف" to "نْشُوفْ",
-        ),
-        ArabicDialect.EGYPTIAN to mapOf(
-            "بيض" to "بَيْضْ",
-            "حوت (سمك)" to "سَمَكْ",
-            "خبزة" to "عِيشْ",
-            "شاهي" to "شَايْ",
-            "مية" to "مَيَّهْ",
-            "طماطم" to "قُوطَهْ",
-            "بازيليه" to "بَسِلَّهْ",
-            "مندرين" to "يُوسْفَنْدِيْ",
-            "إجاص" to "كُمِّتْرَى",
-            "قطوسة" to "قِطَّهْ",
-            "سردوك" to "دِيكْ",
-            "شخاشير" to "شَرَبَاتْ",
-            "كندرة" to "كُوتْشِيْ",
-            "طاقية" to "طَاقِيَّهْ",
-            "نبي مية" to "عَايِزْ مَيَّهْ",
-            "نبي دوايا" to "عَايِزْ دَوَا",
-            "نقعمز" to "أَقْعُدْ",
-            "ندوي" to "أَتْكَلِّمْ",
-            "نشوف" to "أَبُصْ",
-            "نسكر" to "أَقْفِلْ",
-            "نلبس" to "أَلْبِسْ",
-        ),
-        ArabicDialect.SYRIAN to mapOf(
-            "بيض" to "بَيْضْ",
-            "حوت (سمك)" to "سَمَكْ",
-            "خبزة" to "خُبِزْ",
-            "شاهي" to "شَايْ",
-            "مية" to "مَيّْ",
-            "طماطم" to "بَنْدُورَهْ",
-            "بازيليه" to "بَازِيلَّا",
-            "مندرين" to "كِلْمَنْتِينَا",
-            "إجاص" to "نْجَاصْ",
-            "قطوسة" to "بِسَّهْ",
-            "شخاشير" to "كِلْسَاتْ",
-            "كندرة" to "بَوْطْ",
-            "سبتة" to "قَشَاطْ",
-            "نبي مية" to "بَدِّي مَيّْ",
-            "نبي دوايا" to "بَدِّي دَوَايْ",
-            "نقعمز" to "أَقْعُدْ",
-            "ندوي" to "أَحْكِيْ",
-            "نشوف" to "أَتْطَلَّعْ",
-            "نسكر" to "سَكِّرْ",
-        ),
-        ArabicDialect.IRAQI to mapOf(
-            "بيض" to "بَيْضْ",
-            "حوت (سمك)" to "سِمَتْشْ",
-            "خبزة" to "خُبُزْ",
-            "شاهي" to "تْشَايْ",
-            "مية" to "مَايْ",
-            "طماطم" to "طَمَاطَهْ",
-            "بازيليه" to "بْزَالْيَا",
-            "مندرين" to "لَالَنْكِيْ",
-            "إجاص" to "عَرْمُوطْ",
-            "قطوسة" to "بْزُونَهْ",
-            "شخاشير" to "جْوَارِيبْ",
-            "كندرة" to "قُنْدَرَهْ",
-            "طاقية" to "شَفَقَهْ",
-            "نظارة" to "مَنَاظِرْ",
-            "نبي مية" to "أَرِيدْ مَايْ",
-            "نبي دوايا" to "أَرِيدْ دَوَا",
-            "نقعمز" to "أَكْعُدْ",
-            "ندوي" to "أَحْتْشِيْ",
-            "نسكر" to "أَسِدْ",
-            "نشوف" to "أَبَاوِعْ",
-        ),
-        ArabicDialect.SAUDI to mapOf(
-            "بيض" to "بَيْضْ",
-            "حوت (سمك)" to "سِمَكْ",
-            "خبزة" to "خُبْزْ",
-            "شاهي" to "شَاهِيْ",
-            "مية" to "مَايْ",
-            "طماطم" to "طَمَاطْ",
-            "قلعاوي" to "سَنْطَرَهْ",
-            "قطوسة" to "قَطْوَهْ",
-            "شخاشير" to "دِلَاغَاتْ",
-            "كندرة" to "جُوتِيْ",
-            "طاقية" to "كَبُّوسْ",
-            "نبي مية" to "أَبِي مَايْ",
-            "نبي دوايا" to "أَبِي دَوَايْ",
-            "نقعمز" to "أَقْعُدْ",
-            "ندوي" to "أَسُولِفْ",
-            "نشوف" to "أَطَالِعْ",
-            "نسكر" to "أَصُكْ",
-        ),
-    )
-    private const val SUKUN = 'ْ'
-    private val shortVowels = setOf('َ','ُ','ِ')
-    private val tanween = mapOf('ً' to 'َ', 'ٌ' to 'ُ', 'ٍ' to 'ِ')
-    private val longVowels = setOf('ا','ى','آ')
-    private fun isMark(c: Char) = c in 'ً'..'ٟ' || c == 'ٰ'
-    private fun isLetter(c: Char) = c in 'ء'..'ي' || c in "چگڤپ"
-    // Arabic medial ي after kasra and و after damma carry the preceding long vowel.
-    // They do not accept an extra short vowel; compare شْخَاشِيرْ and حُوتْ.
-    private fun medialCarrier(units: List<Pair<Char, String>>, index: Int): Boolean {
-        if (index <= 0 || index >= units.lastIndex) return false
-        val (letter, marks) = units[index]
-        val before = units[index - 1].second
-        return marks.isEmpty() &&
-            ((letter == 'ي' && 'ِ' in before) || (letter == 'و' && 'ُ' in before))
-    }
-
-
-    fun spoken(original: String, localized: String, originalPrompt: String, dialect: ArabicDialect): String {
-        val source = curated[dialect]?.get(original)
-            ?: if (localized == original) originalPrompt else localized
-        return fullyMark(source)
-    }
-    private fun clusters(raw: String): List<Pair<Char, String>> {
-        val result = mutableListOf<Pair<Char, String>>()
-        for (c in raw) {
-            if (isMark(c) && result.isNotEmpty()) {
-                val pair = result.removeAt(result.lastIndex)
-                result += pair.first to (pair.second + c)
-            } else if (isLetter(c)) result += c to ""
+    fun resolve(value: WordItem, dialect: ArabicDialect): SpeechForm {
+        val item = value.forEditing()
+        val key = item.semanticKey
+        fun custom(flag: Int) = item.customTextFields and flag != 0
+        val protectedSpeech = custom(CardDetails.SPEECH) || custom(CardDetails.LABEL)
+        val builtIn = key != null && !item.categoryId.startsWith("custom_")
+        val regional = if (builtIn && dialect != ArabicDialect.STANDARD)
+            RegionalDishesCatalog.variant(key!!, dialect) else null
+        val variant = if (builtIn && dialect != ArabicDialect.STANDARD)
+            DialectCatalog.words[key]?.get(dialect) else null
+        val visible = if (custom(CardDetails.LABEL)) item.displayText
+            else regional?.displayText ?: variant?.displayText ?: item.displayText
+        val source = when {
+            !builtIn || protectedSpeech -> SpeechSource.USER
+            regional != null -> SpeechSource.REGIONAL
+            variant?.speechText != null -> SpeechSource.EXPLICIT_DIALECT
+            visible == item.displayText -> SpeechSource.CANONICAL
+            else -> SpeechSource.UNVOCALIZED_FALLBACK
         }
-        return result
-    }
-    /** Checks all Arabic consonant letters and pause endings; no assertions about natural prosody. */
-    fun isFullyMarked(speech: String): Boolean {
-        if (speech.isBlank()) return false
-        for (part in speech.split(Regex("\\s+"))) {
-            if (part.isBlank()) continue
-            val units = clusters(part)
-            if (units.isEmpty()) return false
-            if (units.withIndex().any { (i,unit) ->
-                    val (letter,marks) = unit
-                    letter !in longVowels && !medialCarrier(units, i) &&
-                        marks.none { it in shortVowels || it == SUKUN }
-                }) return false
-            val ending = units.last()
-            if (ending.first !in longVowels && SUKUN !in ending.second) return false
+        val speech = when (source) {
+            SpeechSource.USER, SpeechSource.CANONICAL -> item.ttsPrompt
+            SpeechSource.REGIONAL -> regional!!.ttsPrompt
+            SpeechSource.EXPLICIT_DIALECT -> variant!!.speechText!!
+            SpeechSource.UNVOCALIZED_FALLBACK -> visible
         }
-        return true
-    }
-    /** Long alif/aleph vowel carriers remain unmarked; final ة is spoken هْ. */
-    fun fullyMark(input: String): String {
-        val raw = input.substringBefore(" / ").replace(Regex("\\([^)]*\\)"), "")
-            .replace("ـ", "").replace("چ","تْش").replace("گ","ج")
-            .trim().replace(Regex("\\s+"), " ")
-        if (raw.isEmpty()) return ""
-        return raw.split(' ').joinToString(" ") { token ->
-            buildString {
-                val parts = clusters(token)
-                parts.forEachIndexed { index, (original, existing) ->
-                    val final = index == parts.lastIndex
-                    val c = if (final && original == 'ة') 'ه' else original
-                    val marks = existing.map { tanween[it] ?: it }.toMutableList()
-                    if (final && c !in longVowels) {
-                        marks.removeAll { it in shortVowels || it == SUKUN }
-                        marks += SUKUN
-                    } else if (c !in longVowels && !medialCarrier(parts, index) &&
-                        marks.none { it in shortVowels || it == SUKUN }) {
-                        marks += 'َ'
-                    }
-                    append(c)
-                    marks.forEach { append(it) }
-                }
-            }
+        val cue = when {
+            custom(CardDetails.CUE) || protectedSpeech || !builtIn -> item.phonemicCue
+            source == SpeechSource.CANONICAL -> item.phonemicCue
+            source == SpeechSource.REGIONAL -> regional!!.phonemicCue
+            source == SpeechSource.UNVOCALIZED_FALLBACK -> ""
+            else -> variant?.phonemicCue ?: PhonemicCue.derive(speech)
         }
+        return SpeechForm(visible, speech, cue, source)
     }
 }

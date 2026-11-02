@@ -7,17 +7,16 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 
 class SeedExtrasConsistencyTest {
-    @Test fun everyConfiguredPromptAndFavoriteMatchesCurrentSeed() {
-        val keys = WordSeed.itemEntities().map { "${it.categoryId}/${it.displayText}" }.toSet()
+    @Test fun everyConfiguredPromptMatchesCurrentSeed() {
+        val keys = WordSeed.itemEntities().mapNotNull { it.semanticKey }.toSet()
         val stale = SeedExtras.configuredKeys() - keys
         assertTrue("Old key(s) found in SeedExtras: $stale", stale.isEmpty())
     }
 
-    @Test fun freshInstallKeepsLibyanDailyFavoriteAndValidHint() {
+    @Test fun freshInstallKeepsFushaSentenceHint() {
         val shahi = WordSeed.itemEntities().single {
-            it.categoryId == "daily" && it.displayText == "نبي شاهي"
+            it.semanticKey == "request.tea"
         }
-        assertTrue(shahi.isFavorite)
         assertEquals("نَشْرَبُ الـ...", shahi.sentencePrompt)
     }
 
@@ -26,7 +25,7 @@ class SeedExtrasConsistencyTest {
             assertNull("Conjugated verb should not have a noun-cloze hint", action.sentencePrompt)
         }
         val melon = WordSeed.itemEntities().single {
-            it.categoryId == "fruits" && it.displayText == "قلعاوي"
+            it.semanticKey == "fruit.melon"
         }
         assertEquals("🍈", melon.emoji)
         assertFalse(melon.emoji.contains("?"))

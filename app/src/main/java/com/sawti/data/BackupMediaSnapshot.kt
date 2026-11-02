@@ -24,7 +24,7 @@ internal object BackupMediaSnapshot {
                         while (cursor.moveToNext()) {
                             val source = File(cursor.getString(1)).canonicalFile
                             require(source.parentFile?.parentFile == root &&
-                                source.parentFile?.name in setOf("photos", "custom_audio", "recordings") &&
+                                source.parentFile?.name in setOf("photos", "custom_audio") &&
                                 source.isFile && source.length() > 0L) {
                                 "صورة أو تسجيل مرتبط ببطاقة غير متاح في مساحة التطبيق؛ لم تُنشأ نسخة ناقصة"
                             }

@@ -1,53 +1,45 @@
 package com.sawti.domain.model
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
+import com.sawti.data.db.WordSeed
+import com.sawti.data.db.toDomain
+import org.junit.Assert.*
 import org.junit.Test
 
 class WordImageCatalogTest {
-    private fun card(category: String, label: String): WordItem = WordItem(
-        id = 88L, categoryId = category, subgroup = "", displayText = label,
-        ttsPrompt = label, phonemicCue = "", sentencePrompt = null,
-        isFavorite = false, audioPath = null, photoPath = null, phone = "", emoji = "",
-        semanticKey = WordImageCatalog.keyForSeed(category, label),
-    )
+    private fun card(key: String) = WordSeed.itemEntities().single { it.semanticKey == key }.toDomain()
 
-    @Test fun originallyVocalizedLabelsKeepTheirSemanticImageKeys() {
-        // "عدّل" has a shadda in the seed, while the lookup strips harakat.
-        // Normalize BOTH the alias map keys and the incoming label before lookup.
-        assertEquals("word_adjust_pillow", WordImageCatalog.keyForSeed("daily", "عدّل لي المخدة"))
-        assertEquals("word_adjust_pillow", WordImageCatalog.keyForSeed("daily", "عدل لي المخدة"))
+    @Test fun distinctConceptsShareAnAssetWithoutSharingIdentity() {
+        val request = card("request.water")
+        val water = card("food.water")
+        assertNotEquals(request.semanticKey, water.semanticKey)
+        assertEquals("word_water", WordImageCatalog.imageFor(request))
+        assertEquals(WordImageCatalog.imageFor(request), WordImageCatalog.imageFor(water))
     }
 
-    @Test fun localizedCatsAlwaysKeepTheirImageKey() {
-        val original = card("animals", "قطوسة")
-        assertEquals("word_cat", original.semanticKey)
-        for (dialect in ArabicDialect.entries) {
+    @Test fun changingCaptionOrSpeechNeverRetargetsImage() {
+        val original = card("animal.cat")
+        val renamed = original.copy(displayText = "ماء", ttsPrompt = "مَاء", customTextFields = 15)
+        assertEquals("word_cat", WordImageCatalog.imageFor(renamed))
+        for (dialect in ArabicDialect.entries)
             assertEquals("word_cat", WordImageCatalog.imageFor(DialectCatalog.localize(original, dialect)))
-        }
     }
 
-    @Test fun localizedSharedVocabularyKeepsItsPhotos() {
-        for ((category, text, key) in listOf(
-            Triple("food", "خبزة", "word_bread"),
-            Triple("body", "خشم", "word_nose"),
-            Triple("actions", "ندوي", "word_speak"),
-            Triple("vegetables", "قرعة", "word_pumpkin"),
-            Triple("fruits", "دلاع", "word_watermelon"),
-        )) for (dialect in ArabicDialect.entries) {
-            assertEquals(key, WordImageCatalog.imageFor(DialectCatalog.localize(card(category, text), dialect)))
-        }
+    @Test fun matchingCaptionCannotBorrowAnUnrelatedImage() {
+        val custom = card("animal.cat").copy(categoryId = "custom_example", semanticKey = null)
+        assertNull(WordImageCatalog.imageFor(custom))
+        assertNull(WordImageCatalog.imageFor(custom.copy(semanticKey = "word_cat")))
+        assertNull(WordImageCatalog.imageFor(custom.copy(semanticKey = "unknown.concept")))
     }
 
-    @Test fun regionalCuisineIsIsolated() {
-        assertNull(WordImageCatalog.keyForSeed(
-            "libyan", "كسكسي بالحوت", RegionalDishesCatalog.subgroupFor(ArabicDialect.TUNISIAN),
-        ))
-        assertEquals("word_couscous_fish", WordImageCatalog.keyForSeed("libyan", "كسكسي بالحوت"))
+    @Test fun regionalDishesNeverBorrowPhotosByTheirNames() {
+        assertEquals("word_couscous_fish", WordImageCatalog.imageFor(card("dish.couscous_fish")))
+        assertNull(WordImageCatalog.imageFor(card("dish.tunisian.couscous_fish")))
+        assertNull(WordImageCatalog.imageFor(card("family.father")))
     }
 
-    @Test fun customAndFamilyCardsDoNotBorrowBuiltInPictures() {
-        assertNull(WordImageCatalog.keyForSeed("custom_test", "قطوسة"))
-        assertNull(WordImageCatalog.keyForSeed("family", "قطوسة"))
+    @Test fun imageMapHasNoOrphanConceptReferences() {
+        val keys = WordSeed.itemEntities().mapNotNull { it.semanticKey }.toSet()
+        assertTrue(keys.containsAll(WordImageCatalog.configuredKeys()))
+        assertEquals(201, WordImageCatalog.configuredKeys().size)
     }
 }

@@ -33,7 +33,6 @@ import androidx.compose.material3.MaterialTheme
 import com.sawti.presentation.theme.cardElevation
 import com.sawti.R
 import com.sawti.domain.model.ProgressSummary
-import com.sawti.presentation.theme.AppBarBlue
 
 private val Green = Color(0xFF2E7D32)
 private val Orange = Color(0xFFE65100)
@@ -50,33 +49,26 @@ fun ProgressRoute(viewModel: ProgressViewModel) {
 fun ProgressScreen(summary: ProgressSummary, onClear: () -> Unit) {
     var confirmReset by remember { mutableStateOf(false) }
     val hasData = summary.recallAttempts > 0 || summary.choiceAttempts > 0
-
     Column(
-        Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
+        Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         Text(stringResource(R.string.progress_private), fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
-
         if (!hasData) {
             Text(stringResource(R.string.progress_empty), fontSize = 18.sp, modifier = Modifier.padding(vertical = 24.dp))
         } else {
             SectionTitle(stringResource(R.string.progress_naming_title))
-            StatCard(stringResource(R.string.progress_attempts), summary.recallAttempts.toString(), AppBarBlue)
+            StatCard(stringResource(R.string.progress_attempts), summary.recallAttempts.toString(), MaterialTheme.colorScheme.primary)
             val selfPercent = if (summary.recallAttempts > 0) summary.selfRecalled * 100 / summary.recallAttempts else 0
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 StatCard(
                     stringResource(R.string.progress_self),
                     "${summary.selfRecalled}  (${stringResource(R.string.progress_percent, selfPercent)})",
-                    Green,
-                    Modifier.weight(1f),
+                    Green, Modifier.weight(1f),
                 )
                 StatCard(stringResource(R.string.progress_cued), summary.cued.toString(), Orange, Modifier.weight(1f))
             }
             StatCard(stringResource(R.string.progress_shown), summary.shown.toString(), Slate)
-
             if (summary.cuedWords.isNotEmpty()) {
                 SectionTitle(stringResource(R.string.progress_cued_words))
                 Surface(shape = RoundedCornerShape(20.dp), color = MaterialTheme.colorScheme.surface, shadowElevation = cardElevation(2.dp)) {
@@ -90,7 +82,6 @@ fun ProgressScreen(summary: ProgressSummary, onClear: () -> Unit) {
                     }
                 }
             }
-
             if (summary.choiceAttempts > 0) {
                 SectionTitle(stringResource(R.string.progress_choice_title))
                 StatCard(
@@ -99,16 +90,11 @@ fun ProgressScreen(summary: ProgressSummary, onClear: () -> Unit) {
                     Green,
                 )
             }
-
-            OutlinedButton(
-                onClick = { confirmReset = true },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 52.dp),
-            ) { Text(stringResource(R.string.progress_reset), fontSize = 16.sp) }
+            OutlinedButton(onClick = { confirmReset = true }, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) {
+                Text(stringResource(R.string.progress_reset), fontSize = 16.sp)
+            }
         }
     }
-
     if (confirmReset) {
         AlertDialog(
             onDismissRequest = { confirmReset = false },
@@ -125,12 +111,14 @@ fun ProgressScreen(summary: ProgressSummary, onClear: () -> Unit) {
 
 @Composable
 private fun SectionTitle(text: String) {
-    Text(text, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold, color = AppBarBlue, modifier = Modifier.padding(top = 6.dp))
+    Text(text, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold,
+        color = MaterialTheme.colorScheme.onBackground, modifier = Modifier.padding(top = 6.dp))
 }
 
 @Composable
 private fun StatCard(label: String, value: String, color: Color, modifier: Modifier = Modifier) {
-    Surface(shape = RoundedCornerShape(20.dp), color = MaterialTheme.colorScheme.surface, shadowElevation = cardElevation(2.dp), modifier = modifier.fillMaxWidth()) {
+    Surface(shape = RoundedCornerShape(20.dp), color = MaterialTheme.colorScheme.surface,
+        shadowElevation = cardElevation(2.dp), modifier = modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp)) {
             Text(value, fontSize = 30.sp, fontWeight = FontWeight.ExtraBold, color = color)
             Text(label, fontSize = 15.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f))

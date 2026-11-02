@@ -1,5 +1,6 @@
 package com.sawti.data
 
+import androidx.room.withTransaction
 import com.sawti.data.db.ProgressRecordEntity
 import com.sawti.data.db.AppDatabase
 import com.sawti.domain.model.CuedWordStat
@@ -14,14 +15,14 @@ class RoomProgressRepository(private val db: AppDatabase) : ProgressRepository {
     private val dao = db.progressDao()
 
     override suspend fun log(wordId: Long, mode: PracticeMode, outcome: PracticeOutcome) = db.storage.cleanupIfActive {
-        dao.insertAttempt(
-            ProgressRecordEntity(
-                wordId = wordId,
-                timestamp = System.currentTimeMillis(),
-                mode = mode.name,
-                outcome = outcome.name,
-            )
-        )
+        db.withTransaction {
+            // A queued practice result may arrive after its custom card was deleted.
+            val reference = db.wordDao().wordById(wordId)?.id
+            dao.insertAttempt(ProgressRecordEntity(
+                wordId = reference, timestamp = System.currentTimeMillis(),
+                mode = mode.name, outcome = outcome.name,
+            ))
+        }
     }
 
     override fun observeSummary(): Flow<ProgressSummary> =

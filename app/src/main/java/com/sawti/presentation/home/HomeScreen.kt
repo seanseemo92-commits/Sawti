@@ -11,6 +11,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +21,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -52,51 +54,39 @@ import com.sawti.presentation.theme.paletteOf
 import com.sawti.presentation.theme.categoryBannerColor
 
 private val CardRadius = RoundedCornerShape(20.dp)
-private val BannerRadius = RoundedCornerShape(
-    topStart = 16.dp,
-    topEnd = 16.dp,
-    bottomStart = 20.dp,
-    bottomEnd = 20.dp,
-)
+private val BannerRadius = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 20.dp, bottomEnd = 20.dp)
 
 @Composable
-fun HomeScreen(
-    categories: List<Category>,
-    speakingItemId: Long?,
-    onOpen: (String) -> Unit,
-) {
+fun HomeScreen(categories: List<Category>, speakingItemId: Long?, onOpen: (String) -> Unit,
+    onRetry: () -> Unit = {}, isLoading: Boolean = true, loadError: String? = null, retryEnabled: Boolean = true) {
     if (categories.isEmpty()) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { 
-            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary) 
+        Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(24.dp),
+            contentAlignment = Alignment.Center) {
+            Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                if (isLoading && loadError == null) {
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                    Text(text = "جارٍ تحميل الأقسام...", style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
+                } else {
+                    Text(text = loadError ?: "لا توجد أقسام متاحة حالياً.", style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onBackground, textAlign = TextAlign.Center)
+                    Button(onClick = onRetry, enabled = retryEnabled && !isLoading) { Text("إعادة المحاولة") }
+                }
+            }
         }
         return
     }
-
     val columns = if (LocalConfiguration.current.screenWidthDp >= 600) 3 else 2
-
-    // شاشة نقية، خالية من التشتيت، وموجهة بالكامل للأقسام الكبيرة
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(columns),
-            modifier = Modifier.fillMaxSize(),
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+        LazyVerticalGrid(columns = GridCells.Fixed(columns), modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 32.dp),
-            horizontalArrangement = Arrangement.spacedBy(18.dp),
-            verticalArrangement = Arrangement.spacedBy(18.dp),
-        ) {
+            horizontalArrangement = Arrangement.spacedBy(18.dp), verticalArrangement = Arrangement.spacedBy(18.dp)) {
             itemsIndexed(categories, key = { _, category -> category.id }) { index, category ->
-                StaggeredCascade(
-                    row = index / columns,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    LuxuryCategoryCard(
-                        category = category,
+                StaggeredCascade(row = index / columns, modifier = Modifier.fillMaxWidth()) {
+                    LuxuryCategoryCard(category = category,
                         isSpeaking = speakingItemId != null && category.items.any { it.id == speakingItemId },
-                        onClick = { onOpen(category.id) }
-                    )
+                        onClick = { onOpen(category.id) })
                 }
             }
         }
@@ -104,111 +94,44 @@ fun HomeScreen(
 }
 
 @Composable
-private fun LuxuryCategoryCard(
-    category: Category,
-    isSpeaking: Boolean,
-    onClick: () -> Unit,
-) {
+private fun LuxuryCategoryCard(category: Category, isSpeaking: Boolean, onClick: () -> Unit) {
     val dark = LocalIsDark.current
     val performance = LocalPerformanceMode.current
     val palette = paletteOf(category.palette)
     val bannerColor = categoryBannerColor(category.id, palette.banner)
-    // An optional packaged image is used when WebP files are added to res/drawable.
     val resId = drawableResourceId(categoryDrawableName(category.id))
-
-    // The photographic stage touches the card edges; a soft border follows the outer shape.
     val surfaceColor = if (dark) Color(0xFF131B26) else bannerColor
     val borderColor = if (dark) Color.White.copy(alpha = 0.09f) else Color(0xFF0F172A).copy(alpha = 0.07f)
-
-    // أنيميشن هالة الصوت المشعة الحية (Bioluminescent Aura)
-    val infiniteTransition = rememberInfiniteTransition(label = "VoiceAuraTransition")
-    val auraGlow by infiniteTransition.animateFloat(
-        initialValue = 0.35f,
-        targetValue = 0.85f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(900, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "AuraPulse"
-    )
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(0.85f) // نسبة هندسية ذهبية ممتلئة وشامخة
-            .then(
-                if (isSpeaking && !performance) {
-                    Modifier.drawBehind {
-                        drawCircle(
-                            brush = Brush.radialGradient(
-                                colors = listOf(
-                                    bannerColor.copy(alpha = auraGlow * 0.39f),
-                                    bannerColor.copy(alpha = 0.12f),
-                                    Color.Transparent
-                                ),
-                                center = center,
-                                radius = size.maxDimension * 0.72f
-                            )
-                        )
-                    }
-                } else Modifier
-            )
-            .clip(CardRadius)
-            .bounceClick(onClick = onClick, accent = bannerColor)
-    ) {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            shape = CardRadius,
-            color = surfaceColor,
-            border = BorderStroke(
-                width = if (isSpeaking) 2.dp else 1.dp,
-                color = if (isSpeaking) bannerColor else borderColor
-            ),
-            shadowElevation = if (performance) 0.dp else if (dark) 4.dp else 8.dp,
-        ) {
-            // Keep the photo edge-to-edge behind a content-sized, rounded
-            // title banner. This removes the old 30%-height empty text area.
+    // Create a running transition only when the aura is actually rendered.
+    val auraGlow = if (isSpeaking && !performance) {
+        val transition = rememberInfiniteTransition(label = "VoiceAuraTransition")
+        val glow by transition.animateFloat(initialValue = 0.35f, targetValue = 0.85f,
+            animationSpec = infiniteRepeatable(animation = tween(900, easing = FastOutSlowInEasing), repeatMode = RepeatMode.Reverse),
+            label = "AuraPulse")
+        glow
+    } else 0f
+    Box(modifier = Modifier.fillMaxWidth().aspectRatio(0.85f).then(
+        if (isSpeaking && !performance) Modifier.drawBehind {
+            drawCircle(brush = Brush.radialGradient(
+                colors = listOf(bannerColor.copy(alpha = auraGlow * 0.39f), bannerColor.copy(alpha = 0.12f), Color.Transparent),
+                center = center, radius = size.maxDimension * 0.72f))
+        } else Modifier).clip(CardRadius).bounceClick(onClick = onClick, accent = bannerColor)) {
+        Surface(modifier = Modifier.fillMaxSize(), shape = CardRadius, color = surfaceColor,
+            border = BorderStroke(width = if (isSpeaking) 2.dp else 1.dp, color = if (isSpeaking) bannerColor else borderColor),
+            shadowElevation = if (performance) 0.dp else if (dark) 4.dp else 8.dp) {
             Box(modifier = Modifier.fillMaxSize()) {
-                val heroItem = category.items.firstOrNull { it.photoPath != null }
-                    ?: category.items.firstOrNull()
-
+                val heroItem = category.items.firstOrNull { it.photoPath != null } ?: category.items.firstOrNull()
                 if (resId != null) {
-                    Image(
-                        painter = painterResource(resId),
-                        contentDescription = category.title,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize(),
-                    )
+                    Image(painter = painterResource(resId), contentDescription = category.title,
+                        contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
                 } else if (heroItem != null) {
-                    CardImageContent(
-                        item = heroItem,
-                        accent = palette.banner,
-                        isCurrentlyPlaying = isSpeaking,
-                        modifier = Modifier.fillMaxSize(),
-                        crop = true,
-                        fullBleed = true,
-                    )
+                    CardImageContent(item = heroItem, accent = palette.banner, isCurrentlyPlaying = isSpeaking,
+                        modifier = Modifier.fillMaxSize(), crop = true, fullBleed = true)
                 }
-
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .fillMaxWidth()
-                        .clip(BannerRadius)
-                        .background(bannerColor)
-                        .padding(horizontal = 8.dp, vertical = 5.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = category.title,
-                        color = Color.White,
-                        fontSize = 18.sp,
-                        lineHeight = 24.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        textAlign = TextAlign.Center,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                    )
+                Box(modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth().clip(BannerRadius)
+                    .background(bannerColor).padding(horizontal = 8.dp, vertical = 5.dp), contentAlignment = Alignment.Center) {
+                    Text(text = category.title, color = Color.White, fontSize = 18.sp, lineHeight = 24.sp,
+                        fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center, maxLines = 2, overflow = TextOverflow.Ellipsis)
                 }
             }
         }

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.media.AudioAttributes
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import com.sawti.audio.AudioFocusController
@@ -28,21 +29,21 @@ data class InstalledArabicVoice(
 
 data class DialectVoiceStatus(
     val initialized: Boolean = false,
-    val requested: ArabicDialect = ArabicDialect.LIBYAN,
+    val requested: ArabicDialect = ArabicDialect.STANDARD,
     val actualTag: String? = null,
     val actualVoice: String? = null,
-    val regionalVoiceAvailable: Boolean = false,
+    val arabicVoiceAvailable: Boolean = false,
     val voices: List<InstalledArabicVoice> = emptyList(),
 ) {
     val usingFallback: Boolean
-        get() = initialized && !regionalVoiceAvailable
+        get() = initialized && !arabicVoiceAvailable
 }
 
 /**
  * One stable Arabic TTS engine language is used for ALL dialects; colloquial speech
  * comes exclusively from the card's speechText. It never selects an ar-TN/ar-LY/
  * ar-DZ locale on dialect change. Installed engines differ in their Arabic support.
- * Nothing here downloads voices or makes network requests.
+ * The selected engine may use its own network voice; this class does not install voice data.
  */
 class SpeechManager(context: Context, private val focus: AudioFocusController) : TextToSpeech.OnInitListener {
     private val appContext = context.applicationContext
@@ -55,11 +56,12 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
     private var tts: TextToSpeech? = null
     private var ready = false
     private var speechRate = 0.85f
-    private var dialect = ArabicDialect.LIBYAN
+    private var dialect = ArabicDialect.STANDARD
     private var preferredVoice: String? = null
     private var pending: (() -> Unit)? = null
     private var pendingCancel: (() -> Unit)? = null
     private var activeLanguage: Locale? = null
+    private var lastEngineAttemptMs = 0L
 
     private val _issue = MutableStateFlow<SpeechIssue?>(null)
     val issue: StateFlow<SpeechIssue?> = _issue.asStateFlow()
@@ -70,6 +72,7 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
 
     private fun createEngine() {
         ready = false
+        lastEngineAttemptMs = SystemClock.elapsedRealtime()
         tts = runCatching { TextToSpeech(appContext, this) }.getOrNull()
         if (tts == null) reportEngineInitializationFailure()
     }
@@ -77,7 +80,7 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
     override fun onInit(status: Int) {
         // Device TTS callbacks are not guaranteed to arrive on our chosen thread.
         if (Looper.myLooper() != Looper.getMainLooper()) {
-            Handler(Looper.getMainLooper()).post { finishInit(status) }
+            main.post { finishInit(status) }
         } else {
             finishInit(status)
         }
@@ -139,7 +142,7 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
     private fun supportedLanguage(engine: TextToSpeech, locale: Locale): Boolean =
         runCatching { engine.setLanguage(locale) >= TextToSpeech.LANG_AVAILABLE }.getOrDefault(false)
 
-    /** Use only ar/ar-SA; if both are unsupported, try the user's device default. */
+    /** Use only general Arabic. Missing Arabic data must not fall through to English/French. */
     private fun configureEngine() {
         val engine = tts ?: return
         val arabic = runCatching { engine.voices.orEmpty() }
@@ -147,13 +150,7 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
             .filter { it.locale.language == "ar" }
             .sortedWith(compareBy({ it.isNetworkConnectionRequired }, { it.name }))
 
-        activeLanguage = null
-        for (candidate in ArabicTtsLocalePolicy.candidates(Locale.getDefault())) {
-            if (supportedLanguage(engine, candidate)) {
-                activeLanguage = candidate
-                break
-            }
-        }
+        activeLanguage = ArabicTtsLocalePolicy.select { supportedLanguage(engine, it) }
         // Respect an explicitly chosen voice only if it uses the same general Arabic
         // language family. Never set an ar-TN/ar-LY/... voice on a dialect switch.
         val selected = arabic.firstOrNull {
@@ -163,8 +160,7 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
             runCatching { engine.setVoice(selected) }
         }
         refreshVoiceStatus(engine, arabic)
-        // An installed engine lacking Arabic is NOT an absent TTS engine.
-        _issue.value = null
+        _issue.value = if (_voiceStatus.value.arabicVoiceAvailable) null else SpeechIssue.MissingArabicVoice
     }
 
     private fun refreshVoiceStatus(engine: TextToSpeech, available: List<android.speech.tts.Voice>? = null) {
@@ -178,9 +174,7 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
             requested = dialect,
             actualTag = actualTag,
             actualVoice = voice?.name,
-            // Existing public status flag now means usable GENERAL Arabic, not a
-            // special engine voice for the current country-specific dialect.
-            regionalVoiceAvailable = activeLanguage?.language == "ar",
+            arabicVoiceAvailable = ArabicTtsLocalePolicy.canSpeak(activeLanguage, actualTag),
             voices = arabic.map {
                 InstalledArabicVoice(it.name, it.locale.toLanguageTag(), !it.isNetworkConnectionRequired)
             },
@@ -205,21 +199,28 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
     /**
      * Engine.speak can fail even after successful initialization (e.g. missing voice
      * data). Attempt the next fixed language fallback once, without changing dialect.
+     * If every attempt fails, the engine returns to the language it had before.
      */
     private fun enqueueWithFallback(engine: TextToSpeech, text: String, id: String): Boolean {
         val initial = runCatching {
             engine.speak(text, TextToSpeech.QUEUE_FLUSH, null, id) == TextToSpeech.SUCCESS
         }.getOrDefault(false)
         if (initial) return true
-        for (locale in ArabicTtsLocalePolicy.candidates(Locale.getDefault())) {
+        val original = activeLanguage
+        for (locale in ArabicTtsLocalePolicy.candidates()) {
             if (locale == activeLanguage || !supportedLanguage(engine, locale)) continue
             activeLanguage = locale
             refreshVoiceStatus(engine)
+            if (!_voiceStatus.value.arabicVoiceAvailable) continue
             val retry = runCatching {
                 engine.speak(text, TextToSpeech.QUEUE_FLUSH, null, id) == TextToSpeech.SUCCESS
             }.getOrDefault(false)
             if (retry) return true
         }
+        // Do not leave a failed fallback language selected for the next utterance.
+        original?.let { supportedLanguage(engine, it) }
+        activeLanguage = original
+        refreshVoiceStatus(engine)
         return false
     }
 
@@ -230,7 +231,14 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
         onCanceled: () -> Unit = onDone,
     ) {
         if (text.isBlank()) { onCanceled(); return }
-        if (tts == null) createEngine()
+        if (tts == null) {
+            // A failing engine must not be re-created on every tap.
+            if (SystemClock.elapsedRealtime() - lastEngineAttemptMs < ENGINE_RETRY_INTERVAL_MS) {
+                onCanceled()
+                return
+            }
+            createEngine()
+        }
         if (tts == null) { onCanceled(); return }
         val action = { speakNow(text, onStart, onDone, onCanceled) }
         if (ready) action() else {
@@ -291,6 +299,13 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
     ) {
         val engine = tts ?: run { onCanceled(); return }
         stop()
+        // Retry configuration after a user installs voice data while the app stays open.
+        if (!_voiceStatus.value.arabicVoiceAvailable) configureEngine()
+        if (!_voiceStatus.value.arabicVoiceAvailable) {
+            _issue.value = SpeechIssue.MissingArabicVoice
+            onCanceled()
+            return
+        }
         val token = focus.acquire { stop() } ?: run { onCanceled(); return }
         val id = "sawti-${System.nanoTime()}"
         focusToken = token
@@ -302,8 +317,12 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
             _issue.value = null
         } else {
             stop()
-            _issue.value = SpeechIssue.PlaybackFailed
+            _issue.value = if (_voiceStatus.value.arabicVoiceAvailable)
+                SpeechIssue.PlaybackFailed else SpeechIssue.MissingArabicVoice
         }
     }
 
+    private companion object {
+        const val ENGINE_RETRY_INTERVAL_MS = 5_000L
+    }
 }

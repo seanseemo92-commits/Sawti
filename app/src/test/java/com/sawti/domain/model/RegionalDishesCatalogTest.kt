@@ -1,6 +1,7 @@
 package com.sawti.domain.model
 
 import com.sawti.data.db.WordSeed
+import com.sawti.data.db.toDomain
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -35,7 +36,8 @@ class RegionalDishesCatalogTest {
         assertEquals("أكلات مصرية", RegionalDishesCatalog.forDialect(ArabicDialect.EGYPTIAN).title)
         assertEquals("أكلات سعودية", RegionalDishesCatalog.forDialect(ArabicDialect.SAUDI).title)
         assertEquals("أكلات عربية", RegionalDishesCatalog.forDialect(ArabicDialect.STANDARD).title)
-        assertTrue(RegionalDishesCatalog.visibleForDialect("", ArabicDialect.LIBYAN))
+        assertFalse(RegionalDishesCatalog.visibleForDialect("", ArabicDialect.LIBYAN))
+        assertTrue(RegionalDishesCatalog.visibleForDialect(RegionalDishesCatalog.subgroupFor(ArabicDialect.LIBYAN), ArabicDialect.LIBYAN))
         assertFalse(RegionalDishesCatalog.visibleForDialect("", ArabicDialect.EGYPTIAN))
         for (dialect in ArabicDialect.entries.filter { it != ArabicDialect.LIBYAN }) {
             val tag = RegionalDishesCatalog.subgroupFor(dialect)
@@ -61,15 +63,15 @@ class RegionalDishesCatalogTest {
             assertEquals(expected.getValue(it.displayText).second, it.phonemicCue)
         }
         val saved = WordSeed.itemEntities().filter {
-            it.categoryId == "libyan" && it.displayText in expected.keys
+            it.semanticKey in dishes.map { dish -> dish.semanticKey }
         }
         assertEquals(5, saved.size)
-        assertTrue(saved.all { it.subgroup.isBlank() && !it.sentencePrompt.isNullOrBlank() })
-        saved.forEach { dish ->
+        assertTrue(saved.all { it.subgroup == RegionalDishesCatalog.subgroupFor(ArabicDialect.LIBYAN) && !it.sentencePrompt.isNullOrBlank() })
+        saved.forEach { source ->
+            val dish = DialectCatalog.localize(source.toDomain(), ArabicDialect.LIBYAN)
             assertEquals(expected.getValue(dish.displayText).first, dish.ttsPrompt)
             assertEquals(expected.getValue(dish.displayText).second, dish.phonemicCue)
         }
-        assertEquals(18, WordSeed.VERSION)
     }
     @Test fun exactFullOrderedListsAreNeverAccidentallyTruncatedOrRenamed() {
         val expected = mapOf(
@@ -80,7 +82,7 @@ class RegionalDishesCatalogTest {
             ArabicDialect.SYRIAN to "كبة مقلية|شاكرية برز|يبرق ورق عنب|شاورما دجاج|فتة حمص|مقلوبة باذنجان|فتوش|تبولة|كباب حلبي|شيش برك|كوسا بلبن / شيخ المحشي|متبل باذنجان|حراق بأصبعه|حلاوة الجبن|كنافة نابلسية",
             ArabicDialect.IRAQI to "دولمة عراقية|سمك مسكوف|قوزي على تمن|تشريب لحم|باجة|كبة تمن / حلب|كبة موصلية|برياني عراقي|مطبق سمك|فافير / مخلمة|بامية عراقية|شلغم مطبوخ|هريسة|كليجة|زلابية",
             ArabicDialect.SAUDI to "كبسة لحم|مندي|جريش|قرصان|سليق طائفي|حنيذ|مطازيز|مرقوق|مظبي دجاج|بخاري|مدفون|كبدة بالحوار|معصوب|حنيني|لقيمات",
-            ArabicDialect.STANDARD to "أرز باللحم|دجاج مشوي|شوربة عدس|يخنة خضار|مشويات مشكلة|سلطة خضراء|سمك مطهو|فطائر مخبوزة|حساء خضار|لحم مسلوق|خبز مخبوز|ثمار وبقوليات|بيض مسلوق|تمر وحليب|حلوى عربية",
+            ArabicDialect.STANDARD to "أرز باللحم|دجاج مشوي|حساء العدس|يخنة خضار|مشويات مشكلة|سلطة خضراء|سمك مطهو|فطائر مخبوزة|حساء خضار|لحم مسلوق|خبز مخبوز|ثمار وبقوليات|بيض مسلوق|تمر وحليب|حلوى عربية",
         )
         assertEquals(8, expected.size)
         expected.forEach { (dialect, sequence) ->
@@ -94,7 +96,7 @@ class RegionalDishesCatalogTest {
     @Test fun culturallyDistinctPronunciationsAndCluesStayVerbatim() {
         val examples = mapOf(
             ArabicDialect.TUNISIAN to Triple("كسكسي بالحوت", "كُسْكْسِي بِالحُوتْ", "كُسْـ..."),
-            ArabicDialect.EGYPTIAN to Triple("كباب وحواوشي", "كَبَابْ وَكُفْتَةْ", "كَـ..."),
+            ArabicDialect.EGYPTIAN to Triple("كباب وحواوشي", "كَبَابْ وَحَوَاوْشِي", "كَـ..."),
             ArabicDialect.ALGERIAN to Triple("كسكسي جزائري", "طْعَامْ", "طْعَا..."),
             ArabicDialect.MOROCCAN to Triple("شوا مغربي", "قُطْبَانْ", "قُطْـ..."),
             ArabicDialect.SYRIAN to Triple("كوسا بلبن / شيخ المحشي", "كُوسَا بِلَبَنْ", "كُو..."),

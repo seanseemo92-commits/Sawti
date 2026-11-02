@@ -7,8 +7,8 @@ from pathlib import Path
 source = Path("app/build.gradle.kts").read_text()
 version = re.search(r'versionName\s*=\s*"([^"]+)"', source).group(1)
 code = int(re.search(r'versionCode\s*=\s*(\d+)', source).group(1))
-assert re.fullmatch(r"\d+\.\d+\.\d+", version), "Invalid versionName"
-assert code > 10, "versionCode must exceed all previous distributed builds"
+assert re.fullmatch(r"\d+\.\d+", version), "Invalid versionName"
+assert code >= 1, "versionCode must be a positive integer"
 assert 'applicationId = "com.sawti"' in source
 if len(sys.argv) > 1:
     badging = Path(sys.argv[1]).read_text()

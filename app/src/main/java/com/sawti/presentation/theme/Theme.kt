@@ -139,7 +139,7 @@ fun paletteOf(index: Int): CategoryPalette {
  */
 fun categoryBannerColor(categoryId: String, fallback: Color): Color = when (categoryId) {
     "family" -> Color(0xFF1769A8)       // blue
-    "libyan" -> Color(0xFF99502B)       // warm brown
+    "cuisine" -> Color(0xFF99502B)       // warm brown
     "daily" -> Color(0xFF087E82)        // teal
     "routine" -> Color(0xFF7A399D)      // purple
     "vegetables" -> Color(0xFF2D793A)   // green

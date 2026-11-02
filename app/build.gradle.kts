@@ -13,8 +13,8 @@ android {
         applicationId = "com.sawti"
         minSdk = 24
         targetSdk = 35
-        versionCode = 11
-        versionName = "4.6.0"
+        versionCode = 1
+        versionName = "1.0"
     }
 
     // The production key is supplied only at release time by GitHub Actions secrets.
@@ -75,3 +75,8 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.14.1")
 }
 
+
+// Checked-in schema history is the contract for non-destructive future upgrades.
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}

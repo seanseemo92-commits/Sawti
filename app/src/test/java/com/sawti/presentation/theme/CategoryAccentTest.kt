@@ -10,7 +10,7 @@ class CategoryAccentTest {
         assertEquals(Color(0xFFAF5300), categoryBannerColor("fruits", Color.Black))
         assertEquals(Color(0xFF1769A8), categoryBannerColor("family", Color.Black))
         assertEquals(Color(0xFF7A399D), categoryBannerColor("routine", Color.Black))
-        assertEquals(Color(0xFF99502B), categoryBannerColor("libyan", Color.Black))
+        assertEquals(Color(0xFF99502B), categoryBannerColor("cuisine", Color.Black))
         assertEquals(Color(0xFF087E82), categoryBannerColor("daily", Color.Black))
     }
 

@@ -1,0 +1,327 @@
+dialect	semantic_key	previous_display	previous_speech	previous_cue	action
+LIBYAN	food.eggs	دحي	دَحْيْ	بَيْـ...	preserved_pending_review
+LIBYAN	food.fish	حوت (سمك)	حُوتْ	حُو...	preserved_pending_review
+LIBYAN	food.bread	خبزة	خُبْزَهْ	خُبْـ...	preserved_pending_review
+LIBYAN	food.water	مية	إِمِّيَّهْ	إِمْـ...	preserved_pending_review
+LIBYAN	request.water	نبي مية	نَبِّيْ إِمِّيَّهْ	إِمْـ...	preserved_pending_review
+LIBYAN	food.tea	شاهي	شَاهِي	شَا...	preserved_pending_review
+LIBYAN	food.pasta	مكرونة	مَكَرُونَهْ	مَكَـ...	preserved_pending_review
+LIBYAN	food.yogurt	زبادي	زَبَادِي	زَبَا...	preserved_pending_review
+LIBYAN	food.soup	شوربة	شُرْبَهْ	شُرْ...	preserved_pending_review
+LIBYAN	food.juice	عصير	عَصِيرْ	عَصِيـ...	preserved_pending_review
+LIBYAN	fruit.figs	كرموس	كَرْمُوسْ	كَرْ...	preserved_pending_review
+LIBYAN	fruit.pear	إجاص	إِجَّاصْ	إِجَّا...	preserved_pending_review
+LIBYAN	fruit.mandarin	مندرين	مَنْدَرِينْ	مَنْـ...	preserved_pending_review
+LIBYAN	vegetable.peas	بازيليه	بَازِيلْيَهْ	بَا...	preserved_pending_review
+LIBYAN	vegetable.pumpkin	قرعة	قَرْعَهْ	قَرْ...	preserved_pending_review
+LIBYAN	vegetable.cauliflower	قرنبيط	قُرْنَبِيطْ	قُرْنَـ...	preserved_pending_review
+LIBYAN	animal.cat	قطوسة	قَطُّوسَهْ	قَطْـ...	preserved_pending_review
+LIBYAN	animal.rooster	سردوك	سَرْدُوكْ	سَرْ...	preserved_pending_review
+LIBYAN	animal.rabbit	قنية	قُنَّيَّهْ	قُنْـ...	preserved_pending_review
+LIBYAN	animal.dog	كلب	كَلْبْ	كَلْـ...	preserved_pending_review
+LIBYAN	animal.horse	حصان	حِصَانْ	حِصَا...	preserved_pending_review
+LIBYAN	clothing.socks	شخاشير	إِشْخَاشِيرْ	إِشْـ...	preserved_pending_review
+LIBYAN	clothing.belt	سبتة	سَبْتَهْ	سَبْـ...	preserved_pending_review
+LIBYAN	clothing.shoes	كندرة	كَنْدْرَهْ	كَنْـ...	preserved_pending_review
+LIBYAN	clothing.high_heels	كندرة كعب	كَنْدْرِةْ كَعْبْ	كَعْبْ...	preserved_pending_review
+LIBYAN	clothing.cap	طاقية	طَاقِيَّهْ	طَا...	preserved_pending_review
+LIBYAN	body.mouth	فم	فَمْ	فَـ...	preserved_pending_review
+LIBYAN	body.nose	خشم	خَشْمْ	خَشْـ...	preserved_pending_review
+LIBYAN	body.ear	ودن	وِدْنْ	وِدْ...	preserved_pending_review
+LIBYAN	body.tongue	لسان	لِسَانْ	لِسَا...	preserved_pending_review
+LIBYAN	body.tooth	سنة	سِنَّهْ	سِـ...	preserved_pending_review
+LIBYAN	body.finger	صبع	صُبْعْ	صُبْـ...	preserved_pending_review
+LIBYAN	body.knee	ركبة	رُكْبَهْ	رُكْـ...	preserved_pending_review
+LIBYAN	body.neck	رقبة	رَقَبَهْ	رَقَـ...	preserved_pending_review
+LIBYAN	request.tea	نبي شاهي	نَبِّيْ شَاهِي	شَا...	preserved_pending_review
+LIBYAN	request.medicine	نبي دوايا	نَبِّيْ إِدْوَايَا	دْوَا...	preserved_pending_review
+LIBYAN	request.rest	نبي نرتاح	نَبِّيْ نَرْتَاحْ	نَرْ...	preserved_pending_review
+LIBYAN	request.toilet	نبي الحمام	نَبِّيْ الحَمَّامْ	حَمْـ...	preserved_pending_review
+LIBYAN	request.adjust_pillow	عدّل لي المخدة	عَدِّلْ لِي المِخَدَّهْ	عَدْ...	preserved_pending_review
+LIBYAN	request.headache	راسي يوجع	رَاسِي يُوجِعْ فِيا	رَا...	preserved_pending_review
+LIBYAN	request.cold	سقعانة	سَقْعَانَهْ	سَقْـ...	replaced_lexical_conflict_pending_review
+LIBYAN	action.sit	نقعمز	إِنْقَعِّمِزْ	إِنْـ...	preserved_pending_review
+LIBYAN	action.stand	نوقف	نُوقَفْ	نُو...	preserved_pending_review
+LIBYAN	action.eat	ناكل	نَاكُلْ	نَا...	preserved_pending_review
+LIBYAN	action.drink	نشرب	نَشْرَبْ	نَشْـ...	preserved_pending_review
+LIBYAN	action.wash	نغسل	نَغْسِلْ	نَغْـ...	preserved_pending_review
+LIBYAN	action.speak	ندوي	نَدْوِي	نَدْ...	preserved_pending_review
+LIBYAN	action.close	نسكر	إِنْسَكِّرْ	إِنْـ...	preserved_pending_review
+LIBYAN	action.open	نفتح	نَفْتَحْ	نَفْـ...	preserved_pending_review
+LIBYAN	action.pray	نصلي	إِنْصَلِّي	إِنْـ...	preserved_pending_review
+LIBYAN	action.dress	نلبس	نَلْبِسْ	نَلْـ...	preserved_pending_review
+LIBYAN	action.see	نشوف	إِنْشُوفْ	إِنْـ...	preserved_pending_review
+LIBYAN	dish.bazin	بازين	بَازِينْ	بَا...	preserved_pending_review
+LIBYAN	dish.reshda_kaskas	رشدة كسكاس	رِشْدِةْ كِسْكَاسْ	رِشْـ...	preserved_pending_review
+LIBYAN	dish.reshda_borma	رشدة برمة	رِشْدِةْ بُرْمَهْ	رِشْـ...	preserved_pending_review
+LIBYAN	dish.mbakbaka	مكرونة مبكبكة	مَكَرُونَهْ إِمْبَكْبَكَهْ	مْبَكْـ...	preserved_pending_review
+LIBYAN	dish.pasta_masqiya	مكرونة مسقية	مَكَرُونَهْ مَسْقِيَّهْ	مَسْـ...	preserved_pending_review
+LIBYAN	dish.couscous_fish	كسكسي بالحوت	كُسْكُسِي بِالحُوتْ	كُسْـ...	preserved_pending_review
+LIBYAN	dish.rice_blaw	رز بلاو	رُزْ بِلَاوْ	رُزْ...	preserved_pending_review
+LIBYAN	dish.libyan_soup	شربة ليبية	شُرْبَهْ لِيبِيَّهْ	شُرْ...	preserved_pending_review
+LIBYAN	dish.potato_stew	طبيخة بطاطا	إِطْبِيخِةْ بَطَاطَا	طْبِيـ...	preserved_pending_review
+LIBYAN	dish.osban	عصبان	عُصْبَانْ	عُصْـ...	preserved_pending_review
+LIBYAN	dish.bourek	بوريك	بُورِيكْ	بُو...	preserved_pending_review
+LIBYAN	dish.khobz_tajin	خبزة طاجين	خُبْزِةْ طَاجِينْ	طَا...	preserved_pending_review
+LIBYAN	dish.maqroudh	مقروض	مَقْرُوضْ	مَقْـ...	preserved_pending_review
+LIBYAN	dish.mint_tea	شاهي بالنعناع	شَاهِي بِالنَّعْنَاعْ	شَا...	preserved_pending_review
+LIBYAN	dish.arabic_coffee	قهوة عربية	قَهْوَهْ عَرَبِيَّهْ	قَهْـ...	preserved_pending_review
+LIBYAN	routine.call_to_prayer	أذان	أَذَانْ	أَذَا...	preserved_pending_review
+LIBYAN	routine.ablution	وضوء	وُضُوءْ	وُضُو...	preserved_pending_review
+LIBYAN	routine.prayer	صلاة	صَلَاةْ	صَلا...	preserved_pending_review
+LIBYAN	routine.prayer_rug	سجادة	سَجَّادَهْ	سَجْـ...	preserved_pending_review
+LIBYAN	routine.prayer_beads	سبحة	سُبْحَهْ	سُبْـ...	preserved_pending_review
+LIBYAN	routine.quran	مصحف	مُصْحَفْ	مُصْـ...	preserved_pending_review
+LIBYAN	routine.evening_coffee	قهوة العشية	قَهْوِةْ العَشِيَّهْ	عَشِيـ...	preserved_pending_review
+LIBYAN	routine.sleep	نوم	نَوْمْ	نَوْ...	preserved_pending_review
+LIBYAN	routine.rest	راحة	رَاحَهْ	رَا...	preserved_pending_review
+LIBYAN	routine.walk	مشي	مَشْيْ	مَشْـ...	preserved_pending_review
+LIBYAN	vegetable.tomato	طماطم	طَمَاطِمْ	طَمَا...	preserved_pending_review
+LIBYAN	vegetable.potato	بطاطا	بَطَاطَا	بَطَا...	preserved_pending_review
+LIBYAN	vegetable.onion	بصل	بَصَلْ	بَصَـ...	preserved_pending_review
+LIBYAN	vegetable.garlic	ثوم	ثُومْ	ثُو...	preserved_pending_review
+LIBYAN	vegetable.carrot	جزر	جَزَرْ	جَزَ...	preserved_pending_review
+LIBYAN	vegetable.cucumber	خيار	خِيَارْ	خِيَا...	preserved_pending_review
+LIBYAN	vegetable.pepper	فلفل	فُلْفُلْ	فُلْـ...	preserved_pending_review
+LIBYAN	vegetable.eggplant	باذنجان	بَاذِنْجَانْ	بَاذِنْـ...	preserved_pending_review
+LIBYAN	vegetable.zucchini	كوسة	كُوسَهْ	كُو...	preserved_pending_review
+LIBYAN	vegetable.lettuce	خس	خَسّ	خَسْ...	preserved_pending_review
+LIBYAN	vegetable.parsley	معدنوس	مَعْدَنُوسْ	مَعْدَ...	preserved_pending_review
+LIBYAN	vegetable.coriander	كزبرة	كُزْبُرَهْ	كُزْ...	preserved_pending_review
+LIBYAN	vegetable.lemon	ليمون	لِيمُونْ	لِيـ...	preserved_pending_review
+LIBYAN	vegetable.green_beans	فاصوليا	فَاصُولِيَا	فَاصُو...	preserved_pending_review
+LIBYAN	vegetable.spinach	سبانخ	سَبَانِخْ	سَبَا...	preserved_pending_review
+LIBYAN	vegetable.broccoli	بروكلي	بُرُوكْلِي	بُرُو...	preserved_pending_review
+LIBYAN	vegetable.radish	فجل	فِجِلْ	فِجْـ...	preserved_pending_review
+LIBYAN	vegetable.mint	نعناع	نَعْنَاعْ	نَعْـ...	preserved_pending_review
+LIBYAN	vegetable.corn	ذرة	ذُرَهْ	ذُ...	preserved_pending_review
+LIBYAN	fruit.apple	تفاح	تُفَّاحْ	تُفَّا...	preserved_pending_review
+LIBYAN	fruit.banana	موز	مَوْزْ	مَوْ...	preserved_pending_review
+LIBYAN	fruit.orange	برتقال	بُرْتُقَالْ	بُرْتُـ...	preserved_pending_review
+LIBYAN	fruit.grapes	عنب	عِنَبْ	عِـ...	preserved_pending_review
+LIBYAN	fruit.strawberry	فراولة	فَرَاوْلَهْ	فَرَا...	preserved_pending_review
+LIBYAN	fruit.mango	مانجو	مَانْجُو	مَانْـ...	preserved_pending_review
+LIBYAN	fruit.watermelon	دلاع	دَلَّاعْ	دَلَّا...	preserved_pending_review
+LIBYAN	fruit.melon	قلعاوي	قَلْعَاوِي	قَلْـ...	preserved_pending_review
+LIBYAN	fruit.peach	خوخ	خَوْخْ	خَوْ...	preserved_pending_review
+LIBYAN	fruit.apricot	مشمش	مِشْمِشْ	مِشْـ...	preserved_pending_review
+LIBYAN	fruit.pomegranate	رمان	رُمَّانْ	رُمَّا...	preserved_pending_review
+LIBYAN	fruit.dates	تمر	تَمْرْ	تَمْـ...	preserved_pending_review
+LIBYAN	fruit.pineapple	أناناس	أَنَانَاسْ	أَنَا...	preserved_pending_review
+LIBYAN	fruit.kiwi	كيوي	كِيوِي	كِيـ...	preserved_pending_review
+LIBYAN	fruit.cherry	كرز	كَرَزْ	كَـ...	preserved_pending_review
+LIBYAN	fruit.berries	توت	تُوتْ	تُو...	preserved_pending_review
+LIBYAN	fruit.avocado	أفوكادو	أَفُوكَادُو	أَفُو...	preserved_pending_review
+LIBYAN	fruit.coconut	جوز الهند	جَوْزُ الهِنْدْ	جَوْزْ...	preserved_pending_review
+LIBYAN	food.milk	حليب	حَلِيبْ	حَلِيـ...	preserved_pending_review
+LIBYAN	food.cheese	جبنة	جُبْنَهْ	جُبْـ...	preserved_pending_review
+LIBYAN	food.butter	زبدة	زُبْدَهْ	زُبْـ...	preserved_pending_review
+LIBYAN	food.rice	أرز	رُزّ	رُزْ...	preserved_pending_review
+LIBYAN	food.meat	لحم	لَحْمْ	لَحْـ...	preserved_pending_review
+LIBYAN	food.chicken	دجاج	دَجَاجْ	دَجَا...	preserved_pending_review
+LIBYAN	food.olives	زيتون	زَيْتُونْ	زَيْـ...	preserved_pending_review
+LIBYAN	food.oil	زيت	زَيْتْ	زَيْـ...	preserved_pending_review
+LIBYAN	food.coffee	قهوة	قَهْوَهْ	قَهْـ...	preserved_pending_review
+LIBYAN	food.honey	عسل	عَسَلْ	عَسَـ...	preserved_pending_review
+LIBYAN	food.biscuit	بسكويت	بِسْكُوِيتْ	بِسْـ...	preserved_pending_review
+LIBYAN	food.salt	ملح	مِلْحْ	مِلْـ...	preserved_pending_review
+LIBYAN	food.sugar	سكر	سُكَّرْ	سُكْـ...	preserved_pending_review
+LIBYAN	home.bed	سرير	سَرِيرْ	سَرِيـ...	preserved_pending_review
+LIBYAN	home.pillow	مخدة	مِخَدَّهْ	مِخَـ...	preserved_pending_review
+LIBYAN	home.blanket	ورغان / بطانية	وِرْغَانْ	وِرْ...	preserved_pending_review
+LIBYAN	home.table	طاولة	طَاوْلَهْ	طَاوْ...	preserved_pending_review
+LIBYAN	home.chair	كرسي	كُرْسِي	كُرْ...	preserved_pending_review
+LIBYAN	home.sofa	صالون	صَالُونْ	صَا...	preserved_pending_review
+LIBYAN	home.door	باب	بَابْ	بَا...	preserved_pending_review
+LIBYAN	home.window	روشن	رَوْشَنْ	رَوْ...	preserved_pending_review
+LIBYAN	home.television	تلفزيون	تِلِفِزْيُونْ	تِلِـ...	preserved_pending_review
+LIBYAN	home.fridge	ثلاجة	ثَلَّاجَهْ	ثَلَّا...	preserved_pending_review
+LIBYAN	home.washing_machine	غسالة	غَسَّالَهْ	غَسَّا...	preserved_pending_review
+LIBYAN	home.stove	غاز	غَازْ	غَا...	preserved_pending_review
+LIBYAN	home.oven	كوشة	كُوشَهْ	كُو...	preserved_pending_review
+LIBYAN	home.air_conditioner	مكيف	مُكَيِّفْ	مُكَيْـ...	preserved_pending_review
+LIBYAN	home.fan	مروحة	مِرْوَحَهْ	مِرْ...	preserved_pending_review
+LIBYAN	home.wardrobe	دولاب	دُولَابْ	دُو...	preserved_pending_review
+LIBYAN	home.key	مفتاح	مَفْتَاحْ	مَفْـ...	preserved_pending_review
+LIBYAN	home.clock	ساعة	سَاعَهْ	سَا...	preserved_pending_review
+LIBYAN	home.carpet	بساط / حواشي	إِبْسَاطْ	إِبْـ...	preserved_pending_review
+LIBYAN	home.kitchen	كوجينة	كُوجِينَهْ	كُو...	preserved_pending_review
+LIBYAN	home.cup	طاسة	طَاسَهْ	طَا...	preserved_pending_review
+LIBYAN	home.tray	صونية	صُونِيَّهْ	صُو...	preserved_pending_review
+LIBYAN	home.spoon	كاشيك	كَاشِيكْ	كَا...	preserved_pending_review
+LIBYAN	home.fork	فرشيطة	فَرْشِيطَهْ	فَرْ...	preserved_pending_review
+LIBYAN	home.knife	موس (سكين)	مُوسْ	مُو...	preserved_pending_review
+LIBYAN	home.teapot	براد	بَرَّادْ	بَرَّا...	preserved_pending_review
+LIBYAN	home.pot	طنجرة	طَنْجْرَهْ	طَنْـ...	preserved_pending_review
+LIBYAN	home.water_bottle	شيشة	شِيشَهْ	شِيـ...	preserved_pending_review
+LIBYAN	clothing.tshirt	تيشرت	تِيشِرْتْ	تِي...	preserved_pending_review
+LIBYAN	clothing.shirt	قميص	قَمِيصْ	قَمِ...	preserved_pending_review
+LIBYAN	clothing.jacket	جاكة	جَاكَهْ	جَا...	preserved_pending_review
+LIBYAN	clothing.shorts	شورت	شُورْتْ	شُو...	preserved_pending_review
+LIBYAN	clothing.blouse	سورية	سُورِيَّهْ	سُو...	preserved_pending_review
+LIBYAN	clothing.dress	فستان	فُسْتَانْ	فُسْـ...	preserved_pending_review
+LIBYAN	clothing.robe	روب / قفطان	رُوبْ	رُو...	preserved_pending_review
+LIBYAN	clothing.abaya	عباية	عَبَايَهْ	عَبَا...	preserved_pending_review
+LIBYAN	clothing.hijab	حجاب	حِجَابْ	حِجَا...	preserved_pending_review
+LIBYAN	clothing.scarf	وشاح	وِشَاحْ	وِشَا...	preserved_pending_review
+LIBYAN	clothing.coat	كبوط	كَبُّوطْ	كَبُّو...	preserved_pending_review
+LIBYAN	clothing.glasses	نظارة	نَظَّارَهْ	نَظَّا...	preserved_pending_review
+LIBYAN	clothing.watch	ساعة يد	سَاعِةْ يَدْ	سَا...	preserved_pending_review
+LIBYAN	clothing.bag	شنطة	شَنْطَهْ	شَنْـ...	preserved_pending_review
+LIBYAN	clothing.sandals	صندل	صَنْدَلْ	صَنْـ...	preserved_pending_review
+LIBYAN	clothing.pajamas	بيجامة	بِيجَامَهْ	بِيـ...	preserved_pending_review
+LIBYAN	clothing.ring	خاتم	خَاتَمْ	خَا...	preserved_pending_review
+LIBYAN	body.eye	عين	عَيْنْ	عَيْـ...	preserved_pending_review
+LIBYAN	body.hand	يد	يَدْ	يَـ...	preserved_pending_review
+LIBYAN	body.leg	رجل / كراع	إِكْرَاعْ	إِكْـ...	preserved_pending_review
+LIBYAN	body.head	راس	رَاسْ	رَا...	preserved_pending_review
+LIBYAN	body.hair	شعر	شَعْرْ	شَعْـ...	preserved_pending_review
+LIBYAN	body.back	ظهر	ظَهْرْ	ظَهْـ...	preserved_pending_review
+LIBYAN	body.abdomen	بطن	بَطْنْ	بَطْـ...	preserved_pending_review
+LIBYAN	body.chest	صدر	صَدْرْ	صَدْ...	preserved_pending_review
+LIBYAN	body.face	وجه	وَجِهْ	وَجْـ...	preserved_pending_review
+LIBYAN	body.heart	قلب	قَلْبْ	قَلْـ...	preserved_pending_review
+LIBYAN	body.shoulder	كتف	كَتِفْ	كَـ...	preserved_pending_review
+LIBYAN	action.sleep	نرقد	نُرْقُدْ	نُرْ...	preserved_pending_review
+LIBYAN	action.walk	نمشي	نَمْشِي	نَمْـ...	preserved_pending_review
+LIBYAN	action.hear	نسمع	نَسْمَعْ	نَسْـ...	preserved_pending_review
+LIBYAN	action.read	نقرا	نَقْرَا	نَقْـ...	preserved_pending_review
+LIBYAN	action.laugh	نضحك	نَضْحَكْ	نَضْـ...	preserved_pending_review
+LIBYAN	animal.sheep	خروف	خَرُوفْ	خَرُو...	preserved_pending_review
+LIBYAN	animal.cow	بقرة	بَقَرَهْ	بَقَـ...	preserved_pending_review
+LIBYAN	animal.sparrow	عصفور	عُصْفُورْ	عُصْـ...	preserved_pending_review
+LIBYAN	animal.pigeon	حمامة	حَمَامَهْ	حَمَا...	preserved_pending_review
+LIBYAN	animal.chicken	دجاجة	دَجَاجَهْ	دَجَا...	preserved_pending_review
+LIBYAN	animal.duck	بطة	بَطَّهْ	بَطْـ...	preserved_pending_review
+LIBYAN	animal.camel	جمل	جَمَلْ	جَمَـ...	preserved_pending_review
+TUNISIAN	food.eggs	عظام	عْظَامْ		preserved_pending_review
+TUNISIAN	food.fish	حوت	حُوتْ		preserved_pending_review
+TUNISIAN	food.tea	تاي	تَايْ		preserved_pending_review
+TUNISIAN	fruit.figs	كرموس	كَرْمُوسْ		preserved_pending_review
+TUNISIAN	fruit.pear	إجاص	أَنْجَاصْ		replaced_lexical_conflict_pending_review
+TUNISIAN	vegetable.peas	جلبانة	جِلْبَانَهْ		preserved_pending_review
+TUNISIAN	vegetable.cauliflower	شفلور	شَفْلُورْ		preserved_pending_review
+TUNISIAN	animal.cat	قطوسة	قَطُّوسَهْ		preserved_pending_review
+TUNISIAN	animal.rooster	سردوك	سَرْدُوكْ		preserved_pending_review
+TUNISIAN	animal.rabbit	أرنب	قْنِيَّهْ		replaced_lexical_conflict_pending_review
+TUNISIAN	clothing.socks	كلسيطة	كَلْسِيطَهْ		preserved_pending_review
+TUNISIAN	clothing.shoes	سباط	سْبَادْرِيْ		replaced_lexical_conflict_pending_review
+TUNISIAN	clothing.cap	كاسكيطة	كَاسْكِيطَهْ		preserved_pending_review
+TUNISIAN	request.water	نحب شوية ما	نْحِبْ مَاءْ		replaced_lexical_conflict_pending_review
+TUNISIAN	request.tea	نحب تاي	نْحِبْ تَايْ		preserved_pending_review
+TUNISIAN	request.medicine	نحب دوايا	حَاجْتِي بْدْوَايَا		replaced_lexical_conflict_pending_review
+TUNISIAN	action.sit	نقعد	نُقْعُدْ		preserved_pending_review
+TUNISIAN	action.speak	نحكي	نِحْكِيْ		preserved_pending_review
+TUNISIAN	action.see	نشوف	نْغْزُرْ		replaced_lexical_conflict_pending_review
+TUNISIAN	action.close	نسكر	نْسَكِّرْ		preserved_pending_review
+ALGERIAN	food.eggs	ولاد الجاج	وْلَادْ الْجَاجْ		preserved_pending_review
+ALGERIAN	food.fish	حوت	حُوتْ		preserved_pending_review
+ALGERIAN	food.tea	أتاي	تَايْ		replaced_lexical_conflict_pending_review
+ALGERIAN	vegetable.pumpkin	قرعة حمرا	كَابُويَا		replaced_lexical_conflict_pending_review
+ALGERIAN	vegetable.tomato	طماطم	طْمَاطِيشْ		replaced_lexical_conflict_pending_review
+ALGERIAN	vegetable.peas	جلبانة	جِلْبَانَهْ		preserved_pending_review
+ALGERIAN	fruit.mandarin	مندرين	مَنْدَارِينْ		preserved_pending_review
+ALGERIAN	animal.sparrow		زَاوْشْ		preserved_pending_review
+ALGERIAN	clothing.socks	تقاشر	تْقَاشِرْ		preserved_pending_review
+ALGERIAN	clothing.shoes	سباط	بَسْكِيطْ		replaced_lexical_conflict_pending_review
+ALGERIAN	clothing.cap	كاسكيطة	كَاسْكِيطَهْ		preserved_pending_review
+ALGERIAN	request.water	نحب نشرب الما	رَانِي حَابْ مَاءْ		replaced_lexical_conflict_pending_review
+ALGERIAN	request.medicine	نحب دوايا	بَاغِي دْوَايَا		replaced_lexical_conflict_pending_review
+ALGERIAN	action.sit	نقعد	نُقْعُدْ		preserved_pending_review
+ALGERIAN	action.speak	نهدر	نْهْدَرْ		preserved_pending_review
+ALGERIAN	action.close	نسكر	نْبَلَّعْ		replaced_lexical_conflict_pending_review
+ALGERIAN	action.see	نشوف	نْشُوفْ		preserved_pending_review
+MOROCCAN	food.eggs	بيض	دَحْيْ		replaced_lexical_conflict_pending_review
+MOROCCAN	food.fish	حوت	حُوتْ		preserved_pending_review
+MOROCCAN	food.tea	أتاي	أَتَايْ		preserved_pending_review
+MOROCCAN	vegetable.tomato	مطيشة	مَطِيشَهْ		preserved_pending_review
+MOROCCAN	fruit.pear	إجاص	بُوعْوَيْدْ		replaced_lexical_conflict_pending_review
+MOROCCAN	food.yogurt	ياغورت	دَانُونْ		replaced_lexical_conflict_pending_review
+MOROCCAN	food.chicken	دجاج	فَرُّوجْ		replaced_lexical_conflict_pending_review
+MOROCCAN	clothing.socks	تقاشر	تْقَاشِرْ		preserved_pending_review
+MOROCCAN	clothing.belt	سمطة	سَمْطَهْ		preserved_pending_review
+MOROCCAN	clothing.shoes	صباط	سْبَرْدِيلَهْ		replaced_lexical_conflict_pending_review
+MOROCCAN	clothing.glasses	نضاضر	نْضَاضْرْ		preserved_pending_review
+MOROCCAN	request.tea	بغيت أتاي	بْغِيتْ أَتَايْ		preserved_pending_review
+MOROCCAN	request.medicine	بغيت الدوا ديالي	بْغِيتْ دْوَايَا		replaced_lexical_conflict_pending_review
+MOROCCAN	action.sit	نجلس	نْجْلْسْ		preserved_pending_review
+MOROCCAN	action.speak	نهضر	نْهْضَرْ		preserved_pending_review
+MOROCCAN	action.close	نسد	نْسَدْ		preserved_pending_review
+MOROCCAN	action.see	نشوف	نْشُوفْ		preserved_pending_review
+EGYPTIAN	food.eggs	بيض	دَحْيْ		replaced_lexical_conflict_pending_review
+EGYPTIAN	food.fish	سمك	سَمَكْ		preserved_pending_review
+EGYPTIAN	food.bread	عيش	عِيشْ		preserved_pending_review
+EGYPTIAN	food.tea	شاي	شَايْ		preserved_pending_review
+EGYPTIAN	food.water	مية	مَيَّهْ		preserved_pending_review
+EGYPTIAN	vegetable.tomato	طماطم	قُوطَهْ		replaced_lexical_conflict_pending_review
+EGYPTIAN	vegetable.peas	بسلة	بَسِلَّهْ		preserved_pending_review
+EGYPTIAN	fruit.mandarin	يوسفي	يُوسْفَنْدِيْ		replaced_lexical_conflict_pending_review
+EGYPTIAN	fruit.pear	كمثرى	كُمِّتْرَى		preserved_pending_review
+EGYPTIAN	animal.cat	قطة	قِطَّهْ		preserved_pending_review
+EGYPTIAN	animal.rooster	ديك	دِيكْ		preserved_pending_review
+EGYPTIAN	clothing.socks	شرابات	شَرَبَاتْ		preserved_pending_review
+EGYPTIAN	clothing.shoes	جزمة	كُوتْشِيْ		replaced_lexical_conflict_pending_review
+EGYPTIAN	clothing.cap	كاب	طَاقِيَّهْ		replaced_lexical_conflict_pending_review
+EGYPTIAN	request.water	عايز مية	عَايِزْ مَيَّهْ		preserved_pending_review
+EGYPTIAN	request.medicine	ممكن دوايا	عَايِزْ دَوَا		replaced_lexical_conflict_pending_review
+EGYPTIAN	action.sit	أقعد	أَقْعُدْ		preserved_pending_review
+EGYPTIAN	action.speak	أتكلم	أَتْكَلِّمْ		preserved_pending_review
+EGYPTIAN	action.see	أشوف	أَبُصْ		replaced_lexical_conflict_pending_review
+EGYPTIAN	action.close	أقفل	أَقْفِلْ		preserved_pending_review
+EGYPTIAN	action.dress	ألبس	أَلْبِسْ		preserved_pending_review
+SYRIAN	food.eggs	بيض	دَحْيْ		replaced_lexical_conflict_pending_review
+SYRIAN	food.fish	سمك	سَمَكْ		preserved_pending_review
+SYRIAN	food.bread	خبز	خُبِزْ		preserved_pending_review
+SYRIAN	food.tea	شاي	شَايْ		preserved_pending_review
+SYRIAN	food.water	مي	مَيّْ		preserved_pending_review
+SYRIAN	vegetable.tomato	بندورة	بَنْدُورَهْ		preserved_pending_review
+SYRIAN	vegetable.peas	بازيلا	بَازِيلَّا		preserved_pending_review
+SYRIAN	fruit.mandarin	يوسفي	كِلْمَنْتِينَا		replaced_lexical_conflict_pending_review
+SYRIAN	fruit.pear	إجاص	نْجَاصْ		replaced_lexical_conflict_pending_review
+SYRIAN	animal.cat	بسة	بِسَّهْ		preserved_pending_review
+SYRIAN	clothing.socks	جرابات	كِلْسَاتْ		replaced_lexical_conflict_pending_review
+SYRIAN	clothing.shoes	كندرة	بَوْطْ		replaced_lexical_conflict_pending_review
+SYRIAN	clothing.belt	حزام	قَشَاطْ		replaced_lexical_conflict_pending_review
+SYRIAN	request.water	بدي مي	بَدِّي مَيّْ		preserved_pending_review
+SYRIAN	request.medicine	بدي دواي	بَدِّي دَوَايْ		preserved_pending_review
+SYRIAN	action.sit	أقعد	أَقْعُدْ		preserved_pending_review
+SYRIAN	action.speak	إحكي	أَحْكِيْ		preserved_pending_review
+SYRIAN	action.see	شوف	أَتْطَلَّعْ		replaced_lexical_conflict_pending_review
+SYRIAN	action.close	سكّر	سَكِّرْ		preserved_pending_review
+IRAQI	food.eggs	بيض	دَحْيْ		replaced_lexical_conflict_pending_review
+IRAQI	food.fish	سمچ	سِمَتْشْ		preserved_pending_review
+IRAQI	food.bread	خبز	خُبُزْ		preserved_pending_review
+IRAQI	food.tea	جاي	تْشَايْ		preserved_pending_review
+IRAQI	food.water	ماي	مَايْ		preserved_pending_review
+IRAQI	vegetable.tomato	طماطة	طَمَاطَهْ		preserved_pending_review
+IRAQI	vegetable.peas	بازلاء	بْزَالْيَا		preserved_pending_review
+IRAQI	fruit.mandarin	لالنكي	لَالَنْكِيْ		preserved_pending_review
+IRAQI	fruit.pear	عرموط	عَرْمُوطْ		preserved_pending_review
+IRAQI	animal.cat	بزونة	بْزُونَهْ		preserved_pending_review
+IRAQI	clothing.socks	جواريب	جْوَارِيبْ		preserved_pending_review
+IRAQI	clothing.shoes	قندرة	قُنْدَرَهْ		preserved_pending_review
+IRAQI	clothing.cap	طاقية	شَفَقَهْ		replaced_lexical_conflict_pending_review
+IRAQI	clothing.glasses	نظارة	مَنَاظِرْ		replaced_lexical_conflict_pending_review
+IRAQI	request.water	أريد ماي	أَرِيدْ مَايْ		preserved_pending_review
+IRAQI	request.medicine	أريد دواي	أَرِيدْ دَوَا		replaced_lexical_conflict_pending_review
+IRAQI	action.sit	أقعد	أَكْعُدْ		preserved_pending_review
+IRAQI	action.speak	أحچي	أَحْتْشِيْ		preserved_pending_review
+IRAQI	action.close	أسدّ	أَسِدْ		preserved_pending_review
+IRAQI	action.see	أشوف	أَبَاوِعْ		replaced_lexical_conflict_pending_review
+SAUDI	food.eggs	بيض	دَحْيْ		replaced_lexical_conflict_pending_review
+SAUDI	food.fish	سمك	سِمَكْ		preserved_pending_review
+SAUDI	food.bread	خبز	خُبْزْ		preserved_pending_review
+SAUDI	food.tea	شاهي	شَاهِيْ		preserved_pending_review
+SAUDI	food.water	ماي	مَايْ		preserved_pending_review
+SAUDI	vegetable.tomato	طماطم	طَمَاطْ		replaced_lexical_conflict_pending_review
+SAUDI	fruit.melon	شمام	سَنْطَرَهْ		replaced_lexical_conflict_pending_review
+SAUDI	animal.cat	بسة	قَطْوَهْ		replaced_lexical_conflict_pending_review
+SAUDI	clothing.socks	دلاغات	دِلَاغَاتْ		preserved_pending_review
+SAUDI	clothing.shoes	جزمة	جُوتِيْ		replaced_lexical_conflict_pending_review
+SAUDI	clothing.cap	طاقية	كَبُّوسْ		replaced_lexical_conflict_pending_review
+SAUDI	request.water	أبغى ماي	أَبِي مَايْ		replaced_lexical_conflict_pending_review
+SAUDI	request.medicine	أبغى دواي	أَبِي دَوَايْ		replaced_lexical_conflict_pending_review
+SAUDI	action.sit	أجلس	أَقْعُدْ		replaced_lexical_conflict_pending_review
+SAUDI	action.speak	أتكلم	أَسُولِفْ		replaced_lexical_conflict_pending_review
+SAUDI	action.see	أشوف	أَطَالِعْ		replaced_lexical_conflict_pending_review
+SAUDI	action.close	أسكر	أَصُكْ		replaced_lexical_conflict_pending_review

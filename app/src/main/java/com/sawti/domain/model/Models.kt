@@ -3,10 +3,9 @@ package com.sawti.domain.model
 /**
  * One tile / flashcard.
  *  displayText – friendly label shown on screen ("نبي مية", "مثال")
- *  ttsPrompt   – fully vocalised (tashkeel) text sent to Android TTS ("أُرِيدُ مَاءً")
+ *  ttsPrompt   – speech-source text sent to Android TTS; listening review is a separate step ("أُرِيدُ مَاءً")
  *  phonemicCue – first syllable that prompts word retrieval ("إِسْـ...")
  *  sentencePrompt – cloze carrier phrase ("نَأْكُلُ الـ...") for the 💬 cue; null = none
- *  isFavorite  – pinned to the quick-access bar on the home screen
  *  audioPath   – caregiver recording; when present it replaces TTS
  *  photoPath   – photo attached from the gallery
  *  emoji       – built-in picture used until a photo is attached
@@ -19,11 +18,11 @@ data class WordItem(
     val ttsPrompt: String,
     val phonemicCue: String,
     val sentencePrompt: String?,
-    val isFavorite: Boolean,
     val audioPath: String?,
     val photoPath: String?,
     val phone: String,
     val emoji: String,
+    /** Immutable concept identity; independent of captions, locale and drawable filename. */
     val semanticKey: String? = null,
     val customTextFields: Int = 0,
     val sourceDetails: CardDetails? = null,
@@ -46,7 +45,6 @@ data class WordItem(
         ttsPrompt = speechText,
         phonemicCue = "",
         sentencePrompt = null,
-        isFavorite = false,
         audioPath = null,
         photoPath = null,
         phone = "",
@@ -73,5 +71,6 @@ enum class ViewMode { GRID, FLASHCARD }
 object CategoryIds {
     const val FAMILY = "family"
     const val DAILY = "daily"
+    const val CUISINE = "cuisine"
 }
 

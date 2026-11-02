@@ -1,3 +1,5 @@
+> Historical note: superseded by [phase 3 speech policy and review queue](phase-3-speech-review.md) on 2026-11-01. Automatic vowel generation and the non-Arabic device-language fallback are removed; no dialect has native/TTS listening approval.
+
 # Sawti TTS diacritization audit – 28 October 2026
 
 ## Architecture

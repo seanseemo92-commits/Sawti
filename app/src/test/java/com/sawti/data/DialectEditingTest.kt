@@ -1,9 +1,7 @@
 package com.sawti.data
 
 import android.app.Application
-import android.content.ContentValues
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase
 import com.sawti.data.db.*
 import com.sawti.domain.model.*
 import kotlinx.coroutines.flow.first
@@ -26,7 +24,7 @@ class DialectEditingTest {
     private lateinit var db: AppDatabase
     private lateinit var repo: RoomWordRepository
     private lateinit var settings: SettingsRepository
-    private val seed = WordSeed.itemEntities().first { it.displayText == "خبزة" }
+    private val seed = WordSeed.itemEntities().first { it.semanticKey == "food.bread" }
     private var id = 0L
 
     @Before fun setup() = runBlocking {
@@ -35,7 +33,7 @@ class DialectEditingTest {
         settings = SettingsRepository(context)
         repo = RoomWordRepository(db, context, settings)
         db.wordDao().insertCategory(CategoryEntity(seed.categoryId, "قسم", 0, false, 0))
-        id = db.wordDao().insertItem(seed.copy(sentencePrompt = "جملة شخصية", isFavorite = true,
+        id = db.wordDao().insertItem(seed.copy(sentencePrompt = "جملة شخصية",
             photoPath = "/personal/photo.jpg", audioPath = "/personal/voice.m4a"))
     }
 
@@ -75,7 +73,6 @@ class DialectEditingTest {
         ArabicDialect.entries.forEach {
             assertEquals("نطق شخصي", DialectCatalog.localize(row.toDomain(), it).ttsPrompt)
         }
-        assertTrue(row.isFavorite)
         assertEquals("/personal/photo.jpg", row.photoPath)
         assertEquals("/personal/voice.m4a", row.audioPath)
     }
@@ -91,20 +88,19 @@ class DialectEditingTest {
     @Test fun deliberateSentenceRemovalIsNotRefilledBySeedQueries() = runBlocking {
         val baseline = CardDetails.from(saved().toDomain())
         save(baseline, baseline.copy(sentence = null))
-        db.wordDao().fillSentencePrompt(id, "جملة افتراضية")
+        repo.seedOrUpdateDefaults()
         assertNull(saved().sentencePrompt)
         assertEquals(CardDetails.SENTENCE, saved().customTextFields)
     }
 
-    @Test fun staleEditorPreservesNewFavoriteMediaAndUneditedText() = runBlocking {
+    @Test fun staleEditorPreservesNewMediaAndUneditedText() = runBlocking {
         val before = CardDetails.from(saved().toDomain())
         save(before, before.copy(speech = "أحدث نطق"))
-        db.wordDao().setFavorite(id, false)
         db.wordDao().updatePhoto(id, "/personal/new.jpg")
         save(before, before.copy(phone = "123"))
         val row = saved()
         assertEquals("أحدث نطق", row.ttsPrompt); assertEquals("123", row.phone)
-        assertFalse(row.isFavorite); assertEquals("/personal/new.jpg", row.photoPath)
+        assertEquals("/personal/new.jpg", row.photoPath)
     }
 
     @Test fun conflictingSaveFailsAtomically() = runBlocking {
@@ -120,50 +116,9 @@ class DialectEditingTest {
         val before = CardDetails.from(saved().toDomain())
         save(before, before.copy(display = "مية", speech = "نطقي", cue = "تلميحي", sentence = "جملتي"))
         val expected = saved()
-        db.wordDao().updateTts(id, "افتراضي")
-        db.wordDao().updateTtsAndCue(id, "افتراضي", "افتراضي")
-        db.wordDao().renameItem(id, "افتراضي", "افتراضي", "افتراضي", "افتراضي")
+        repeat(2) { repo.seedOrUpdateDefaults() }
         assertEquals(expected, saved())
         assertEquals("مية", DialectCatalog.localize(saved().toDomain(), ArabicDialect.EGYPTIAN).displayText)
-    }
-
-    @Test fun versionFiveMigrationDetectsHistoricalOverridesWithoutChangingValues() = runBlocking {
-        db.close()
-        context.deleteDatabase("my_words.db")
-        val file = context.getDatabasePath("my_words.db")
-        SQLiteDatabase.openOrCreateDatabase(file, null).use { sqlite ->
-            sqlite.execSQL("CREATE TABLE categories(id TEXT NOT NULL PRIMARY KEY,title TEXT NOT NULL,palette INTEGER NOT NULL,previewOnTap INTEGER NOT NULL,sortOrder INTEGER NOT NULL)")
-            sqlite.execSQL("""CREATE TABLE word_items(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                categoryId TEXT NOT NULL,subgroup TEXT NOT NULL,displayText TEXT NOT NULL,ttsPrompt TEXT NOT NULL,
-                phonemicCue TEXT NOT NULL,audioPath TEXT,photoPath TEXT,phone TEXT NOT NULL,emoji TEXT NOT NULL,
-                sortOrder INTEGER NOT NULL,sentencePrompt TEXT DEFAULT NULL,isFavorite INTEGER NOT NULL DEFAULT 0,
-                semanticKey TEXT DEFAULT NULL,
-                FOREIGN KEY(categoryId) REFERENCES categories(id) ON UPDATE NO ACTION ON DELETE CASCADE)""")
-            sqlite.execSQL("CREATE INDEX index_word_items_categoryId ON word_items(categoryId)")
-            sqlite.execSQL("CREATE TABLE progress_records(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,wordId INTEGER NOT NULL,timestamp INTEGER NOT NULL,mode TEXT NOT NULL,outcome TEXT NOT NULL)")
-            sqlite.execSQL("INSERT INTO categories VALUES(?, 'قسم',0,0,0)", arrayOf(seed.categoryId))
-            for (custom in listOf(false, true)) {
-                val values = ContentValues().apply {
-                    put("categoryId", seed.categoryId); put("subgroup", seed.subgroup)
-                    put("displayText", seed.displayText); put("ttsPrompt", if (custom) "تسجيل نص قديم مخصص" else seed.ttsPrompt)
-                    put("phonemicCue", seed.phonemicCue); put("sentencePrompt", seed.sentencePrompt)
-                    put("phone", "123"); put("emoji", seed.emoji); put("sortOrder", seed.sortOrder)
-                    put("isFavorite", 1); put("semanticKey", seed.semanticKey)
-                    put("photoPath", "/personal/photo.jpg"); put("audioPath", "/personal/voice.m4a")
-                }
-                sqlite.insertOrThrow("word_items", null, values)
-            }
-            sqlite.version = 5
-        }
-        db = AppDatabase.build(context)
-        val ordinary = requireNotNull(db.wordDao().wordById(1))
-        val personal = requireNotNull(db.wordDao().wordById(2))
-        assertEquals(0, ordinary.customTextFields)
-        assertEquals(CardDetails.SPEECH, personal.customTextFields)
-        assertEquals("تسجيل نص قديم مخصص", personal.ttsPrompt)
-        assertEquals(seed.sentencePrompt, personal.sentencePrompt)
-        assertTrue(personal.isFavorite); assertEquals("/personal/voice.m4a", personal.audioPath)
-        assertEquals("/personal/photo.jpg", personal.photoPath); assertEquals("123", personal.phone)
     }
 
     @Test fun customTextMetadataSurvivesBackupAndRestore() = runBlocking {

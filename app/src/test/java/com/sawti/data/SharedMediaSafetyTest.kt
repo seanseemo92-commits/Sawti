@@ -229,8 +229,8 @@ class SharedMediaSafetyTest {
         assertTrue(outside.exists()); assertNull(dao.audioPath(b))
     }
 
-    @Test fun legacyRecordingsAlsoRespectSharedOwnership() = runBlocking {
-        val f = file("recordings", "legacy.m4a")
+    @Test fun familyAndCustomCardsShareRecordingOwnership() = runBlocking {
+        val f = file("custom_audio", "shared-family.m4a")
         val a = card(audio = f.path, category = "family", group = "الأبناء")
         val b = card(audio = f.path)
         repo.deleteFamilyMember(a)

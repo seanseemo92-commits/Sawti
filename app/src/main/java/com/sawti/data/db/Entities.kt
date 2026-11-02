@@ -26,7 +26,7 @@ data class CategoryEntity(
             onDelete = ForeignKey.CASCADE,
         )
     ],
-    indices = [Index("categoryId")],
+    indices = [Index("categoryId"), Index(value = ["semanticKey"], unique = true)],
 )
 data class WordItemEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
@@ -36,7 +36,6 @@ data class WordItemEntity(
     val ttsPrompt: String,
     val phonemicCue: String,
     val sentencePrompt: String? = null,
-    @ColumnInfo(defaultValue = "0") val isFavorite: Boolean = false,
     val audioPath: String? = null,
     val photoPath: String? = null,
     val phone: String = "",
@@ -49,15 +48,22 @@ data class WordItemEntity(
 fun WordItemEntity.toDomain() = WordItem(
     id = id, categoryId = categoryId, subgroup = subgroup, displayText = displayText,
     ttsPrompt = ttsPrompt, phonemicCue = phonemicCue, sentencePrompt = sentencePrompt,
-    isFavorite = isFavorite, audioPath = audioPath,
+    audioPath = audioPath,
     photoPath = photoPath, phone = phone, emoji = emoji, semanticKey = semanticKey, customTextFields = customTextFields,
 )
 
-/** One practice record (added in DB v3). Stored as plain strings so the history survives enum changes. */
-@Entity(tableName = "progress_records")
+/** Completed practice history survives card deletion; a deleted card leaves a null reference. */
+@Entity(
+    tableName = "progress_records",
+    foreignKeys = [ForeignKey(
+        entity = WordItemEntity::class, parentColumns = ["id"], childColumns = ["wordId"],
+        onDelete = ForeignKey.SET_NULL,
+    )],
+    indices = [Index("wordId"), Index(value = ["mode", "outcome"])],
+)
 data class ProgressRecordEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val wordId: Long,
+    val wordId: Long?,
     val timestamp: Long,
     val mode: String,
     val outcome: String,
