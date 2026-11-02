@@ -9,7 +9,8 @@ on:
       - .github/workflows/release-signed.yml
 
 permissions:
-  contents: write
+  # Testing a signed build never needs permission to publish Releases.
+  contents: read
   actions: read
 
 concurrency:
@@ -81,8 +82,14 @@ jobs:
           echo "::add-mask::$STORE_PASSWORD"
           echo "::add-mask::$KEY_PASSWORD"
 
+      # Room 2.6 KSP writes Debug and Release schemas to the same location.
+      # Build each variant in a separate Gradle invocation and serialize workers
+      # to prevent the transient "Empty schema file" processor failure.
+      - name: Run Debug unit tests before Release generation
+        run: gradle --no-daemon --max-workers=1 :app:testDebugUnitTest
+
       - name: Build signed Release APK and AAB
-        run: gradle --no-daemon :app:assembleRelease :app:bundleRelease :app:testDebugUnitTest :app:lintRelease
+        run: gradle --no-daemon --max-workers=1 :app:assembleRelease :app:bundleRelease :app:lintRelease
 
       - name: Verify identity, version, publisher certificate and release files
         env:
@@ -134,7 +141,11 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
+      # Publishing is intentionally disabled until the project owner separately
+      # authorizes a public GitHub Release. This gate must be removed in a
+      # separately reviewed change only after approval.
       - name: Publish versioned release
+        if: ${{ false }}
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
