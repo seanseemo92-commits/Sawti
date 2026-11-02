@@ -73,8 +73,6 @@
     <string name="favorite_pin">تثبيت في المفضلة</string>
     <string name="favorite_unpin">إزالة من المفضلة</string>
     <string name="favorites_full">المفضلة ممتلئة (٨ بطاقات كحد أقصى)</string>
-    <string name="sentence_hint">تلميح الجملة</string>
-    <string name="field_sentence">الجملة الناقصة (تلميح)</string>
     <string name="focus_close">إغلاق شاشة التركيز</string>
 
     <!-- practice -->
