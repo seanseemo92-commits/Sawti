@@ -80,7 +80,6 @@ import com.sawti.domain.model.ViewMode
 import com.sawti.domain.model.WordItem
 import com.sawti.presentation.common.ActionPill
 import com.sawti.presentation.common.HintButton
-import com.sawti.presentation.common.PhraseHintButton
 import com.sawti.presentation.common.CardImageContent
 import com.sawti.presentation.common.CeramicCard
 import com.sawti.presentation.common.StaggeredCascade
@@ -227,13 +226,10 @@ private fun WordGrid(items: List<WordItem>, category: Category, palette: Categor
         val captionWidthPx = with(density) { (cellWidth - 16.dp).roundToPx().coerceAtLeast(1) }
         val captionHeightPx = remember(items, captionWidthPx, density.density, density.fontScale, measurer) {
             items.maxOfOrNull { item ->
-                measurer.measure(
-                    text = item.displayText,
-                    style = TextStyle(fontSize = 18.sp, lineHeight = 24.sp,
-                        fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center),
+                measurer.measure(text = item.displayText,
+                    style = TextStyle(fontSize = 18.sp, lineHeight = 24.sp, fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center),
                     maxLines = 4, overflow = TextOverflow.Ellipsis,
-                    constraints = Constraints(maxWidth = captionWidthPx),
-                ).size.height
+                    constraints = Constraints(maxWidth = captionWidthPx)).size.height
             } ?: 0
         }
         val cardHeight = wordCardHeightDp(cellWidth.value, captionHeightPx / density.density).dp
@@ -247,9 +243,7 @@ private fun WordGrid(items: List<WordItem>, category: Category, palette: Categor
                         isSpeaking = state.playbackVisual.isSpeaking && state.playbackVisual.activeWordId == item.id,
                         caregiverMode = state.caregiverMode,
                         onClick = { actions.onItemTapped(item, flashcard = false) },
-                        onLongClick = { actions.onItemLongPressed(item) },
-                        onHint = { actions.onHint(item) }, onSentenceHint = { actions.onSentenceHint(item) },
-                        cardHeight = cardHeight)
+                        onLongClick = { actions.onItemLongPressed(item) }, onHint = { actions.onHint(item) }, cardHeight = cardHeight)
                 }
             }
         }
@@ -259,12 +253,11 @@ private fun WordGrid(items: List<WordItem>, category: Category, palette: Categor
 @Composable
 internal fun WordCard(item: WordItem, palette: CategoryPalette, crop: Boolean, isActive: Boolean,
     isSpeaking: Boolean = false, caregiverMode: Boolean, onClick: () -> Unit, onLongClick: () -> Unit,
-    onHint: () -> Unit, onSentenceHint: () -> Unit, cardHeight: Dp? = null) {
+    onHint: () -> Unit, cardHeight: Dp? = null) {
     val bannerColor = categoryBannerColor(item.categoryId, palette.banner)
     BoxWithConstraints(Modifier.fillMaxWidth()) {
         val height = cardHeight ?: (maxWidth / 0.85f)
-        CeramicCard(isActive = isActive, isSpeaking = isSpeaking, accent = bannerColor,
-            shape = RoundedCornerShape(20.dp),
+        CeramicCard(isActive = isActive, isSpeaking = isSpeaking, accent = bannerColor, shape = RoundedCornerShape(20.dp),
             modifier = Modifier.fillMaxWidth().height(height).clip(RoundedCornerShape(20.dp))
                 .bounceClick(onLongClick = onLongClick, onClick = onClick, accent = bannerColor)) {
             Box(Modifier.fillMaxSize()) {
@@ -274,13 +267,10 @@ internal fun WordCard(item: WordItem, palette: CategoryPalette, crop: Boolean, i
                     .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 20.dp, bottomEnd = 20.dp))
                     .background(bannerColor).padding(horizontal = 8.dp, vertical = 5.dp), contentAlignment = Alignment.Center) {
                     Text(text = item.displayText, color = Color.White, fontSize = 18.sp, lineHeight = 24.sp,
-                        fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center,
-                        maxLines = 4, overflow = TextOverflow.Ellipsis)
+                        fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center, maxLines = 4, overflow = TextOverflow.Ellipsis)
                 }
-                Row(modifier = Modifier.align(Alignment.TopEnd).padding(6.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    HintButton(onClick = onHint)
-                    if (!item.sentencePrompt.isNullOrBlank()) PhraseHintButton(onClick = onSentenceHint)
-                }
+                // In the app's RTL layout TopEnd is the former speech-bubble slot.
+                HintButton(onClick = onHint, modifier = Modifier.align(Alignment.TopEnd).padding(6.dp))
             }
         }
     }
@@ -334,21 +324,16 @@ private fun FlashcardPage(item: WordItem, category: Category, palette: CategoryP
                 CardImageContent(item = item, accent = palette.banner,
                     isCurrentlyPlaying = state.playbackVisual.isSpeaking && state.playbackVisual.activeWordId == item.id,
                     modifier = Modifier.fillMaxSize().padding(22.dp), crop = category.previewOnTap)
-                Row(modifier = Modifier.align(Alignment.TopEnd).padding(6.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    HintButton(onClick = { actions.onHint(item) })
-                    if (!item.sentencePrompt.isNullOrBlank()) PhraseHintButton(onClick = { actions.onSentenceHint(item) })
-                }
+                HintButton(onClick = { actions.onHint(item) }, modifier = Modifier.align(Alignment.TopEnd).padding(6.dp))
             }
             Text(item.displayText, color = MaterialTheme.colorScheme.onSurface, fontSize = 34.sp, lineHeight = 44.sp,
-                fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp))
+                fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp))
             Row(Modifier.padding(start = 16.dp, end = 16.dp, bottom = 18.dp), verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 ActionPill(label = stringResource(R.string.listen), icon = Icons.AutoMirrored.Filled.VolumeUp,
                     color = palette.banner, onClick = { actions.onSpeakAgain(item) })
                 if (item.phone.isNotBlank() && !state.caregiverMode) {
-                    ActionPill(label = stringResource(R.string.call), icon = Icons.Filled.Call,
-                        color = palette.banner, onClick = { onCall(item.phone) })
+                    ActionPill(label = stringResource(R.string.call), icon = Icons.Filled.Call, color = palette.banner, onClick = { onCall(item.phone) })
                 }
             }
         }
