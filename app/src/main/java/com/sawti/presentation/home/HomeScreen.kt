@@ -8,20 +8,29 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.MenuBook
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -58,6 +67,7 @@ private val BannerRadius = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, 
 
 @Composable
 fun HomeScreen(categories: List<Category>, speakingItemId: Long?, onOpen: (String) -> Unit,
+    onOpenQuran: () -> Unit,
     onRetry: () -> Unit = {}, isLoading: Boolean = true, loadError: String? = null, retryEnabled: Boolean = true) {
     if (categories.isEmpty()) {
         Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(24.dp),
@@ -82,12 +92,80 @@ fun HomeScreen(categories: List<Category>, speakingItemId: Long?, onOpen: (Strin
         LazyVerticalGrid(columns = GridCells.Fixed(columns), modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 32.dp),
             horizontalArrangement = Arrangement.spacedBy(18.dp), verticalArrangement = Arrangement.spacedBy(18.dp)) {
+            item(key = "quran-feature", span = { GridItemSpan(2) }) {
+                StaggeredCascade(row = 0, modifier = Modifier.fillMaxWidth()) {
+                    QuranHeroCard(onClick = onOpenQuran)
+                }
+            }
             itemsIndexed(categories, key = { _, category -> category.id }) { index, category ->
-                StaggeredCascade(row = index / columns, modifier = Modifier.fillMaxWidth()) {
+                StaggeredCascade(row = (index + 2) / columns, modifier = Modifier.fillMaxWidth()) {
                     LuxuryCategoryCard(category = category,
                         isSpeaking = speakingItemId != null && category.items.any { it.id == speakingItemId },
                         onClick = { onOpen(category.id) })
                 }
+            }
+        }
+    }
+}
+
+
+@Composable
+private fun QuranHeroCard(onClick: () -> Unit) {
+    val dark = LocalIsDark.current
+    val performance = LocalPerformanceMode.current
+    val gold = Color(0xFFE8CE91)
+    val background = if (dark) {
+        listOf(Color(0xFF082B28), Color(0xFF145343))
+    } else {
+        listOf(Color(0xFF155847), Color(0xFF22705A))
+    }
+    Surface(
+        modifier = Modifier.fillMaxWidth().clip(CardRadius)
+            .bounceClick(onClick = onClick, accent = gold),
+        shape = CardRadius,
+        color = Color.Transparent,
+        border = BorderStroke(1.dp, gold.copy(alpha = if (dark) 0.35f else 0.45f)),
+        shadowElevation = if (performance) 0.dp else if (dark) 4.dp else 8.dp,
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 158.dp)
+                .background(Brush.horizontalGradient(background))
+                .padding(horizontal = 20.dp, vertical = 18.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(
+                    text = "القرآن الكريم",
+                    color = Color.White,
+                    fontSize = 26.sp,
+                    lineHeight = 34.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    maxLines = 2,
+                )
+                Text(
+                    text = "قسم مستقل داخل صوتي",
+                    color = Color(0xFFF2E4C6),
+                    fontSize = 14.sp,
+                    lineHeight = 20.sp,
+                    fontWeight = FontWeight.Medium,
+                )
+            }
+            Box(
+                modifier = Modifier.size(82.dp)
+                    .border(1.dp, gold.copy(alpha = 0.65f), CircleShape)
+                    .background(gold.copy(alpha = 0.1f), CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.MenuBook,
+                    contentDescription = null,
+                    tint = gold,
+                    modifier = Modifier.size(42.dp),
+                )
             }
         }
     }

@@ -49,6 +49,7 @@ import com.sawti.presentation.practice.PracticeRoute
 import com.sawti.presentation.practice.PracticeViewModel
 import com.sawti.presentation.progress.ProgressRoute
 import com.sawti.presentation.progress.ProgressViewModel
+import com.sawti.presentation.quran.QuranScreen
 import com.sawti.presentation.settings.DialectSettingsRoute
 import com.sawti.presentation.settings.SettingsRoute
 import com.sawti.presentation.settings.SettingsViewModel
@@ -57,6 +58,7 @@ import com.sawti.presentation.theme.CaregiverTint
 import com.sawti.speech.SpeechIssue
 
 private const val HOME = "home"
+private const val QURAN = "quran"
 private const val PRACTICE = "practice"
 private const val PROGRESS = "progress"
 private const val SETTINGS = "settings"
@@ -90,6 +92,7 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
         if (!navigationLocked()) route = HOME
     }
     val title = when {
+        route == QURAN -> "القرآن الكريم"
         route == PRACTICE -> stringResource(R.string.practice_title)
         route == PROGRESS -> stringResource(R.string.progress_title)
         route == SETTINGS -> stringResource(R.string.settings_title)
@@ -152,6 +155,7 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
                 LocalTouchDwell provides settings.touchDwell,
             ) {
                 when {
+                    route == QURAN -> QuranScreen()
                     route == PRACTICE -> PracticeRoute(practice)
                     route == PROGRESS && state.caregiverMode -> ProgressRoute(progress)
                     route == SETTINGS && state.caregiverMode -> SettingsRoute(settingsVm)
@@ -165,6 +169,7 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
                         categories = state.categories,
                         speakingItemId = state.playbackVisual.activeWordId.takeIf { state.playbackVisual.isSpeaking },
                         onOpen = { id -> if (!navigationLocked()) route = CATEGORY_PREFIX + id },
+                        onOpenQuran = { if (!navigationLocked()) route = QURAN },
                         onRetry = { if (!navigationLocked()) library.retryLoad() },
                         isLoading = state.isLoadingCategories,
                         loadError = state.categoryLoadError,
