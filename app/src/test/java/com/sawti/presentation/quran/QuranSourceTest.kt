@@ -3,7 +3,15 @@ package com.sawti.presentation.quran
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+import android.app.Application
 
+// org.json is part of the Android framework; plain JVM tests would use an
+// unimplemented android.jar stub. Robolectric provides the real JSON behavior.
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [28], application = Application::class)
 class QuranSourceTest {
     @Test
     fun verseAudioUsesGlobalQuranIndex() {
