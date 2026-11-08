@@ -32,9 +32,8 @@ jobs:
         if: success()
         run: ./gradlew --no-daemon :app:testDebugUnitTest :app:lintDebug --continue
       - name: Upload Sawti Argon preview APK
-        # Push runs verify code without consuming artifact storage.
-        # Upload only when explicitly requested and quota is available.
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.upload_artifacts }}
+        # Temporary post-cleanup quota check; revert after this single run.
+        if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.upload_artifacts) }}
         uses: actions/upload-artifact@v4
         with:
           name: Sawti-Argon-preview-debug
@@ -42,9 +41,8 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
       - name: Upload test reports
-        # Push runs verify code without consuming artifact storage.
-        # Upload only when explicitly requested and quota is available.
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.upload_artifacts }}
+        # Temporary post-cleanup quota check; revert after this single run.
+        if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.upload_artifacts) }}
         uses: actions/upload-artifact@v4
         with:
           name: Sawti-Argon-preview-test-reports
