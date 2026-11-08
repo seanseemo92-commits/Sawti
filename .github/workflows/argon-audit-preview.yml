@@ -28,7 +28,8 @@ jobs:
           chmod +x gradlew
           ./gradlew --no-daemon :app:assembleDebug
       - name: Test and lint
-        if: always()
+        # No second wrapper download attempt when the build step failed.
+        if: success()
         run: ./gradlew --no-daemon :app:testDebugUnitTest :app:lintDebug --continue
       - name: Upload Sawti Argon preview APK
         # Push runs verify code without consuming artifact storage.
