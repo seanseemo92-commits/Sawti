@@ -25,8 +25,10 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.outlined.MenuBook
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -113,11 +115,11 @@ fun HomeScreen(categories: List<Category>, speakingItemId: Long?, onOpen: (Strin
 private fun QuranHeroCard(onClick: () -> Unit) {
     val dark = LocalIsDark.current
     val performance = LocalPerformanceMode.current
-    val green = if (dark) Color(0xFF103A31) else Color(0xFF175A47)
+    val green = if (dark) Color(0xFF103A31) else Color(0xFF124E40)
     val gold = Color(0xFFE8CE91)
 
-    // Uses the same rounded tile, elevation and bounce/haptic behavior as the
-    // surrounding home categories. Text remains real Compose text for accessibility.
+    // One image-backed card, like the other Sawti categories. The Quran artwork
+    // is only a photo; all Arabic copy stays native, legible and accessible.
     Surface(
         modifier = Modifier.fillMaxWidth().clip(CardRadius)
             .bounceClick(onClick = onClick, accent = gold),
@@ -126,14 +128,36 @@ private fun QuranHeroCard(onClick: () -> Unit) {
         border = BorderStroke(1.dp, gold.copy(alpha = if (dark) 0.28f else 0.35f)),
         shadowElevation = if (performance) 0.dp else if (dark) 4.dp else 8.dp,
     ) {
-        Row(
+        Box(
             modifier = Modifier.fillMaxWidth().height(168.dp).background(green),
-            verticalAlignment = Alignment.CenterVertically,
         ) {
-            // In RTL the text stays on the right; photo occupies 62% of the card.
+            // In RTL, End is the physical left: the photo fills most of the card.
+            Image(
+                painter = painterResource(R.drawable.img_quran_hero),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.align(Alignment.CenterEnd)
+                    .fillMaxHeight().fillMaxWidth(0.78f),
+            )
+            // A soft fade, rather than two distinct columns, preserves the
+            // open book and lantern from the reference card.
+            Box(
+                modifier = Modifier.fillMaxSize().background(
+                    Brush.horizontalGradient(
+                        0f to Color.Transparent,
+                        0.43f to Color.Transparent,
+                        0.74f to green,
+                        1f to green,
+                    )
+                )
+            )
+
             Column(
-                modifier = Modifier.weight(0.38f).padding(start = 14.dp, end = 2.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier.align(Alignment.CenterStart)
+                    .fillMaxWidth(0.53f)
+                    .padding(start = 13.dp, end = 13.dp, top = 9.dp, bottom = 9.dp),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.spacedBy(5.dp),
             ) {
                 Icon(
                     imageVector = Icons.Outlined.MenuBook,
@@ -144,38 +168,33 @@ private fun QuranHeroCard(onClick: () -> Unit) {
                 Text(
                     text = "القرآن الكريم",
                     color = Color.White,
-                    fontSize = 23.sp,
-                    lineHeight = 29.sp,
+                    fontSize = 21.sp,
+                    lineHeight = 28.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    maxLines = 2,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
                 Text(
                     text = "سور قصيرة للتلاوة والتكرار",
                     color = Color(0xFFF1E4C7),
                     fontSize = 12.sp,
-                    lineHeight = 19.sp,
+                    lineHeight = 18.sp,
                     fontWeight = FontWeight.Medium,
-                    maxLines = 3,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                 )
-            }
-
-            // Keep the existing local Quran artwork. A narrow fade softens only the image edge.
-            Box(modifier = Modifier.weight(0.62f).fillMaxHeight()) {
-                Image(
-                    painter = painterResource(R.drawable.img_quran_hero),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize(),
-                )
+                // Decorative arrow: the entire card remains a single large touch target.
                 Box(
-                    modifier = Modifier.fillMaxSize().background(
-                        Brush.horizontalGradient(
-                            0f to Color.Transparent,
-                            0.82f to Color.Transparent,
-                            1f to green.copy(alpha = 0.95f),
-                        )
+                    modifier = Modifier.size(30.dp).background(Color.White, CircleShape),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.ChevronRight,
+                        contentDescription = null,
+                        tint = green,
+                        modifier = Modifier.size(22.dp),
                     )
-                )
+                }
             }
         }
     }
