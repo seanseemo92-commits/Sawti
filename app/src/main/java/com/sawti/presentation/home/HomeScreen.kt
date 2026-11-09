@@ -8,14 +8,14 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,7 +25,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MenuBook
@@ -51,6 +50,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sawti.R
 import com.sawti.domain.model.Category
 import com.sawti.presentation.common.CardImageContent
 import com.sawti.presentation.common.categoryDrawableName
@@ -113,58 +113,68 @@ fun HomeScreen(categories: List<Category>, speakingItemId: Long?, onOpen: (Strin
 private fun QuranHeroCard(onClick: () -> Unit) {
     val dark = LocalIsDark.current
     val performance = LocalPerformanceMode.current
+    val green = if (dark) Color(0xFF103A31) else Color(0xFF175A47)
     val gold = Color(0xFFE8CE91)
-    val background = if (dark) {
-        listOf(Color(0xFF082B28), Color(0xFF145343))
-    } else {
-        listOf(Color(0xFF155847), Color(0xFF22705A))
-    }
+
+    // Uses the same rounded tile, elevation and bounce/haptic behavior as the
+    // surrounding home categories. Text remains real Compose text for accessibility.
     Surface(
         modifier = Modifier.fillMaxWidth().clip(CardRadius)
             .bounceClick(onClick = onClick, accent = gold),
         shape = CardRadius,
-        color = Color.Transparent,
-        border = BorderStroke(1.dp, gold.copy(alpha = if (dark) 0.35f else 0.45f)),
+        color = green,
+        border = BorderStroke(1.dp, gold.copy(alpha = if (dark) 0.28f else 0.35f)),
         shadowElevation = if (performance) 0.dp else if (dark) 4.dp else 8.dp,
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 158.dp)
-                .background(Brush.horizontalGradient(background))
-                .padding(horizontal = 20.dp, vertical = 18.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.fillMaxWidth().height(168.dp).background(green),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            // RTL: the wording is on the right, just like the approved mockup.
             Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Text(
-                    text = "القرآن الكريم",
-                    color = Color.White,
-                    fontSize = 26.sp,
-                    lineHeight = 34.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    maxLines = 2,
-                )
-                Text(
-                    text = "قسم مستقل داخل صوتي",
-                    color = Color(0xFFF2E4C6),
-                    fontSize = 14.sp,
-                    lineHeight = 20.sp,
-                    fontWeight = FontWeight.Medium,
-                )
-            }
-            Box(
-                modifier = Modifier.size(82.dp)
-                    .border(1.dp, gold.copy(alpha = 0.65f), CircleShape)
-                    .background(gold.copy(alpha = 0.1f), CircleShape),
-                contentAlignment = Alignment.Center,
+                modifier = Modifier.weight(0.56f).padding(start = 18.dp, end = 4.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 Icon(
                     imageVector = Icons.Outlined.MenuBook,
                     contentDescription = null,
                     tint = gold,
-                    modifier = Modifier.size(42.dp),
+                    modifier = Modifier.size(26.dp),
+                )
+                Text(
+                    text = "القرآن الكريم",
+                    color = Color.White,
+                    fontSize = 23.sp,
+                    lineHeight = 29.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    maxLines = 2,
+                )
+                Text(
+                    text = "سور قصيرة للتلاوة والتكرار",
+                    color = Color(0xFFF1E4C7),
+                    fontSize = 12.sp,
+                    lineHeight = 19.sp,
+                    fontWeight = FontWeight.Medium,
+                    maxLines = 3,
+                )
+            }
+
+            // Local WebP artwork: no network call and no text baked into the photo.
+            Box(modifier = Modifier.weight(0.44f).fillMaxHeight()) {
+                Image(
+                    painter = painterResource(R.drawable.img_quran_hero),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize(),
+                )
+                Box(
+                    modifier = Modifier.fillMaxSize().background(
+                        Brush.horizontalGradient(
+                            0f to Color.Transparent,
+                            0.6f to green.copy(alpha = 0.18f),
+                            1f to green,
+                        )
+                    )
                 )
             }
         }
