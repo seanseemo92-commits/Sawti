@@ -30,9 +30,20 @@ class QuranSourceTest {
     @Test
     fun sudaisUsesIndependentVerseAudioEdition() {
         assertEquals(
-            "https://cdn.islamic.network/quran/audio/192/ar.sudais/1.mp3",
-            QuranSource.audioUrl(1, QuranReciter.SUDAIS),
+            "https://everyayah.com/data/Abdurrahmaan_As-Sudais_192kbps/001001.mp3",
+            QuranSource.audioUrls(1, QuranReciter.SUDAIS, 1, 1).first(),
         )
+        assertEquals(
+            "https://verse.mp3quran.net/data/Abdurrahmaan_As-Sudais_192kbps/001001.mp3",
+            QuranSource.audioUrls(1, QuranReciter.SUDAIS, 1, 1)[1],
+        )
+        assertEquals(
+            "https://everyayah.com/data/Abdurrahmaan_As-Sudais_192kbps/108001.mp3",
+            QuranSource.audioUrls(6205, QuranReciter.SUDAIS, 108, 1).first(),
+        )
+        assertThrows(IllegalArgumentException::class.java) {
+            QuranSource.audioUrls(1, QuranReciter.SUDAIS)
+        }
         assertEquals(
             "https://cdn.islamic.network/quran/audio/64/ar.alafasy/1.mp3",
             QuranSource.audioUrl(1, QuranReciter.ALAFASY),

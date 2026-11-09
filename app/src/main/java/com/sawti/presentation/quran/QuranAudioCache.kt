@@ -34,7 +34,15 @@ class QuranAudioCache(
         return target.takeIf(::hasValidMp3Header)
     }
 
-    suspend fun obtain(globalVerseNumber: Int): File = withContext(Dispatchers.IO) {
+    suspend fun obtain(
+        globalVerseNumber: Int,
+        surahNumber: Int? = null,
+        verseNumber: Int? = null,
+    ): File = withContext(Dispatchers.IO) {
+        // Validate the source and local ayah numbering before touching the disk.
+        val urls = QuranSource.audioUrls(
+            globalVerseNumber, reciter, surahNumber, verseNumber
+        )
         val target = targetFile(globalVerseNumber)
         // Playback and whole-surah downloads may request the same ayah.
         val lock = locks.getOrPut(globalVerseNumber) { Mutex() }
@@ -45,47 +53,63 @@ class QuranAudioCache(
             }
             val temporary = File.createTempFile("ayah_" + globalVerseNumber + "_", ".part", audioDir)
             try {
-                val connection = connectionFactory(URL(QuranSource.audioUrl(globalVerseNumber, reciter)))
-                try {
-                    connection.connectTimeout = 12_000
-                    connection.readTimeout = 20_000
-                    connection.instanceFollowRedirects = true
-                    connection.setRequestProperty("Accept", "audio/mpeg, audio/*")
-                    if (connection.responseCode != HttpURLConnection.HTTP_OK) {
-                        throw IOException("Recording HTTP " + connection.responseCode)
-                    }
-                    if (connection.contentLengthLong > MAX_AUDIO_BYTES) {
-                        throw IOException("Recording is too large")
-                    }
-                    connection.inputStream.use { input ->
-                        FileOutputStream(temporary).use { output ->
-                            val buffer = ByteArray(8192)
-                            var total = 0L
-                            while (true) {
-                                currentCoroutineContext().ensureActive()
-                                val count = input.read(buffer)
-                                if (count < 0) break
-                                total += count
-                                if (total > MAX_AUDIO_BYTES) throw IOException("Recording is too large")
-                                output.write(buffer, 0, count)
+                var lastFailure: Exception? = null
+                for (sourceUrl in urls) {
+                    currentCoroutineContext().ensureActive()
+                    try {
+                        val connection = connectionFactory(URL(sourceUrl))
+                        try {
+                            connection.connectTimeout = 12_000
+                            connection.readTimeout = 20_000
+                            connection.instanceFollowRedirects = true
+                            connection.setRequestProperty("Accept", "audio/mpeg, audio/*")
+                            if (connection.responseCode != HttpURLConnection.HTTP_OK) {
+                                throw IOException("Recording HTTP " + connection.responseCode)
                             }
-                            output.fd.sync()
+                            if (connection.contentLengthLong > MAX_AUDIO_BYTES) {
+                                throw IOException("Recording is too large")
+                            }
+                            connection.inputStream.use { input ->
+                                FileOutputStream(temporary).use { output ->
+                                    val buffer = ByteArray(8192)
+                                    var total = 0L
+                                    while (true) {
+                                        currentCoroutineContext().ensureActive()
+                                        val count = input.read(buffer)
+                                        if (count < 0) break
+                                        total += count
+                                        if (total > MAX_AUDIO_BYTES) {
+                                            throw IOException("Recording is too large")
+                                        }
+                                        output.write(buffer, 0, count)
+                                    }
+                                    output.fd.sync()
+                                }
+                            }
+                        } finally {
+                            connection.disconnect()
                         }
+                        currentCoroutineContext().ensureActive()
+                        if (!hasValidMp3Header(temporary)) {
+                            throw IOException("Invalid or incomplete MP3")
+                        }
+                        if (target.exists() && !target.delete()) {
+                            throw IOException("Cannot replace incomplete recording")
+                        }
+                        if (!temporary.renameTo(target)) {
+                            throw IOException("Cannot save Quran recording")
+                        }
+                        return@withLock target
+                    } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                        throw cancelled
+                    } catch (error: Exception) {
+                        lastFailure = error
+                        temporary.delete()
                     }
-                } finally {
-                    connection.disconnect()
                 }
-                currentCoroutineContext().ensureActive()
-                if (!hasValidMp3Header(temporary)) throw IOException("Invalid or incomplete MP3")
-                if (target.exists() && !target.delete()) {
-                    throw IOException("Cannot replace incomplete recording")
-                }
-                if (!temporary.renameTo(target)) {
-                    throw IOException("Cannot save Quran recording")
-                }
-                target
+                throw IOException("No accessible recording for " + reciter.displayName, lastFailure)
             } finally {
-                // Failed requests and cancelled downloads never leave partial mp3 files.
+                // Failed, cancelled, or partial downloads are never playable.
                 temporary.delete()
             }
         }

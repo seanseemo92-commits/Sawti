@@ -41,10 +41,36 @@ object QuranSource {
     fun audioUrl(globalVerseNumber: Int): String =
         audioUrl(globalVerseNumber, QuranReciter.ALAFASY)
 
+    // Alafasy's existing API uses the global ayah number.
+    // Sudais's working EveryAyah source requires the LOCAL surah + ayah numbers.
     fun audioUrl(globalVerseNumber: Int, reciter: QuranReciter): String {
         require(globalVerseNumber in 1..6236)
-        return "https://cdn.islamic.network/quran/audio/" +
-            "${reciter.bitrateKbps}/${reciter.editionId}/$globalVerseNumber.mp3"
+        require(reciter == QuranReciter.ALAFASY) {
+            "For Sudais use audioUrls with surah and local verse numbers"
+        }
+        return "https://cdn.islamic.network/quran/audio/64/ar.alafasy/$globalVerseNumber.mp3"
+    }
+
+    fun audioUrls(
+        globalVerseNumber: Int,
+        reciter: QuranReciter,
+        surahNumber: Int? = null,
+        verseNumber: Int? = null,
+    ): List<String> {
+        require(globalVerseNumber in 1..6236)
+        return when (reciter) {
+            QuranReciter.ALAFASY -> listOf(audioUrl(globalVerseNumber))
+            QuranReciter.SUDAIS -> {
+                require(surahNumber != null && surahNumber in 1..114)
+                require(verseNumber != null && verseNumber in 1..286)
+                val filename = surahNumber.toString().padStart(3, '0') +
+                    verseNumber.toString().padStart(3, '0') + ".mp3"
+                listOf(
+                    "https://everyayah.com/data/Abdurrahmaan_As-Sudais_192kbps/$filename",
+                    "https://verse.mp3quran.net/data/Abdurrahmaan_As-Sudais_192kbps/$filename",
+                )
+            }
+        }
     }
 
     suspend fun load(context: Context, surah: ShortSurah): List<QuranVerse> =

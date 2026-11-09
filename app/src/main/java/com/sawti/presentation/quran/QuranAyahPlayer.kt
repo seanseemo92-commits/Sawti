@@ -47,7 +47,8 @@ class QuranAyahPlayer(
     private var playsLeft = 0
     private var released = false
 
-    fun play(globalVerseNumber: Int, repeatCount: Int) {
+    fun play(verse: QuranVerse, repeatCount: Int) {
+        val globalVerseNumber = verse.globalNumber
         require(repeatCount in setOf(1, 3, 5))
         if (released) return
         stop()
@@ -56,7 +57,7 @@ class QuranAyahPlayer(
         update(RecitationStatus(globalVerseNumber, RecitationPhase.BUFFERING, repeatCount))
         downloadJob = scope.launch {
             try {
-                val file = cache.obtain(globalVerseNumber)
+                val file = cache.obtain(globalVerseNumber, verse.surahNumber, verse.verseNumber)
                 ensureActive()
                 if (!released && verseNumber == globalVerseNumber) {
                     prepareLocalPlayer(globalVerseNumber, file)

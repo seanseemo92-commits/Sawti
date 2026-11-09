@@ -256,7 +256,7 @@ fun QuranScreen() {
             }
             item {
                 AttributionText(
-                    "الآيات بالرسم العثماني من AlQuran.cloud، والتلاوة بصوت الشيخ مشاري العفاسي عبر Islamic Network. يمكن تنزيل صوت السورة للاستماع دون إنترنت."
+                    "الآيات بالرسم العثماني من AlQuran.cloud؛ والتلاوات حسب القارئ من Islamic Network أو EveryAyah. يمكن تنزيل صوت السورة للاستماع دون إنترنت."
                 )
             }
         } else {
@@ -339,8 +339,8 @@ fun QuranScreen() {
                                     downloadInProgress = true
                                     downloadJob = scope.launch {
                                         try {
-                                            for (number in numbers) {
-                                                cache.obtain(number)
+                                            for (verse in verses) {
+                                                cache.obtain(verse.globalNumber, verse.surahNumber, verse.verseNumber)
                                                 downloadedAyahs = numbers.count {
                                                     cache.cachedFile(it) != null
                                                 }
@@ -456,12 +456,12 @@ fun QuranScreen() {
                                     audioState.phase == RecitationPhase.BUFFERING),
                             isBuffering = audioState.globalVerseNumber == verse.globalNumber &&
                                 audioState.phase == RecitationPhase.BUFFERING,
-                            onClick = { audio.play(verse.globalNumber, repeatCount) },
+                            onClick = { audio.play(verse, repeatCount) },
                         )
                     }
                     item {
                         AttributionText(
-                            "الآيات من AlQuran.cloud والتلاوة من Islamic Network. يتم حفظ صوت الآية للقارئ المختار بعد أول تشغيل؛ لتفعيل الاستماع دون إنترنت لقارئ آخر نزّل تلاوته بشكل مستقل."
+                            "الآيات من AlQuran.cloud والتلاوات من Islamic Network للعفاسي وEveryAyah للسديس. يتم حفظ صوت كل قارئ بشكل مستقل بعد أول تشغيل لتعمل التلاوات بدون إنترنت."
                         )
                     }
                 }

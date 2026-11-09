@@ -44,10 +44,10 @@ jobs:
           set -euo pipefail
           mkdir -p release
           test -s app/build/outputs/apk/debug/app-debug.apk
-          cp app/build/outputs/apk/debug/app-debug.apk release/Sawti-Quran-Sudais-Preview-debug.apk
+          cp app/build/outputs/apk/debug/app-debug.apk release/Sawti-Quran-Sudais-Audio-Fixed-debug.apk
           (
             cd release
-            sha256sum Sawti-Quran-Sudais-Preview-debug.apk > Sawti-Quran-Sudais-Preview-debug.apk.sha256
+            sha256sum Sawti-Quran-Sudais-Audio-Fixed-debug.apk > Sawti-Quran-Sudais-Audio-Fixed-debug.apk.sha256
           )
 
       - name: Publish GitHub pre-release without Actions Artifacts
@@ -57,11 +57,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          gh release create "sawti-quran-sudais-selector-preview-20261109" \
-            release/Sawti-Quran-Sudais-Preview-debug.apk \
-            release/Sawti-Quran-Sudais-Preview-debug.apk.sha256 \
+          gh release create "sawti-quran-sudais-audio-fixed-preview-20261109" \
+            release/Sawti-Quran-Sudais-Audio-Fixed-debug.apk \
+            release/Sawti-Quran-Sudais-Audio-Fixed-debug.apk.sha256 \
             --target "$GITHUB_SHA" \
             --prerelease \
             --latest=false \
-            --title "صوتي - معاينة السديس واختيار القارئ (Debug)" \
-            --notes "معاينة على فرع fix/prelaunch-cleanup-hint: اختيار القارئ بين مشاري العفاسي وعبدالرحمن السديس من قائمة بسيطة في صفحة الآيات، مع حفظ الاختيار وتسجيلات كل قارئ في مجلد منفصل، وتشغيل الآيات المحمّلة دون إنترنت. يحتفظ التطبيق بقسم القرآن والتصميم السابق. أول تنزيل لصوت القارئ يحتاج الإنترنت. نسخة Debug للتجربة فقط، ليست تحديثاً مباشراً للإصدار الرسمي 1.0؛ لا تحذف النسخة الحالية دون نسخة احتياطية."
+            --title "صوتي - إصلاح تلاوة السديس دون إنترنت (Debug)" \
+            --notes "تحديث تجريبي على فرع fix/prelaunch-cleanup-hint يصلح تشغيل السديس بعد استجابة 403 من CDN السابق، باستخدام تسجيلات EveryAyah آية بآية ورابط احتياطي موثوق. يحفظ التلاوات على الهاتف ويدعم تنزيل السورة للقارئ المختار، مع بقاء العفاسي على مصدره الحالي. التلاوة الأولى تحتاج الإنترنت؛ المقاطع المكتملة تعمل بدونه. لا تغييرات على تصميم القسم أو main. نسخة Debug وليست تحديثاً مباشراً للإصدار الرسمي الموقّع 1.0. احفظ نسخة احتياطية قبل أي إزالة للتطبيق."
