@@ -130,9 +130,9 @@ private fun QuranHeroCard(onClick: () -> Unit) {
             modifier = Modifier.fillMaxWidth().height(168.dp).background(green),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // RTL: the wording is on the right, just like the approved mockup.
+            // In RTL the text stays on the right; photo occupies 62% of the card.
             Column(
-                modifier = Modifier.weight(0.56f).padding(start = 18.dp, end = 4.dp),
+                modifier = Modifier.weight(0.38f).padding(start = 14.dp, end = 2.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 Icon(
@@ -159,8 +159,8 @@ private fun QuranHeroCard(onClick: () -> Unit) {
                 )
             }
 
-            // Local WebP artwork: no network call and no text baked into the photo.
-            Box(modifier = Modifier.weight(0.44f).fillMaxHeight()) {
+            // Keep the existing local Quran artwork. A narrow fade softens only the image edge.
+            Box(modifier = Modifier.weight(0.62f).fillMaxHeight()) {
                 Image(
                     painter = painterResource(R.drawable.img_quran_hero),
                     contentDescription = null,
@@ -171,8 +171,8 @@ private fun QuranHeroCard(onClick: () -> Unit) {
                     modifier = Modifier.fillMaxSize().background(
                         Brush.horizontalGradient(
                             0f to Color.Transparent,
-                            0.6f to green.copy(alpha = 0.18f),
-                            1f to green,
+                            0.82f to Color.Transparent,
+                            1f to green.copy(alpha = 0.95f),
                         )
                     )
                 )
