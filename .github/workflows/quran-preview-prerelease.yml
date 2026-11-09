@@ -1,0 +1,67 @@
+name: Sawti Quran preview pre-release APK
+
+on:
+  push:
+    branches:
+      - fix/prelaunch-cleanup-hint
+    paths:
+      - .github/workflows/quran-preview-prerelease.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: quran-preview-prerelease
+  cancel-in-progress: false
+
+jobs:
+  quran-preview:
+    if: github.ref == 'refs/heads/fix/prelaunch-cleanup-hint'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout the exact dev-branch commit
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build debug APK and validate unit tests and Android lint
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
+
+      - name: Prepare labeled APK and SHA-256 checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release
+          test -s app/build/outputs/apk/debug/app-debug.apk
+          cp app/build/outputs/apk/debug/app-debug.apk release/Sawti-Quran-Preview-debug.apk
+          (
+            cd release
+            sha256sum Sawti-Quran-Preview-debug.apk > Sawti-Quran-Preview-debug.apk.sha256
+          )
+
+      - name: Publish GitHub pre-release without Actions Artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release create "sawti-quran-preview-20261109" \
+            release/Sawti-Quran-Preview-debug.apk \
+            release/Sawti-Quran-Preview-debug.apk.sha256 \
+            --target "$GITHUB_SHA" \
+            --prerelease \
+            --latest=false \
+            --title "صوتي - معاينة القرآن (Debug)" \
+            --notes "معاينة غير رسمية على فرع fix/prelaunch-cleanup-hint. تضم قسم القرآن والسور القصيرة، وآيات منفصلة وتكرار التلاوة. هذا APK تجريبي موقّع بمفتاح Debug وليس تحديثاً للإصدار الموقّع 1.0. قد يتطلب تثبيته إزالة نسخة موقّعة مختلفة؛ لا تمسح النسخة الحالية دون نسخة احتياطية للبيانات. قراءة الآيات بعد تحميلها تدعم التخزين المحلي، والتلاوة تحتاج إنترنت."
