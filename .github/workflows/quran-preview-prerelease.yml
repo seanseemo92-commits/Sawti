@@ -44,10 +44,10 @@ jobs:
           set -euo pipefail
           mkdir -p release
           test -s app/build/outputs/apk/debug/app-debug.apk
-          cp app/build/outputs/apk/debug/app-debug.apk release/Sawti-Quran-Reference-Card-debug.apk
+          cp app/build/outputs/apk/debug/app-debug.apk release/Sawti-Quran-Hero-HD-debug.apk
           (
             cd release
-            sha256sum Sawti-Quran-Reference-Card-debug.apk > Sawti-Quran-Reference-Card-debug.apk.sha256
+            sha256sum Sawti-Quran-Hero-HD-debug.apk > Sawti-Quran-Hero-HD-debug.apk.sha256
           )
 
       - name: Publish GitHub pre-release without Actions Artifacts
@@ -57,11 +57,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          gh release create "sawti-quran-reference-card-preview-20261109" \
-            release/Sawti-Quran-Reference-Card-debug.apk \
-            release/Sawti-Quran-Reference-Card-debug.apk.sha256 \
+          gh release create "sawti-quran-hero-hd-preview-20261109" \
+            release/Sawti-Quran-Hero-HD-debug.apk \
+            release/Sawti-Quran-Hero-HD-debug.apk.sha256 \
             --target "$GITHUB_SHA" \
             --prerelease \
             --latest=false \
-            --title "صوتي - معاينة مربع القرآن المرجعي (Debug)" \
-            --notes "معاينة غير رسمية لنسخة صوتي على فرع fix/prelaunch-cleanup-hint. تغيّر فقط مربع القرآن في الصفحة الرئيسية: مربع القرآن صار أقرب للصورة المرجعية: صورة المصحف والفانوس تمتد خلف الكرت مع تدرج أخضر ناعم، العنوان في سطر واحد وأيقونة سهم بسيطة، مع الاحتفاظ بتأثيرات الضغط الأصلية. بقيت صفحات السور والآيات والصوت كما كانت. هذا APK تجريبي موقّع بمفتاح Debug وليس تحديثاً للإصدار الموقّع 1.0. لا تحذف نسختك الحالية دون حفظ نسخة احتياطية للبيانات. التلاوة تحتاج اتصال إنترنت."
+            --title "صوتي - معاينة صورة القرآن عالية الوضوح (Debug)" \
+            --notes "معاينة غير رسمية لنسخة صوتي على فرع fix/prelaunch-cleanup-hint. تغيّر فقط مربع القرآن في الصفحة الرئيسية: معاينة مربع القرآن المعتمد على الرئيسية مع صورة مصحف وفانوس محسنة عالية الوضوح. لم تتغير أبعاد الكرت أو أماكن النص والسهم، ولم تتغير صفحات السور والآيات. بقيت صفحات السور والآيات والصوت كما كانت. هذا APK تجريبي موقّع بمفتاح Debug وليس تحديثاً للإصدار الموقّع 1.0. لا تحذف نسختك الحالية دون حفظ نسخة احتياطية للبيانات. التلاوة تحتاج اتصال إنترنت."
