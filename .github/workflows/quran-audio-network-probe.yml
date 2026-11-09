@@ -1,0 +1,37 @@
+name: Quran audio CDN diagnostic
+on:
+  push:
+    branches: [fix/prelaunch-cleanup-hint]
+    paths: [.github/workflows/quran-audio-network-probe.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check actual response bytes from Quran audio provider
+        shell: bash
+        run: |
+          set -uo pipefail
+          for name in sudais192 sudais128 sudais64 alafasy64; do
+            case "$name" in
+              sudais192) url="https://cdn.islamic.network/quran/audio/192/ar.sudais/1.mp3" ;;
+              sudais128) url="https://cdn.islamic.network/quran/audio/128/ar.sudais/1.mp3" ;;
+              sudais64) url="https://cdn.islamic.network/quran/audio/64/ar.sudais/1.mp3" ;;
+              alafasy64) url="https://cdn.islamic.network/quran/audio/64/ar.alafasy/1.mp3" ;;
+            esac
+            echo "=== $name ==="
+            curl -sS -L --retry 1 --retry-delay 2 --max-time 35 \
+              -o "/tmp/$name.bin" -w 'HTTP=%{http_code} CONTENT_TYPE=%{content_type} URL=%{url_effective} SIZE=%{size_download}\n' "$url" || true
+            if [ -f "/tmp/$name.bin" ]; then
+              wc -c "/tmp/$name.bin"
+              file "/tmp/$name.bin"
+              od -A n -t x1 -N 16 "/tmp/$name.bin"
+            fi
+          done
+          echo "=== sudais API metadata ==="
+          curl -sS -L --max-time 20 -w '\nHTTP=%{http_code} SIZE=%{size_download}\n' \
+            'https://api.alquran.cloud/v1/ayah/1/ar.sudais' | head -c 1500 || true
+          echo
