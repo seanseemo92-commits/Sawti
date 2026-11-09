@@ -1,8 +1,15 @@
 package com.sawti.presentation.quran
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +18,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
@@ -34,14 +42,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sawti.presentation.common.StaggeredCascade
+import com.sawti.presentation.common.bounceClick
+import com.sawti.presentation.theme.CardShape
 import com.sawti.presentation.theme.LocalIsDark
+import com.sawti.presentation.theme.LocalPerformanceMode
+import com.sawti.presentation.theme.cardBorder
 
 private val DeepGreen = Color(0xFF1B6652)
 private val LightGold = Color(0xFFE8CE91)
@@ -111,34 +128,84 @@ fun QuranScreen() {
                     fontWeight = FontWeight.Bold,
                 )
             }
-            items(QuranSource.shortSurahs, key = { it.number }) { surah ->
-                Surface(
-                    onClick = { audio.stop(); chosenSurahId = surah.number },
-                    modifier = Modifier.fillMaxWidth().heightIn(min = 88.dp),
-                    shape = AyahShape,
-                    color = MaterialTheme.colorScheme.surface,
-                    border = BorderStroke(1.dp, if (isDark) LightGold.copy(alpha = 0.2f) else Color(0xFFD5E6DF)),
-                    tonalElevation = 2.dp,
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
+            itemsIndexed(QuranSource.shortSurahs, key = { _, surah -> surah.number }) { index, surah ->
+                StaggeredCascade(row = index, modifier = Modifier.fillMaxWidth()) {
+                    val dark = LocalIsDark.current
+                    val performance = LocalPerformanceMode.current
+                    val accent = if (dark) Color(0xFF68C9A8) else DeepGreen
+                    val interaction = remember { MutableInteractionSource() }
+                    val pressed by interaction.collectIsPressedAsState()
+                    val glow by animateFloatAsState(
+                        targetValue = if (pressed && !performance) 1f else 0f,
+                        animationSpec = if (performance) snap() else tween(170),
+                        label = "QuranSurahGlow",
+                    )
+                    val cardColor by animateColorAsState(
+                        targetValue = when {
+                            performance -> MaterialTheme.colorScheme.surface
+                            pressed && dark -> Color(0xFF213C37)
+                            pressed -> Color(0xFFE8F5EF)
+                            else -> MaterialTheme.colorScheme.surface
+                        },
+                        animationSpec = if (performance) snap() else tween(170),
+                        label = "QuranSurahCardColor",
+                    )
+
+                    Box(
+                        modifier = Modifier.fillMaxWidth().heightIn(min = 88.dp)
+                            .drawBehind {
+                                if (glow > 0f) {
+                                    drawRoundRect(
+                                        color = accent.copy(alpha = 0.32f * glow),
+                                        cornerRadius = CornerRadius(24.dp.toPx()),
+                                        style = Stroke(width = 7.dp.toPx()),
+                                    )
+                                }
+                            },
                     ) {
-                        Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                            Text(
-                                "سورة ${surah.name}",
-                                fontSize = 21.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface,
-                            )
-                            Text(
-                                "${surah.verseCount} آيات",
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.bodyMedium,
-                            )
+                        Surface(
+                            modifier = Modifier.fillMaxWidth().padding(2.dp)
+                                .heightIn(min = 84.dp).clip(CardShape)
+                                .bounceClick(
+                                    onClick = { audio.stop(); chosenSurahId = surah.number },
+                                    accent = accent,
+                                    interactionSource = interaction,
+                                ),
+                            shape = CardShape,
+                            color = cardColor,
+                            border = if (pressed && !performance) {
+                                BorderStroke(2.dp, accent.copy(alpha = 0.85f))
+                            } else {
+                                cardBorder()
+                            },
+                            shadowElevation = if (performance) 0.dp else if (dark) 4.dp else 8.dp,
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth()
+                                    .padding(horizontal = 18.dp, vertical = 16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                            ) {
+                                Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                                    Text(
+                                        "سورة ${surah.name}",
+                                        fontSize = 21.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                    )
+                                    Text(
+                                        "${surah.verseCount} آيات",
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                    )
+                                }
+                                Icon(
+                                    Icons.Outlined.MenuBook,
+                                    contentDescription = null,
+                                    tint = accent,
+                                )
+                            }
                         }
-                        Icon(Icons.Outlined.MenuBook, contentDescription = null, tint = DeepGreen)
                     }
                 }
             }
