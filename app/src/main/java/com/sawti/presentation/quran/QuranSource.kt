@@ -47,7 +47,7 @@ object QuranSource {
     suspend fun load(context: Context, surah: ShortSurah): List<QuranVerse> =
         withContext(Dispatchers.IO) {
             // Download once; subsequent visits can display verified text without internet.
-            // Audio remains streamed; no copyrighted recordings are bundled in the APK.
+            // Recordings are cached separately in filesDir by QuranAudioCache. None are bundled in the APK.
             val dir = File(context.filesDir, "quran_uthmani_cache")
             val file = File(dir, "surah_${surah.number}.json")
             if (file.isFile) {

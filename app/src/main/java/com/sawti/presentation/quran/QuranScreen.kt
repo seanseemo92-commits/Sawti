@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.outlined.MenuBook
 import androidx.compose.material3.Button
@@ -39,6 +40,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -59,6 +61,9 @@ import com.sawti.presentation.theme.CardShape
 import com.sawti.presentation.theme.LocalIsDark
 import com.sawti.presentation.theme.LocalPerformanceMode
 import com.sawti.presentation.theme.cardBorder
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 private val DeepGreen = Color(0xFF1B6652)
 private val LightGold = Color(0xFFE8CE91)
@@ -75,20 +80,42 @@ fun QuranScreen() {
     var loading by remember { mutableStateOf(false) }
     var loadError by remember { mutableStateOf<String?>(null) }
     var audioState by remember { mutableStateOf(RecitationStatus()) }
-    val audio = remember(context) {
-        QuranAyahPlayer(context.applicationContext) { audioState = it }
+    var downloadedAyahs by remember { mutableIntStateOf(0) }
+    var downloadInProgress by remember { mutableStateOf(false) }
+    var downloadError by remember { mutableStateOf<String?>(null) }
+    var downloadJob by remember { mutableStateOf<Job?>(null) }
+    val scope = rememberCoroutineScope()
+    val cache = remember(context) { QuranAudioCache(context.applicationContext) }
+    val audio = remember(context, cache) {
+        QuranAyahPlayer(context.applicationContext, cache) { status ->
+            audioState = status
+            if (status.phase == RecitationPhase.PLAYING) {
+                downloadedAyahs = verses.count { cache.cachedFile(it.globalNumber) != null }
+            }
+        }
     }
-    DisposableEffect(audio) { onDispose { audio.release() } }
+    DisposableEffect(audio) {
+        onDispose {
+            downloadJob?.cancel()
+            audio.release()
+        }
+    }
 
     val chosenSurah = QuranSource.shortSurahs.firstOrNull { it.number == chosenSurahId }
     LaunchedEffect(chosenSurahId, retryAttempt) {
         audio.stop()
+        downloadJob?.cancel()
+        downloadJob = null
+        downloadInProgress = false
+        downloadError = null
+        downloadedAyahs = 0
         verses = emptyList()
         loadError = null
         if (chosenSurah != null) {
             loading = true
             try {
                 verses = QuranSource.load(context.applicationContext, chosenSurah)
+                downloadedAyahs = verses.count { cache.cachedFile(it.globalNumber) != null }
             } catch (_: Exception) {
                 loadError = "تعذّر تحميل الآيات. تأكّد من اتصال الإنترنت وحاول مرة ثانية."
             } finally {
@@ -97,6 +124,7 @@ fun QuranScreen() {
         }
     }
     BackHandler(enabled = chosenSurah != null) {
+        downloadJob?.cancel()
         audio.stop()
         chosenSurahId = null
     }
@@ -211,13 +239,70 @@ fun QuranScreen() {
             }
             item {
                 AttributionText(
-                    "الآيات من AlQuran.cloud بالرسم العثماني. التلاوات بصوت الشيخ مشاري راشد العفاسي عبر Islamic Network؛ تشغيل الصوت يحتاج إلى الإنترنت."
+                    "الآيات بالرسم العثماني من AlQuran.cloud، والتلاوة بصوت الشيخ مشاري العفاسي عبر Islamic Network. يمكن تنزيل صوت السورة للاستماع دون إنترنت."
                 )
             }
         } else {
             item {
-                TextButton(onClick = { audio.stop(); chosenSurahId = null }) {
+                TextButton(onClick = {
+                    downloadJob?.cancel()
+                    audio.stop()
+                    chosenSurahId = null
+                }) {
                     Text("العودة إلى قائمة السور")
+                }
+            }
+            if (verses.isNotEmpty()) {
+                item {
+                    Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                        if (downloadedAyahs == verses.size) {
+                            Text(
+                                "تلاوة السورة محفوظة على الهاتف وتشتغل بدون إنترنت",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                        } else {
+                            TextButton(onClick = {
+                                if (downloadInProgress) {
+                                    downloadJob?.cancel()
+                                    downloadInProgress = false
+                                } else {
+                                    val numbers = verses.map { it.globalNumber }
+                                    downloadError = null
+                                    downloadInProgress = true
+                                    downloadJob = scope.launch {
+                                        try {
+                                            for (number in numbers) {
+                                                cache.obtain(number)
+                                                downloadedAyahs = numbers.count {
+                                                    cache.cachedFile(it) != null
+                                                }
+                                            }
+                                        } catch (cancelled: CancellationException) {
+                                            throw cancelled
+                                        } catch (_: Exception) {
+                                            downloadError = "تعذّر تنزيل بعض التلاوات. تأكّد من الإنترنت وأعد المحاولة."
+                                        } finally {
+                                            downloadInProgress = false
+                                        }
+                                    }
+                                }
+                            }) {
+                                Icon(Icons.Filled.Download, contentDescription = null)
+                                Text(if (downloadInProgress) "إلغاء التنزيل" else "تحميل السورة للاستماع بدون إنترنت")
+                            }
+                            if (downloadInProgress) {
+                                Text(
+                                    "تم حفظ " + downloadedAyahs + " من " + verses.size + " آيات",
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    style = MaterialTheme.typography.bodySmall,
+                                )
+                            }
+                            downloadError?.let { message ->
+                                Text(message, color = MaterialTheme.colorScheme.error)
+                            }
+                        }
+                    }
                 }
             }
             item {
@@ -242,7 +327,7 @@ fun QuranScreen() {
             if (audioState.phase == RecitationPhase.ERROR) {
                 item {
                     Text(
-                        "تعذّر تشغيل التلاوة. تأكّد من الإنترنت والصوت، واضغط على الآية للمحاولة من جديد.",
+                        "تعذّر تشغيل التلاوة. الآية غير المحفوظة تحتاج إنترنت أول مرة، ثم تشتغل دون اتصال.",
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodyMedium,
                     )
@@ -309,7 +394,7 @@ fun QuranScreen() {
                     }
                     item {
                         AttributionText(
-                            "نص الآيات من AlQuran.cloud (الرسم العثماني)، وتلاوة الشيخ مشاري راشد العفاسي عبر Islamic Network. يمكن قراءة الآيات المحفوظة دون إنترنت بعد تحميلها أول مرة، أما التلاوة فتحتاج اتصالاً بالإنترنت."
+                            "الآيات من AlQuran.cloud والتلاوة من Islamic Network بصوت مشاري العفاسي. تتحفظ التلاوة تلقائياً بعد أول تشغيل، أو نزّل السورة كاملة لتشتغل بدون إنترنت."
                         )
                     }
                 }

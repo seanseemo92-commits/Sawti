@@ -4,6 +4,15 @@ import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
+import java.io.File
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.launch
 
 enum class RecitationPhase { IDLE, BUFFERING, PLAYING, ERROR }
 
@@ -14,40 +23,55 @@ data class RecitationStatus(
 )
 
 /**
- * Single active ayah playback with explicit finite repeats.
- * Never uses TTS for Quran recitation. Releasing stops streaming on exit.
+ * Ayah playback uses the persistently downloaded local MP3 rather than
+ * a streaming URL. The first play saves the ayah before playing it; repeats
+ * and subsequent offline plays never require network access.
  */
 class QuranAyahPlayer(
     context: Context,
+    private val cache: QuranAudioCache,
     private val update: (RecitationStatus) -> Unit,
 ) {
-    private val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    private val audioManager = context.applicationContext
+        .getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private val focusListener = AudioManager.OnAudioFocusChangeListener { change ->
         if (change == AudioManager.AUDIOFOCUS_LOSS ||
             change == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT
         ) stop()
     }
     private var player: MediaPlayer? = null
+    private var downloadJob: Job? = null
     private var focusHeld = false
     private var verseNumber: Int? = null
     private var playsLeft = 0
+    private var released = false
 
     fun play(globalVerseNumber: Int, repeatCount: Int) {
         require(repeatCount in setOf(1, 3, 5))
+        if (released) return
         stop()
-        if (audioManager.requestAudioFocus(
-                focusListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT
-            ) != AudioManager.AUDIOFOCUS_REQUEST_GRANTED
-        ) {
-            update(RecitationStatus(globalVerseNumber, RecitationPhase.ERROR))
-            return
-        }
-        focusHeld = true
         verseNumber = globalVerseNumber
         playsLeft = repeatCount
+        update(RecitationStatus(globalVerseNumber, RecitationPhase.BUFFERING, repeatCount))
+        downloadJob = scope.launch {
+            try {
+                val file = cache.obtain(globalVerseNumber)
+                ensureActive()
+                if (!released && verseNumber == globalVerseNumber) {
+                    prepareLocalPlayer(globalVerseNumber, file)
+                }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                if (!released && verseNumber == globalVerseNumber) fail(globalVerseNumber)
+            }
+        }
+    }
+
+    private fun prepareLocalPlayer(number: Int, file: File) {
         val candidate = MediaPlayer()
         player = candidate
-        update(RecitationStatus(globalVerseNumber, RecitationPhase.BUFFERING, repeatCount))
         try {
             candidate.setAudioAttributes(
                 AudioAttributes.Builder()
@@ -55,15 +79,23 @@ class QuranAyahPlayer(
                     .setUsage(AudioAttributes.USAGE_MEDIA)
                     .build()
             )
-            candidate.setDataSource(QuranSource.audioUrl(globalVerseNumber))
+            candidate.setDataSource(file.absolutePath)
             candidate.setOnPreparedListener { mp ->
-                if (mp === player) {
-                    try {
-                        mp.start()
-                        update(RecitationStatus(globalVerseNumber, RecitationPhase.PLAYING, playsLeft))
-                    } catch (_: IllegalStateException) {
-                        fail(globalVerseNumber)
+                if (mp !== player || released || verseNumber != number) return@setOnPreparedListener
+                try {
+                    if (audioManager.requestAudioFocus(
+                            focusListener, AudioManager.STREAM_MUSIC,
+                            AudioManager.AUDIOFOCUS_GAIN_TRANSIENT
+                        ) != AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+                    ) {
+                        fail(number)
+                        return@setOnPreparedListener
                     }
+                    focusHeld = true
+                    mp.start()
+                    update(RecitationStatus(number, RecitationPhase.PLAYING, playsLeft))
+                } catch (_: Exception) {
+                    fail(number)
                 }
             }
             candidate.setOnCompletionListener { mp ->
@@ -73,30 +105,32 @@ class QuranAyahPlayer(
                     try {
                         mp.seekTo(0)
                         mp.start()
-                        update(RecitationStatus(globalVerseNumber, RecitationPhase.PLAYING, playsLeft))
-                    } catch (_: IllegalStateException) {
-                        fail(globalVerseNumber)
+                        update(RecitationStatus(number, RecitationPhase.PLAYING, playsLeft))
+                    } catch (_: Exception) {
+                        fail(number)
                     }
                 } else {
                     stop()
                 }
             }
             candidate.setOnErrorListener { mp, _, _ ->
-                if (mp === player) fail(globalVerseNumber)
+                if (mp === player) fail(number)
                 true
             }
             candidate.prepareAsync()
         } catch (_: Exception) {
-            fail(globalVerseNumber)
+            fail(number)
         }
     }
 
     private fun fail(number: Int) {
         stop()
-        update(RecitationStatus(number, RecitationPhase.ERROR))
+        if (!released) update(RecitationStatus(number, RecitationPhase.ERROR))
     }
 
     fun stop() {
+        downloadJob?.cancel()
+        downloadJob = null
         val active = player
         player = null
         verseNumber = null
@@ -105,7 +139,7 @@ class QuranAyahPlayer(
             try {
                 active.reset()
             } catch (_: Exception) {
-                // An async player might already have entered an error state.
+                // The async player might already have entered its error state.
             }
             active.release()
         }
@@ -117,6 +151,9 @@ class QuranAyahPlayer(
     }
 
     fun release() {
+        if (released) return
+        released = true
         stop()
+        scope.cancel()
     }
 }
