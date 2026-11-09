@@ -31,6 +31,21 @@ jobs:
               od -A n -t x1 -N 16 "/tmp/$name.bin"
             fi
           done
+          for name in sudaisEveryayah sudaisMirror sudaisHF; do
+            case "$name" in
+              sudaisEveryayah) url="https://everyayah.com/data/Abdurrahmaan_As-Sudais_192kbps/001001.mp3" ;;
+              sudaisMirror) url="https://verse.mp3quran.net/data/Abdurrahmaan_As-Sudais_192kbps/001001.mp3" ;;
+              sudaisHF) url="https://huggingface.co/datasets/maqra-project/abdurrahman-as-sudais-192kbps/resolve/main/001001.mp3" ;;
+            esac
+            echo "=== $name ==="
+            curl -sS -L --retry 1 --retry-delay 2 --max-time 45 \
+              -o "/tmp/$name.bin" -w 'HTTP=%{http_code} CONTENT_TYPE=%{content_type} SIZE=%{size_download}\n' "$url" || true
+            if [ -f "/tmp/$name.bin" ]; then
+              wc -c "/tmp/$name.bin"
+              file "/tmp/$name.bin"
+              od -A n -t x1 -N 16 "/tmp/$name.bin"
+            fi
+          done
           echo "=== sudais API metadata ==="
           curl -sS -L --max-time 20 -w '\nHTTP=%{http_code} SIZE=%{size_download}\n' \
             'https://api.alquran.cloud/v1/ayah/1/ar.sudais' | head -c 1500 || true
