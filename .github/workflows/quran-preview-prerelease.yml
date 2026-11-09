@@ -44,10 +44,10 @@ jobs:
           set -euo pipefail
           mkdir -p release
           test -s app/build/outputs/apk/debug/app-debug.apk
-          cp app/build/outputs/apk/debug/app-debug.apk release/Sawti-Quran-Preview-debug.apk
+          cp app/build/outputs/apk/debug/app-debug.apk release/Sawti-Quran-HomeCard-Preview-debug.apk
           (
             cd release
-            sha256sum Sawti-Quran-Preview-debug.apk > Sawti-Quran-Preview-debug.apk.sha256
+            sha256sum Sawti-Quran-HomeCard-Preview-debug.apk > Sawti-Quran-HomeCard-Preview-debug.apk.sha256
           )
 
       - name: Publish GitHub pre-release without Actions Artifacts
@@ -57,11 +57,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          gh release create "sawti-quran-preview-20261109" \
-            release/Sawti-Quran-Preview-debug.apk \
-            release/Sawti-Quran-Preview-debug.apk.sha256 \
+          gh release create "sawti-quran-homecard-preview-20261109" \
+            release/Sawti-Quran-HomeCard-Preview-debug.apk \
+            release/Sawti-Quran-HomeCard-Preview-debug.apk.sha256 \
             --target "$GITHUB_SHA" \
             --prerelease \
             --latest=false \
-            --title "صوتي - معاينة القرآن (Debug)" \
-            --notes "معاينة غير رسمية على فرع fix/prelaunch-cleanup-hint. تضم قسم القرآن والسور القصيرة، وآيات منفصلة وتكرار التلاوة. هذا APK تجريبي موقّع بمفتاح Debug وليس تحديثاً للإصدار الموقّع 1.0. قد يتطلب تثبيته إزالة نسخة موقّعة مختلفة؛ لا تمسح النسخة الحالية دون نسخة احتياطية للبيانات. قراءة الآيات بعد تحميلها تدعم التخزين المحلي، والتلاوة تحتاج إنترنت."
+            --title "صوتي - معاينة كرت القرآن الجديد (Debug)" \
+            --notes "معاينة غير رسمية لنسخة صوتي على فرع fix/prelaunch-cleanup-hint. تغيّر فقط مربع القرآن في الصفحة الرئيسية: صورة مصحف واقعية، ألوان خضراء وتفاعل متناسق مع بطاقات التطبيق الأصلية. بقيت صفحات السور والآيات والصوت كما كانت. هذا APK تجريبي موقّع بمفتاح Debug وليس تحديثاً للإصدار الموقّع 1.0. لا تحذف نسختك الحالية دون حفظ نسخة احتياطية للبيانات. التلاوة تحتاج اتصال إنترنت."
