@@ -36,12 +36,15 @@ object QuranSource {
     )
 
     private const val API_BASE = "https://api.alquran.cloud/v1/surah"
-    private const val AUDIO_BASE = "https://cdn.islamic.network/quran/audio/64/ar.alafasy"
 
     // Islamic Network's CDN uses the global Quran verse number, NOT the local surah index.
-    fun audioUrl(globalVerseNumber: Int): String {
+    fun audioUrl(globalVerseNumber: Int): String =
+        audioUrl(globalVerseNumber, QuranReciter.ALAFASY)
+
+    fun audioUrl(globalVerseNumber: Int, reciter: QuranReciter): String {
         require(globalVerseNumber in 1..6236)
-        return "$AUDIO_BASE/$globalVerseNumber.mp3"
+        return "https://cdn.islamic.network/quran/audio/" +
+            "${reciter.bitrateKbps}/${reciter.editionId}/$globalVerseNumber.mp3"
     }
 
     suspend fun load(context: Context, surah: ShortSurah): List<QuranVerse> =

@@ -44,10 +44,10 @@ jobs:
           set -euo pipefail
           mkdir -p release
           test -s app/build/outputs/apk/debug/app-debug.apk
-          cp app/build/outputs/apk/debug/app-debug.apk release/Sawti-Quran-Offline-Audio-debug.apk
+          cp app/build/outputs/apk/debug/app-debug.apk release/Sawti-Quran-Sudais-Preview-debug.apk
           (
             cd release
-            sha256sum Sawti-Quran-Offline-Audio-debug.apk > Sawti-Quran-Offline-Audio-debug.apk.sha256
+            sha256sum Sawti-Quran-Sudais-Preview-debug.apk > Sawti-Quran-Sudais-Preview-debug.apk.sha256
           )
 
       - name: Publish GitHub pre-release without Actions Artifacts
@@ -57,11 +57,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          gh release create "sawti-quran-offline-audio-preview-20261109" \
-            release/Sawti-Quran-Offline-Audio-debug.apk \
-            release/Sawti-Quran-Offline-Audio-debug.apk.sha256 \
+          gh release create "sawti-quran-sudais-selector-preview-20261109" \
+            release/Sawti-Quran-Sudais-Preview-debug.apk \
+            release/Sawti-Quran-Sudais-Preview-debug.apk.sha256 \
             --target "$GITHUB_SHA" \
             --prerelease \
             --latest=false \
-            --title "صوتي - معاينة القرآن بلا إنترنت (Debug)" \
-            --notes "نسخة تجريبية من صوتي على فرع fix/prelaunch-cleanup-hint: عند تشغيل تلاوة آية أول مرة تحفظ كملف MP3 في مساحة التطبيق، وإعادة تشغيلها وتكرارها يعملان بدون إنترنت. أضفنا خيار تحميل تلاوة السورة كاملة مع متابعة التقدم. يحتفظ التطبيق بالنصوص القرآنية والسور والتصميم السابق. التلاوات من Islamic Network بصوت مشاري العفاسي؛ أول تحميل يحتاج إنترنت. هذا APK بتوقيع Debug وليس تحديثاً مباشراً للإصدار الرسمي الموقع 1.0؛ لا تحذف النسخة الحالية دون نسخة احتياطية."
+            --title "صوتي - معاينة السديس واختيار القارئ (Debug)" \
+            --notes "معاينة على فرع fix/prelaunch-cleanup-hint: اختيار القارئ بين مشاري العفاسي وعبدالرحمن السديس من قائمة بسيطة في صفحة الآيات، مع حفظ الاختيار وتسجيلات كل قارئ في مجلد منفصل، وتشغيل الآيات المحمّلة دون إنترنت. يحتفظ التطبيق بقسم القرآن والتصميم السابق. أول تنزيل لصوت القارئ يحتاج الإنترنت. نسخة Debug للتجربة فقط، ليست تحديثاً مباشراً للإصدار الرسمي 1.0؛ لا تحذف النسخة الحالية دون نسخة احتياطية."

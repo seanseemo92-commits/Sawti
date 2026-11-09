@@ -20,11 +20,13 @@ import java.util.concurrent.ConcurrentHashMap
  */
 class QuranAudioCache(
     context: Context,
+    val reciter: QuranReciter = QuranReciter.ALAFASY,
     private val connectionFactory: (URL) -> HttpURLConnection = {
         it.openConnection() as HttpURLConnection
     },
 ) {
-    private val audioDir = File(context.applicationContext.filesDir, "quran_recitations/ar_alafasy")
+    // Separate storage per reciter. Existing alafasy downloads remain intact.
+    private val audioDir = File(context.applicationContext.filesDir, "quran_recitations/" + reciter.editionId)
     private val locks = ConcurrentHashMap<Int, Mutex>()
 
     fun cachedFile(globalVerseNumber: Int): File? {
@@ -43,7 +45,7 @@ class QuranAudioCache(
             }
             val temporary = File.createTempFile("ayah_" + globalVerseNumber + "_", ".part", audioDir)
             try {
-                val connection = connectionFactory(URL(QuranSource.audioUrl(globalVerseNumber)))
+                val connection = connectionFactory(URL(QuranSource.audioUrl(globalVerseNumber, reciter)))
                 try {
                     connection.connectTimeout = 12_000
                     connection.readTimeout = 20_000

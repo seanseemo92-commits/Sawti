@@ -28,6 +28,20 @@ class QuranSourceTest {
     }
 
     @Test
+    fun sudaisUsesIndependentVerseAudioEdition() {
+        assertEquals(
+            "https://cdn.islamic.network/quran/audio/192/ar.sudais/1.mp3",
+            QuranSource.audioUrl(1, QuranReciter.SUDAIS),
+        )
+        assertEquals(
+            "https://cdn.islamic.network/quran/audio/64/ar.alafasy/1.mp3",
+            QuranSource.audioUrl(1, QuranReciter.ALAFASY),
+        )
+        assertEquals(QuranReciter.SUDAIS, QuranReciter.fromEdition("ar.sudais"))
+        assertEquals(QuranReciter.ALAFASY, QuranReciter.fromEdition("unknown"))
+    }
+
+    @Test
     fun shortSurahsHaveUniqueIds() {
         assertEquals(13, QuranSource.shortSurahs.size)
         assertEquals(13, QuranSource.shortSurahs.map { it.number }.distinct().size)

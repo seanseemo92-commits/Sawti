@@ -39,11 +39,13 @@ class QuranAudioCacheTest {
         app = RuntimeEnvironment.getApplication()
         audioDir = File(app.filesDir, "quran_recitations/ar_alafasy")
         audioDir.deleteRecursively()
+        File(app.filesDir, "quran_recitations/ar.sudais").deleteRecursively()
     }
 
     @After
     fun cleanup() {
         audioDir.deleteRecursively()
+        File(app.filesDir, "quran_recitations/ar.sudais").deleteRecursively()
     }
 
     @Test
@@ -93,6 +95,30 @@ class QuranAudioCacheTest {
         assertFalse(audioDir.listFiles()?.any { it.extension == "part" } ?: false)
         val retry = QuranAudioCache(app) { url -> FakeConnection(url, sampleMp3) }
         assertTrue(retry.obtain(2).isFile)
+    }
+
+    @Test
+    fun eachReciterUsesSeparatePersistentFiles() = runBlocking {
+        val defaultCache = QuranAudioCache(app, QuranReciter.ALAFASY) { url ->
+            FakeConnection(url, sampleMp3)
+        }
+        val sudaisCache = QuranAudioCache(app, QuranReciter.SUDAIS) { url ->
+            assertTrue(url.toString().contains("/192/ar.sudais/"))
+            FakeConnection(url, sampleMp3)
+        }
+        val alafasy = defaultCache.obtain(6205)
+        val sudais = sudaisCache.obtain(6205)
+
+        assertTrue(alafasy.absolutePath.contains("/ar.alafasy/"))
+        assertTrue(sudais.absolutePath.contains("/ar.sudais/"))
+        assertTrue(alafasy.absolutePath != sudais.absolutePath)
+        assertNotNull(defaultCache.cachedFile(6205))
+        assertNotNull(sudaisCache.cachedFile(6205))
+
+        val offline = QuranAudioCache(app, QuranReciter.SUDAIS) {
+            throw IOException("No network")
+        }
+        assertEquals(sudais.absolutePath, offline.obtain(6205).absolutePath)
     }
 
     private open class FakeConnection(url: URL, private val audio: ByteArray) :

@@ -1,5 +1,6 @@
 package com.sawti.presentation.quran
 
+import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -23,10 +24,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.outlined.MenuBook
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -73,6 +78,13 @@ private val AyahShape = RoundedCornerShape(20.dp)
 fun QuranScreen() {
     val context = LocalContext.current
     val isDark = LocalIsDark.current
+    val reciterPreferences = remember(context) {
+        context.applicationContext.getSharedPreferences("quran_reciter", Context.MODE_PRIVATE)
+    }
+    var selectedReciter by rememberSaveable {
+        mutableStateOf(QuranReciter.fromEdition(reciterPreferences.getString("selected_edition", null)))
+    }
+    var reciterMenuExpanded by remember { mutableStateOf(false) }
     var chosenSurahId by rememberSaveable { mutableStateOf<Int?>(null) }
     var repeatCount by rememberSaveable { mutableIntStateOf(1) }
     var retryAttempt by remember { mutableIntStateOf(0) }
@@ -85,7 +97,9 @@ fun QuranScreen() {
     var downloadError by remember { mutableStateOf<String?>(null) }
     var downloadJob by remember { mutableStateOf<Job?>(null) }
     val scope = rememberCoroutineScope()
-    val cache = remember(context) { QuranAudioCache(context.applicationContext) }
+    val cache = remember(context, selectedReciter) {
+        QuranAudioCache(context.applicationContext, selectedReciter)
+    }
     val audio = remember(context, cache) {
         QuranAyahPlayer(context.applicationContext, cache) { status ->
             audioState = status
@@ -99,6 +113,9 @@ fun QuranScreen() {
             downloadJob?.cancel()
             audio.release()
         }
+    }
+    LaunchedEffect(cache, verses) {
+        downloadedAyahs = verses.count { cache.cachedFile(it.globalNumber) != null }
     }
 
     val chosenSurah = QuranSource.shortSurahs.firstOrNull { it.number == chosenSurahId }
@@ -252,12 +269,62 @@ fun QuranScreen() {
                     Text("العودة إلى قائمة السور")
                 }
             }
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        "القارئ",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Box {
+                        TextButton(onClick = { reciterMenuExpanded = true }) {
+                            Text(selectedReciter.displayName)
+                            Icon(Icons.Filled.KeyboardArrowDown, contentDescription = "اختيار القارئ")
+                        }
+                        DropdownMenu(
+                            expanded = reciterMenuExpanded,
+                            onDismissRequest = { reciterMenuExpanded = false },
+                        ) {
+                            QuranReciter.entries.forEach { option ->
+                                DropdownMenuItem(
+                                    text = { Text(option.displayName) },
+                                    onClick = {
+                                        reciterMenuExpanded = false
+                                        if (option != selectedReciter) {
+                                            audio.stop()
+                                            downloadJob?.cancel()
+                                            downloadJob = null
+                                            downloadInProgress = false
+                                            downloadError = null
+                                            downloadedAyahs = 0
+                                            selectedReciter = option
+                                            reciterPreferences.edit()
+                                                .putString("selected_edition", option.editionId)
+                                                .apply()
+                                        }
+                                    },
+                                    trailingIcon = {
+                                        if (option == selectedReciter) {
+                                            Icon(Icons.Filled.Check, contentDescription = null)
+                                        }
+                                    },
+                                )
+                            }
+                        }
+                    }
+                }
+            }
             if (verses.isNotEmpty()) {
                 item {
                     Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
                         if (downloadedAyahs == verses.size) {
                             Text(
-                                "تلاوة السورة محفوظة على الهاتف وتشتغل بدون إنترنت",
+                                "تلاوة السورة بصوت " + selectedReciter.displayName + " محفوظة على الهاتف وتشتغل بدون إنترنت",
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 style = MaterialTheme.typography.bodyMedium,
                             )
@@ -289,7 +356,7 @@ fun QuranScreen() {
                                 }
                             }) {
                                 Icon(Icons.Filled.Download, contentDescription = null)
-                                Text(if (downloadInProgress) "إلغاء التنزيل" else "تحميل السورة للاستماع بدون إنترنت")
+                                Text(if (downloadInProgress) "إلغاء التنزيل" else "تحميل السورة بصوت " + selectedReciter.displayName)
                             }
                             if (downloadInProgress) {
                                 Text(
@@ -394,7 +461,7 @@ fun QuranScreen() {
                     }
                     item {
                         AttributionText(
-                            "الآيات من AlQuran.cloud والتلاوة من Islamic Network بصوت مشاري العفاسي. تتحفظ التلاوة تلقائياً بعد أول تشغيل، أو نزّل السورة كاملة لتشتغل بدون إنترنت."
+                            "الآيات من AlQuran.cloud والتلاوة من Islamic Network. يتم حفظ صوت الآية للقارئ المختار بعد أول تشغيل؛ لتفعيل الاستماع دون إنترنت لقارئ آخر نزّل تلاوته بشكل مستقل."
                         )
                     }
                 }
