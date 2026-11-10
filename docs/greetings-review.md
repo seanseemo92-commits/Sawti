@@ -18,3 +18,11 @@ This review build contains the new **التحيات** section; it is not a produ
 - Newly seeded greeting cards: 14 (391 total foundation words), idempotent by semantic key
 - No Room schema changes; archived media and custom text remain owned by the user
 - Automated validation: debug compile, unit tests, lint, optimized signed Release and certificate verification before delivery
+
+## Photo cards QA
+- Each of the 14 greeting concepts displays a unique offline photo rather than a single letter fallback.
+- Home greetings tile uses a full-bleed dedicated greeting frame, while retaining the coral bottom banner and existing tap animations.
+- Family category, Quran hero and all other category cards remain untouched.
+- Across all nine dialects, the picture is the same for a semantic concept while text and TTS remain localized.
+- A caregiver's own card photo remains higher priority than the bundled image.
+- Test both light/dark themes and large text; native-device visual and speech review is still required.
