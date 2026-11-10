@@ -338,7 +338,8 @@ private fun FlashcardPage(item: WordItem, category: Category, palette: CategoryP
             Row(Modifier.padding(start = 16.dp, end = 16.dp, bottom = 18.dp), verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 ActionPill(label = stringResource(R.string.listen), icon = Icons.AutoMirrored.Filled.VolumeUp,
-                    color = palette.banner, onClick = { actions.onSpeakAgain(item) })
+                    color = palette.banner, onClick = { actions.onSpeakAgain(item) },
+                    modifier = Modifier.testTag("flashcard-listen-${item.id}"))
                 if (item.phone.isNotBlank() && !state.caregiverMode) {
                     ActionPill(label = stringResource(R.string.call), icon = Icons.Filled.Call, color = palette.banner, onClick = { onCall(item.phone) })
                 }

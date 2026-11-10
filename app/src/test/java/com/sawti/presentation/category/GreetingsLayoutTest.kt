@@ -57,10 +57,12 @@ class GreetingsLayoutTest {
     @get:Rule val compose = createComposeRule()
     private lateinit var view: View
     private val tapped = mutableListOf<Long>()
+    private val spoken = mutableListOf<Long>()
     private val actions = Proxy.newProxyInstance(LibraryActions::class.java.classLoader,
         arrayOf(LibraryActions::class.java)) { proxy, method, args ->
         when (method.name) {
             "onItemTapped" -> { tapped += (args!![0] as com.sawti.domain.model.WordItem).id; Unit }
+            "onSpeakAgain" -> { spoken += (args!![0] as com.sawti.domain.model.WordItem).id; Unit }
             "hashCode" -> System.identityHashCode(proxy)
             "equals" -> proxy === args?.firstOrNull()
             "toString" -> "Greetings test actions"
@@ -162,7 +164,8 @@ class GreetingsLayoutTest {
         val context = RuntimeEnvironment.getApplication()
         compose.onNodeWithContentDescription(context.getString(R.string.view_flashcards)).performClick()
         compose.onNodeWithText(category.items.first().displayText).assertIsDisplayed()
-        compose.onNodeWithText(context.getString(R.string.listen)).assertIsDisplayed()
+        compose.onNodeWithTag("flashcard-listen-${category.items.first().id}").assertIsDisplayed().performClick()
+        assertEquals(listOf(category.items.first().id), spoken)
         save("greetings-flashcard")
     }
 
