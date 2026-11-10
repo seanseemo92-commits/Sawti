@@ -247,15 +247,15 @@ private fun LuxuryCategoryCard(category: Category, isSpeaking: Boolean, onClick:
             shadowElevation = if (performance) 0.dp else if (dark) 4.dp else 8.dp) {
             Box(modifier = Modifier.fillMaxSize()) {
                 val heroItem = category.items.firstOrNull { it.photoPath != null } ?: category.items.firstOrNull()
-                if (category.id == GreetingPhotoAtlas.CATEGORY_ID) {
+                if (resId != null) {
+                    Image(painter = painterResource(resId), contentDescription = category.title,
+                        contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
+                } else if (category.id == GreetingPhotoAtlas.CATEGORY_ID) {
                     GreetingPhoto(
                         slot = GreetingPhotoAtlas.HOME_SLOT,
                         contentDescription = category.title,
                         modifier = Modifier.fillMaxSize(),
                     )
-                } else if (resId != null) {
-                    Image(painter = painterResource(resId), contentDescription = category.title,
-                        contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
                 } else if (heroItem != null) {
                     CardImageContent(item = heroItem, accent = palette.banner, isCurrentlyPlaying = isSpeaking,
                         modifier = Modifier.fillMaxSize(), crop = true, fullBleed = true)
