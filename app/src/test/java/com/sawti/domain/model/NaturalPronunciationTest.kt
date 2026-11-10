@@ -30,6 +30,7 @@ class NaturalPronunciationTest {
     @Test fun fathatanRetainsLongAaInBothUnicodeSpellingsAndAfterHamza() {
         assertEquals("مَرْحَبَا", TtsEndings.normalize("مَرْحَبًا"))
         assertEquals("مَرْحَبَا", TtsEndings.normalize("مَرْحَباً"))
+        assertEquals("مَرْحَبَا", TtsEndings.normalize("مَرْحَبَاً"))
         assertEquals("هُدَى", TtsEndings.normalize("هُدًى"))
         assertEquals("مَاءَا", TtsEndings.normalize("مَاءً"))
         assertEquals("رَحْمَهْ", TtsEndings.normalize("رَحْمَةً"))

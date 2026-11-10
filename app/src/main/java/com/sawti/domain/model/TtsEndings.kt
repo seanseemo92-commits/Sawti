@@ -39,7 +39,11 @@ object TtsEndings {
         if (body.endsWith("ًا") || body.endsWith("ًى")) {
             return body.dropLast(2) + "َ" + body.last() + tail
         }
-        if (body.endsWith("اً") || body.endsWith("ىً")) return body.dropLast(1) + tail
+        if (body.endsWith("اً") || body.endsWith("ىً")) {
+            val stem = body.dropLast(2)
+            val marks = stem.takeLastWhile(::isMark)
+            return stem + (if ('َ' in marks) "" else "َ") + body[body.lastIndex - 1] + tail
+        }
 
         var index = body.length
         while (index > 0 && isMark(body[index - 1])) index--

@@ -69,7 +69,7 @@ class DialectSpeechCatalogTest {
         val form = DialectSpeechCatalog.resolve(item("home.water_bottle"), ArabicDialect.MOROCCAN)
         assertEquals(SpeechSource.EXPLICIT_DIALECT, form.source)
         assertEquals("قَرْعَتْ مَا", form.speechText)
-        assertEquals("قَرْ...", form.phonemicCue)
+        assertEquals("قَرْـ...", form.phonemicCue)
         assertTrue(form.needsNativeReview)
         assertTrue(form.needsTtsListening)
     }
