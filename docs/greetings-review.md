@@ -31,7 +31,7 @@ This review build contains the new **التحيات** section; it is not a produ
 
 
 ## High-resolution inclusive photo review — 10 Nov 2026
-- New offline cover and all 14 greeting tiles: separate WebP images, 816 × 960 each, matched to the live 0.85 card aspect.
+- New offline cover and all 14 greeting tiles: separate WebP images, 512 × 512 each, matched to the live 0.85 card aspect.
 - Subjects include adults of different ages, men, and multiple hijab-wearing women; every scene uses the same crop and warm, understated color grading.
 - All nine dialects share the same semantic-key image. Spoken and displayed language remains governed by the existing dialect engine, and caregivers' custom media override bundled imagery.
 - Attribution/source provenance: docs/GREETINGS_PHOTO_SOURCES.md.
@@ -39,5 +39,12 @@ This review build contains the new **التحيات** section; it is not a produ
 
 ## Final QA gate
 - Word image catalog now expects 347 stable photo mappings (333 prior plus 14 greetings).
-- The new 14-photo resource/dialect test validates all 15 816×960 bundled images and nine localizations.
+- The new 14-photo resource/dialect test validates all 15 512×512 bundled images and nine localizations.
 - Signed review artifact is named Sawti-Greetings-HQ-2026-11-10-Release.apk.
+
+## Native asset parity and cleanup
+- Inspected original Sawti media using Pillow: both a transport word photo and the Family home-cover photo are 512×512 WebP.
+- Greetings now contain fourteen 512×512 standalone WebP cards and one 512×512 home cover; no exceptional pixel dimensions or special UI crop code.
+- The prior obsolete 4×4 low-resolution atlas, its custom rendering path and tests have been deleted. The category and word views use their original standard image components and animations.
+- All nine dialects retain the same semantic-key photo; the displayed/speech text still changes by dialect.
+- Automated photo-resource tests assert exact parity with existing category media and all nine dialects.
