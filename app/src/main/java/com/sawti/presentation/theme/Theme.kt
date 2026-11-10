@@ -134,10 +134,30 @@ fun paletteOf(index: Int): CategoryPalette {
 }
 
 /**
+ * Greetings uses a distinct warm coral palette rather than borrowing the purple preset.
+ * The entire existing ceramic/rounded/bounce UI system is reused unchanged.
+ */
+@Composable
+fun categoryPaletteFor(categoryId: String, paletteIndex: Int): CategoryPalette {
+    if (categoryId != "greetings") return paletteOf(paletteIndex)
+    val coral = Color(0xFFBF5A61)
+    return if (LocalIsDark.current) CategoryPalette(
+        pastel = Color(0xFF38232B),
+        banner = coral,
+        accent = Color(0xFFF2A7AC),
+    ) else CategoryPalette(
+        pastel = Color(0xFFF9EBED),
+        banner = coral,
+        accent = coral,
+    )
+}
+
+/**
  * Consistent saturated card banners across category tiles and vocabulary cards.
  * The darker vibrant values preserve the readability of bold white Arabic text.
  */
 fun categoryBannerColor(categoryId: String, fallback: Color): Color = when (categoryId) {
+    "greetings" -> Color(0xFFBF5A61) // distinctive warm coral; separate from Family blue and Daily teal
     "family" -> Color(0xFF1769A8)       // blue
     "cuisine" -> Color(0xFF99502B)       // warm brown
     "daily" -> Color(0xFF087E82)        // teal
