@@ -120,4 +120,16 @@
     <string name="settings_performance_desc">يلغي الحركات والظلال ويصغّر الصور المخزّنة لتعمل التطبيق بسلاسة على الأجهزة الأضعف</string>
     <string name="pick_audio_file">اختيار ملف صوتي من الجهاز</string>
     <string name="media_import_failed">تعذّر استيراد الملف. تأكد من صلاحيته وحجمه ومساحة التخزين.</string>
+    <string name="about_title">حول صوتي</string>
+    <string name="about_settings_summary">معلومات التطبيق والمطوّر والتواصل للاقتراحات.</string>
+    <string name="about_tagline">وسيلتك للتواصل والتعبير</string>
+    <string name="about_version">الإصدار %1$s</string>
+    <string name="about_developed_by">تطوير التطبيق</string>
+    <string name="about_developer_name">إسماعيل بن سالم</string>
+    <string name="about_contact">تواصل مع المطوّر</string>
+    <string name="about_contact_hint">للاقتراحات والإبلاغ عن المشاكل</string>
+    <string name="about_email_subject">صوتي — ملاحظات واقتراحات</string>
+    <string name="about_no_email_app">تعذّر فتح تطبيق البريد. يمكنك التواصل عبر ismail92sa@gmail.com</string>
+    <string name="about_copyright">© 2026 إسماعيل بن سالم\nجميع الحقوق محفوظة</string>
 </resources>
+

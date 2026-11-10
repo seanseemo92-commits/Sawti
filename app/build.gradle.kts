@@ -13,8 +13,8 @@ android {
         applicationId = "com.sawti"
         minSdk = 24
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
     }
 
     // The production key is supplied only at release time by GitHub Actions secrets.
@@ -90,3 +90,4 @@ dependencies {
 ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
 }
+

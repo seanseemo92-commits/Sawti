@@ -59,6 +59,7 @@ import com.sawti.presentation.progress.ProgressRoute
 import com.sawti.presentation.progress.ProgressViewModel
 import com.sawti.presentation.quran.QuranScreen
 import com.sawti.presentation.settings.DialectSettingsRoute
+import com.sawti.presentation.settings.AboutScreen
 import com.sawti.presentation.settings.SettingsRoute
 import com.sawti.presentation.settings.SettingsViewModel
 import com.sawti.presentation.theme.CaregiverInk
@@ -72,6 +73,7 @@ private const val QURAN = "quran"
 private const val PRACTICE = "practice"
 private const val PROGRESS = "progress"
 private const val SETTINGS = "settings"
+private const val ABOUT = "about"
 private const val DIALECT = "dialect"
 private const val CATEGORY_PREFIX = "category:"
 
@@ -123,7 +125,7 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
         library.messages.collect { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
     }
     LaunchedEffect(state.caregiverMode, route) {
-        if ((route == PROGRESS || route == SETTINGS) && !state.caregiverMode) route = HOME
+        if ((route == PROGRESS || route == SETTINGS || route == ABOUT) && !state.caregiverMode) route = HOME
     }
     val category = if (route.startsWith(CATEGORY_PREFIX)) {
         state.categories.firstOrNull { it.id == route.removePrefix(CATEGORY_PREFIX) }
@@ -134,6 +136,7 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
     val navigateBack: () -> Unit = {
         if (!navigationLocked()) {
             if (route == QURAN && quranSurahId != null) quranSurahId = null
+            else if (route == ABOUT) route = SETTINGS
             else route = HOME
         }
     }
@@ -143,6 +146,7 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
         route == PRACTICE -> stringResource(R.string.practice_title)
         route == PROGRESS -> stringResource(R.string.progress_title)
         route == SETTINGS -> stringResource(R.string.settings_title)
+        route == ABOUT -> stringResource(R.string.about_title)
         route == DIALECT -> "اللغة والصوت"
         category != null -> category.title
         else -> stringResource(R.string.app_title)
@@ -217,7 +221,9 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
                     )
                     route == PRACTICE -> PracticeRoute(practice)
                     route == PROGRESS && state.caregiverMode -> ProgressRoute(progress)
-                    route == SETTINGS && state.caregiverMode -> SettingsRoute(settingsVm, onStartTour = beginTour)
+                    route == SETTINGS && state.caregiverMode -> SettingsRoute(settingsVm, onStartTour = beginTour,
+                        onOpenAbout = { if (!navigationLocked()) route = ABOUT })
+                    route == ABOUT && state.caregiverMode -> AboutScreen()
                     route == DIALECT -> DialectSettingsRoute(
                         settingsVm,
                         (context.applicationContext as SawtiApp).container.speech,
@@ -367,3 +373,4 @@ private fun SpeechIssueBanner(issue: SpeechIssue, onInstall: () -> Unit) {
         }
     }
 }
+

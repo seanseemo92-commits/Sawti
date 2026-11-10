@@ -8,7 +8,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -49,7 +55,7 @@ import com.sawti.presentation.theme.cardElevation
 
 /** Caregiver-only display settings: theme, card text size and Performance Mode. */
 @Composable
-fun SettingsRoute(viewModel: SettingsViewModel, onStartTour: (String) -> Unit = {}) {
+fun SettingsRoute(viewModel: SettingsViewModel, onStartTour: (String) -> Unit = {}, onOpenAbout: () -> Unit = {}) {
     val settings by viewModel.settings.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val operations = remember { (context.applicationContext as SawtiApp).container.backupOperations }
@@ -80,6 +86,12 @@ fun SettingsRoute(viewModel: SettingsViewModel, onStartTour: (String) -> Unit = 
         Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(18.dp),
     ) {
+        SettingBlock(stringResource(R.string.about_title)) {
+            Text(stringResource(R.string.about_settings_summary))
+            Button(onClick = onOpenAbout, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.about_title))
+            }
+        }
         SettingBlock("النسخ الاحتياطي والاسترجاع") {
             Text("احفظ كلماتك وصورك وتسجيلاتك في ملف ZIP على جهازك. الملف غير مشفّر؛ احتفظ به في مكان آمن. لاسترجاع النسخ الجديدة على جهاز آخر، حدّث تطبيق صوتي عليه أولاً.")
             Button(enabled = !backup.busy && !backup.restartRequired, onClick = { exportLauncher.launch("Sawti-backup.zip") }) {
@@ -185,24 +197,30 @@ private fun SettingBlock(title: String, content: @Composable () -> Unit) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun <T> ChoiceRow(options: List<Pair<T, String>>, selected: T, onSelect: (T) -> Unit) {
+internal fun <T> ChoiceRow(options: List<Pair<T, String>>, selected: T, onSelect: (T) -> Unit) {
     val dark = LocalIsDark.current
     val selectedContainer = if (dark) MaterialTheme.colorScheme.primaryContainer else AppBarBlue
     val selectedContent = if (dark) MaterialTheme.colorScheme.onPrimaryContainer else Color.White
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    FlowRow(Modifier.fillMaxWidth().selectableGroup(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         options.forEach { (value, label) ->
             val on = value == selected
             Surface(
                 shape = RoundedCornerShape(22.dp),
                 color = if (on) selectedContainer else MaterialTheme.colorScheme.surfaceVariant,
                 contentColor = if (on) selectedContent else MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.weight(1f).height(48.dp).clip(RoundedCornerShape(22.dp)).clickable { onSelect(value) },
+                modifier = Modifier.widthIn(min = 92.dp).heightIn(min = 48.dp)
+                    .clip(RoundedCornerShape(22.dp))
+                    .selectable(selected = on, role = Role.RadioButton, onClick = { onSelect(value) }),
             ) {
-                Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                    Text(label, fontSize = 15.sp, fontWeight = FontWeight.ExtraBold, maxLines = 1)
+                Row(Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                    horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+                    Text(label, fontSize = 15.sp, fontWeight = FontWeight.ExtraBold)
                 }
             }
         }
     }
 }
+

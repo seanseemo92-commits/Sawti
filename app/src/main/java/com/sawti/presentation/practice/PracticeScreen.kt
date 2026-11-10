@@ -46,6 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sawti.presentation.theme.cardElevation
 import com.sawti.R
@@ -62,6 +63,10 @@ private val Correct = Color(0xFF2E7D32)
 
 @Composable
 fun PracticeRoute(viewModel: PracticeViewModel) {
+    LifecycleResumeEffect(viewModel) {
+        viewModel.onEnterPractice()
+        onPauseOrDispose { viewModel.onLeavePractice() }
+    }
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     PracticeScreen(state, viewModel)
 }
@@ -205,3 +210,4 @@ private fun ChoiceCard(choice: PracticeCard, isTarget: Boolean, state: PracticeU
         }
     }
 }
+
