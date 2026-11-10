@@ -144,7 +144,7 @@ jobs:
           "$BUILD_TOOLS/aapt" dump badging "$APK" > "$RUNNER_TEMP/review-badging.txt"
           python3 scripts/verify_release.py "$RUNNER_TEMP/review-badging.txt"
           unzip -t "$APK" > /dev/null
-          cp "$APK" dist/Sawti-Greetings-2026-11-10-Release.apk
+          cp "$APK" dist/Sawti-Greetings-HQ-2026-11-10-Release.apk
           "$BUILD_TOOLS/aapt2" dump resources "$APK" > "$RUNNER_TEMP/review-resources.txt"
           python3 scripts/summarize_review_build.py "$RUNNER_TEMP/review-resources.txt"
           (cd dist && sha256sum *.apk > SHA256SUMS.txt)
