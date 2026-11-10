@@ -49,7 +49,7 @@ import com.sawti.presentation.theme.cardElevation
 
 /** Caregiver-only display settings: theme, card text size and Performance Mode. */
 @Composable
-fun SettingsRoute(viewModel: SettingsViewModel) {
+fun SettingsRoute(viewModel: SettingsViewModel, onStartTour: (String) -> Unit = {}) {
     val settings by viewModel.settings.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val operations = remember { (context.applicationContext as SawtiApp).container.backupOperations }
@@ -95,6 +95,20 @@ fun SettingsRoute(viewModel: SettingsViewModel) {
                 DialectFlag(settings.dialect)
                 Spacer(Modifier.width(12.dp))
                 Text("اللهجة الحالية: ${settings.dialect.label}. يمكن تغيير اللهجة واختيار الصوت من أيقونة اللغة أعلى الشاشة.")
+            }
+        }
+        SettingBlock("دليل استخدام صوتي") {
+            Text("تقدر تعاود الجولة التعريفية، أو تختار شرحًا خاصًا بالقرآن أو العائلة.")
+            Button(onClick = { onStartTour("home") }, modifier = Modifier.fillMaxWidth()) {
+                Text("إعادة الجولة الرئيسية")
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = { onStartTour("quran") }, modifier = Modifier.weight(1f)) {
+                    Text("شرح القرآن")
+                }
+                Button(onClick = { onStartTour("family") }, modifier = Modifier.weight(1f)) {
+                    Text("شرح العائلة")
+                }
             }
         }
         SettingBlock(stringResource(R.string.settings_theme)) {
