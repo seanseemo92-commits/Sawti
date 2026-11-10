@@ -13,12 +13,12 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
-/** Regression guard against the previous low-resolution 4x4 photo atlas. */
+/** Regression guard that greetings use the same bitmap dimensions as Sawti's existing sections. */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28])
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class GreetingsPhotoResourcesTest {
-    @Test fun all14ConceptsAndTheHomeCoverAreDistinctHighResolutionWebPPhotos() {
+    @Test fun all14ConceptsAndTheHomeCoverMatchTheExistingPhotoDimensions() {
         val context = RuntimeEnvironment.getApplication()
         val items = WordSeed.itemEntities().filter { it.categoryId == GreetingsCatalog.CATEGORY_ID }
         assertEquals(14, items.size)
@@ -28,21 +28,26 @@ class GreetingsPhotoResourcesTest {
         val cover = requireNotNull(categoryDrawableName(GreetingsCatalog.CATEGORY_ID))
         assertEquals("img_cat_greetings", cover)
 
-        for (name in images + cover) {
+        fun bounds(name: String): Pair<Int, Int> {
             @Suppress("DiscouragedApi")
             val id = context.resources.getIdentifier(name, "drawable", context.packageName)
-            assertNotEquals("Missing bundled greeting photo: $name", 0, id)
+            assertNotEquals("Missing bundled photo: $name", 0, id)
             context.resources.openRawResource(id).use { stream ->
                 val bytes = stream.readBytes()
-                assertNotEquals("Unexpectedly small photo: $name", true, bytes.size < 18_000)
                 assertEquals(name, "RIFF", String(bytes, 0, 4, Charsets.US_ASCII))
                 assertEquals(name, "WEBP", String(bytes, 8, 4, Charsets.US_ASCII))
-                val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-                BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
-                assertEquals(name, 816, bounds.outWidth)
-                assertEquals(name, 960, bounds.outHeight)
+                val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                BitmapFactory.decodeByteArray(bytes, 0, bytes.size, options)
+                return options.outWidth to options.outHeight
             }
         }
+
+        // Source dimensions, not card UI aspect ratio, define the specification.
+        val wordDimensions = bounds("word_transport_car")
+        val coverDimensions = bounds("img_cat_family")
+        assertEquals(512 to 512, wordDimensions)
+        for (name in images) assertEquals("Inconsistent word image $name", wordDimensions, bounds(name))
+        assertEquals("Inconsistent greetings home cover", coverDimensions, bounds(cover))
     }
 
     @Test fun allDialectsKeepTheSameImageIdentity() {
