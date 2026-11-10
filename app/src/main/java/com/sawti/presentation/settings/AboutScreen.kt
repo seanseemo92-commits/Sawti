@@ -80,7 +80,8 @@ fun AboutScreen() {
             )
             Column(horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text(stringResource(R.string.app_title), style = MaterialTheme.typography.headlineLarge,
+                Text(stringResource(R.string.about_app_name), style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center)
                 Text("Sawti", style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant)

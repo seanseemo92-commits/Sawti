@@ -15,6 +15,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.test.assertIsDisplayed
@@ -83,6 +87,9 @@ class AboutScreenTest {
 
     @Test fun darkPageKeepsDeveloperAndCopyrightReachable() {
         show(ThemeMode.DARK)
+        val titleLayout = mutableListOf<TextLayoutResult>()
+        compose.onNodeWithText("صوتي").performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(titleLayout) }
+        assertEquals(Color(0xFFF1F5F9), titleLayout.single().layoutInput.style.color)
         compose.onNodeWithText("إسماعيل بن سالم").assertIsDisplayed()
         compose.onNodeWithText("© 2026 إسماعيل بن سالم\nجميع الحقوق محفوظة").performScrollTo().assertIsDisplayed()
         save("about-dark")

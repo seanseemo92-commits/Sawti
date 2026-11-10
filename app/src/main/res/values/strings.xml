@@ -120,6 +120,7 @@
     <string name="settings_performance_desc">يلغي الحركات والظلال ويصغّر الصور المخزّنة لتعمل التطبيق بسلاسة على الأجهزة الأضعف</string>
     <string name="pick_audio_file">اختيار ملف صوتي من الجهاز</string>
     <string name="media_import_failed">تعذّر استيراد الملف. تأكد من صلاحيته وحجمه ومساحة التخزين.</string>
+    <string name="about_app_name">صوتي</string>
     <string name="about_title">حول صوتي</string>
     <string name="about_settings_summary">معلومات التطبيق والمطوّر والتواصل للاقتراحات.</string>
     <string name="about_tagline">وسيلتك للتواصل والتعبير</string>
