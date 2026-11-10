@@ -117,20 +117,7 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
             offerTour = true
         }
     }
-    LaunchedEffect(route, quranSurahId, state.isLoadingCategories, backupLocked, activeTour, offerTour) {
-        if (activeTour == null && !offerTour && !backupLocked && !state.isLoadingCategories) {
-            val kind = when {
-                route == QURAN && quranSurahId == null -> TourGuide.QURAN
-                route == QURAN && quranSurahId != null -> TourGuide.VERSE
-                route == CATEGORY_PREFIX + "family" -> TourGuide.FAMILY
-                else -> null
-            }
-            if (kind != null && !tourProgress.completed(kind)) {
-                activeTour = kind
-                tourIndex = 0
-            }
-        }
-    }
+    // Contextual section tours are replay-only from Settings: never interrupt normal navigation.
     val navigationLocked = { operations.state.value.let { it.busy || it.restartRequired } }
     LaunchedEffect(Unit) {
         library.messages.collect { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
@@ -285,7 +272,7 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
             onDismissRequest = { offerTour = false; tourProgress.complete(TourGuide.HOME) },
             icon = { Text("✦", color = MaterialTheme.colorScheme.primary) },
             title = { Text("خلّينا نعرّفك على صوتي", fontWeight = FontWeight.ExtraBold) },
-            text = { Text("جولة قصيرة بإضاءة هادئة توضّح أهم الميزات. تقدر تتخطاها أو ترجع لها من الإعدادات في أي وقت.") },
+            text = { Text("ثلاث خطوات بسيطة تعرّفك على أهم ميزات صوتي. تقدر تتخطاها أو ترجع لها من الإعدادات.") },
             confirmButton = {
                 Button(onClick = { beginTour(TourGuide.HOME) }) { Text("ابدأ الجولة") }
             },
