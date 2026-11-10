@@ -65,6 +65,7 @@ import com.sawti.presentation.common.bounceClick
 import com.sawti.presentation.theme.LocalIsDark
 import com.sawti.presentation.theme.LocalPerformanceMode
 import com.sawti.presentation.theme.paletteOf
+import com.sawti.presentation.theme.categoryPaletteFor
 import com.sawti.presentation.theme.categoryBannerColor
 
 private val CardRadius = RoundedCornerShape(20.dp)
@@ -220,7 +221,7 @@ private fun QuranHeroCard(onClick: () -> Unit) {
 private fun LuxuryCategoryCard(category: Category, isSpeaking: Boolean, onClick: () -> Unit) {
     val dark = LocalIsDark.current
     val performance = LocalPerformanceMode.current
-    val palette = paletteOf(category.palette)
+    val palette = categoryPaletteFor(category.id, category.palette)
     val bannerColor = categoryBannerColor(category.id, palette.banner)
     val resId = drawableResourceId(categoryDrawableName(category.id))
     val surfaceColor = if (dark) Color(0xFF131B26) else bannerColor
