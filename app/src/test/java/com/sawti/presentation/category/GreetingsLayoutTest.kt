@@ -157,7 +157,7 @@ class GreetingsLayoutTest {
         show(ThemeMode.LIGHT) {
             CategoryScreen(category, LibraryUiState(categories = listOf(category), isLoadingCategories = false), actions)
         }
-        val context = RuntimeEnvironment.getApplication<Application>()
+        val context = RuntimeEnvironment.getApplication()
         compose.onNodeWithContentDescription(context.getString(R.string.view_flashcards)).performClick()
         compose.onNodeWithText(category.items.first().displayText).assertIsDisplayed()
         compose.onNodeWithText(context.getString(R.string.listen)).assertIsDisplayed()
