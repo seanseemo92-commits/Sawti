@@ -1,0 +1,43 @@
+name: Verify Salah Bukhatir and Husary ayah audio
+on:
+  push:
+    branches: [fix/prelaunch-cleanup-hint]
+    paths: [.github/workflows/quran-reciters-audio-probe.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Probe representative verses, valid MP3 and silence boundaries
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p /tmp/quran-samples
+          for reciter in bukhatir husary; do
+            case "$reciter" in
+              bukhatir)
+                folder='Salaah_AbdulRahman_Bukhatir_128kbps'
+                mirror='salah-bukhatir-128kbps'
+                ;;
+              husary)
+                folder='Husary_Muallim_128kbps'
+                mirror='mahmoud-al-husary-muallim-128kbps'
+                ;;
+            esac
+            for verse in 001001 001002 001007 112001 112002 108001 108003; do
+              echo "======= ${reciter} ${verse} ======="
+              file="/tmp/quran-samples/${reciter}-${verse}.mp3"
+              curl -sS -L --max-time 30 --retry 1 -o "$file" -w 'PRIMARY HTTP=%{http_code} SIZE=%{size_download} TYPE=%{content_type}\n' "https://everyayah.com/data/${folder}/${verse}.mp3" || true
+              if ! ffprobe -v error -show_entries format=duration -of default=nk=1:nw=1 "$file" 2>/dev/null; then echo 'PRIMARY INVALID MP3'; fi
+              file "$file" || true
+              if [ "$verse" = "001001" ] || [ "$verse" = "112001" ]; then
+                mirrorFile="/tmp/quran-samples/${reciter}-${verse}-mirror.mp3"
+                curl -sS -L --max-time 30 --retry 1 -o "$mirrorFile" -w 'MIRROR HTTP=%{http_code} SIZE=%{size_download} TYPE=%{content_type}\n' "https://huggingface.co/datasets/maqra-project/${mirror}/resolve/main/${verse}.mp3" || true
+                file "$mirrorFile" || true
+              fi
+              ffmpeg -hide_banner -i "$file" -af 'silencedetect=noise=-35dB:d=0.10' -f null - 2>&1 | grep -E 'silence_start|silence_end' | tail -n 7 || true
+            done
+          done
