@@ -33,13 +33,30 @@ class WordImageCatalogTest {
 
     @Test fun regionalDishesNeverBorrowPhotosByTheirNames() {
         assertEquals("word_couscous_fish", WordImageCatalog.imageFor(card("dish.couscous_fish")))
-        assertNull(WordImageCatalog.imageFor(card("dish.tunisian.couscous_fish")))
+        assertEquals("word_dish_tunisian_couscous_fish", WordImageCatalog.imageFor(card("dish.tunisian.couscous_fish")))
         assertNull(WordImageCatalog.imageFor(card("family.father")))
+    }
+
+    @Test fun everyRegionalDishKeepsItsDedicatedPhotoWhenTextOrDialectChanges() {
+        val dishes = RegionalDishesCatalog.additionalDialects()
+        assertEquals(120, dishes.size)
+        val photos = dishes.map { (_, dish) ->
+            val original = card(dish.semanticKey)
+            val image = WordImageCatalog.imageFor(original)
+            assertNotNull(dish.semanticKey, image)
+            assertTrue(dish.semanticKey, image!!.startsWith("word_dish_"))
+            val renamed = original.copy(displayText = "ماء", ttsPrompt = "ماء", customTextFields = 15)
+            assertEquals(image, WordImageCatalog.imageFor(renamed))
+            for (dialect in ArabicDialect.entries)
+                assertEquals(image, WordImageCatalog.imageFor(DialectCatalog.localize(original, dialect)))
+            image
+        }
+        assertEquals(120, photos.toSet().size)
     }
 
     @Test fun imageMapHasNoOrphanConceptReferences() {
         val keys = WordSeed.itemEntities().mapNotNull { it.semanticKey }.toSet()
         assertTrue(keys.containsAll(WordImageCatalog.configuredKeys()))
-        assertEquals(201, WordImageCatalog.configuredKeys().size)
+        assertEquals(321, WordImageCatalog.configuredKeys().size)
     }
 }

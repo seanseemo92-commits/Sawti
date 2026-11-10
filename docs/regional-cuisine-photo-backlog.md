@@ -1,6 +1,10 @@
-# Sawti: missing dedicated cuisine images by dialect
+# Sawti: dedicated cuisine images by dialect — complete
 
-Shared word photos are assigned by persistent Room semantic keys. Country-specific cuisine entries are **not** assigned Libyan photos merely because their names look similar. These dishes currently have no dedicated bundled images; they keep emoji fallback until matching photos are provided.
+Shared word photos are assigned by persistent Room semantic keys. Country-specific cuisine entries are **not** assigned Libyan photos merely because their names look similar. All 120 dishes below now have their own bundled 512 × 512 WebP image, generated individually using the existing Libyan food images as visual references. The set contains 15 images for each of the eight non-Libyan dialects.
+
+Assets are mapped explicitly in `WordImageCatalog` using each dish’s persistent semantic key. Existing Libyan images, vocabulary, recorded audio and user-selected photos are unchanged. Custom `photoPath` images retain priority in `ItemImage`. No database migration or image network request is needed.
+
+The machine-readable inventory with semantic keys, drawable names and SHA-256 checksums is `regional-cuisine-images.csv`. All 120 exported files were decoded, checked at 512 × 512, checked for byte-identical duplicates, and reviewed on dialect contact sheets. The Algerian berkoukes image was regenerated after review to correct the pasta grain size.
 
 ## أكلات تونسية — 15 dishes
 
@@ -147,4 +151,4 @@ Shared word photos are assigned by persistent Room semantic keys. Country-specif
 - حلوى عربية
 
 
-Note: existing user-selected photos and recordings are never replaced by this migration.
+Existing user-selected photos and recordings are never replaced by this asset addition.
