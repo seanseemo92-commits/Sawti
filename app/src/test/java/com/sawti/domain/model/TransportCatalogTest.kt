@@ -13,7 +13,7 @@ class TransportCatalogTest {
             "airplane", "helicopter", "ship", "boat", "truck").map { "transport.$it" }.toSet()
         assertEquals(expected, cards.map { it.semanticKey }.toSet())
         assertEquals(12, cards.size)
-        assertEquals(CategoryIds.TRANSPORT, WordSeed.categories.last().id)
+        assertEquals(CategoryIds.TRANSPORT, WordSeed.categories[WordSeed.categories.lastIndex - 1].id)
         for (vehicle in TransportCatalog.vehicles) {
             assertEquals(ArabicDialect.entries.toSet(), vehicle.forms.keys)
             val card = cards.single { it.semanticKey == vehicle.semanticKey }
