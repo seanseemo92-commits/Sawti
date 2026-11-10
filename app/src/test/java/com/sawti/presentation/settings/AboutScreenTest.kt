@@ -77,7 +77,8 @@ class AboutScreenTest {
         compose.onNodeWithText("تواصل مع المطوّر").performScrollTo().performClick()
         val intent = shadowOf(RuntimeEnvironment.getApplication() as Application).nextStartedActivity
         assertEquals(Intent.ACTION_SENDTO, intent.action)
-        assertEquals("mailto:ismail92sa@gmail.com", intent.dataString)
+        assertEquals("mailto", intent.data?.scheme)
+        assertEquals(DEVELOPER_EMAIL, intent.data?.schemeSpecificPart)
     }
 
     @Test fun darkPageKeepsDeveloperAndCopyrightReachable() {
