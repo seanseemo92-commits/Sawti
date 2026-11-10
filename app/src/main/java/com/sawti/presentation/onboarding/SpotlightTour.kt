@@ -67,12 +67,13 @@ object TourGuide {
     private val blue = Color(0xFF9CD7FF)
 
     fun steps(kind: String, availableCategories: Set<String> = emptySet()): List<SpotlightStep> = when (kind) {
+        // Keep first-use guidance intentionally short. Additional tours are available on demand.
         HOME -> buildList {
-            add(SpotlightStep("top_caregiver", "وضع المرافق", "اضغط مطولاً على الترس ٣ ثوانٍ لتفعيل وضع المرافق وإدارة المحتوى.", purple))
-            add(SpotlightStep("home_quran", "القرآن الكريم", "افتح سورًا قصيرة للاستماع إلى الآيات وتكرارها.", gold))
-            if ("family" in availableCategories) add(SpotlightStep("home_family", "عائلتي", "تواصل مع أفراد العائلة، وخصص أسماءهم وصورهم.", blue))
-            if ("daily" in availableCategories) add(SpotlightStep("home_daily", "طلباتي اليومية", "اختر الكلمات والصور للتعبير عن احتياجاتك.", purple))
-            add(SpotlightStep("top_language", "اللهجة والصوت", "اختر اللهجة والصوت المناسبين لك من أيقونة اللغة.", purple))
+            add(SpotlightStep("top_caregiver", "وضع المرافق", "اضغط على الترس ٣ ثوانٍ لتفعيل وضع المرافق.", purple))
+            if ("daily" in availableCategories) {
+                add(SpotlightStep("home_daily", "تواصل بسهولة", "اضغط على الطلب أو الصورة حتى يعبّر صوتي عن احتياجك.", purple))
+            }
+            add(SpotlightStep("home_quran", "القرآن الكريم", "افتح القرآن للاستماع إلى الآيات وتكرارها.", gold))
         }
         QURAN -> listOf(
             SpotlightStep("quran_surah", "اختر سورة", "اضغط على أي سورة لعرض آياتها والاستماع للتلاوة.", gold),
