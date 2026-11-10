@@ -58,6 +58,8 @@ import com.sawti.R
 import com.sawti.presentation.onboarding.spotlightAnchor
 import com.sawti.domain.model.Category
 import com.sawti.presentation.common.CardImageContent
+import com.sawti.presentation.common.GreetingPhoto
+import com.sawti.presentation.common.GreetingPhotoAtlas
 import com.sawti.presentation.common.categoryDrawableName
 import com.sawti.presentation.common.drawableResourceId
 import com.sawti.presentation.common.StaggeredCascade
@@ -245,7 +247,13 @@ private fun LuxuryCategoryCard(category: Category, isSpeaking: Boolean, onClick:
             shadowElevation = if (performance) 0.dp else if (dark) 4.dp else 8.dp) {
             Box(modifier = Modifier.fillMaxSize()) {
                 val heroItem = category.items.firstOrNull { it.photoPath != null } ?: category.items.firstOrNull()
-                if (resId != null) {
+                if (category.id == GreetingPhotoAtlas.CATEGORY_ID) {
+                    GreetingPhoto(
+                        slot = GreetingPhotoAtlas.HOME_SLOT,
+                        contentDescription = category.title,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                } else if (resId != null) {
                     Image(painter = painterResource(resId), contentDescription = category.title,
                         contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
                 } else if (heroItem != null) {
