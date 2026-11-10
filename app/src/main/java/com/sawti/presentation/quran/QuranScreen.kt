@@ -76,13 +76,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sawti.presentation.common.StaggeredCascade
 import com.sawti.presentation.common.bounceClick
+import com.sawti.presentation.onboarding.spotlightAnchor
 import com.sawti.presentation.theme.CardShape
 import com.sawti.presentation.theme.LocalIsDark
 import com.sawti.presentation.theme.LocalPerformanceMode
 import com.sawti.presentation.theme.cardBorder
 
 @Composable
-fun QuranScreen(chosenSurahId: Int?, onChooseSurah: (Int?) -> Unit) {
+fun QuranScreen(chosenSurahId: Int?, onChooseSurah: (Int?) -> Unit, focusFirstVerse: Boolean = false) {
     val vm: QuranViewModel = viewModel()
     val state by vm.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -96,7 +97,7 @@ fun QuranScreen(chosenSurahId: Int?, onChooseSurah: (Int?) -> Unit) {
     }
     QuranContent(state, chosenSurahId, onChooseSurah, vm::selectReciter,
         vm::selectRepeats, vm::play, vm::stopAudio, vm::toggleDownload,
-        onRetry = { vm.openSurah(chosenSurahId, retry = true) })
+        onRetry = { vm.openSurah(chosenSurahId, retry = true) }, focusFirstVerse = focusFirstVerse)
 }
 
 /** Content is separate from network/player ownership so layouts and taps can be tested offline. */
@@ -111,11 +112,17 @@ internal fun QuranContent(
     onStop: () -> Unit,
     onDownload: () -> Unit,
     onRetry: () -> Unit,
+    focusFirstVerse: Boolean = false,
 ) {
     val surah = QuranSource.shortSurahs.firstOrNull { it.number == chosenSurahId }
     val colors = quranColors()
     val listState = rememberLazyListState()
     LaunchedEffect(chosenSurahId) { listState.scrollToItem(0) }
+    LaunchedEffect(focusFirstVerse, chosenSurahId, state.verses.size, state.loading) {
+        if (focusFirstVerse && !state.loading && state.surahId == chosenSurahId && state.verses.isNotEmpty()) {
+            listState.animateScrollToItem(2)
+        }
+    }
     LazyColumn(
         state = listState,
         modifier = Modifier.fillMaxSize().testTag("quran-content"),
@@ -135,12 +142,16 @@ internal fun QuranContent(
             }
             itemsIndexed(QuranSource.shortSurahs, key = { _, chapter -> "surah-${chapter.number}" }) { index, chapter ->
                 StaggeredCascade(row = index, modifier = Modifier.fillMaxWidth()) {
-                    QuranSurahCard(chapter) { onChooseSurah(chapter.number) }
+                    Box(modifier = if (index == 0) Modifier.spotlightAnchor("quran_surah") else Modifier) {
+                        QuranSurahCard(chapter) { onChooseSurah(chapter.number) }
+                    }
                 }
             }
         } else {
             item(key = "settings") {
-                QuranSettings(state, onReciter, onRepeats, onDownload)
+                Box(Modifier.spotlightAnchor("quran_reciter")) {
+                    QuranSettings(state, onReciter, onRepeats, onDownload)
+                }
             }
             if (state.downloadError != null) item(key = "download-error") { ErrorText(state.downloadError) }
             if (state.audio.phase == RecitationPhase.ERROR) item(key = "audio-error") {
@@ -167,8 +178,10 @@ internal fun QuranContent(
                 }
                 else -> itemsIndexed(state.verses, key = { _, verse -> "ayah-${verse.globalNumber}" }) { index, verse ->
                     StaggeredCascade(row = index, modifier = Modifier.fillMaxWidth()) {
-                        QuranVerseCard(verse, state.audio,
-                            onClick = { onPlay(verse) }, onStop = onStop)
+                        Box(modifier = if (index == 0) Modifier.spotlightAnchor("quran_verse") else Modifier) {
+                            QuranVerseCard(verse, state.audio,
+                                onClick = { onPlay(verse) }, onStop = onStop)
+                        }
                     }
                 }
             }
