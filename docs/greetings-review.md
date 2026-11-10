@@ -28,3 +28,11 @@ This review build contains the new **التحيات** section; it is not a produ
 - Test both light/dark themes and large text; native-device visual and speech review is still required.
 
 - The test suite checks the packaged WebP RIFF header in Robolectric and verifies semantic-key photo mapping; on-device rendering remains part of manual QA.
+
+
+## High-resolution inclusive photo review — 10 Nov 2026
+- New offline cover and all 14 greeting tiles: separate WebP images, 816 × 960 each, matched to the live 0.85 card aspect.
+- Subjects include adults of different ages, men, and multiple hijab-wearing women; every scene uses the same crop and warm, understated color grading.
+- All nine dialects share the same semantic-key image. Spoken and displayed language remains governed by the existing dialect engine, and caregivers' custom media override bundled imagery.
+- Attribution/source provenance: docs/GREETINGS_PHOTO_SOURCES.md.
+- Test all 14 tiles, light/dark mode, labels, audio, RTL, caregiver edit overrides, and installation over a previous signed build.
