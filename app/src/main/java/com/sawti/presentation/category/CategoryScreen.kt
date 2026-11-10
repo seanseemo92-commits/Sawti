@@ -76,6 +76,7 @@ import com.sawti.R
 import com.sawti.domain.model.Category
 import com.sawti.domain.model.CategoryIds
 import com.sawti.domain.model.FamilyRelationships
+import com.sawti.presentation.onboarding.spotlightAnchor
 import com.sawti.domain.model.ViewMode
 import com.sawti.domain.model.WordItem
 import com.sawti.presentation.common.ActionPill
@@ -184,10 +185,15 @@ private fun SubgroupTabs(subgroups: List<String>, selected: String, palette: Cat
     Row(modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         subgroups.forEach { label ->
             val on = label == selected
+            val tourModifier = when (label) {
+                FamilyRelationships.RELATIVES -> Modifier.spotlightAnchor("family_relatives")
+                "الزوج" -> Modifier.spotlightAnchor("family_people")
+                else -> Modifier
+            }
             Surface(shape = RoundedCornerShape(22.dp), color = if (on) palette.banner else MaterialTheme.colorScheme.surface,
                 contentColor = if (on) Color.White else palette.accent,
                 shadowElevation = cardElevation(if (on) 4.dp else 1.dp),
-                modifier = Modifier.height(46.dp).clip(RoundedCornerShape(22.dp)).clickable { onSelect(label) }) {
+                modifier = Modifier.height(46.dp).then(tourModifier).clip(RoundedCornerShape(22.dp)).clickable { onSelect(label) }) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(horizontal = 18.dp)) {
                     Text(label, fontSize = 15.sp, fontWeight = FontWeight.ExtraBold, maxLines = 1)
                 }
