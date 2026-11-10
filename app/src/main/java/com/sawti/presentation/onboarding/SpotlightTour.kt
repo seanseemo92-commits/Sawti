@@ -1,6 +1,7 @@
 package com.sawti.presentation.onboarding
 
 import android.content.Context
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
@@ -29,6 +30,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -43,14 +46,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 /** The new cinematic guide deliberately has no dependency on the retired onboarding gate. */
@@ -81,7 +83,7 @@ object TourGuide {
         )
         FAMILY -> listOf(
             SpotlightStep("family_relatives", "الأقرباء", "هذا القسم يعرض صلات القرابة مثل أبي وأمي وابني.", blue),
-            SpotlightStep("family_people", "أسماء العائلة", "اختر قسمًا مثل الأبناء. في وضع المرافق تقدر تضيف الأسماء والصور بالزر +.", blue),
+            SpotlightStep("family_people", "أسماء العائلة", "اختر أحد الأقسام مثل الزوج أو الأبناء. في وضع المرافق تقدر تضيف الأسماء والصور بالزر +.", blue),
         )
         else -> emptyList()
     }
@@ -133,6 +135,16 @@ fun SpotlightOverlay(
     onSkip: () -> Unit,
 ) {
     val target = registry.rect(step.target)
+    val scrim = remember { Animatable(0f) }
+    val cardFade = remember(step.target) { Animatable(0f) }
+    LaunchedEffect(reducedMotion) {
+        if (reducedMotion) scrim.snapTo(0.79f)
+        else scrim.animateTo(0.79f, tween(350))
+    }
+    LaunchedEffect(step.target, reducedMotion) {
+        if (reducedMotion) cardFade.snapTo(1f)
+        else cardFade.animateTo(1f, tween(250))
+    }
     val duration = if (reducedMotion) 0 else 560
     val left by animateFloatAsState(target?.left ?: 0f, tween(duration), label = "spotlight-left")
     val top by animateFloatAsState(target?.top ?: 0f, tween(duration), label = "spotlight-top")
@@ -149,12 +161,11 @@ fun SpotlightOverlay(
         opacity
     }
     val focus = if (target != null) Rect(left, top, right, bottom) else null
-    val density = LocalDensity.current
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize().pointerInput(Unit) { detectTapGestures(onTap = {}) },
     ) {
         Canvas(Modifier.fillMaxSize().graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)) {
-            drawRect(Color(0xC90A1020))
+            drawRect(Color(0xFF0A1020).copy(alpha = scrim.value))
             if (focus != null) {
                 val p = 5.dp.toPx()
                 val origin = Offset((focus.left - p).coerceAtLeast(0f), (focus.top - p).coerceAtLeast(0f))
@@ -185,6 +196,7 @@ fun SpotlightOverlay(
                 .padding(horizontal = 16.dp, vertical = 24.dp)
                 .widthIn(max = 480.dp)
                 .fillMaxWidth()
+                .alpha(cardFade.value)
                 .semantics { paneTitle = "دليل استخدام صوتي" },
             shape = RoundedCornerShape(22.dp),
             color = MaterialTheme.colorScheme.surface,
