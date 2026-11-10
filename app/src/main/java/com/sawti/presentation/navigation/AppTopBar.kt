@@ -52,6 +52,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sawti.R
+import com.sawti.presentation.onboarding.spotlightAnchor
 import com.sawti.presentation.theme.LocalIsDark
 import com.sawti.presentation.theme.LocalPerformanceMode
 import com.sawti.presentation.theme.HeaderColors
@@ -129,7 +130,7 @@ fun AppTopBar(
                     modifier = Modifier.size(28.dp),
                 )
             }
-            IconButton(onClick = onDialects) {
+            IconButton(onClick = onDialects, modifier = Modifier.spotlightAnchor("top_language")) {
                 Icon(Icons.Filled.Language, contentDescription = "اختيار اللهجة والصوت", tint = ink)
             }
             SettingsGear(caregiverMode, onToggleCaregiver, ink)
@@ -154,6 +155,7 @@ private fun SettingsGear(caregiverMode: Boolean, onToggle: () -> Unit, ink: Colo
     Box(
         Modifier
             .size(48.dp)
+            .spotlightAnchor("top_caregiver")
             .semantics {
                 contentDescription = description
                 onLongClick(label = description) {
