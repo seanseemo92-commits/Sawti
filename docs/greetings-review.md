@@ -26,3 +26,5 @@ This review build contains the new **التحيات** section; it is not a produ
 - Across all nine dialects, the picture is the same for a semantic concept while text and TTS remain localized.
 - A caregiver's own card photo remains higher priority than the bundled image.
 - Test both light/dark themes and large text; native-device visual and speech review is still required.
+
+- The test suite checks the packaged WebP RIFF header in Robolectric and verifies semantic-key photo mapping; on-device rendering remains part of manual QA.
