@@ -75,6 +75,24 @@ class SemanticSeedPersistenceTest {
         assertEquals("existing voice", audio.readText())
     }
 
+    @Test fun greetingsAreFirstBesideFamilyAndReseedingPreservesPersonalEdits() = runBlocking {
+        val displayed = repo.observeCategories().first()
+        assertEquals(listOf("greetings", "family"), displayed.take(2).map { it.id })
+        assertEquals(14, displayed.first().items.size)
+        val original = db.wordDao().observeItems().first().single { it.semanticKey == "greeting.salam" }
+        repo.updateDetails(original.id, "تحيتي الشخصية", "نطقي الشخصي", "تلميحي", null, "")
+        val saved = requireNotNull(db.wordDao().wordById(original.id))
+        repeat(2) { repo.seedOrUpdateDefaults() }
+        settings.setDialect(ArabicDialect.MOROCCAN)
+        val after = repo.observeCategories().first()
+        assertEquals(listOf("greetings", "family"), after.take(2).map { it.id })
+        assertEquals(14, after.first().items.size)
+        assertEquals(saved, db.wordDao().wordById(original.id))
+        val customized = after.first().items.single { it.id == original.id }
+        assertEquals("تحيتي الشخصية", customized.displayText)
+        assertEquals("نطقي الشخصي", customized.ttsPrompt)
+    }
+
     @Test fun reseedingRenamedCardDoesNotDuplicateResetOrRetargetIt() = runBlocking {
         val dao = db.wordDao()
         val water = dao.observeItems().first().single { it.semanticKey == "request.water" }
