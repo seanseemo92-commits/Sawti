@@ -28,10 +28,13 @@ import org.robolectric.annotation.Config
 class QuranAudioCacheTest {
     private lateinit var app: Application
     private lateinit var audioDir: File
-    private val sampleMp3 = ByteArray(4096).apply {
-        this[0] = 'I'.code.toByte()
-        this[1] = 'D'.code.toByte()
-        this[2] = '3'.code.toByte()
+    private val sampleMp3 = ByteArray(417 * 4).apply {
+        // Four complete MPEG-1 Layer III frames (128 kbps, 44.1 kHz).
+        for (offset in indices step 417) {
+            this[offset] = 0xFF.toByte()
+            this[offset + 1] = 0xFB.toByte()
+            this[offset + 2] = 0x90.toByte()
+        }
     }
 
     @Before
@@ -143,6 +146,45 @@ class QuranAudioCacheTest {
         assertTrue(requestedUrls[0].startsWith("https://everyayah.com/"))
         assertTrue(requestedUrls[1].contains("maqra-project/salah-bukhatir-128kbps"))
         assertArrayEquals(sampleMp3, file.readBytes())
+    }
+
+    @Test
+    fun id3TagWithoutAudioFramesIsRejected() {
+        val body = ByteArray(4096).apply {
+            this[0] = 73; this[1] = 68; this[2] = 51; this[3] = 4
+        }
+        val cache = QuranAudioCache(app) { url -> FakeConnection(url, body) }
+        assertThrows(IOException::class.java) { runBlocking { cache.obtain(1) } }
+        assertNull(cache.cachedFile(1))
+    }
+
+    @Test
+    fun cleanEarlyEofDoesNotPublishTruncatedResponse() {
+        val cache = QuranAudioCache(app) { url ->
+            object : FakeConnection(url, sampleMp3) {
+                override fun getContentLengthLong() = sampleMp3.size.toLong() + 500
+            }
+        }
+        assertThrows(IOException::class.java) { runBlocking { cache.obtain(1) } }
+        assertNull(cache.cachedFile(1))
+        assertTrue(audioDir.listFiles()?.none { it.extension == "part" } ?: true)
+    }
+
+    @Test
+    fun brokenOldCacheIsReplacedAndDecoderInvalidationAllowsRetry() = runBlocking {
+        audioDir.mkdirs()
+        File(audioDir, "ayah_1.mp3").writeBytes(ByteArray(2048).apply {
+            this[0] = 73; this[1] = 68; this[2] = 51
+        })
+        var calls = 0
+        val cache = QuranAudioCache(app) { url -> calls++; FakeConnection(url, sampleMp3) }
+        assertNull(cache.cachedFile(1))
+        cache.obtain(1)
+        assertEquals(1, calls)
+        cache.invalidate(1)
+        assertNull(cache.cachedFile(1))
+        cache.obtain(1)
+        assertEquals(2, calls)
     }
 
     private open class FakeConnection(url: URL, private val audio: ByteArray) :

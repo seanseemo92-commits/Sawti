@@ -3,10 +3,13 @@ package com.sawti.presentation.quran
 import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import org.json.JSONObject
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
+import java.io.IOException
 
 data class ShortSurah(val number: Int, val name: String, val verseCount: Int)
 
@@ -36,6 +39,21 @@ object QuranSource {
     )
 
     private const val API_BASE = "https://api.alquran.cloud/v1/surah"
+    private const val MAX_TEXT_BYTES = 256 * 1024
+    // Canonical Hafs global ayah numbering for the supported first-release surahs.
+    private val firstAyahs = mapOf(
+        1 to 1, 103 to 6177, 104 to 6180, 105 to 6189, 106 to 6194,
+        107 to 6198, 108 to 6205, 109 to 6208, 110 to 6214,
+        111 to 6217, 112 to 6222, 113 to 6226, 114 to 6231,
+    )
+
+    internal fun checkAyah(global: Int, surah: Int, local: Int) {
+        val chapter = shortSurahs.firstOrNull { it.number == surah }
+            ?: throw IllegalArgumentException("Unsupported surah")
+        require(local in 1..chapter.verseCount && global == firstAyahs.getValue(surah) + local - 1) {
+            "Ayah does not belong to the requested surah"
+        }
+    }
 
     // Islamic Network's CDN uses the global Quran verse number, NOT the local surah index.
     fun audioUrl(globalVerseNumber: Int): String =
@@ -57,6 +75,9 @@ object QuranSource {
         verseNumber: Int? = null,
     ): List<String> {
         require(globalVerseNumber in 1..6236)
+        if (surahNumber != null && verseNumber != null) {
+            checkAyah(globalVerseNumber, surahNumber, verseNumber)
+        }
         if (reciter == QuranReciter.ALAFASY) return listOf(audioUrl(globalVerseNumber))
         require(surahNumber != null && surahNumber in 1..114)
         require(verseNumber != null && verseNumber in 1..286)
@@ -98,7 +119,19 @@ object QuranSource {
                 if (connection.responseCode != HttpURLConnection.HTTP_OK) {
                     error("تعذّر تحميل السورة (HTTP ${connection.responseCode})")
                 }
-                val response = connection.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
+                if (connection.contentLengthLong > MAX_TEXT_BYTES) throw IOException("Quran response too large")
+                val response = connection.inputStream.use { input ->
+                    val output = java.io.ByteArrayOutputStream()
+                    val buffer = ByteArray(8192)
+                    while (true) {
+                        currentCoroutineContext().ensureActive()
+                        val count = input.read(buffer)
+                        if (count < 0) break
+                        if (output.size() + count > MAX_TEXT_BYTES) throw IOException("Quran response too large")
+                        output.write(buffer, 0, count)
+                    }
+                    output.toString("UTF-8")
+                }
                 val checked = parse(response, surah)
                 dir.mkdirs()
                 val tmp = File(dir, "surah_${surah.number}.tmp")
@@ -127,6 +160,7 @@ object QuranSource {
             val local = ayah.getInt("numberInSurah")
             val global = ayah.getInt("number")
             val text = ayah.getString("text")
+            checkAyah(global, surah.number, local)
             require(local == index + 1 && global in 1..6236 && text.isNotBlank()) {
                 "Unexpected verse data"
             }

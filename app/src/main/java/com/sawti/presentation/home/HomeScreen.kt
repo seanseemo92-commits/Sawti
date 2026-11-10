@@ -94,7 +94,7 @@ fun HomeScreen(categories: List<Category>, speakingItemId: Long?, onOpen: (Strin
         LazyVerticalGrid(columns = GridCells.Fixed(columns), modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 32.dp),
             horizontalArrangement = Arrangement.spacedBy(18.dp), verticalArrangement = Arrangement.spacedBy(18.dp)) {
-            item(key = "quran-feature", span = { GridItemSpan(2) }) {
+            item(key = "quran-feature", span = { GridItemSpan(columns) }) {
                 StaggeredCascade(row = 0, modifier = Modifier.fillMaxWidth()) {
                     QuranHeroCard(onClick = onOpenQuran)
                 }

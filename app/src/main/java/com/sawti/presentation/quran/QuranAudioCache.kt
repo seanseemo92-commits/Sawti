@@ -27,11 +27,21 @@ class QuranAudioCache(
 ) {
     // Separate storage per reciter. Existing alafasy downloads remain intact.
     private val audioDir = File(context.applicationContext.filesDir, "quran_recitations/" + reciter.editionId)
-    private val locks = ConcurrentHashMap<Int, Mutex>()
 
     fun cachedFile(globalVerseNumber: Int): File? {
         val target = targetFile(globalVerseNumber)
-        return target.takeIf(::hasValidMp3Header)
+        return target.takeIf { it.isFile && QuranMp3.isPlayable(it) }
+    }
+
+    suspend fun cachedCount(verses: List<QuranVerse>): Int = withContext(Dispatchers.IO) {
+        verses.count { cachedFile(it.globalNumber) != null }
+    }
+
+    suspend fun invalidate(number: Int) = withContext(Dispatchers.IO) {
+        val target = targetFile(number)
+        locks.getOrPut(target.absolutePath) { Mutex() }.withLock {
+            if (target.exists() && !target.delete()) throw IOException("Cannot remove damaged recording")
+        }
     }
 
     suspend fun obtain(
@@ -45,7 +55,7 @@ class QuranAudioCache(
         )
         val target = targetFile(globalVerseNumber)
         // Playback and whole-surah downloads may request the same ayah.
-        val lock = locks.getOrPut(globalVerseNumber) { Mutex() }
+        val lock = locks.getOrPut(target.absolutePath) { Mutex() }
         lock.withLock {
             cachedFile(globalVerseNumber)?.let { return@withLock it }
             if (!audioDir.isDirectory && !audioDir.mkdirs()) {
@@ -83,6 +93,10 @@ class QuranAudioCache(
                                         }
                                         output.write(buffer, 0, count)
                                     }
+                                    val expected = connection.contentLengthLong
+                                    if (expected >= 0 && total != expected) {
+                                        throw IOException("Incomplete recording response")
+                                    }
                                     output.fd.sync()
                                 }
                             }
@@ -90,7 +104,7 @@ class QuranAudioCache(
                             connection.disconnect()
                         }
                         currentCoroutineContext().ensureActive()
-                        if (!hasValidMp3Header(temporary)) {
+                        if (!QuranMp3.isPlayable(temporary)) {
                             throw IOException("Invalid or incomplete MP3")
                         }
                         if (target.exists() && !target.delete()) {
@@ -120,27 +134,10 @@ class QuranAudioCache(
         return File(audioDir, "ayah_" + number + ".mp3")
     }
 
-    private fun hasValidMp3Header(file: File): Boolean {
-        if (!file.isFile || file.length() < MIN_AUDIO_BYTES || file.length() > MAX_AUDIO_BYTES) {
-            return false
-        }
-        return try {
-            file.inputStream().buffered().use { input ->
-                val head = ByteArray(3)
-                if (input.read(head) != 3) return@use false
-                (head[0] == 'I'.code.toByte() &&
-                    head[1] == 'D'.code.toByte() &&
-                    head[2] == '3'.code.toByte()) ||
-                    ((head[0].toInt() and 0xFF) == 0xFF &&
-                        (head[1].toInt() and 0xE0) == 0xE0)
-            }
-        } catch (_: IOException) {
-            false
-        }
-    }
-
     private companion object {
-        const val MIN_AUDIO_BYTES = 1024L
         const val MAX_AUDIO_BYTES = 12L * 1024 * 1024
+        // Shared across screen/reciter recreation: an old cancelled writer and a
+        // new player must never publish/delete the same ayah concurrently.
+        val locks = ConcurrentHashMap<String, Mutex>()
     }
 }

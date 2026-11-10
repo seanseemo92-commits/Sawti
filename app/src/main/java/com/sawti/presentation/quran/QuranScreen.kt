@@ -1,578 +1,373 @@
 package com.sawti.presentation.quran
 
-import android.content.Context
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.MenuBook
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Equalizer
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material.icons.outlined.MenuBook
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontSynthesis
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sawti.presentation.common.StaggeredCascade
 import com.sawti.presentation.common.bounceClick
 import com.sawti.presentation.theme.CardShape
 import com.sawti.presentation.theme.LocalIsDark
 import com.sawti.presentation.theme.LocalPerformanceMode
 import com.sawti.presentation.theme.cardBorder
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-
-private val DeepGreen = Color(0xFF1B6652)
-private val LightGold = Color(0xFFE8CE91)
-private val AyahShape = RoundedCornerShape(20.dp)
 
 @Composable
-fun QuranScreen() {
-    val context = LocalContext.current
-    val isDark = LocalIsDark.current
-    val reciterPreferences = remember(context) {
-        context.applicationContext.getSharedPreferences("quran_reciter", Context.MODE_PRIVATE)
-    }
-    var selectedReciterId by rememberSaveable {
-        mutableStateOf(QuranReciter.fromEdition(
-            reciterPreferences.getString("selected_edition", null)
-        ).editionId)
-    }
-    val selectedReciter = QuranReciter.fromEdition(selectedReciterId)
-    var reciterMenuExpanded by remember { mutableStateOf(false) }
-    var chosenSurahId by rememberSaveable { mutableStateOf<Int?>(null) }
-    var repeatCount by rememberSaveable { mutableIntStateOf(1) }
-    var retryAttempt by remember { mutableIntStateOf(0) }
-    var verses by remember { mutableStateOf<List<QuranVerse>>(emptyList()) }
-    var loading by remember { mutableStateOf(false) }
-    var loadError by remember { mutableStateOf<String?>(null) }
-    var audioState by remember { mutableStateOf(RecitationStatus()) }
-    var downloadedAyahs by remember { mutableIntStateOf(0) }
-    var downloadInProgress by remember { mutableStateOf(false) }
-    var downloadError by remember { mutableStateOf<String?>(null) }
-    var downloadJob by remember { mutableStateOf<Job?>(null) }
-    val scope = rememberCoroutineScope()
-    val cache = remember(context, selectedReciter) {
-        QuranAudioCache(context.applicationContext, selectedReciter)
-    }
-    val audio = remember(context, cache) {
-        QuranAyahPlayer(context.applicationContext, cache) { status ->
-            audioState = status
-            if (status.phase == RecitationPhase.PLAYING) {
-                downloadedAyahs = verses.count { cache.cachedFile(it.globalNumber) != null }
-            }
+fun QuranScreen(chosenSurahId: Int?, onChooseSurah: (Int?) -> Unit) {
+    val vm: QuranViewModel = viewModel()
+    val state by vm.state.collectAsStateWithLifecycle()
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    LaunchedEffect(chosenSurahId) { vm.openSurah(chosenSurahId) }
+    DisposableEffect(vm, lifecycle) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_STOP) vm.stopAudio()
         }
+        lifecycle.addObserver(observer)
+        onDispose { lifecycle.removeObserver(observer); vm.leaveScreen() }
     }
-    DisposableEffect(audio) {
-        onDispose {
-            downloadJob?.cancel()
-            audio.release()
-        }
-    }
-    LaunchedEffect(cache, verses) {
-        downloadedAyahs = verses.count { cache.cachedFile(it.globalNumber) != null }
-    }
+    QuranContent(state, chosenSurahId, onChooseSurah, vm::selectReciter,
+        vm::selectRepeats, vm::play, vm::stopAudio, vm::toggleDownload,
+        onRetry = { vm.openSurah(chosenSurahId, retry = true) })
+}
 
-    val chosenSurah = QuranSource.shortSurahs.firstOrNull { it.number == chosenSurahId }
-    LaunchedEffect(chosenSurahId, retryAttempt) {
-        audio.stop()
-        downloadJob?.cancel()
-        downloadJob = null
-        downloadInProgress = false
-        downloadError = null
-        downloadedAyahs = 0
-        verses = emptyList()
-        loadError = null
-        if (chosenSurah != null) {
-            loading = true
-            try {
-                verses = QuranSource.load(context.applicationContext, chosenSurah)
-                downloadedAyahs = verses.count { cache.cachedFile(it.globalNumber) != null }
-            } catch (_: Exception) {
-                loadError = "تعذّر تحميل الآيات. تأكّد من اتصال الإنترنت وحاول مرة ثانية."
-            } finally {
-                loading = false
-            }
-        }
-    }
-    BackHandler(enabled = chosenSurah != null) {
-        downloadJob?.cancel()
-        audio.stop()
-        chosenSurahId = null
-    }
-
+/** Content is separate from network/player ownership so layouts and taps can be tested offline. */
+@Composable
+internal fun QuranContent(
+    state: QuranUiState,
+    chosenSurahId: Int?,
+    onChooseSurah: (Int?) -> Unit,
+    onReciter: (QuranReciter) -> Unit,
+    onRepeats: (Int) -> Unit,
+    onPlay: (QuranVerse) -> Unit,
+    onStop: () -> Unit,
+    onDownload: () -> Unit,
+    onRetry: () -> Unit,
+) {
+    val surah = QuranSource.shortSurahs.firstOrNull { it.number == chosenSurahId }
+    val colors = quranColors()
+    val listState = rememberLazyListState()
+    LaunchedEffect(chosenSurahId) { listState.scrollToItem(0) }
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = androidx.compose.foundation.layout.PaddingValues(
-            start = 20.dp, end = 20.dp, top = 18.dp, bottom = 32.dp
-        ),
+        state = listState,
+        modifier = Modifier.fillMaxSize().testTag("quran-content"),
+        contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 18.dp, bottom = 32.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        item {
-            QuranHeading(
-                title = if (chosenSurah == null) "القرآن الكريم" else "سورة ${chosenSurah.name}",
-                subtitle = if (chosenSurah == null) {
-                    "سور قصيرة للتلاوة والتكرار، مناسبة للتدريب والاستماع"
-                } else {
-                    "اضغط على أي آية لسماعها، واضغط عليها مجدداً لإعادتها من البداية"
-                },
-                dark = isDark,
-            )
+        item(key = "heading") {
+            QuranHeading(if (surah == null) "القرآن الكريم" else "سورة ${surah.name}",
+                if (surah == null) "سور قصيرة للاستماع والتكرار" else
+                    "اضغط الآية للاستماع، واضغط مجددًا لتعيدها مع القارئ",
+                surah?.verseCount)
         }
-        if (chosenSurah == null) {
-            item {
-                Text(
-                    "اختر السورة",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontWeight = FontWeight.Bold,
-                )
+        if (surah == null) {
+            item(key = "choose") {
+                Text("اختر السورة", style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
             }
-            itemsIndexed(QuranSource.shortSurahs, key = { _, surah -> surah.number }) { index, surah ->
+            itemsIndexed(QuranSource.shortSurahs, key = { _, chapter -> "surah-${chapter.number}" }) { index, chapter ->
                 StaggeredCascade(row = index, modifier = Modifier.fillMaxWidth()) {
-                    val dark = LocalIsDark.current
-                    val performance = LocalPerformanceMode.current
-                    val accent = if (dark) Color(0xFF68C9A8) else DeepGreen
-                    val interaction = remember { MutableInteractionSource() }
-                    val pressed by interaction.collectIsPressedAsState()
-                    val glow by animateFloatAsState(
-                        targetValue = if (pressed && !performance) 1f else 0f,
-                        animationSpec = if (performance) snap() else tween(170),
-                        label = "QuranSurahGlow",
-                    )
-                    val cardColor by animateColorAsState(
-                        targetValue = when {
-                            performance -> MaterialTheme.colorScheme.surface
-                            pressed && dark -> Color(0xFF213C37)
-                            pressed -> Color(0xFFE8F5EF)
-                            else -> MaterialTheme.colorScheme.surface
-                        },
-                        animationSpec = if (performance) snap() else tween(170),
-                        label = "QuranSurahCardColor",
-                    )
-
-                    Box(
-                        modifier = Modifier.fillMaxWidth().heightIn(min = 88.dp)
-                            .drawBehind {
-                                if (glow > 0f) {
-                                    drawRoundRect(
-                                        color = accent.copy(alpha = 0.32f * glow),
-                                        cornerRadius = CornerRadius(24.dp.toPx()),
-                                        style = Stroke(width = 7.dp.toPx()),
-                                    )
-                                }
-                            },
-                    ) {
-                        Surface(
-                            modifier = Modifier.fillMaxWidth().padding(2.dp)
-                                .heightIn(min = 84.dp).clip(CardShape)
-                                .bounceClick(
-                                    onClick = { audio.stop(); chosenSurahId = surah.number },
-                                    accent = accent,
-                                    interactionSource = interaction,
-                                ),
-                            shape = CardShape,
-                            color = cardColor,
-                            border = if (pressed && !performance) {
-                                BorderStroke(2.dp, accent.copy(alpha = 0.85f))
-                            } else {
-                                cardBorder()
-                            },
-                            shadowElevation = if (performance) 0.dp else if (dark) 4.dp else 8.dp,
-                        ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth()
-                                    .padding(horizontal = 18.dp, vertical = 16.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                            ) {
-                                Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                                    Text(
-                                        "سورة ${surah.name}",
-                                        fontSize = 21.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                    )
-                                    Text(
-                                        "${surah.verseCount} آيات",
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                    )
-                                }
-                                Icon(
-                                    Icons.Outlined.MenuBook,
-                                    contentDescription = null,
-                                    tint = accent,
-                                )
-                            }
-                        }
-                    }
+                    QuranSurahCard(chapter) { onChooseSurah(chapter.number) }
                 }
-            }
-            item {
-                AttributionText(
-                    "الآيات من AlQuran.cloud. التلاوات من Islamic Network أو EveryAyah، مع مصدر احتياطي Maqra. يمكن تحميل السورة للاستماع دون إنترنت."
-                )
             }
         } else {
-            item {
-                TextButton(onClick = {
-                    downloadJob?.cancel()
-                    audio.stop()
-                    chosenSurahId = null
-                }) {
-                    Text("العودة إلى قائمة السور")
-                }
+            item(key = "settings") {
+                QuranSettings(state, onReciter, onRepeats, onDownload)
             }
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        "القارئ",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontWeight = FontWeight.Bold,
-                    )
-                    Box {
-                        TextButton(onClick = { reciterMenuExpanded = true }) {
-                            Text(selectedReciter.displayName)
-                            Icon(Icons.Filled.KeyboardArrowDown, contentDescription = "اختيار القارئ")
-                        }
-                        DropdownMenu(
-                            expanded = reciterMenuExpanded,
-                            onDismissRequest = { reciterMenuExpanded = false },
-                        ) {
-                            QuranReciter.entries.forEach { option ->
-                                DropdownMenuItem(
-                                    text = { Text(option.displayName) },
-                                    onClick = {
-                                        reciterMenuExpanded = false
-                                        if (option != selectedReciter) {
-                                            audio.stop()
-                                            downloadJob?.cancel()
-                                            downloadJob = null
-                                            downloadInProgress = false
-                                            downloadError = null
-                                            downloadedAyahs = 0
-                                            selectedReciterId = option.editionId
-                                            reciterPreferences.edit()
-                                                .putString("selected_edition", option.editionId)
-                                                .apply()
-                                        }
-                                    },
-                                    trailingIcon = {
-                                        if (option == selectedReciter) {
-                                            Icon(Icons.Filled.Check, contentDescription = null)
-                                        }
-                                    },
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-            if (verses.isNotEmpty()) {
-                item {
-                    Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                        if (downloadedAyahs == verses.size) {
-                            Text(
-                                "تلاوة السورة بصوت " + selectedReciter.displayName + " محفوظة على الهاتف وتشتغل بدون إنترنت",
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.bodyMedium,
-                            )
-                        } else {
-                            TextButton(onClick = {
-                                if (downloadInProgress) {
-                                    downloadJob?.cancel()
-                                    downloadInProgress = false
-                                } else {
-                                    val numbers = verses.map { it.globalNumber }
-                                    downloadError = null
-                                    downloadInProgress = true
-                                    downloadJob = scope.launch {
-                                        try {
-                                            for (verse in verses) {
-                                                cache.obtain(verse.globalNumber, verse.surahNumber, verse.verseNumber)
-                                                downloadedAyahs = numbers.count {
-                                                    cache.cachedFile(it) != null
-                                                }
-                                            }
-                                        } catch (cancelled: CancellationException) {
-                                            throw cancelled
-                                        } catch (_: Exception) {
-                                            downloadError = "تعذّر تنزيل بعض التلاوات. تأكّد من الإنترنت وأعد المحاولة."
-                                        } finally {
-                                            downloadInProgress = false
-                                        }
-                                    }
-                                }
-                            }) {
-                                Icon(Icons.Filled.Download, contentDescription = null)
-                                Text(if (downloadInProgress) "إلغاء التنزيل" else "تحميل السورة بصوت " + selectedReciter.displayName)
-                            }
-                            if (downloadInProgress) {
-                                Text(
-                                    "تم حفظ " + downloadedAyahs + " من " + verses.size + " آيات",
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    style = MaterialTheme.typography.bodySmall,
-                                )
-                            }
-                            downloadError?.let { message ->
-                                Text(message, color = MaterialTheme.colorScheme.error)
-                            }
-                        }
-                    }
-                }
-            }
-            item {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        "عدد مرات تكرار الآية",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground,
-                    )
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        listOf(1, 3, 5).forEach { count ->
-                            FilterChip(
-                                selected = repeatCount == count,
-                                onClick = { repeatCount = count },
-                                label = { Text("${count} ×", fontSize = 16.sp) },
-                            )
-                        }
-                    }
-                }
-            }
-            if (audioState.phase == RecitationPhase.ERROR) {
-                item {
-                    Text(
-                        "تعذّر تشغيل التلاوة. الآية غير المحفوظة تحتاج إنترنت أول مرة، ثم تشتغل دون اتصال.",
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
-            }
-            if (audioState.phase == RecitationPhase.PLAYING ||
-                audioState.phase == RecitationPhase.BUFFERING
-            ) {
-                item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            if (audioState.phase == RecitationPhase.BUFFERING)
-                                "جارٍ تجهيز التلاوة..."
-                            else "التكرارات المتبقية: ${audioState.remaining}",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                        TextButton(onClick = { audio.stop() }) {
-                            Icon(Icons.Filled.Stop, contentDescription = null)
-                            Text("إيقاف")
-                        }
-                    }
-                }
+            if (state.downloadError != null) item(key = "download-error") { ErrorText(state.downloadError) }
+            if (state.audio.phase == RecitationPhase.ERROR) item(key = "audio-error") {
+                ErrorText(when (state.audio.failure) {
+                    RecitationFailure.FOCUS -> "الصوت مشغول الآن. أعد الضغط على الآية بعد انتهاء المكالمة أو الصوت الآخر."
+                    RecitationFailure.DECODER -> "تعذّر قراءة التسجيل. أعد الضغط على الآية لإعادة تنزيلها وتشغيلها."
+                    else -> "تعذّر تحميل أو حفظ التلاوة. تحقّق من الاتصال والمساحة المتاحة، ثم اضغط الآية للمحاولة."
+                })
             }
             when {
-                loading -> item {
-                    Column(
-                        modifier = Modifier.fillMaxWidth().padding(32.dp),
+                state.loading || state.surahId != chosenSurahId -> item(key = "loading") {
+                    Column(Modifier.fillMaxWidth().padding(24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
-                        CircularProgressIndicator()
-                        Text("جارٍ تحميل الآيات...")
+                        verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        CircularProgressIndicator(color = colors.accent)
+                        Text("جارٍ تحميل الآيات…", color = MaterialTheme.colorScheme.onBackground)
                     }
                 }
-                loadError != null -> item {
-                    Column(
-                        modifier = Modifier.fillMaxWidth().padding(20.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
-                        Text(
-                            loadError.orEmpty(),
-                            color = MaterialTheme.colorScheme.error,
-                            textAlign = TextAlign.Center,
-                        )
-                        Button(onClick = { retryAttempt++ }) { Text("إعادة المحاولة") }
+                state.loadError != null -> item(key = "load-error") {
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        ErrorText(state.loadError)
+                        QuranAction("إعادة المحاولة", onClick = onRetry)
                     }
                 }
-                else -> {
-                    items(verses, key = { it.globalNumber }) { verse ->
-                        VerseCard(
-                            verse = verse,
-                            isActive = audioState.globalVerseNumber == verse.globalNumber &&
-                                (audioState.phase == RecitationPhase.PLAYING ||
-                                    audioState.phase == RecitationPhase.BUFFERING),
-                            isBuffering = audioState.globalVerseNumber == verse.globalNumber &&
-                                audioState.phase == RecitationPhase.BUFFERING,
-                            onClick = { audio.play(verse, repeatCount) },
-                        )
-                    }
-                    item {
-                        AttributionText(
-                            "الآيات من AlQuran.cloud، وتلاوات العفاسي من Islamic Network، وصلاح أبو خاطر والحصري من EveryAyah مع مصدر احتياطي Maqra. يتم حفظ صوت كل قارئ بشكل مستقل للاستماع بدون إنترنت."
-                        )
+                else -> itemsIndexed(state.verses, key = { _, verse -> "ayah-${verse.globalNumber}" }) { index, verse ->
+                    StaggeredCascade(row = index, modifier = Modifier.fillMaxWidth()) {
+                        QuranVerseCard(verse, state.audio,
+                            onClick = { onPlay(verse) }, onStop = onStop)
                     }
                 }
             }
+        }
+        item(key = "source") {
+            Text("النص: AlQuran.cloud • التلاوات: Islamic Network وEveryAyah، مع مصدر احتياطي Maqra",
+                modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
         }
     }
 }
 
 @Composable
-private fun QuranHeading(title: String, subtitle: String, dark: Boolean) {
-    Surface(
-        shape = RoundedCornerShape(24.dp),
-        modifier = Modifier.fillMaxWidth(),
-        color = if (dark) Color(0xFF123C34) else DeepGreen,
-        border = BorderStroke(1.dp, LightGold.copy(alpha = 0.4f)),
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(24.dp),
+private fun QuranHeading(title: String, subtitle: String, verseCount: Int?) {
+    val colors = quranColors()
+    Surface(shape = CardShape, color = colors.header,
+        border = BorderStroke(1.dp, colors.gold.copy(alpha = 0.4f)), modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 18.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            Icon(Icons.Outlined.MenuBook, contentDescription = null, tint = LightGold)
-            Text(
-                title, color = Color.White, fontWeight = FontWeight.ExtraBold,
-                fontSize = 25.sp, lineHeight = 34.sp, textAlign = TextAlign.Center,
-            )
-            Text(
-                subtitle, color = Color(0xFFF2E4C6),
-                style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Center,
-            )
+            verticalArrangement = Arrangement.spacedBy(7.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Icon(Icons.AutoMirrored.Outlined.MenuBook, contentDescription = null, tint = colors.gold)
+                Text(title, fontSize = 25.sp, lineHeight = 34.sp, fontWeight = FontWeight.Bold,
+                    color = Color.White, textAlign = TextAlign.Center, modifier = Modifier.weight(1f, fill = false))
+            }
+            if (verseCount != null) Text("$verseCount آيات", color = colors.gold,
+                style = MaterialTheme.typography.labelLarge)
+            Text(subtitle, color = Color(0xFFF2E4C6), textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
 
 @Composable
-private fun VerseCard(
-    verse: QuranVerse,
-    isActive: Boolean,
-    isBuffering: Boolean,
-    onClick: () -> Unit,
+private fun QuranSurahCard(surah: ShortSurah, onClick: () -> Unit) {
+    val colors = quranColors()
+    QuranInteractiveSurface(onClick = onClick, tag = "surah-${surah.number}") {
+        Row(Modifier.fillMaxWidth().padding(18.dp), verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+            Box(Modifier.size(46.dp).background(colors.activeSurface, RoundedCornerShape(15.dp)),
+                contentAlignment = Alignment.Center) {
+                Icon(Icons.AutoMirrored.Outlined.MenuBook, contentDescription = null, tint = colors.accent)
+            }
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                Text("سورة ${surah.name}", fontSize = 21.sp, fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface)
+                Text("${surah.verseCount} آيات", style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null,
+                tint = colors.accent, modifier = Modifier.size(20.dp))
+        }
+    }
+}
+
+@Composable
+private fun QuranSettings(
+    state: QuranUiState, onReciter: (QuranReciter) -> Unit,
+    onRepeats: (Int) -> Unit, onDownload: () -> Unit,
 ) {
-    Surface(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth().heightIn(min = 118.dp),
-        color = if (isActive) {
-            MaterialTheme.colorScheme.primaryContainer
-        } else {
-            MaterialTheme.colorScheme.surface
-        },
-        shape = AyahShape,
-        border = BorderStroke(
-            if (isActive) 2.dp else 1.dp,
-            if (isActive) DeepGreen else MaterialTheme.colorScheme.outlineVariant,
-        ),
-        tonalElevation = if (isActive) 4.dp else 1.dp,
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp),
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    "الآية ${verse.verseNumber}",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontWeight = FontWeight.SemiBold,
-                )
-                if (isBuffering) {
-                    CircularProgressIndicator(modifier = Modifier.padding(5.dp))
-                } else {
-                    Icon(
-                        Icons.Filled.PlayArrow, contentDescription = null,
-                        tint = if (isActive) DeepGreen else MaterialTheme.colorScheme.primary,
-                    )
+    val colors = quranColors()
+    var expanded by remember { mutableStateOf(false) }
+    Surface(shape = CardShape, color = MaterialTheme.colorScheme.surface, border = cardBorder()) {
+        Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+            Text("القارئ", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+            Box {
+                QuranAction(state.reciter.displayName, icon = Icons.Filled.KeyboardArrowDown,
+                    onClick = { expanded = true })
+                DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                    QuranReciter.entries.forEach { option ->
+                        DropdownMenuItem(text = { Text(option.displayName) },
+                            onClick = { expanded = false; onReciter(option) },
+                            trailingIcon = { if (option == state.reciter) Icon(Icons.Filled.Check, null, tint = colors.accent) })
+                    }
                 }
             }
-            Text(
-                text = verse.uthmaniText,
-                modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 29.sp,
-                lineHeight = 49.sp,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Medium,
-            )
-            if (isActive && !isBuffering) {
-                Text(
-                    "اضغط لإعادة التلاوة من البداية",
-                    modifier = Modifier.fillMaxWidth(),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelMedium,
-                    textAlign = TextAlign.Center,
-                )
+            Text("عدد مرات تكرار الآية", style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                listOf(1, 3, 5).forEach { count ->
+                    val selected = count == state.repeats
+                    Surface(color = if (selected) colors.activeSurface else MaterialTheme.colorScheme.surface,
+                        shape = RoundedCornerShape(14.dp),
+                        border = BorderStroke(if (selected) 2.dp else 1.dp,
+                            if (selected) colors.accent else MaterialTheme.colorScheme.outlineVariant),
+                        modifier = Modifier.weight(1f).heightIn(min = 50.dp).clip(RoundedCornerShape(14.dp))
+                            .semantics { stateDescription = if (selected) "محدد" else "غير محدد" }
+                            .bounceClick(onClick = { onRepeats(count) }, accent = colors.accent)) {
+                        Box(Modifier.padding(10.dp), contentAlignment = Alignment.Center) {
+                            Text("$count ×", color = colors.accent, fontWeight = FontWeight.Bold, fontSize = 17.sp)
+                        }
+                    }
+                }
+            }
+            if (state.verses.isNotEmpty()) {
+                if (state.savedAyahs == state.verses.size && !state.downloading) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Filled.Check, null, tint = colors.accent)
+                        Text("التلاوة محفوظة للاستماع دون إنترنت", style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.weight(1f))
+                    }
+                } else {
+                    QuranAction(if (state.downloading) "إلغاء التنزيل · ${state.savedAyahs} من ${state.verses.size}" else "تحميل تلاوة السورة",
+                        icon = if (state.downloading) Icons.Filled.Stop else Icons.Filled.Download, onClick = onDownload)
+                }
             }
         }
     }
 }
 
 @Composable
-private fun AttributionText(text: String) {
-    Text(
-        text,
-        modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        textAlign = TextAlign.Center,
-    )
+internal fun QuranVerseCard(verse: QuranVerse, status: RecitationStatus, onClick: () -> Unit, onStop: () -> Unit) {
+    val colors = quranColors()
+    val active = status.globalVerseNumber == verse.globalNumber &&
+        status.phase in setOf(RecitationPhase.PLAYING, RecitationPhase.BUFFERING)
+    val buffering = active && status.phase == RecitationPhase.BUFFERING
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        QuranInteractiveSurface(onClick = onClick, active = active, tag = "ayah-${verse.globalNumber}",
+            description = when { buffering -> "جارٍ تجهيز الآية"; active -> "الآية قيد التشغيل؛ اضغط لإعادتها من البداية"; else -> "اضغط للاستماع إلى الآية" }) {
+            Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 18.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Surface(color = colors.activeSurface, shape = CircleShape,
+                        border = BorderStroke(1.dp, colors.accent.copy(alpha = 0.35f))) {
+                        Text("${verse.verseNumber}", modifier = Modifier.padding(horizontal = 13.dp, vertical = 6.dp),
+                            color = colors.accent, fontWeight = FontWeight.Bold)
+                    }
+                    Text(if (buffering) "جارٍ التجهيز…" else if (active) "تلاوة الآية" else "الآية ${verse.verseNumber}",
+                        modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.labelLarge)
+                    if (buffering) CircularProgressIndicator(Modifier.size(24.dp), color = colors.accent, strokeWidth = 2.dp)
+                    else Icon(if (active) Icons.Filled.Equalizer else Icons.Filled.PlayArrow,
+                        contentDescription = null, tint = colors.accent, modifier = Modifier.size(27.dp))
+                }
+                Text(verse.uthmaniText, modifier = Modifier.fillMaxWidth().testTag("quran-text-${verse.globalNumber}"),
+                    style = TextStyle(fontFamily = QuranFont, fontSynthesis = FontSynthesis.None,
+                        fontWeight = FontWeight.Normal, fontSize = 30.sp, lineHeight = 62.sp,
+                        textAlign = TextAlign.Center, textDirection = TextDirection.ContentOrRtl,
+                        platformStyle = PlatformTextStyle(includeFontPadding = true)),
+                    color = MaterialTheme.colorScheme.onSurface)
+                if (active) Text(if (buffering) "يتم حفظ الآية قبل تشغيلها" else "اضغط الآية مجددًا لتعيدها مع القارئ",
+                    modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
+            }
+        }
+        // A local stop action follows only this active ayah; there is no fixed player.
+        if (active) QuranAction(if (buffering) "إلغاء تجهيز الآية" else "إيقاف التلاوة · المتبقي ${status.remaining}",
+            icon = Icons.Filled.Stop, onClick = onStop)
+    }
+}
+
+@Composable
+private fun QuranAction(text: String, icon: androidx.compose.ui.graphics.vector.ImageVector? = null, onClick: () -> Unit) {
+    val colors = quranColors()
+    Surface(shape = RoundedCornerShape(16.dp), color = colors.activeSurface,
+        modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).clip(RoundedCornerShape(16.dp))
+            .bounceClick(onClick = onClick, accent = colors.accent)) {
+        Row(Modifier.padding(horizontal = 14.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            if (icon != null) Icon(icon, contentDescription = null, tint = colors.accent)
+            Text(text, color = colors.accent, fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.weight(1f), textAlign = TextAlign.Start)
+        }
+    }
+}
+
+@Composable
+private fun ErrorText(message: String) {
+    Text(message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium,
+        modifier = Modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite })
+}
+
+@Composable
+private fun QuranInteractiveSurface(
+    onClick: () -> Unit, tag: String, active: Boolean = false, description: String? = null,
+    content: @Composable () -> Unit,
+) {
+    val colors = quranColors()
+    val performance = LocalPerformanceMode.current
+    val interaction = remember { MutableInteractionSource() }
+    val pressed by interaction.collectIsPressedAsState()
+    val color by animateColorAsState(
+        when { active -> colors.activeSurface; pressed -> colors.pressedSurface; else -> MaterialTheme.colorScheme.surface },
+        animationSpec = if (performance) snap() else tween(190), label = "quran-card-color")
+    val glow by animateFloatAsState(if ((active || pressed) && !performance) 1f else 0f,
+        animationSpec = if (performance) snap() else tween(190), label = "quran-card-glow")
+    Box(Modifier.fillMaxWidth().drawBehind {
+        if (glow > 0f) drawRoundRect(colors.accent.copy(alpha = 0.16f * glow),
+            cornerRadius = CornerRadius(25.dp.toPx()), style = Stroke(width = 6.dp.toPx()))
+    }) {
+        Surface(shape = CardShape, color = color,
+            border = if (active || pressed) BorderStroke(2.dp, colors.accent) else cardBorder(),
+            shadowElevation = if (performance) 0.dp else if (LocalIsDark.current) 4.dp else 8.dp,
+            modifier = Modifier.fillMaxWidth().padding(2.dp).heightIn(min = 88.dp).clip(CardShape)
+                .testTag(tag).semantics { if (description != null) stateDescription = description }
+                .bounceClick(onClick = onClick, accent = colors.accent, interactionSource = interaction),
+            content = content)
+    }
 }

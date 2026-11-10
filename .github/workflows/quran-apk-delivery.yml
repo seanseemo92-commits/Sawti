@@ -1,4 +1,4 @@
-name: Deliver Quran three-reciter debug APK
+name: Validate Quran green-gold ayah training APK
 on:
   push:
     branches:
@@ -43,8 +43,11 @@ jobs:
         continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
-          name: Sawti-Quran-Reciters-Bukhatir-Husary-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: Sawti-Quran-Green-Gold-debug
+          path: |
+            app/build/outputs/apk/debug/app-debug.apk
+            app/build/outputs/quran-review/*.png
+            app/build/test-results/testDebugUnitTest/TEST-*Quran*.xml
           if-no-files-found: error
           retention-days: 1
       - name: Fallback - commit APK to the dev branch for direct download
@@ -52,10 +55,12 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p previews
-          cp app/build/outputs/apk/debug/app-debug.apk previews/Sawti-Quran-Reciters-Bukhatir-Husary-debug.apk
-          (cd previews && sha256sum Sawti-Quran-Reciters-Bukhatir-Husary-debug.apk > Sawti-Quran-Reciters-Bukhatir-Husary-debug.apk.sha256)
+          cp app/build/outputs/apk/debug/app-debug.apk previews/Sawti-Quran-Green-Gold-debug.apk
+          (cd previews && sha256sum Sawti-Quran-Green-Gold-debug.apk > Sawti-Quran-Green-Gold-debug.apk.sha256)
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add previews/Sawti-Quran-Reciters-Bukhatir-Husary-debug.apk previews/Sawti-Quran-Reciters-Bukhatir-Husary-debug.apk.sha256
-          git commit -m "build(preview): expose verified three-reciter Quran APK for testing"
+          if [ -d app/build/outputs/quran-review ]; then cp app/build/outputs/quran-review/*.png previews/; fi
+          git add previews/Sawti-Quran-Green-Gold-debug.apk previews/Sawti-Quran-Green-Gold-debug.apk.sha256
+          git add previews/quran-*.png 2>/dev/null || true
+          git commit -m "build(preview): expose verified Quran green-gold APK for testing"
           git push origin HEAD:fix/prelaunch-cleanup-hint

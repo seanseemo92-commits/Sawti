@@ -70,6 +70,7 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
     val state by library.uiState.collectAsStateWithLifecycle()
     val settings by settingsVm.settings.collectAsStateWithLifecycle()
     var route by rememberSaveable { mutableStateOf(HOME) }
+    var quranSurahId by rememberSaveable { mutableStateOf<Int?>(null) }
     var manageCategories by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
     val operations = (context.applicationContext as SawtiApp).container.backupOperations
@@ -88,9 +89,13 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
     LaunchedEffect(state.categories, route) {
         if (route.startsWith(CATEGORY_PREFIX) && state.categories.isNotEmpty() && category == null) route = HOME
     }
-    BackHandler(enabled = route != HOME || backupLocked) {
-        if (!navigationLocked()) route = HOME
+    val navigateBack: () -> Unit = {
+        if (!navigationLocked()) {
+            if (route == QURAN && quranSurahId != null) quranSurahId = null
+            else route = HOME
+        }
     }
+    BackHandler(enabled = route != HOME || backupLocked, onBack = navigateBack)
     val title = when {
         route == QURAN -> "القرآن الكريم"
         route == PRACTICE -> stringResource(R.string.practice_title)
@@ -108,7 +113,7 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
                     title = title,
                     showBack = route != HOME,
                     caregiverMode = state.caregiverMode,
-                    onBack = { if (!navigationLocked()) route = HOME },
+                    onBack = navigateBack,
                     onPractice = { if (!navigationLocked()) route = PRACTICE },
                     onDialects = { if (!navigationLocked()) route = DIALECT },
                     onToggleCaregiver = { if (!navigationLocked()) library.toggleCaregiver() },
@@ -155,7 +160,9 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
                 LocalTouchDwell provides settings.touchDwell,
             ) {
                 when {
-                    route == QURAN -> QuranScreen()
+                    route == QURAN -> QuranScreen(quranSurahId) { id ->
+                        if (!navigationLocked()) quranSurahId = id
+                    }
                     route == PRACTICE -> PracticeRoute(practice)
                     route == PROGRESS && state.caregiverMode -> ProgressRoute(progress)
                     route == SETTINGS && state.caregiverMode -> SettingsRoute(settingsVm)
@@ -169,7 +176,13 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
                         categories = state.categories,
                         speakingItemId = state.playbackVisual.activeWordId.takeIf { state.playbackVisual.isSpeaking },
                         onOpen = { id -> if (!navigationLocked()) route = CATEGORY_PREFIX + id },
-                        onOpenQuran = { if (!navigationLocked()) route = QURAN },
+                        onOpenQuran = {
+                            if (!navigationLocked()) {
+                                library.onAppBackgrounded()
+                                quranSurahId = null
+                                route = QURAN
+                            }
+                        },
                         onRetry = { if (!navigationLocked()) library.retryLoad() },
                         isLoading = state.isLoadingCategories,
                         loadError = state.categoryLoadError,

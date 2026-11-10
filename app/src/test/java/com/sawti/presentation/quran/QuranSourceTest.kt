@@ -97,4 +97,31 @@ class QuranSourceTest {
             QuranSource.parse(source, ShortSurah(112, "الإخلاص", 4))
         }
     }
+
+    @Test
+    fun rejectsGlobalIdsFromAnotherSurahAndDuplicateGlobalIds() {
+        val chapter = ShortSurah(108, "الكوثر", 3)
+        fun response(ids: List<Int>) = """{"status":"OK","data":{"number":108,"numberOfAyahs":3,"ayahs":[
+            {"number":${ids[0]},"numberInSurah":1,"text":"آية"},
+            {"number":${ids[1]},"numberInSurah":2,"text":"آية"},
+            {"number":${ids[2]},"numberInSurah":3,"text":"آية"}]}}"""
+        assertThrows(IllegalArgumentException::class.java) {
+            QuranSource.parse(response(listOf(1, 2, 3)), chapter)
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            QuranSource.parse(response(listOf(6205, 6205, 6207)), chapter)
+        }
+    }
+
+    @Test
+    fun rejectsWrongLocalGlobalCombinationBeforeRequestingAnyReciter() {
+        QuranReciter.entries.forEach { reciter ->
+            assertThrows(IllegalArgumentException::class.java) {
+                QuranSource.audioUrls(1, reciter, 108, 1)
+            }
+            assertThrows(IllegalArgumentException::class.java) {
+                QuranSource.audioUrls(6208, reciter, 108, 4)
+            }
+        }
+    }
 }
