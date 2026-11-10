@@ -24,6 +24,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          fetch-depth: 2
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -33,7 +34,36 @@ jobs:
       - name: Validate canonical version
         run: python3 scripts/verify_release.py
 
+      - name: Test APK resource-table verification
+        run: python3 scripts/test_review_apk_resources.py
+
+      - name: Verify prior completed checks for a packaging-only retry
+        if: contains(github.event.head_commit.message, '[package-retry]')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/actions/jobs/129786303130" > "$RUNNER_TEMP/prior-review-job.json"
+          python3 - <<'PY'
+          import json, os, subprocess
+          base = 'ee321de61457b659bcbaa9ef2b2c2b60e8d52afc'
+          job = json.load(open(os.environ['RUNNER_TEMP'] + '/prior-review-job.json'))
+          assert job['run_id'] == 42803380026
+          assert job['head_sha'] == base
+          checks = {step['name']: step['conclusion'] for step in job['steps']}
+          assert checks['Build debug and run complete tests and lint'] == 'success'
+          assert checks['Build signed optimized Release and lint'] == 'success'
+          allowed = {'.github/workflows/signed-review-apk.yml', 'scripts/summarize_review_build.py',
+                     'scripts/review_apk_resources.py', 'scripts/test_review_apk_resources.py'}
+          changes = set(subprocess.check_output(['git', 'diff', '--name-only', base, 'HEAD'], text=True).splitlines())
+          assert changes and changes <= allowed, 'App/test/build inputs changed: full validation required'
+          with open(os.environ['GITHUB_ENV'], 'a') as output:
+              output.write(f'VALIDATION_COMMIT={base}\nVALIDATION_RUN_ID=42803380026\n')
+          print('Prior complete tests and both Lint variants verified; only packaging verification changed.')
+          PY
+
       - name: Build debug and run complete tests and lint
+        if: ${{ !contains(github.event.head_commit.message, '[package-retry]') }}
         run: |
           chmod +x gradlew
           ./gradlew --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug --continue
@@ -92,7 +122,13 @@ jobs:
           } >> "$GITHUB_ENV"
 
       - name: Build signed optimized Release and lint
-        run: ./gradlew --no-daemon :app:assembleRelease :app:lintRelease --continue
+        run: |
+          chmod +x gradlew
+          if [[ -n "${VALIDATION_RUN_ID:-}" ]]; then
+            ./gradlew --no-daemon :app:assembleRelease
+          else
+            ./gradlew --no-daemon :app:assembleRelease :app:lintRelease --continue
+          fi
 
       - name: Verify signature and package, then prepare APK
         shell: bash
@@ -109,7 +145,8 @@ jobs:
           python3 scripts/verify_release.py "$RUNNER_TEMP/review-badging.txt"
           unzip -t "$APK" > /dev/null
           cp "$APK" dist/Sawti-Review-2026-11-10-Release.apk
-          python3 scripts/summarize_review_build.py
+          "$BUILD_TOOLS/aapt2" dump resources "$APK" > "$RUNNER_TEMP/review-resources.txt"
+          python3 scripts/summarize_review_build.py "$RUNNER_TEMP/review-resources.txt"
           (cd dist && sha256sum *.apk > SHA256SUMS.txt)
 
       - name: Upload reviewed signed APK
