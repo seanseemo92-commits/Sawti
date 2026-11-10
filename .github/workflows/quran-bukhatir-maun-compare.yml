@@ -1,4 +1,4 @@
-name: Compare Salah Bukhatir Al-Maun audio (read-only probe)
+name: Compare Salah Bukhatir Al-Maun source SHA256
 on:
   push:
     branches: [fix/prelaunch-cleanup-hint]
@@ -11,38 +11,30 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
-      - name: Compare original and mirror checksums and sound levels for seven ayahs
+      - name: Verify both repositories provide the identical files for all seven verses
         shell: bash
         run: |
           set -uo pipefail
-          if ! command -v ffprobe >/dev/null 2>&1; then
-            sudo apt-get update -qq
-            sudo apt-get install -y -qq ffmpeg
-          fi
-          command -v ffprobe
-          command -v ffmpeg
           mkdir -p /tmp/maun
-          printf 'VERSE | upstream HTTP/BYTES | mirror HTTP/BYTES | SAME_SHA256 | duration | audio bitrate | mean dB | max dB\n'
           for n in 1 2 3 4 5 6 7; do
-            num="$(printf '%03d' "$n")"
-            file="107${num}.mp3"
-            upstream="/tmp/maun/original-${file}"
+            printf '\n=== AL-MAUN VERSE %s ===\n' "$n"
+            file=$(printf '107%03d.mp3' "$n")
+            primary="/tmp/maun/primary-${file}"
             mirror="/tmp/maun/mirror-${file}"
-            upstreamUrl="https://everyayah.com/data/Salaah_AbdulRahman_Bukhatir_128kbps/${file}"
-            mirrorUrl="https://huggingface.co/datasets/maqra-project/salah-bukhatir-128kbps/resolve/main/${file}"
-            upStatus=$(curl -sS -L -w '%{http_code}' --max-time 35 --retry 1 -o "$upstream" "$upstreamUrl") || upStatus=FAILED
-            mirStatus=$(curl -sS -L -w '%{http_code}' --max-time 35 --retry 1 -o "$mirror" "$mirrorUrl") || mirStatus=FAILED
-            upBytes=$(wc -c < "$upstream" 2>/dev/null || echo 0)
-            mirBytes=$(wc -c < "$mirror" 2>/dev/null || echo 0)
-            upSha=$(sha256sum "$upstream" 2>/dev/null | awk '{print $1}')
-            mirSha=$(sha256sum "$mirror" 2>/dev/null | awk '{print $1}')
-            equal=NO
-            if [ "$upStatus" = 200 ] && [ "$mirStatus" = 200 ] && [ "$upSha" = "$mirSha" ]; then equal=YES; fi
-            duration=$(ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 "$upstream" 2>/dev/null || echo NA)
-            bitrate=$(ffprobe -v error -select_streams a:0 -show_entries stream=bit_rate -of default=nw=1:nk=1 "$upstream" 2>/dev/null || echo NA)
-            levels=$(ffmpeg -hide_banner -nostdin -i "$upstream" -af volumedetect -f null - 2>&1 || true)
-            mean=$(printf '%s\n' "$levels" | sed -n 's/.*mean_volume: \([^ ]*\) dB.*/\1/p' | tail -n 1)
-            max=$(printf '%s\n' "$levels" | sed -n 's/.*max_volume: \([^ ]*\) dB.*/\1/p' | tail -n 1)
-            echo "$file | $upStatus/$upBytes | $mirStatus/$mirBytes | $equal | $duration | $bitrate | $mean | $max"
-            echo "SHA256 up=$upSha mirror=$mirSha"
+            u1="https://everyayah.com/data/Salaah_AbdulRahman_Bukhatir_128kbps/${file}"
+            u2="https://huggingface.co/datasets/maqra-project/salah-bukhatir-128kbps/resolve/main/${file}"
+            st1=$(curl -L -sS --connect-timeout 8 --max-time 25 -w '%{http_code}' -o "$primary" "$u1") || st1=FAILED
+            st2=$(curl -L -sS --connect-timeout 8 --max-time 25 -w '%{http_code}' -o "$mirror" "$u2") || st2=FAILED
+            size1=$(wc -c < "$primary" 2>/dev/null || echo 0)
+            size2=$(wc -c < "$mirror" 2>/dev/null || echo 0)
+            sha1=$(sha256sum "$primary" 2>/dev/null | cut -d' ' -f1)
+            sha2=$(sha256sum "$mirror" 2>/dev/null | cut -d' ' -f1)
+            echo "PRIMARY_HTTP=$st1 BYTES=$size1 SHA256=$sha1"
+            echo "MIRROR_HTTP=$st2 BYTES=$size2 SHA256=$sha2"
+            if [ "$st1" = 200 ] && [ "$st2" = 200 ] && [ "$sha1" = "$sha2" ]; then
+              echo "RESULT=BYTE_IDENTICAL"
+            else
+              echo "RESULT=DIFFERENT_OR_FETCH_FAILED"
+            fi
+            file "$primary" "$mirror" || true
           done
