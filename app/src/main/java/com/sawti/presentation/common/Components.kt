@@ -198,6 +198,13 @@ fun ItemImage(item: WordItem, accent: Color, modifier: Modifier = Modifier,
                     contentScale = if (crop) ContentScale.Crop else ContentScale.Fit,
                     modifier = Modifier.fillMaxSize().then(if (fullBleed) Modifier else Modifier.clip(RoundedCornerShape(16.dp))))
             }
+            GreetingPhotoAtlas.slotFor(item) != null -> GreetingPhoto(
+                slot = requireNotNull(GreetingPhotoAtlas.slotFor(item)),
+                contentDescription = item.displayText,
+                modifier = Modifier.fillMaxSize().then(
+                    if (fullBleed) Modifier else Modifier.clip(RoundedCornerShape(16.dp))
+                ),
+            )
             resId != null -> Image(painter = painterResource(resId), contentDescription = item.displayText,
                 contentScale = if (crop) ContentScale.Crop else ContentScale.Fit,
                 modifier = Modifier.fillMaxSize().then(if (fullBleed) Modifier else Modifier.clip(RoundedCornerShape(16.dp))))
@@ -229,7 +236,7 @@ fun CardImageContent(item: WordItem, accent: Color, isCurrentlyPlaying: Boolean,
     val dark = LocalIsDark.current
     val resId = drawableResourceId(wordDrawableName(item))
     BoxWithConstraints(modifier, contentAlignment = Alignment.Center) {
-        if (item.photoPath != null || resId != null) {
+        if (item.photoPath != null || resId != null || GreetingPhotoAtlas.slotFor(item) != null) {
             val photoShape = if (fullBleed) RectangleShape else RoundedCornerShape(16.dp)
             if (isCurrentlyPlaying) VoiceAuraHalo(accent, Modifier.matchParentSize())
             ItemImage(item = item, accent = accent, modifier = Modifier.fillMaxSize().then(
