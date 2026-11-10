@@ -25,6 +25,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -53,6 +55,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sawti.R
+import com.sawti.presentation.onboarding.spotlightAnchor
 import com.sawti.domain.model.Category
 import com.sawti.presentation.common.CardImageContent
 import com.sawti.presentation.common.categoryDrawableName
@@ -70,7 +73,8 @@ private val BannerRadius = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, 
 @Composable
 fun HomeScreen(categories: List<Category>, speakingItemId: Long?, onOpen: (String) -> Unit,
     onOpenQuran: () -> Unit,
-    onRetry: () -> Unit = {}, isLoading: Boolean = true, loadError: String? = null, retryEnabled: Boolean = true) {
+    onRetry: () -> Unit = {}, isLoading: Boolean = true, loadError: String? = null, retryEnabled: Boolean = true,
+    tourTarget: String? = null) {
     if (categories.isEmpty()) {
         Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(24.dp),
             contentAlignment = Alignment.Center) {
@@ -90,8 +94,20 @@ fun HomeScreen(categories: List<Category>, speakingItemId: Long?, onOpen: (Strin
         return
     }
     val columns = if (LocalConfiguration.current.screenWidthDp >= 600) 3 else 2
+    val gridState = rememberLazyGridState()
+    LaunchedEffect(tourTarget, categories) {
+        val scrollIndex = when (tourTarget) {
+            "home_quran" -> 0
+            "home_family", "home_daily" -> {
+                val id = tourTarget.removePrefix("home_")
+                categories.indexOfFirst { it.id == id }.takeIf { it >= 0 }?.plus(1)
+            }
+            else -> null
+        }
+        if (scrollIndex != null) gridState.animateScrollToItem(scrollIndex)
+    }
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-        LazyVerticalGrid(columns = GridCells.Fixed(columns), modifier = Modifier.fillMaxSize(),
+        LazyVerticalGrid(columns = GridCells.Fixed(columns), state = gridState, modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 32.dp),
             horizontalArrangement = Arrangement.spacedBy(18.dp), verticalArrangement = Arrangement.spacedBy(18.dp)) {
             item(key = "quran-feature", span = { GridItemSpan(columns) }) {
@@ -121,7 +137,7 @@ private fun QuranHeroCard(onClick: () -> Unit) {
     // One image-backed card, like the other Sawti categories. The Quran artwork
     // is only a photo; all Arabic copy stays native, legible and accessible.
     Surface(
-        modifier = Modifier.fillMaxWidth().clip(CardRadius)
+        modifier = Modifier.fillMaxWidth().spotlightAnchor("home_quran").clip(CardRadius)
             .bounceClick(onClick = onClick, accent = gold),
         shape = CardRadius,
         color = green,
@@ -217,7 +233,7 @@ private fun LuxuryCategoryCard(category: Category, isSpeaking: Boolean, onClick:
             label = "AuraPulse")
         glow
     } else 0f
-    Box(modifier = Modifier.fillMaxWidth().aspectRatio(0.85f).then(
+    Box(modifier = Modifier.fillMaxWidth().aspectRatio(0.85f).spotlightAnchor("home_${category.id}").then(
         if (isSpeaking && !performance) Modifier.drawBehind {
             drawCircle(brush = Brush.radialGradient(
                 colors = listOf(bannerColor.copy(alpha = auraGlow * 0.39f), bannerColor.copy(alpha = 0.12f), Color.Transparent),
