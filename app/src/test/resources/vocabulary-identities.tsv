@@ -375,3 +375,17 @@ transport.helicopter	transport
 transport.ship	transport
 transport.boat	transport
 transport.truck	transport
+greeting.salam	greetings
+greeting.reply	greetings
+greeting.hello	greetings
+greeting.welcome	greetings
+greeting.how_are_you	greetings
+greeting.fine	greetings
+greeting.good_morning	greetings
+greeting.good_evening	greetings
+greeting.brighten	greetings
+greeting.good_health	greetings
+greeting.goodbye	greetings
+greeting.safe	greetings
+greeting.thanks	greetings
+greeting.bless	greetings
