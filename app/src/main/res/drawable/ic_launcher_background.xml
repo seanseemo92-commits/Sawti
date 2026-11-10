@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Full-bleed adaptive background; Android supplies the final mask. -->
+<!-- Approved purple identity stays consistent across light and dark launcher modes. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <gradient android:angle="315"
-        android:startColor="#BDE9FF"
-        android:centerColor="#7378F3"
-        android:endColor="#A362EB" />
+    <gradient android:angle="315" android:startColor="#7D1370"
+        android:centerColor="#530B71" android:endColor="#230D67" />
 </shape>

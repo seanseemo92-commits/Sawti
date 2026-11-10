@@ -2,11 +2,10 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp" android:height="108dp"
     android:viewportWidth="108" android:viewportHeight="108">
-    <!-- Speaking-person brand. Native adaptive-icon safe area; no baked-in launcher mask.
-         Side profile and shoulders, with three sound waves aligned to the mouth. -->
-    <path android:fillColor="#253E91"
-        android:pathData="M45,28 C35,28 28,36 28,46 C28,54 32,60 38,64 L38,69 C34,71 32,74 31,77 L59,77 C57,73 53,70 48,69 L48,64 L53,64 C57,64 60,61 60,57 L60,56 L56,54 L60,52 L60,50 L64,50 Q66,50 64,47 L60,41 C58,33 52,28 45,28 Z"/>
-    <path android:fillColor="@android:color/transparent"
-        android:strokeColor="#164175" android:strokeWidth="3.4" android:strokeLineCap="round"
-        android:pathData="M66,49 Q72,54 66,59 M72,43 Q84,54 72,65 M77,38 Q93,54 77,70"/>
+    <!-- Approved flowing face with white and gold speech curves, inside the adaptive safe circle. -->
+    <path android:fillColor="#FFFFFFFF" android:pathData="M41.935,28.390 C46.660,29.273 49.748,32.800 51.071,37.273 C51.764,39.227 51.322,41.117 51.386,42.440 C51.449,44.519 53.968,46.093 56.236,48.172 C57.938,49.684 58.316,51.071 56.740,52.394 L54.472,53.906 C54.032,54.221 54.094,54.788 54.535,55.480 C55.291,56.867 54.850,57.938 53.528,58.694 L49.370,60.647 C48.614,61.025 48.676,61.465 49.559,61.969 L53.465,63.986 C54.410,64.489 54.977,64.868 54.850,65.812 C54.472,67.010 54.913,68.900 53.843,70.727 C52.898,72.364 51.260,73.120 49.054,72.995 L43.889,72.112 C39.478,71.608 36.139,74.758 33.242,79.294 C33.242,76.585 34.439,73.751 36.832,71.797 C38.722,70.222 40.864,69.403 43.133,69.529 L47.920,70.096 C49.999,70.285 51.260,69.656 51.386,68.144 L51.322,66.569 C51.322,65.686 52.205,65.183 51.575,64.805 C49.243,63.671 47.416,62.663 46.787,61.340 C45.904,59.639 46.535,58.694 47.794,58.063 L51.449,56.047 C52.456,55.544 52.456,55.228 51.889,54.661 C50.566,53.528 51.133,52.205 52.205,51.511 L54.157,50.315 C54.977,49.810 54.850,49.306 54.094,48.614 L50.566,45.337 C48.928,43.889 48.361,42.251 48.425,40.612 C49.054,36.076 46.724,31.730 41.935,28.390 Z"/>
+    <path android:fillColor="@android:color/transparent" android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="3.339" android:strokeLineCap="round" android:pathData="M61.591,53.528 C67.073,56.803 67.136,63.481 61.591,67.388"/>
+    <path android:fillColor="@android:color/transparent" android:strokeColor="#FFBE61"
+        android:strokeWidth="4.158" android:strokeLineCap="round" android:pathData="M65.686,48.047 C75.326,54.157 75.326,66.757 65.434,72.680"/>
 </vector>
