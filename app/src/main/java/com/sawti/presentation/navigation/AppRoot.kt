@@ -55,6 +55,8 @@ import com.sawti.presentation.settings.SettingsRoute
 import com.sawti.presentation.settings.SettingsViewModel
 import com.sawti.presentation.theme.CaregiverInk
 import com.sawti.presentation.theme.CaregiverTint
+import com.sawti.presentation.theme.categoryBannerColor
+import com.sawti.presentation.theme.paletteOf
 import com.sawti.speech.SpeechIssue
 
 private const val HOME = "home"
@@ -105,12 +107,18 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
         category != null -> category.title
         else -> stringResource(R.string.app_title)
     }
+    val sectionColor = when {
+        category != null -> categoryBannerColor(category.id, paletteOf(category.palette).banner)
+        route == QURAN -> Color(0xFF176448)
+        else -> null
+    }
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             Column {
                 AppTopBar(
                     title = title,
+                    sectionColor = sectionColor,
                     showBack = route != HOME,
                     caregiverMode = state.caregiverMode,
                     onBack = navigateBack,

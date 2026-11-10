@@ -50,9 +50,9 @@ jobs:
           grep -q 'rootProject.name = "Sawti"' settings.gradle.kts
           grep -q '<string name="app_name">صوتي</string>' app/src/main/res/values/strings.xml
           grep -q 'android:allowBackup="false"' app/src/main/AndroidManifest.xml
-          # Prevent accidental resurrection of stale splash screens/resources.
-          test -f app/src/main/java/com/sawti/presentation/splash/SawtiAuroraSplash.kt
-          grep -q 'SawtiAuroraSplash(' app/src/main/java/com/sawti/MainActivity.kt
+          # Startup now opens the home screen directly, without the retired Continue gate.
+          grep -q 'AppRoot(' app/src/main/java/com/sawti/MainActivity.kt
+          ! grep -q 'SawtiAuroraSplash' app/src/main/java/com/sawti/MainActivity.kt
           # Approved images for both app-selected light and dark appearance.
           test -s app/src/main/res/drawable-nodpi/sawti_welcome_light.webp
           test -s app/src/main/res/drawable-nodpi/sawti_welcome_dark.webp

@@ -1,6 +1,11 @@
 package com.sawti.presentation.navigation
 
 import android.widget.Toast
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -25,6 +30,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -47,6 +53,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sawti.R
 import com.sawti.presentation.theme.LocalIsDark
+import com.sawti.presentation.theme.LocalPerformanceMode
+import com.sawti.presentation.theme.HeaderColors
+import com.sawti.presentation.theme.headerColors
+import com.sawti.presentation.theme.headerContentColor
+import androidx.core.view.WindowInsetsControllerCompat
 import kotlinx.coroutines.launch
 
 private const val HOLD_MS = 3000
@@ -61,13 +72,22 @@ fun AppTopBar(
     onPractice: () -> Unit,
     onDialects: () -> Unit,
     onToggleCaregiver: () -> Unit,
+    sectionColor: Color? = null,
 ) {
     val dark = LocalIsDark.current
-    val headerGradient = if (dark) {
-        Brush.horizontalGradient(listOf(Color(0xFF071629), Color(0xFF123554), Color(0xFF081A31)))
-    } else {
-        Brush.horizontalGradient(listOf(Color(0xFF5845B2), Color(0xFF4859C4), Color(0xFF2566AB)))
+    val target = headerColors(sectionColor, dark)
+    val duration = if (LocalPerformanceMode.current) 0 else 360
+    val start by animateColorAsState(target.start, tween(duration, easing = FastOutSlowInEasing), label = "headerStart")
+    val middle by animateColorAsState(target.middle, tween(duration, easing = FastOutSlowInEasing), label = "headerMiddle")
+    val end by animateColorAsState(target.end, tween(duration, easing = FastOutSlowInEasing), label = "headerEnd")
+    val ink = headerContentColor(HeaderColors(start, middle, end))
+    val window = LocalContext.current.activityOrNull()?.window
+    SideEffect {
+        window?.let {
+            WindowInsetsControllerCompat(it, it.decorView).isAppearanceLightStatusBars = ink == Color.Black
+        }
     }
+    val headerGradient = Brush.horizontalGradient(listOf(start, middle, end))
     Surface(
         color = Color.Transparent,
         shadowElevation = 2.dp,
@@ -86,13 +106,13 @@ fun AppTopBar(
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = stringResource(R.string.back),
-                        tint = Color.White,
+                        tint = ink,
                     )
                 }
             }
             Text(
                 text = title,
-                color = Color.White,
+                color = ink,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.ExtraBold,
                 maxLines = 1,
@@ -105,14 +125,14 @@ fun AppTopBar(
                 Icon(
                     Icons.Filled.Extension,
                     contentDescription = stringResource(R.string.practice_icon_desc),
-                    tint = Color.White,
+                    tint = ink,
                     modifier = Modifier.size(28.dp),
                 )
             }
             IconButton(onClick = onDialects) {
-                Icon(Icons.Filled.Language, contentDescription = "اختيار اللهجة والصوت", tint = Color.White)
+                Icon(Icons.Filled.Language, contentDescription = "اختيار اللهجة والصوت", tint = ink)
             }
-            SettingsGear(caregiverMode, onToggleCaregiver)
+            SettingsGear(caregiverMode, onToggleCaregiver, ink)
         }
         }
     }
@@ -123,7 +143,7 @@ fun AppTopBar(
  * triggered by accident. A normal tap just shows a hint. Holding again leaves Caregiver Mode.
  */
 @Composable
-private fun SettingsGear(caregiverMode: Boolean, onToggle: () -> Unit) {
+private fun SettingsGear(caregiverMode: Boolean, onToggle: () -> Unit, ink: Color) {
     val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
     val scope = rememberCoroutineScope()
@@ -163,8 +183,8 @@ private fun SettingsGear(caregiverMode: Boolean, onToggle: () -> Unit) {
         if (progress.value > 0f) {
             CircularProgressIndicator(
                 progress = { progress.value },
-                color = Color.White,
-                trackColor = Color.White.copy(alpha = 0.25f),
+                color = ink,
+                trackColor = ink.copy(alpha = 0.25f),
                 strokeWidth = 3.dp,
                 modifier = Modifier.size(44.dp),
             )
@@ -172,8 +192,14 @@ private fun SettingsGear(caregiverMode: Boolean, onToggle: () -> Unit) {
         Icon(
             if (caregiverMode) Icons.Filled.LockOpen else Icons.Filled.Settings,
             contentDescription = null,
-            tint = if (caregiverMode) Color(0xFFFFE082) else Color.White.copy(alpha = 0.85f),
+            tint = if (caregiverMode && ink == Color.White) Color(0xFFFFE082) else ink,
             modifier = Modifier.size(24.dp),
         )
     }
+}
+
+private tailrec fun Context.activityOrNull(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> if (baseContext === this) null else baseContext.activityOrNull()
+    else -> null
 }
