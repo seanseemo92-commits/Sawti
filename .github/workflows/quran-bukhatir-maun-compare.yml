@@ -1,0 +1,44 @@
+name: Compare Salah Bukhatir Al-Maun audio (read-only probe)
+on:
+  push:
+    branches: [fix/prelaunch-cleanup-hint]
+    paths: [.github/workflows/quran-bukhatir-maun-compare.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Compare original and mirror checksums and sound levels for seven ayahs
+        shell: bash
+        run: |
+          set -uo pipefail
+          command -v ffprobe
+          command -v ffmpeg
+          mkdir -p /tmp/maun
+          printf 'VERSE | upstream HTTP/BYTES | mirror HTTP/BYTES | SAME_SHA256 | duration | audio bitrate | mean dB | max dB\n'
+          for n in 1 2 3 4 5 6 7; do
+            num="$(printf '%03d' "$n")"
+            file="107${num}.mp3"
+            upstream="/tmp/maun/original-${file}"
+            mirror="/tmp/maun/mirror-${file}"
+            upstreamUrl="https://everyayah.com/data/Salaah_AbdulRahman_Bukhatir_128kbps/${file}"
+            mirrorUrl="https://huggingface.co/datasets/maqra-project/salah-bukhatir-128kbps/resolve/main/${file}"
+            upStatus=$(curl -sS -L -w '%{http_code}' --max-time 35 --retry 1 -o "$upstream" "$upstreamUrl") || upStatus=FAILED
+            mirStatus=$(curl -sS -L -w '%{http_code}' --max-time 35 --retry 1 -o "$mirror" "$mirrorUrl") || mirStatus=FAILED
+            upBytes=$(wc -c < "$upstream" 2>/dev/null || echo 0)
+            mirBytes=$(wc -c < "$mirror" 2>/dev/null || echo 0)
+            upSha=$(sha256sum "$upstream" 2>/dev/null | awk '{print $1}')
+            mirSha=$(sha256sum "$mirror" 2>/dev/null | awk '{print $1}')
+            equal=NO
+            if [ "$upStatus" = 200 ] && [ "$mirStatus" = 200 ] && [ "$upSha" = "$mirSha" ]; then equal=YES; fi
+            duration=$(ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 "$upstream" 2>/dev/null || echo NA)
+            bitrate=$(ffprobe -v error -select_streams a:0 -show_entries stream=bit_rate -of default=nw=1:nk=1 "$upstream" 2>/dev/null || echo NA)
+            levels=$(ffmpeg -hide_banner -nostdin -i "$upstream" -af volumedetect -f null - 2>&1 || true)
+            mean=$(printf '%s\n' "$levels" | sed -n 's/.*mean_volume: \([^ ]*\) dB.*/\1/p' | tail -n 1)
+            max=$(printf '%s\n' "$levels" | sed -n 's/.*max_volume: \([^ ]*\) dB.*/\1/p' | tail -n 1)
+            echo "$file | $upStatus/$upBytes | $mirStatus/$mirBytes | $equal | $duration | $bitrate | $mean | $max"
+            echo "SHA256 up=$upSha mirror=$mirSha"
+          done
