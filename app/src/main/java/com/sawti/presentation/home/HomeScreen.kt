@@ -58,8 +58,6 @@ import com.sawti.R
 import com.sawti.presentation.onboarding.spotlightAnchor
 import com.sawti.domain.model.Category
 import com.sawti.presentation.common.CardImageContent
-import com.sawti.presentation.common.GreetingPhoto
-import com.sawti.presentation.common.GreetingPhotoAtlas
 import com.sawti.presentation.common.categoryDrawableName
 import com.sawti.presentation.common.drawableResourceId
 import com.sawti.presentation.common.StaggeredCascade
@@ -250,12 +248,6 @@ private fun LuxuryCategoryCard(category: Category, isSpeaking: Boolean, onClick:
                 if (resId != null) {
                     Image(painter = painterResource(resId), contentDescription = category.title,
                         contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
-                } else if (category.id == GreetingPhotoAtlas.CATEGORY_ID) {
-                    GreetingPhoto(
-                        slot = GreetingPhotoAtlas.HOME_SLOT,
-                        contentDescription = category.title,
-                        modifier = Modifier.fillMaxSize(),
-                    )
                 } else if (heroItem != null) {
                     CardImageContent(item = heroItem, accent = palette.banner, isCurrentlyPlaying = isSpeaking,
                         modifier = Modifier.fillMaxSize(), crop = true, fullBleed = true)
