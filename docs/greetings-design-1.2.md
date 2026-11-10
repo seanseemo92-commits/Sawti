@@ -16,6 +16,10 @@ All 15 images are distinct RGB WebPs at exactly 512×512, matching existing Fami
 
 ## Validation
 
-The full signed review workflow must pass before production publication. Existing 512px resource and nine-dialect identity tests remain. New coverage checks black frame edges, white-label contrast, home-card geometry/navigation against Family, all 14 card taps, repeated taps, the Libyan dark grid, 2× text scaling, flashcard controls and focus-dialog palette. Native graphics screenshots are captured for visual inspection. Build results and final visual-review outcome are recorded when validation completes.
+The full signed review workflow must pass before production publication. Existing 512px resource and nine-dialect identity tests remain. New coverage checks black frame edges, white-label contrast, home-card geometry/navigation against Family, all 14 card taps, repeated taps, the Libyan dark grid, 2× text scaling, flashcard controls and focus-dialog palette. Native graphics screenshots are captured for visual inspection. Validation succeeded on commit `289eaa1c969a6b4e2250e55ac946a53af5a5f79e`: **260 tests, 0 failures, 0 errors, 0 skipped**. Debug assembly/Lint and optimized signed Release assembly/Lint passed, along with actual APK identity/version, publisher-certificate and packaged-resource checks.
+
+Run: https://github.com/seanseemo92-commits/Sawti/actions/runs/42903643167
+
+The native graphics screenshots for Home beside Family, the light grid, Libyan dark grid, 2× text and the flashcard were visually inspected. The cover has no embedded frame bands, the photos occupy the normal shared card area, Arabic labels are readable, and the flashcard's current listen action is exercised by its stable card identity. Publication rechecks the exact APK checksum, established signing certificate and `com.sawti` / `1.2` / `3` metadata before marking the release stable. Main is unchanged.
 
 Hosted rendering does not certify physical-device behavior or native-speaker/TTS pronunciation.
