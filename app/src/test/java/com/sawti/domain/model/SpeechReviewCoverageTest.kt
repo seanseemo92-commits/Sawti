@@ -37,8 +37,8 @@ class SpeechReviewCoverageTest {
                 rows += listOf(payload, form.source.name, "PENDING", "PENDING", fingerprint).joinToString("\t")
             }
         }
-        // 237 shared concepts x 9 dialects + 140 distinct regional dishes.
-        assertEquals(2273, rows.size)
+        // 251 shared concepts (including 14 greetings) x 9 dialects + 140 distinct regional dishes.
+        assertEquals(2399, rows.size)
         assertEquals(9, seen.map { it.first }.distinct().size)
         val report = File("build/reports/speech-review.tsv")
         report.parentFile.mkdirs()
