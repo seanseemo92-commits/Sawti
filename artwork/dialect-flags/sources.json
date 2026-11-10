@@ -1,0 +1,42 @@
+{
+  "ly": {
+    "repository": "lipis/flag-icons",
+    "path": "flags/4x3/ly.svg",
+    "blob_sha": "1eaa51e468b7ed416ae8c332d8310feda761fa41"
+  },
+  "sa": {
+    "repository": "lipis/flag-icons",
+    "path": "flags/4x3/sa.svg",
+    "blob_sha": "596cf48bb7b6005ba3fb4da6d9d6ae0b6451fa0b"
+  },
+  "eg": {
+    "repository": "lipis/flag-icons",
+    "path": "flags/4x3/eg.svg",
+    "blob_sha": "909f1e7a8f6543531e4f94cc22197f7ae09e68c7"
+  },
+  "sy": {
+    "repository": "lipis/flag-icons",
+    "path": "flags/4x3/sy.svg",
+    "blob_sha": "97c05cfc93b1e68d3336507be6f885a52d353252"
+  },
+  "iq": {
+    "repository": "lipis/flag-icons",
+    "path": "flags/4x3/iq.svg",
+    "blob_sha": "804451474adb04b36660de45e082b6c758f8b7b5"
+  },
+  "tn": {
+    "repository": "lipis/flag-icons",
+    "path": "flags/4x3/tn.svg",
+    "blob_sha": "5735c1984de39c02488cafaebbd34d91f79c93bf"
+  },
+  "ma": {
+    "repository": "lipis/flag-icons",
+    "path": "flags/4x3/ma.svg",
+    "blob_sha": "7ce56eff707c288edbe3071bd8cb495c74dd307c"
+  },
+  "dz": {
+    "repository": "lipis/flag-icons",
+    "path": "flags/4x3/dz.svg",
+    "blob_sha": "5ff29a74a00be5f65b5219b35ca6caaa6399e87f"
+  }
+}

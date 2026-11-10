@@ -2,6 +2,7 @@
 from pathlib import Path
 import os
 import sys
+import re
 import xml.etree.ElementTree as ET
 from zipfile import ZipFile
 from review_apk_resources import verify_transport_photos
@@ -15,15 +16,23 @@ for report in reports:
         totals[key] += int(suite.attrib.get(key, '0'))
 assert not reports or (totals['tests'] > 0 and totals['failures'] == 0 and totals['errors'] == 0), totals
 
-apk = Path('dist/Sawti-Review-2026-11-10-Release.apk')
+apks = list(Path('dist').glob('*.apk'))
+assert len(apks) == 1, 'Expected exactly one verified APK'
+apk = apks[0]
 with ZipFile(apk) as archive:
-    verify_transport_photos(archive, Path(sys.argv[1]).read_text())
+    resource_dump = Path(sys.argv[1]).read_text()
+    verify_transport_photos(archive, resource_dump)
+    for code in ('ly', 'sa', 'eg', 'sy', 'iq', 'tn', 'ma', 'dz'):
+        assert re.search(r'\bdrawable/dialect_flag_' + code + r'\b', resource_dump), code
+    assert 'assets/licenses/flag-icons-LICENSE.txt' in archive.namelist()
 
 lines = [f'commit={os.environ["GITHUB_SHA"]}', f'run={os.environ["GITHUB_RUN_ID"]}',
          'branch=fix/prelaunch-cleanup-hint', 'package=com.sawti',
          f'versionName={os.environ["RELEASE_VERSION"]}', f'versionCode={os.environ["RELEASE_CODE"]}',
          'build=Release (R8 optimized, publisher signed, not debuggable)',
          'transport_photos=12', 'transport_written_forms=108',
+         'dialect_flags=8 packaged national flags; Fusha uses a globe',
+         'initial_dialect=one-time local country hint, saved user choice preserved',
          'checks=assembleDebug,testDebugUnitTest,lintDebug,assembleRelease,lintRelease,apksigner,aapt',
          *([f'{key}={value}' for key, value in totals.items()] if reports else [
              'tests_and_lint=PASSED in verified prior run; app, tests and build inputs unchanged',

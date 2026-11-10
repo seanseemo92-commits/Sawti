@@ -12,7 +12,10 @@ enum class ArabicDialect(val label: String, val localeTag: String) {
     IRAQI("العراقية", "ar-IQ"),
     TUNISIAN("التونسية", "ar-TN"),
     MOROCCAN("المغربية", "ar-MA"),
-    ALGERIAN("الجزائرية", "ar-DZ"),
+    ALGERIAN("الجزائرية", "ar-DZ");
+
+    /** Null for Fusha: it belongs to no single country. */
+    val countryCode: String? get() = localeTag.substringAfter('-', "").ifBlank { null }
 }
 
 /** Card text scaling: Normal / Large / Extra Large. */

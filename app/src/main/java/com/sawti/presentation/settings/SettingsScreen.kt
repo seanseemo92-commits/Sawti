@@ -4,6 +4,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -89,7 +91,11 @@ fun SettingsRoute(viewModel: SettingsViewModel) {
             backup.message?.let { Text(it) }
         }
         SettingBlock("اللهجة والصوت") {
-            Text("اللهجة الحالية: ${settings.dialect.label}. يمكن تغيير اللهجة واختيار الصوت من أيقونة اللغة أعلى الشاشة.")
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                DialectFlag(settings.dialect)
+                Spacer(Modifier.width(12.dp))
+                Text("اللهجة الحالية: ${settings.dialect.label}. يمكن تغيير اللهجة واختيار الصوت من أيقونة اللغة أعلى الشاشة.")
+            }
         }
         SettingBlock(stringResource(R.string.settings_theme)) {
             ChoiceRow(
