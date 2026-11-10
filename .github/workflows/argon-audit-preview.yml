@@ -31,6 +31,9 @@ jobs:
         # No second wrapper download attempt when the build step failed.
         if: success()
         run: ./gradlew --no-daemon :app:testDebugUnitTest :app:lintDebug --continue
+      - name: Validate optimized Release build
+        if: success()
+        run: ./gradlew --no-daemon :app:assembleRelease :app:lintRelease --continue
       - name: Upload Sawti Argon preview APK
         # Push runs verify code without consuming artifact storage.
         # Upload only when explicitly requested and quota is available.

@@ -16,7 +16,9 @@ Implemented a native speaking-person profile with three sound waves aligned to t
 
 ## Stage 3 — transport vocabulary and photos
 
-Pending: stable concepts and 512px WebP photographs, nine dialect variants with vocalized speech text, safe idempotent insertion into existing databases, and custom-text/photo/recording preservation.
+Implemented 12 stable concepts: car, taxi, bus, minibus, bicycle, motorcycle, train, airplane, helicopter, ship, boat and truck. Each has a distinct generated 512×512 WebP photograph and explicit display/speech forms in all nine Arabic variants (108 forms). The new section is appended without reordering existing sections and uses a petrol-blue header accent. Written content is recorded in `transport-vocabulary-review.tsv`; native-speaker and device-listening review remain pending.
+
+Existing transactional insertion adds only missing category/concept IDs; no schema change or destructive migration is required. Tests cover upgrade from the 365-card baseline, reseeding and reopening, unchanged old rows and attached media, retained practice history, dialect projections, customized text, and packaged image decoding. Final integration CI is pending.
 
 ## Validation
 

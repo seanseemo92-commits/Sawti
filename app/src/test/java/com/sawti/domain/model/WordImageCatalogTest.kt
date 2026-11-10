@@ -57,6 +57,6 @@ class WordImageCatalogTest {
     @Test fun imageMapHasNoOrphanConceptReferences() {
         val keys = WordSeed.itemEntities().mapNotNull { it.semanticKey }.toSet()
         assertTrue(keys.containsAll(WordImageCatalog.configuredKeys()))
-        assertEquals(321, WordImageCatalog.configuredKeys().size)
+        assertEquals(333, WordImageCatalog.configuredKeys().size)
     }
 }

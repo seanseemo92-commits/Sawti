@@ -1189,7 +1189,7 @@ object DialectCatalog {
             ArabicDialect.MOROCCAN to DialectForm("قنية"),
             ArabicDialect.ALGERIAN to DialectForm("قنية"),
         ),
-    )
+    ) + TransportCatalog.dialectForms
 
     fun text(semanticKey: String, dialect: ArabicDialect, fallback: String): String {
         val original = if (dialect == ArabicDialect.STANDARD) fallback
@@ -1213,7 +1213,7 @@ object DialectCatalog {
             ttsPrompt = form.speechText,
             phonemicCue = form.phonemicCue,
             sentencePrompt = if (custom(CardDetails.SENTENCE)) item.sentencePrompt
-                else regional?.sentencePrompt ?: item.sentencePrompt,
+                else regional?.sentencePrompt ?: TransportCatalog.sentencePrompt(key, dialect) ?: item.sentencePrompt,
             sourceDetails = CardDetails.from(item),
         )
         return ArgonAuditOverrides.applySentence(item, dialect, projected)

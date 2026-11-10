@@ -149,6 +149,7 @@ fun categoryBannerColor(categoryId: String, fallback: Color): Color = when (cate
     "clothes" -> Color(0xFF67449A)
     "body" -> Color(0xFF176F8C)
     "actions" -> Color(0xFF295F9A)
+    "transport" -> Color(0xFF126C80)     // petrol blue
     "animals" -> Color(0xFF357746)
     else -> fallback
 }

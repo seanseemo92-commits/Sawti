@@ -3,6 +3,7 @@ package com.sawti.data.db
 /** Fusha cloze prompts keyed by concept identity, never by a display label. */
 object SeedExtras {
     private val categoryDefault = mapOf(
+        "transport" to "أَسْتَخْدِمُ الـ...",
         "vegetables" to "نَطْبُخُ الـ...", "fruits" to "نَأْكُلُ الـ...",
         "food" to "نَأْكُلُ الـ...", "clothes" to "نَلْبَسُ الـ...",
         "family" to "أُرِيدُ أَنْ أَتَكَلَّمَ مَعَ ...", "cuisine" to "نَأْكُلُ الـ...",

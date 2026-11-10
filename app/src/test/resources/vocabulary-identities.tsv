@@ -363,3 +363,15 @@ vegetable.radish	vegetables
 vegetable.spinach	vegetables
 vegetable.tomato	vegetables
 vegetable.zucchini	vegetables
+transport.car	transport
+transport.taxi	transport
+transport.bus	transport
+transport.minibus	transport
+transport.bicycle	transport
+transport.motorcycle	transport
+transport.train	transport
+transport.airplane	transport
+transport.helicopter	transport
+transport.ship	transport
+transport.boat	transport
+transport.truck	transport

@@ -1,0 +1,161 @@
+package com.sawti.domain.model
+
+/** Stable transport concepts with explicit written speech candidates in all nine variants.
+ * Native-speaker review and device listening remain independent, pending review gates.
+ * Images and saved rows use semanticKey, never the translated caption.
+ */
+object TransportCatalog {
+    data class Vehicle(val semanticKey: String, val emoji: String, val forms: Map<ArabicDialect, DialectForm>)
+
+    val vehicles: List<Vehicle> = listOf(
+        Vehicle("transport.car", "🚗", mapOf(
+            ArabicDialect.STANDARD to DialectForm("سيارة", "سَيَّارَة"),
+            ArabicDialect.LIBYAN to DialectForm("سيارة", "سَيَّارَهْ"),
+            ArabicDialect.SAUDI to DialectForm("سيارة", "سَيَّارَهْ"),
+            ArabicDialect.EGYPTIAN to DialectForm("عربية", "عَرَبِيَّهْ"),
+            ArabicDialect.SYRIAN to DialectForm("سيارة", "سَيَّارَهْ"),
+            ArabicDialect.IRAQI to DialectForm("سيارة", "سَيَّارَهْ"),
+            ArabicDialect.TUNISIAN to DialectForm("كرهبة", "كَرْهْبَهْ"),
+            ArabicDialect.MOROCCAN to DialectForm("طوموبيل", "طُومُوبِيلْ"),
+            ArabicDialect.ALGERIAN to DialectForm("طوموبيل", "طُومُوبِيلْ"),
+        )),
+        Vehicle("transport.taxi", "🚕", mapOf(
+            ArabicDialect.STANDARD to DialectForm("سيارة أجرة", "سَيَّارَة أُجْرَة"),
+            ArabicDialect.LIBYAN to DialectForm("تاكسي", "تَاكْسِي"),
+            ArabicDialect.SAUDI to DialectForm("تاكسي", "تَاكْسِي"),
+            ArabicDialect.EGYPTIAN to DialectForm("تاكسي", "تَاكْسِي"),
+            ArabicDialect.SYRIAN to DialectForm("تكسي", "تَكْسِي"),
+            ArabicDialect.IRAQI to DialectForm("تاكسي", "تَاكْسِي"),
+            ArabicDialect.TUNISIAN to DialectForm("تاكسي", "تَاكْسِي"),
+            ArabicDialect.MOROCCAN to DialectForm("طاكسي", "طَاكْسِي"),
+            ArabicDialect.ALGERIAN to DialectForm("طاكسي", "طَاكْسِي"),
+        )),
+        Vehicle("transport.bus", "🚌", mapOf(
+            ArabicDialect.STANDARD to DialectForm("حافلة", "حَافِلَة"),
+            ArabicDialect.LIBYAN to DialectForm("باص", "بَاصْ"),
+            ArabicDialect.SAUDI to DialectForm("باص", "بَاصْ"),
+            ArabicDialect.EGYPTIAN to DialectForm("أتوبيس", "أُتُوبِيسْ"),
+            ArabicDialect.SYRIAN to DialectForm("باص", "بَاصْ"),
+            ArabicDialect.IRAQI to DialectForm("باص", "بَاصْ"),
+            ArabicDialect.TUNISIAN to DialectForm("كار", "كَارْ"),
+            ArabicDialect.MOROCCAN to DialectForm("طوبيس", "طُوبِيسْ"),
+            ArabicDialect.ALGERIAN to DialectForm("طوبيس", "طُوبِيسْ"),
+        )),
+        Vehicle("transport.minibus", "🚐", mapOf(
+            ArabicDialect.STANDARD to DialectForm("حافلة صغيرة", "حَافِلَة صَغِيرَة"),
+            ArabicDialect.LIBYAN to DialectForm("ميكروباص", "مِيكْرُوبَاصْ"),
+            ArabicDialect.SAUDI to DialectForm("باص صغير", "بَاصْ صْغِيرْ"),
+            ArabicDialect.EGYPTIAN to DialectForm("ميكروباص", "مِيكْرُوبَاصْ"),
+            ArabicDialect.SYRIAN to DialectForm("سرفيس", "سِرْفِيسْ"),
+            ArabicDialect.IRAQI to DialectForm("باص صغير", "بَاصْ صْغِيرْ"),
+            ArabicDialect.TUNISIAN to DialectForm("لواج", "لُوَاجْ"),
+            ArabicDialect.MOROCCAN to DialectForm("طوبيس صغير", "طُوبِيسْ صْغِيرْ"),
+            ArabicDialect.ALGERIAN to DialectForm("حافلة صغيرة", "حَافْلَهْ صْغِيرَهْ"),
+        )),
+        Vehicle("transport.bicycle", "🚲", mapOf(
+            ArabicDialect.STANDARD to DialectForm("دراجة هوائية", "دَرَّاجَة هَوَائِيَّة"),
+            ArabicDialect.LIBYAN to DialectForm("دراجة", "دَرَّاجَهْ"),
+            ArabicDialect.SAUDI to DialectForm("سيكل", "سَيْكَلْ"),
+            ArabicDialect.EGYPTIAN to DialectForm("عجلة", "عَجَلَهْ"),
+            ArabicDialect.SYRIAN to DialectForm("بسكليت", "بِسْكْلِيتْ"),
+            ArabicDialect.IRAQI to DialectForm("بايسكل", "بَايْسِكِلْ"),
+            ArabicDialect.TUNISIAN to DialectForm("بسكلات", "بِسْكْلَاتْ"),
+            ArabicDialect.MOROCCAN to DialectForm("بيكالة", "بِيكَالَهْ"),
+            ArabicDialect.ALGERIAN to DialectForm("فيلو", "فِيلُو"),
+        )),
+        Vehicle("transport.motorcycle", "🏍️", mapOf(
+            ArabicDialect.STANDARD to DialectForm("دراجة نارية", "دَرَّاجَة نَارِيَّة"),
+            ArabicDialect.LIBYAN to DialectForm("دراجة نارية", "دَرَّاجَهْ نَارِيَّهْ"),
+            ArabicDialect.SAUDI to DialectForm("دباب", "دَبَّابْ"),
+            ArabicDialect.EGYPTIAN to DialectForm("موتوسيكل", "مُوتُوسِيكِلْ"),
+            ArabicDialect.SYRIAN to DialectForm("موتور", "مُوتُورْ"),
+            ArabicDialect.IRAQI to DialectForm("دراجة نارية", "دَرَّاجَهْ نَارِيَّهْ"),
+            ArabicDialect.TUNISIAN to DialectForm("موتور", "مُوتُورْ"),
+            ArabicDialect.MOROCCAN to DialectForm("موطور", "مُوطُورْ"),
+            ArabicDialect.ALGERIAN to DialectForm("موتو", "مُوتُو"),
+        )),
+        Vehicle("transport.train", "🚆", mapOf(
+            ArabicDialect.STANDARD to DialectForm("قطار", "قِطَار"),
+            ArabicDialect.LIBYAN to DialectForm("قطار", "قِطَارْ"),
+            ArabicDialect.SAUDI to DialectForm("قطار", "قِطَارْ"),
+            ArabicDialect.EGYPTIAN to DialectForm("قطر", "قَطْرْ"),
+            ArabicDialect.SYRIAN to DialectForm("قطار", "قْطَارْ"),
+            ArabicDialect.IRAQI to DialectForm("قطار", "قِطَارْ"),
+            ArabicDialect.TUNISIAN to DialectForm("تران", "تْرَانْ"),
+            ArabicDialect.MOROCCAN to DialectForm("تران", "تْرَانْ"),
+            ArabicDialect.ALGERIAN to DialectForm("تران", "تْرَانْ"),
+        )),
+        Vehicle("transport.airplane", "✈️", mapOf(
+            ArabicDialect.STANDARD to DialectForm("طائرة", "طَائِرَة"),
+            ArabicDialect.LIBYAN to DialectForm("طيارة", "طَيَّارَهْ"),
+            ArabicDialect.SAUDI to DialectForm("طيارة", "طَيَّارَهْ"),
+            ArabicDialect.EGYPTIAN to DialectForm("طيارة", "طَيَّارَهْ"),
+            ArabicDialect.SYRIAN to DialectForm("طيارة", "طَيَّارَهْ"),
+            ArabicDialect.IRAQI to DialectForm("طيارة", "طَيَّارَهْ"),
+            ArabicDialect.TUNISIAN to DialectForm("طيارة", "طَيَّارَهْ"),
+            ArabicDialect.MOROCCAN to DialectForm("طيارة", "طَيَّارَهْ"),
+            ArabicDialect.ALGERIAN to DialectForm("طيارة", "طَيَّارَهْ"),
+        )),
+        Vehicle("transport.helicopter", "🚁", mapOf(
+            ArabicDialect.STANDARD to DialectForm("مروحية", "مِرْوَحِيَّة"),
+            ArabicDialect.LIBYAN to DialectForm("هليكوبتر", "هِلِيكُوبْتَرْ"),
+            ArabicDialect.SAUDI to DialectForm("هليكوبتر", "هِلِيكُوبْتَرْ"),
+            ArabicDialect.EGYPTIAN to DialectForm("هليكوبتر", "هِلِيكُوبْتَرْ"),
+            ArabicDialect.SYRIAN to DialectForm("هليكوبتر", "هِلِيكُوبْتَرْ"),
+            ArabicDialect.IRAQI to DialectForm("هليكوبتر", "هِلِيكُوبْتَرْ"),
+            ArabicDialect.TUNISIAN to DialectForm("هليكوبتر", "هِلِيكُوبْتَرْ"),
+            ArabicDialect.MOROCCAN to DialectForm("هليكوبتر", "هِلِيكُوبْتَرْ"),
+            ArabicDialect.ALGERIAN to DialectForm("هليكوبتر", "هِلِيكُوبْتَرْ"),
+        )),
+        Vehicle("transport.ship", "🚢", mapOf(
+            ArabicDialect.STANDARD to DialectForm("سفينة", "سَفِينَة"),
+            ArabicDialect.LIBYAN to DialectForm("باخرة", "بَاخِرَهْ"),
+            ArabicDialect.SAUDI to DialectForm("سفينة", "سَفِينَهْ"),
+            ArabicDialect.EGYPTIAN to DialectForm("مركب كبير", "مَرْكِبْ كِبِيرْ"),
+            ArabicDialect.SYRIAN to DialectForm("باخرة", "بَاخِرَهْ"),
+            ArabicDialect.IRAQI to DialectForm("باخرة", "بَاخِرَهْ"),
+            ArabicDialect.TUNISIAN to DialectForm("باطو", "بَاطُو"),
+            ArabicDialect.MOROCCAN to DialectForm("باخرة", "بَاخِرَهْ"),
+            ArabicDialect.ALGERIAN to DialectForm("باخرة", "بَاخِرَهْ"),
+        )),
+        Vehicle("transport.boat", "🛶", mapOf(
+            ArabicDialect.STANDARD to DialectForm("قارب", "قَارِب"),
+            ArabicDialect.LIBYAN to DialectForm("قارب", "قَارِبْ"),
+            ArabicDialect.SAUDI to DialectForm("قارب", "قَارِبْ"),
+            ArabicDialect.EGYPTIAN to DialectForm("مركب", "مَرْكِبْ"),
+            ArabicDialect.SYRIAN to DialectForm("قارب", "قَارِبْ"),
+            ArabicDialect.IRAQI to DialectForm("زورق", "زَوْرَقْ"),
+            ArabicDialect.TUNISIAN to DialectForm("فلوكة", "فْلُوكَهْ"),
+            ArabicDialect.MOROCCAN to DialectForm("فلوكة", "فْلُوكَهْ"),
+            ArabicDialect.ALGERIAN to DialectForm("قارب", "قَارِبْ"),
+        )),
+        Vehicle("transport.truck", "🚚", mapOf(
+            ArabicDialect.STANDARD to DialectForm("شاحنة", "شَاحِنَة"),
+            ArabicDialect.LIBYAN to DialectForm("شاحنة", "شَاحْنَهْ"),
+            ArabicDialect.SAUDI to DialectForm("شاحنة", "شَاحِنَهْ"),
+            ArabicDialect.EGYPTIAN to DialectForm("عربية نقل", "عَرَبِيَّةْ نَقْلْ"),
+            ArabicDialect.SYRIAN to DialectForm("شاحنة", "شَاحِنَهْ"),
+            ArabicDialect.IRAQI to DialectForm("لوري", "لُورِي"),
+            ArabicDialect.TUNISIAN to DialectForm("كاميون", "كَامْيُونْ"),
+            ArabicDialect.MOROCCAN to DialectForm("كاميو", "كَامْيُو"),
+            ArabicDialect.ALGERIAN to DialectForm("كاميون", "كَامْيُونْ"),
+        )),
+    )
+
+    internal val dialectForms: Map<String, Map<ArabicDialect, DialectForm>> = vehicles.associate {
+        it.semanticKey to it.forms.filterKeys { dialect -> dialect != ArabicDialect.STANDARD }
+    }
+
+    fun sentencePrompt(semanticKey: String, dialect: ArabicDialect): String? {
+        if (vehicles.none { it.semanticKey == semanticKey }) return null
+        return when (dialect) {
+            ArabicDialect.STANDARD -> "أَسْتَخْدِمُ الـ..."
+            ArabicDialect.LIBYAN, ArabicDialect.TUNISIAN -> "نِرْكَبْ فِي الـ..."
+            ArabicDialect.SAUDI, ArabicDialect.IRAQI -> "أَرْكَبْ الـ..."
+            ArabicDialect.EGYPTIAN -> "بَرْكَبْ الـ..."
+            ArabicDialect.SYRIAN -> "بِرْكَبْ الـ..."
+            ArabicDialect.MOROCCAN -> "كَنْرْكَبْ فِي الـ..."
+            ArabicDialect.ALGERIAN -> "نَرْكَبْ فِي الـ..."
+        }
+    }
+}

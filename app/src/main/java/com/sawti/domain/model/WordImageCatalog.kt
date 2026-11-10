@@ -3,6 +3,18 @@ package com.sawti.domain.model
 /** Stable concept -> packaged drawable. No translation, label aliases or text guessing. */
 object WordImageCatalog {
     private val images = mapOf(
+        "transport.car" to "word_transport_car",
+        "transport.taxi" to "word_transport_taxi",
+        "transport.bus" to "word_transport_bus",
+        "transport.minibus" to "word_transport_minibus",
+        "transport.bicycle" to "word_transport_bicycle",
+        "transport.motorcycle" to "word_transport_motorcycle",
+        "transport.train" to "word_transport_train",
+        "transport.airplane" to "word_transport_airplane",
+        "transport.helicopter" to "word_transport_helicopter",
+        "transport.ship" to "word_transport_ship",
+        "transport.boat" to "word_transport_boat",
+        "transport.truck" to "word_transport_truck",
         "request.water" to "word_water",
         "request.tea" to "word_tea",
         "request.rest" to "word_sleep",

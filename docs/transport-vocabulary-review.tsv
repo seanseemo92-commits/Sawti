@@ -1,0 +1,109 @@
+semantic_key	dialect	display	speech	native_review	tts_listening
+transport.car	STANDARD	سيارة	سَيَّارَة	PENDING	PENDING
+transport.car	LIBYAN	سيارة	سَيَّارَهْ	PENDING	PENDING
+transport.car	SAUDI	سيارة	سَيَّارَهْ	PENDING	PENDING
+transport.car	EGYPTIAN	عربية	عَرَبِيَّهْ	PENDING	PENDING
+transport.car	SYRIAN	سيارة	سَيَّارَهْ	PENDING	PENDING
+transport.car	IRAQI	سيارة	سَيَّارَهْ	PENDING	PENDING
+transport.car	TUNISIAN	كرهبة	كَرْهْبَهْ	PENDING	PENDING
+transport.car	MOROCCAN	طوموبيل	طُومُوبِيلْ	PENDING	PENDING
+transport.car	ALGERIAN	طوموبيل	طُومُوبِيلْ	PENDING	PENDING
+transport.taxi	STANDARD	سيارة أجرة	سَيَّارَة أُجْرَة	PENDING	PENDING
+transport.taxi	LIBYAN	تاكسي	تَاكْسِي	PENDING	PENDING
+transport.taxi	SAUDI	تاكسي	تَاكْسِي	PENDING	PENDING
+transport.taxi	EGYPTIAN	تاكسي	تَاكْسِي	PENDING	PENDING
+transport.taxi	SYRIAN	تكسي	تَكْسِي	PENDING	PENDING
+transport.taxi	IRAQI	تاكسي	تَاكْسِي	PENDING	PENDING
+transport.taxi	TUNISIAN	تاكسي	تَاكْسِي	PENDING	PENDING
+transport.taxi	MOROCCAN	طاكسي	طَاكْسِي	PENDING	PENDING
+transport.taxi	ALGERIAN	طاكسي	طَاكْسِي	PENDING	PENDING
+transport.bus	STANDARD	حافلة	حَافِلَة	PENDING	PENDING
+transport.bus	LIBYAN	باص	بَاصْ	PENDING	PENDING
+transport.bus	SAUDI	باص	بَاصْ	PENDING	PENDING
+transport.bus	EGYPTIAN	أتوبيس	أُتُوبِيسْ	PENDING	PENDING
+transport.bus	SYRIAN	باص	بَاصْ	PENDING	PENDING
+transport.bus	IRAQI	باص	بَاصْ	PENDING	PENDING
+transport.bus	TUNISIAN	كار	كَارْ	PENDING	PENDING
+transport.bus	MOROCCAN	طوبيس	طُوبِيسْ	PENDING	PENDING
+transport.bus	ALGERIAN	طوبيس	طُوبِيسْ	PENDING	PENDING
+transport.minibus	STANDARD	حافلة صغيرة	حَافِلَة صَغِيرَة	PENDING	PENDING
+transport.minibus	LIBYAN	ميكروباص	مِيكْرُوبَاصْ	PENDING	PENDING
+transport.minibus	SAUDI	باص صغير	بَاصْ صْغِيرْ	PENDING	PENDING
+transport.minibus	EGYPTIAN	ميكروباص	مِيكْرُوبَاصْ	PENDING	PENDING
+transport.minibus	SYRIAN	سرفيس	سِرْفِيسْ	PENDING	PENDING
+transport.minibus	IRAQI	باص صغير	بَاصْ صْغِيرْ	PENDING	PENDING
+transport.minibus	TUNISIAN	لواج	لُوَاجْ	PENDING	PENDING
+transport.minibus	MOROCCAN	طوبيس صغير	طُوبِيسْ صْغِيرْ	PENDING	PENDING
+transport.minibus	ALGERIAN	حافلة صغيرة	حَافْلَهْ صْغِيرَهْ	PENDING	PENDING
+transport.bicycle	STANDARD	دراجة هوائية	دَرَّاجَة هَوَائِيَّة	PENDING	PENDING
+transport.bicycle	LIBYAN	دراجة	دَرَّاجَهْ	PENDING	PENDING
+transport.bicycle	SAUDI	سيكل	سَيْكَلْ	PENDING	PENDING
+transport.bicycle	EGYPTIAN	عجلة	عَجَلَهْ	PENDING	PENDING
+transport.bicycle	SYRIAN	بسكليت	بِسْكْلِيتْ	PENDING	PENDING
+transport.bicycle	IRAQI	بايسكل	بَايْسِكِلْ	PENDING	PENDING
+transport.bicycle	TUNISIAN	بسكلات	بِسْكْلَاتْ	PENDING	PENDING
+transport.bicycle	MOROCCAN	بيكالة	بِيكَالَهْ	PENDING	PENDING
+transport.bicycle	ALGERIAN	فيلو	فِيلُو	PENDING	PENDING
+transport.motorcycle	STANDARD	دراجة نارية	دَرَّاجَة نَارِيَّة	PENDING	PENDING
+transport.motorcycle	LIBYAN	دراجة نارية	دَرَّاجَهْ نَارِيَّهْ	PENDING	PENDING
+transport.motorcycle	SAUDI	دباب	دَبَّابْ	PENDING	PENDING
+transport.motorcycle	EGYPTIAN	موتوسيكل	مُوتُوسِيكِلْ	PENDING	PENDING
+transport.motorcycle	SYRIAN	موتور	مُوتُورْ	PENDING	PENDING
+transport.motorcycle	IRAQI	دراجة نارية	دَرَّاجَهْ نَارِيَّهْ	PENDING	PENDING
+transport.motorcycle	TUNISIAN	موتور	مُوتُورْ	PENDING	PENDING
+transport.motorcycle	MOROCCAN	موطور	مُوطُورْ	PENDING	PENDING
+transport.motorcycle	ALGERIAN	موتو	مُوتُو	PENDING	PENDING
+transport.train	STANDARD	قطار	قِطَار	PENDING	PENDING
+transport.train	LIBYAN	قطار	قِطَارْ	PENDING	PENDING
+transport.train	SAUDI	قطار	قِطَارْ	PENDING	PENDING
+transport.train	EGYPTIAN	قطر	قَطْرْ	PENDING	PENDING
+transport.train	SYRIAN	قطار	قْطَارْ	PENDING	PENDING
+transport.train	IRAQI	قطار	قِطَارْ	PENDING	PENDING
+transport.train	TUNISIAN	تران	تْرَانْ	PENDING	PENDING
+transport.train	MOROCCAN	تران	تْرَانْ	PENDING	PENDING
+transport.train	ALGERIAN	تران	تْرَانْ	PENDING	PENDING
+transport.airplane	STANDARD	طائرة	طَائِرَة	PENDING	PENDING
+transport.airplane	LIBYAN	طيارة	طَيَّارَهْ	PENDING	PENDING
+transport.airplane	SAUDI	طيارة	طَيَّارَهْ	PENDING	PENDING
+transport.airplane	EGYPTIAN	طيارة	طَيَّارَهْ	PENDING	PENDING
+transport.airplane	SYRIAN	طيارة	طَيَّارَهْ	PENDING	PENDING
+transport.airplane	IRAQI	طيارة	طَيَّارَهْ	PENDING	PENDING
+transport.airplane	TUNISIAN	طيارة	طَيَّارَهْ	PENDING	PENDING
+transport.airplane	MOROCCAN	طيارة	طَيَّارَهْ	PENDING	PENDING
+transport.airplane	ALGERIAN	طيارة	طَيَّارَهْ	PENDING	PENDING
+transport.helicopter	STANDARD	مروحية	مِرْوَحِيَّة	PENDING	PENDING
+transport.helicopter	LIBYAN	هليكوبتر	هِلِيكُوبْتَرْ	PENDING	PENDING
+transport.helicopter	SAUDI	هليكوبتر	هِلِيكُوبْتَرْ	PENDING	PENDING
+transport.helicopter	EGYPTIAN	هليكوبتر	هِلِيكُوبْتَرْ	PENDING	PENDING
+transport.helicopter	SYRIAN	هليكوبتر	هِلِيكُوبْتَرْ	PENDING	PENDING
+transport.helicopter	IRAQI	هليكوبتر	هِلِيكُوبْتَرْ	PENDING	PENDING
+transport.helicopter	TUNISIAN	هليكوبتر	هِلِيكُوبْتَرْ	PENDING	PENDING
+transport.helicopter	MOROCCAN	هليكوبتر	هِلِيكُوبْتَرْ	PENDING	PENDING
+transport.helicopter	ALGERIAN	هليكوبتر	هِلِيكُوبْتَرْ	PENDING	PENDING
+transport.ship	STANDARD	سفينة	سَفِينَة	PENDING	PENDING
+transport.ship	LIBYAN	باخرة	بَاخِرَهْ	PENDING	PENDING
+transport.ship	SAUDI	سفينة	سَفِينَهْ	PENDING	PENDING
+transport.ship	EGYPTIAN	مركب كبير	مَرْكِبْ كِبِيرْ	PENDING	PENDING
+transport.ship	SYRIAN	باخرة	بَاخِرَهْ	PENDING	PENDING
+transport.ship	IRAQI	باخرة	بَاخِرَهْ	PENDING	PENDING
+transport.ship	TUNISIAN	باطو	بَاطُو	PENDING	PENDING
+transport.ship	MOROCCAN	باخرة	بَاخِرَهْ	PENDING	PENDING
+transport.ship	ALGERIAN	باخرة	بَاخِرَهْ	PENDING	PENDING
+transport.boat	STANDARD	قارب	قَارِب	PENDING	PENDING
+transport.boat	LIBYAN	قارب	قَارِبْ	PENDING	PENDING
+transport.boat	SAUDI	قارب	قَارِبْ	PENDING	PENDING
+transport.boat	EGYPTIAN	مركب	مَرْكِبْ	PENDING	PENDING
+transport.boat	SYRIAN	قارب	قَارِبْ	PENDING	PENDING
+transport.boat	IRAQI	زورق	زَوْرَقْ	PENDING	PENDING
+transport.boat	TUNISIAN	فلوكة	فْلُوكَهْ	PENDING	PENDING
+transport.boat	MOROCCAN	فلوكة	فْلُوكَهْ	PENDING	PENDING
+transport.boat	ALGERIAN	قارب	قَارِبْ	PENDING	PENDING
+transport.truck	STANDARD	شاحنة	شَاحِنَة	PENDING	PENDING
+transport.truck	LIBYAN	شاحنة	شَاحْنَهْ	PENDING	PENDING
+transport.truck	SAUDI	شاحنة	شَاحِنَهْ	PENDING	PENDING
+transport.truck	EGYPTIAN	عربية نقل	عَرَبِيَّةْ نَقْلْ	PENDING	PENDING
+transport.truck	SYRIAN	شاحنة	شَاحِنَهْ	PENDING	PENDING
+transport.truck	IRAQI	لوري	لُورِي	PENDING	PENDING
+transport.truck	TUNISIAN	كاميون	كَامْيُونْ	PENDING	PENDING
+transport.truck	MOROCCAN	كاميو	كَامْيُو	PENDING	PENDING
+transport.truck	ALGERIAN	كاميون	كَامْيُونْ	PENDING	PENDING

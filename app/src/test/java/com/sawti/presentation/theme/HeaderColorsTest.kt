@@ -17,7 +17,7 @@ class HeaderColorsTest {
     }
 
     @Test fun controlsStayReadableThroughoutSectionTransitions() {
-        val ids = listOf("family", "cuisine", "daily", "routine", "vegetables", "fruits", "food", "home", "clothes", "body", "actions", "animals")
+        val ids = listOf("family", "cuisine", "daily", "routine", "vegetables", "fruits", "food", "home", "clothes", "body", "actions", "animals", "transport")
         for (dark in listOf(false, true)) {
             val palettes = listOf(headerColors(null, dark)) + ids.map { headerColors(categoryBannerColor(it, Color.Black), dark) }
             for (from in palettes) for (to in palettes) for (step in 0..20) {
