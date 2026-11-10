@@ -1,11 +1,8 @@
-name: Normalize greetings photography to existing Sawti section specifications
++name: Legacy greetings stock-photo import (manual only)
 
 on:
-  push:
-    branches:
-      - fix/prelaunch-cleanup-hint
-    paths:
-      - docs/greetings-highres.trigger
+  # Current 1.2 artwork is generated and reviewed; do not overwrite it on documentation pushes.
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -109,3 +106,4 @@ jobs:
             git commit -m "fix(greetings): align all greeting image dimensions with existing Sawti cards [skip ci]"
             git push origin HEAD:fix/prelaunch-cleanup-hint
           fi
+

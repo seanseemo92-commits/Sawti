@@ -64,7 +64,7 @@ import com.sawti.presentation.common.HintButton
 import com.sawti.presentation.common.ItemImage
 import com.sawti.presentation.common.VoiceRecordingSection
 import com.sawti.presentation.theme.CategoryPalette
-import com.sawti.presentation.theme.paletteOf
+import com.sawti.presentation.theme.categoryPaletteFor
 
 @Composable
 fun WordPreviewDialog(item: WordItem, palette: CategoryPalette, actions: LibraryActions, onCall: (String) -> Unit) {
@@ -153,7 +153,7 @@ fun WordEditorDialog(item: WordItem, isRecording: Boolean, actions: LibraryActio
     var showCustomDeleteConfirm by remember(item.id) { mutableStateOf(false) }
     var pendingMove by remember(item.id) { mutableStateOf<String?>(null) }
     val isRelationship = item.categoryId == CategoryIds.FAMILY && item.subgroup == FamilyRelationships.RELATIVES
-    val palette = paletteOf(if (item.categoryId == CategoryIds.FAMILY) 0 else 1)
+    val palette = categoryPaletteFor(item.categoryId, if (item.categoryId == CategoryIds.FAMILY) 0 else 1)
     val photoPicker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) actions.onPhotoPicked(item.id, uri)
     }
@@ -254,3 +254,4 @@ private fun normalizePhone(raw: String): String = buildString {
         }
     }
 }
+

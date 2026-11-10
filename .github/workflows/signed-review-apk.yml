@@ -151,9 +151,14 @@ jobs:
           if [[ -d app/build/outputs/about-review ]]; then
             (cd app/build/outputs && zip -q -r ../../../dist/ABOUT-SCREENSHOTS.zip about-review)
           fi
+          (cd app/build/outputs && zip -q -r ../../../dist/GREETINGS-SCREENSHOTS.zip greetings-review)
           python3 - <<'PY'
           import base64
           from pathlib import Path
+          for screenshot in sorted(Path('app/build/outputs/greetings-review').glob('*.png')):
+              content = screenshot.read_bytes()
+              assert content.startswith(b'\x89PNG\r\n\x1a\n') and len(content) < 2_000_000
+              print('SAWTI_GREETING_SCREENSHOT ' + screenshot.stem + ' ' + base64.b64encode(content).decode('ascii'))
           for name in ('about-light', 'about-dark', 'about-large-text'):
               content = Path('app/build/outputs/about-review', name + '.png').read_bytes()
               assert content.startswith(b'\x89PNG\r\n\x1a\n') and len(content) < 2_000_000

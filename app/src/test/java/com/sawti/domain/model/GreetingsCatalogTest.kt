@@ -41,8 +41,9 @@ class GreetingsCatalogTest {
 
     @Test fun greetingCardUsesDedicatedPhotoAndCoralAccent() {
         assertEquals("img_cat_greetings", categoryDrawableName("greetings"))
-        assertEquals(Color(0xFFBF5A61), categoryBannerColor("greetings", Color.Black))
+        assertEquals(com.sawti.presentation.theme.GreetingsCoral, categoryBannerColor("greetings", Color.Black))
         assertEquals("عائلتي", WordSeed.categories.first().title)
         assertEquals("التحيات", WordSeed.categories.last().title)
     }
 }
+

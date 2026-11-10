@@ -25,12 +25,17 @@ with ZipFile(apk) as archive:
     for code in ('ly', 'sa', 'eg', 'sy', 'iq', 'tn', 'ma', 'dz'):
         assert re.search(r'\bdrawable/dialect_flag_' + code + r'\b', resource_dump), code
     assert 'assets/licenses/flag-icons-LICENSE.txt' in archive.namelist()
+    for name in ('salam', 'reply', 'hello', 'welcome', 'how_are_you', 'fine', 'good_morning',
+                 'good_evening', 'brighten', 'good_health', 'goodbye', 'safe', 'thanks', 'bless'):
+        assert re.search(r'\bdrawable/greeting_' + name + r'\b', resource_dump), name
+    assert re.search(r'\bdrawable/img_cat_greetings\b', resource_dump)
 
 lines = [f'commit={os.environ["GITHUB_SHA"]}', f'run={os.environ["GITHUB_RUN_ID"]}',
          'branch=fix/prelaunch-cleanup-hint', 'package=com.sawti',
          f'versionName={os.environ["RELEASE_VERSION"]}', f'versionCode={os.environ["RELEASE_CODE"]}',
          'build=Release (R8 optimized, publisher signed, not debuggable)',
          'transport_photos=12', 'transport_written_forms=108',
+         'greetings_word_photos=14', 'greetings_home_cover=1', 'greetings_photo_dimensions=512x512',
          'dialect_flags=8 packaged national flags; Fusha uses a globe',
          'initial_dialect=one-time local country hint, saved user choice preserved',
          'checks=assembleDebug,testDebugUnitTest,lintDebug,assembleRelease,lintRelease,apksigner,aapt',
@@ -40,3 +45,4 @@ lines = [f'commit={os.environ["GITHUB_SHA"]}', f'run={os.environ["GITHUB_RUN_ID"
              f'validation_commit={os.environ["VALIDATION_COMMIT"]}'])]
 Path('dist/BUILD-INFO.txt').write_text('\n'.join(lines) + '\n', encoding='utf-8')
 print('\n'.join(lines))
+

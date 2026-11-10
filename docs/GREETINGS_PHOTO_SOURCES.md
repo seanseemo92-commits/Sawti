@@ -1,4 +1,9 @@
-# Greetings photography sources
+# Greetings image provenance
+
+Current Sawti 1.2 greetings artwork consists of 15 AI-generated, individually reviewed photos, prepared as 512×512 WebPs. No current greetings image is downloaded at runtime. See [current image manifest and scene prompts](greetings-images-1.2.json) and [design review](greetings-design-1.2.md).
+
+The source pages below describe the **historical stock images replaced in 1.2**, and are retained for provenance of older commits. The legacy stock-import workflow is manual only.
+
 
 These originals are published as free-use Pexels photos. Source pages are retained for license provenance.
 All images are cropped and resized offline; the app never downloads them.
@@ -21,3 +26,4 @@ No face/speech pairing is linked to a user's dialect, ethnicity or location.
 | greeting.thanks | https://www.pexels.com/photo/6084250/ |
 | greeting.bless | https://www.pexels.com/photo/8422437/ |
 | greeting.cover | https://www.pexels.com/photo/28977571/ |
+

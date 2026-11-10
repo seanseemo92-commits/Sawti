@@ -1,11 +1,13 @@
 package com.sawti.domain.model
 
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import com.sawti.data.db.WordSeed
 import com.sawti.data.db.toDomain
 import com.sawti.presentation.common.categoryDrawableName
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -50,6 +52,33 @@ class GreetingsPhotoResourcesTest {
         assertEquals("Inconsistent greetings home cover", coverDimensions, bounds(cover))
     }
 
+
+    @Test fun bundledGreetingPhotosDoNotContainWideBlackFrameEdges() {
+        val context = RuntimeEnvironment.getApplication()
+        val names = GreetingsCatalog.greetings.map { key ->
+            val item = WordSeed.itemEntities().single { it.semanticKey == key.key }.toDomain()
+            requireNotNull(WordImageCatalog.imageFor(item))
+        } + requireNotNull(categoryDrawableName("greetings"))
+        for (name in names) {
+            @Suppress("DiscouragedApi")
+            val id = context.resources.getIdentifier(name, "drawable", context.packageName)
+            val bitmap = context.resources.openRawResource(id).use { requireNotNull(BitmapFactory.decodeStream(it)) }
+            try {
+                fun black(x: Int, y: Int): Boolean {
+                    val pixel = bitmap.getPixel(x, y)
+                    return Color.red(pixel) < 24 && Color.green(pixel) < 24 && Color.blue(pixel) < 24
+                }
+                val edges = listOf(
+                    (0 until bitmap.width).count { black(it, 0) }.toFloat() / bitmap.width,
+                    (0 until bitmap.width).count { black(it, bitmap.height - 1) }.toFloat() / bitmap.width,
+                    (0 until bitmap.height).count { black(0, it) }.toFloat() / bitmap.height,
+                    (0 until bitmap.height).count { black(bitmap.width - 1, it) }.toFloat() / bitmap.height,
+                )
+                assertTrue("Black frame edge in $name: $edges", edges.all { it < 0.7f })
+            } finally { bitmap.recycle() }
+        }
+    }
+
     @Test fun allDialectsKeepTheSameImageIdentity() {
         val items = WordSeed.itemEntities().filter { it.categoryId == GreetingsCatalog.CATEGORY_ID }
         for (source in items) for (dialect in ArabicDialect.entries) {
@@ -60,3 +89,4 @@ class GreetingsPhotoResourcesTest {
         }
     }
 }
+

@@ -1,7 +1,9 @@
 package com.sawti.presentation.theme
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class CategoryAccentTest {
@@ -15,8 +17,17 @@ class CategoryAccentTest {
         assertEquals(Color(0xFF087E82), categoryBannerColor("daily", Color.Black))
     }
 
+    @Test fun greetingsLabelsMeetNormalTextContrastWithoutReusingAnotherSectionsColor() {
+        val coral = categoryBannerColor("greetings", Color.Black)
+        assertEquals(GreetingsCoral, coral)
+        assertTrue((Color.White.luminance() + 0.05f) / (coral.luminance() + 0.05f) >= 4.5f)
+        assertTrue(coral != categoryBannerColor("family", Color.Black))
+        assertTrue(coral != categoryBannerColor("routine", Color.Black))
+    }
+
     @Test fun customSectionsKeepAssignedPalette() {
         val customAccent = Color(0xFF6B4DB2)
         assertEquals(customAccent, categoryBannerColor("custom_123", customAccent))
     }
 }
+

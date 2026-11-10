@@ -57,6 +57,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -86,7 +87,6 @@ import com.sawti.presentation.common.CeramicCard
 import com.sawti.presentation.common.StaggeredCascade
 import com.sawti.presentation.common.bounceClick
 import com.sawti.presentation.theme.CategoryPalette
-import com.sawti.presentation.theme.paletteOf
 import com.sawti.presentation.theme.categoryPaletteFor
 import com.sawti.presentation.theme.categoryBannerColor
 import kotlinx.coroutines.launch
@@ -170,9 +170,9 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
         AddFamilyMemberDialog(group = state.addingFamilyGroup, actions = actions)
     }
     val preview = state.previewItemId?.let { id -> category.items.firstOrNull { it.id == id } }
-    if (preview != null && !state.caregiverMode) WordPreviewDialog(preview, paletteOf(category.palette), actions, onCall)
+    if (preview != null && !state.caregiverMode) WordPreviewDialog(preview, palette, actions, onCall)
     val focus = state.focusItemId?.let { id -> category.items.firstOrNull { it.id == id } }
-    if (focus != null) WordFocusDialog(focus, paletteOf(category.palette), actions)
+    if (focus != null) WordFocusDialog(focus, palette, actions)
     val editing = state.editingItemId?.let { id -> category.items.firstOrNull { it.id == id }?.forEditing() }
     if (editing != null && state.caregiverMode) {
         WordEditorDialog(editing, isRecording = state.recordingItemId == editing.id,
@@ -240,7 +240,7 @@ private fun WordGrid(items: List<WordItem>, category: Category, palette: Categor
             } ?: 0
         }
         val cardHeight = wordCardHeightDp(cellWidth.value, captionHeightPx / density.density).dp
-        LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 160.dp), modifier = Modifier.fillMaxSize(),
+        LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 160.dp), modifier = Modifier.fillMaxSize().testTag("word-grid"),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 28.dp),
             horizontalArrangement = Arrangement.spacedBy(14.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
             itemsIndexed(items, key = { _, item -> item.id }) { index, item ->
@@ -265,7 +265,7 @@ internal fun WordCard(item: WordItem, palette: CategoryPalette, crop: Boolean, i
     BoxWithConstraints(Modifier.fillMaxWidth()) {
         val height = cardHeight ?: (maxWidth / 0.85f)
         CeramicCard(isActive = isActive, isSpeaking = isSpeaking, accent = bannerColor, shape = RoundedCornerShape(20.dp),
-            modifier = Modifier.fillMaxWidth().height(height).clip(RoundedCornerShape(20.dp))
+            modifier = Modifier.fillMaxWidth().height(height).testTag("word-card-${item.id}").clip(RoundedCornerShape(20.dp))
                 .bounceClick(onLongClick = onLongClick, onClick = onClick, accent = bannerColor)) {
             Box(Modifier.fillMaxSize()) {
                 CardImageContent(item = item, accent = bannerColor, isCurrentlyPlaying = isSpeaking,
@@ -346,3 +346,4 @@ private fun FlashcardPage(item: WordItem, category: Category, palette: CategoryP
         }
     }
 }
+
