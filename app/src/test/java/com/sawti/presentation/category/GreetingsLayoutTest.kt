@@ -70,7 +70,9 @@ class GreetingsLayoutTest {
 
     private fun category(dialect: ArabicDialect = ArabicDialect.STANDARD): Category {
         val items = WordSeed.itemEntities().filter { it.categoryId == "greetings" }
-            .map { DialectCatalog.localize(it.toDomain(), dialect) }
+            .mapIndexed { index, entity ->
+                DialectCatalog.localize(entity.toDomain().copy(id = index + 1L), dialect)
+            }
         return Category("greetings", "التحيات", 5, false, items)
     }
 
