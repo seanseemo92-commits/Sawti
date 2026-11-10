@@ -81,9 +81,12 @@ fun QuranScreen() {
     val reciterPreferences = remember(context) {
         context.applicationContext.getSharedPreferences("quran_reciter", Context.MODE_PRIVATE)
     }
-    var selectedReciter by rememberSaveable {
-        mutableStateOf(QuranReciter.fromEdition(reciterPreferences.getString("selected_edition", null)))
+    var selectedReciterId by rememberSaveable {
+        mutableStateOf(QuranReciter.fromEdition(
+            reciterPreferences.getString("selected_edition", null)
+        ).editionId)
     }
+    val selectedReciter = QuranReciter.fromEdition(selectedReciterId)
     var reciterMenuExpanded by remember { mutableStateOf(false) }
     var chosenSurahId by rememberSaveable { mutableStateOf<Int?>(null) }
     var repeatCount by rememberSaveable { mutableIntStateOf(1) }
@@ -256,7 +259,7 @@ fun QuranScreen() {
             }
             item {
                 AttributionText(
-                    "الآيات بالرسم العثماني من AlQuran.cloud؛ والتلاوات حسب القارئ من Islamic Network أو EveryAyah. يمكن تنزيل صوت السورة للاستماع دون إنترنت."
+                    "الآيات من AlQuran.cloud. التلاوات من Islamic Network أو EveryAyah، مع مصدر احتياطي Maqra. يمكن تحميل السورة للاستماع دون إنترنت."
                 )
             }
         } else {
@@ -302,7 +305,7 @@ fun QuranScreen() {
                                             downloadInProgress = false
                                             downloadError = null
                                             downloadedAyahs = 0
-                                            selectedReciter = option
+                                            selectedReciterId = option.editionId
                                             reciterPreferences.edit()
                                                 .putString("selected_edition", option.editionId)
                                                 .apply()
@@ -461,7 +464,7 @@ fun QuranScreen() {
                     }
                     item {
                         AttributionText(
-                            "الآيات من AlQuran.cloud والتلاوات من Islamic Network للعفاسي وEveryAyah للسديس. يتم حفظ صوت كل قارئ بشكل مستقل بعد أول تشغيل لتعمل التلاوات بدون إنترنت."
+                            "الآيات من AlQuran.cloud، وتلاوات العفاسي من Islamic Network، وصلاح أبو خاطر والحصري من EveryAyah مع مصدر احتياطي Maqra. يتم حفظ صوت كل قارئ بشكل مستقل للاستماع بدون إنترنت."
                         )
                     }
                 }

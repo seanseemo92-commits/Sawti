@@ -28,28 +28,47 @@ class QuranSourceTest {
     }
 
     @Test
-    fun sudaisUsesIndependentVerseAudioEdition() {
+    fun reciterChoicesExcludeSudaisAndOldSelectionFallsBackToAlafasy() {
+        assertEquals(3, QuranReciter.entries.size)
+        assertEquals(QuranReciter.ALAFASY, QuranReciter.fromEdition(null))
+        assertEquals(QuranReciter.ALAFASY, QuranReciter.fromEdition("ar.sudais"))
+        assertEquals(QuranReciter.SALAH_BUKHATIR, QuranReciter.fromEdition("salah.bukhatir"))
+        assertEquals(QuranReciter.HUSARY_MUALLIM, QuranReciter.fromEdition("husary.muallim"))
+    }
+
+    @Test
+    fun salahBukhatirVerseAudioUsesSurahLocalIndexAndWorkingMirror() {
+        val urls = QuranSource.audioUrls(6205, QuranReciter.SALAH_BUKHATIR, 108, 1)
+        assertEquals(2, urls.size)
         assertEquals(
-            "https://everyayah.com/data/Abdurrahmaan_As-Sudais_192kbps/001001.mp3",
-            QuranSource.audioUrls(1, QuranReciter.SUDAIS, 1, 1).first(),
+            "https://everyayah.com/data/Salaah_AbdulRahman_Bukhatir_128kbps/108001.mp3",
+            urls[0],
         )
         assertEquals(
-            "https://verse.mp3quran.net/data/Abdurrahmaan_As-Sudais_192kbps/001001.mp3",
-            QuranSource.audioUrls(1, QuranReciter.SUDAIS, 1, 1)[1],
+            "https://huggingface.co/datasets/maqra-project/salah-bukhatir-128kbps/resolve/main/108001.mp3",
+            urls[1],
+        )
+    }
+
+    @Test
+    fun husaryMuallimVerseAudioUsesSurahLocalIndexAndWorkingMirror() {
+        val urls = QuranSource.audioUrls(1, QuranReciter.HUSARY_MUALLIM, 1, 1)
+        assertEquals(2, urls.size)
+        assertEquals(
+            "https://everyayah.com/data/Husary_Muallim_128kbps/001001.mp3",
+            urls[0],
         )
         assertEquals(
-            "https://everyayah.com/data/Abdurrahmaan_As-Sudais_192kbps/108001.mp3",
-            QuranSource.audioUrls(6205, QuranReciter.SUDAIS, 108, 1).first(),
+            "https://huggingface.co/datasets/maqra-project/mahmoud-al-husary-muallim-128kbps/resolve/main/001001.mp3",
+            urls[1],
         )
         assertThrows(IllegalArgumentException::class.java) {
-            QuranSource.audioUrls(1, QuranReciter.SUDAIS)
+            QuranSource.audioUrls(1, QuranReciter.HUSARY_MUALLIM)
         }
         assertEquals(
             "https://cdn.islamic.network/quran/audio/64/ar.alafasy/1.mp3",
             QuranSource.audioUrl(1, QuranReciter.ALAFASY),
         )
-        assertEquals(QuranReciter.SUDAIS, QuranReciter.fromEdition("ar.sudais"))
-        assertEquals(QuranReciter.ALAFASY, QuranReciter.fromEdition("unknown"))
     }
 
     @Test

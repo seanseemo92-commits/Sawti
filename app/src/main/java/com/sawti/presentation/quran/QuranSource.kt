@@ -41,12 +41,11 @@ object QuranSource {
     fun audioUrl(globalVerseNumber: Int): String =
         audioUrl(globalVerseNumber, QuranReciter.ALAFASY)
 
-    // Alafasy's existing API uses the global ayah number.
-    // Sudais's working EveryAyah source requires the LOCAL surah + ayah numbers.
-    fun audioUrl(globalVerseNumber: Int, reciter: QuranReciter): String {
+    // Alafasy uses its global verse ID; the other reciters use surah + local ayah.
+    fun audioUrl(globalVerseNumber: Int, reciter: QuranReciter = QuranReciter.ALAFASY): String {
         require(globalVerseNumber in 1..6236)
         require(reciter == QuranReciter.ALAFASY) {
-            "For Sudais use audioUrls with surah and local verse numbers"
+            "Use audioUrls with the surah and local verse for this reciter"
         }
         return "https://cdn.islamic.network/quran/audio/64/ar.alafasy/$globalVerseNumber.mp3"
     }
@@ -58,19 +57,22 @@ object QuranSource {
         verseNumber: Int? = null,
     ): List<String> {
         require(globalVerseNumber in 1..6236)
-        return when (reciter) {
-            QuranReciter.ALAFASY -> listOf(audioUrl(globalVerseNumber))
-            QuranReciter.SUDAIS -> {
-                require(surahNumber != null && surahNumber in 1..114)
-                require(verseNumber != null && verseNumber in 1..286)
-                val filename = surahNumber.toString().padStart(3, '0') +
-                    verseNumber.toString().padStart(3, '0') + ".mp3"
-                listOf(
-                    "https://everyayah.com/data/Abdurrahmaan_As-Sudais_192kbps/$filename",
-                    "https://verse.mp3quran.net/data/Abdurrahmaan_As-Sudais_192kbps/$filename",
-                )
-            }
+        if (reciter == QuranReciter.ALAFASY) return listOf(audioUrl(globalVerseNumber))
+        require(surahNumber != null && surahNumber in 1..114)
+        require(verseNumber != null && verseNumber in 1..286)
+        val filename = surahNumber.toString().padStart(3, '0') +
+            verseNumber.toString().padStart(3, '0') + ".mp3"
+        val (folder, mirror) = when (reciter) {
+            QuranReciter.SALAH_BUKHATIR ->
+                "Salaah_AbdulRahman_Bukhatir_128kbps" to "salah-bukhatir-128kbps"
+            QuranReciter.HUSARY_MUALLIM ->
+                "Husary_Muallim_128kbps" to "mahmoud-al-husary-muallim-128kbps"
+            QuranReciter.ALAFASY -> error("Handled above")
         }
+        return listOf(
+            "https://everyayah.com/data/$folder/$filename",
+            "https://huggingface.co/datasets/maqra-project/$mirror/resolve/main/$filename",
+        )
     }
 
     suspend fun load(context: Context, surah: ShortSurah): List<QuranVerse> =

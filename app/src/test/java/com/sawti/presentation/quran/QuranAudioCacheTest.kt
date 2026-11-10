@@ -39,13 +39,15 @@ class QuranAudioCacheTest {
         app = RuntimeEnvironment.getApplication()
         audioDir = File(app.filesDir, "quran_recitations/ar.alafasy")
         audioDir.deleteRecursively()
-        File(app.filesDir, "quran_recitations/ar.sudais").deleteRecursively()
+        File(app.filesDir, "quran_recitations/salah.bukhatir").deleteRecursively()
+        File(app.filesDir, "quran_recitations/husary.muallim").deleteRecursively()
     }
 
     @After
     fun cleanup() {
         audioDir.deleteRecursively()
-        File(app.filesDir, "quran_recitations/ar.sudais").deleteRecursively()
+        File(app.filesDir, "quran_recitations/salah.bukhatir").deleteRecursively()
+        File(app.filesDir, "quran_recitations/husary.muallim").deleteRecursively()
     }
 
     @Test
@@ -99,50 +101,48 @@ class QuranAudioCacheTest {
 
     @Test
     fun eachReciterUsesSeparatePersistentFiles() = runBlocking {
-        val defaultCache = QuranAudioCache(app, QuranReciter.ALAFASY) { url ->
+        val alafasyCache = QuranAudioCache(app, QuranReciter.ALAFASY) { url ->
             FakeConnection(url, sampleMp3)
         }
-        val sudaisCache = QuranAudioCache(app, QuranReciter.SUDAIS) { url ->
-            assertTrue(url.toString().contains("Abdurrahmaan_As-Sudais_192kbps/108001.mp3"))
+        val bukhatirCache = QuranAudioCache(app, QuranReciter.SALAH_BUKHATIR) { url ->
+            assertTrue(url.toString().contains("Salaah_AbdulRahman_Bukhatir_128kbps/108001.mp3"))
             FakeConnection(url, sampleMp3)
         }
-        val alafasy = defaultCache.obtain(6205)
-        val sudais = sudaisCache.obtain(6205, 108, 1)
+        val husaryCache = QuranAudioCache(app, QuranReciter.HUSARY_MUALLIM) { url ->
+            assertTrue(url.toString().contains("Husary_Muallim_128kbps/108001.mp3"))
+            FakeConnection(url, sampleMp3)
+        }
+        val alafasy = alafasyCache.obtain(6205)
+        val bukhatir = bukhatirCache.obtain(6205, 108, 1)
+        val husary = husaryCache.obtain(6205, 108, 1)
 
         assertTrue(alafasy.absolutePath.contains("/ar.alafasy/"))
-        assertTrue(sudais.absolutePath.contains("/ar.sudais/"))
-        assertTrue(alafasy.absolutePath != sudais.absolutePath)
-        assertNotNull(defaultCache.cachedFile(6205))
-        assertNotNull(sudaisCache.cachedFile(6205))
+        assertTrue(bukhatir.absolutePath.contains("/salah.bukhatir/"))
+        assertTrue(husary.absolutePath.contains("/husary.muallim/"))
+        assertTrue(setOf(alafasy.absolutePath, bukhatir.absolutePath, husary.absolutePath).size == 3)
 
-        val offline = QuranAudioCache(app, QuranReciter.SUDAIS) {
-            throw IOException("No network")
+        val offline = QuranAudioCache(app, QuranReciter.HUSARY_MUALLIM) {
+            throw IOException("Offline")
         }
-        assertEquals(sudais.absolutePath, offline.obtain(6205, 108, 1).absolutePath)
+        assertEquals(husary.absolutePath, offline.obtain(6205, 108, 1).absolutePath)
     }
 
     @Test
-    fun sudaisFallsBackToMirrorAfterPrimaryRejectsAndCachesLocally() = runBlocking {
-        val attempted = mutableListOf<String>()
-        val cache = QuranAudioCache(app, QuranReciter.SUDAIS) { url ->
-            attempted.add(url.toString())
+    fun bukhatirFallsBackToVerifiedMirrorAfterPrimaryRefuses() = runBlocking {
+        val requestedUrls = mutableListOf<String>()
+        val cache = QuranAudioCache(app, QuranReciter.SALAH_BUKHATIR) { url ->
+            requestedUrls.add(url.toString())
             object : FakeConnection(url, sampleMp3) {
                 override fun getResponseCode(): Int =
                     if (url.host == "everyayah.com") HTTP_FORBIDDEN else HTTP_OK
             }
         }
-
-        val audio = cache.obtain(1, 1, 1)
-        assertTrue(audio.isFile)
-        assertEquals(2, attempted.size)
-        assertTrue(attempted[0].startsWith("https://everyayah.com/"))
-        assertTrue(attempted[1].startsWith("https://verse.mp3quran.net/"))
-        assertArrayEquals(sampleMp3, audio.readBytes())
-
-        val offline = QuranAudioCache(app, QuranReciter.SUDAIS) {
-            throw IOException("Disconnected")
-        }
-        assertEquals(audio.absolutePath, offline.obtain(1, 1, 1).absolutePath)
+        val file = cache.obtain(1, 1, 1)
+        assertTrue(file.isFile)
+        assertEquals(2, requestedUrls.size)
+        assertTrue(requestedUrls[0].startsWith("https://everyayah.com/"))
+        assertTrue(requestedUrls[1].contains("maqra-project/salah-bukhatir-128kbps"))
+        assertArrayEquals(sampleMp3, file.readBytes())
     }
 
     private open class FakeConnection(url: URL, private val audio: ByteArray) :

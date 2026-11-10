@@ -1,4 +1,4 @@
-name: Deliver Quran Sudais fixed debug APK
+name: Deliver Quran three-reciter debug APK
 on:
   push:
     branches:
@@ -43,7 +43,7 @@ jobs:
         continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
-          name: Sawti-Quran-Sudais-Fixed-debug
+          name: Sawti-Quran-Reciters-Bukhatir-Husary-debug
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 1
@@ -52,10 +52,10 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p previews
-          cp app/build/outputs/apk/debug/app-debug.apk previews/Sawti-Quran-Sudais-Fixed-debug.apk
-          (cd previews && sha256sum Sawti-Quran-Sudais-Fixed-debug.apk > Sawti-Quran-Sudais-Fixed-debug.apk.sha256)
+          cp app/build/outputs/apk/debug/app-debug.apk previews/Sawti-Quran-Reciters-Bukhatir-Husary-debug.apk
+          (cd previews && sha256sum Sawti-Quran-Reciters-Bukhatir-Husary-debug.apk > Sawti-Quran-Reciters-Bukhatir-Husary-debug.apk.sha256)
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add previews/Sawti-Quran-Sudais-Fixed-debug.apk previews/Sawti-Quran-Sudais-Fixed-debug.apk.sha256
-          git commit -m "build(preview): expose Sudais audio fix APK for direct download"
+          git add previews/Sawti-Quran-Reciters-Bukhatir-Husary-debug.apk previews/Sawti-Quran-Reciters-Bukhatir-Husary-debug.apk.sha256
+          git commit -m "build(preview): expose verified three-reciter Quran APK for testing"
           git push origin HEAD:fix/prelaunch-cleanup-hint
