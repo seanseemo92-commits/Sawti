@@ -1189,7 +1189,7 @@ object DialectCatalog {
             ArabicDialect.MOROCCAN to DialectForm("قنية"),
             ArabicDialect.ALGERIAN to DialectForm("قنية"),
         ),
-    ) + TransportCatalog.dialectForms
+    ) + TransportCatalog.dialectForms + GreetingsCatalog.dialectForms
 
     fun text(semanticKey: String, dialect: ArabicDialect, fallback: String): String {
         val original = if (dialect == ArabicDialect.STANDARD) fallback
