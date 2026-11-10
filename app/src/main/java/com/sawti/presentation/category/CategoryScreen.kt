@@ -87,12 +87,13 @@ import com.sawti.presentation.common.StaggeredCascade
 import com.sawti.presentation.common.bounceClick
 import com.sawti.presentation.theme.CategoryPalette
 import com.sawti.presentation.theme.paletteOf
+import com.sawti.presentation.theme.categoryPaletteFor
 import com.sawti.presentation.theme.categoryBannerColor
 import kotlinx.coroutines.launch
 
 @Composable
 fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryActions) {
-    val palette = paletteOf(category.palette)
+    val palette = categoryPaletteFor(category.id, category.palette)
     val isFamily = category.id == CategoryIds.FAMILY
     val isCustom = category.id.startsWith("custom_")
     var addingCustomWord by rememberSaveable(category.id) { mutableStateOf(false) }
