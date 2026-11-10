@@ -35,7 +35,7 @@ jobs:
       - name: Build and validate APK
         run: |
           chmod +x gradlew
-          ./gradlew --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
+          ./gradlew --no-daemon :app:assembleDebug :app:assembleRelease :app:testDebugUnitTest :app:lintDebug
           test -s app/build/outputs/apk/debug/app-debug.apk
           sha256sum app/build/outputs/apk/debug/app-debug.apk
       - name: Try GitHub Actions artifact

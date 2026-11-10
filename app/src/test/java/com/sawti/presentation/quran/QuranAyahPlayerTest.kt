@@ -2,6 +2,9 @@ package com.sawti.presentation.quran
 
 import android.app.Application
 import android.media.MediaPlayer
+import android.media.AudioManager
+import android.content.Context
+import android.os.Looper
 import java.io.File
 import java.util.Collections
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +19,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.shadows.ShadowMediaPlayer
 import org.robolectric.shadows.util.DataSource
 import org.robolectric.annotation.Config
@@ -102,6 +106,29 @@ class QuranAyahPlayerTest {
         current.invokeCompletionListener()
         assertEquals(1, states.last().remaining)
         current.invokeCompletionListener()
+        assertEquals(RecitationPhase.IDLE, states.last().phase)
+    }
+
+    @Test
+    fun audioFocusRefusalReportsFocusErrorAndKeepsDownloadedFile() {
+        val app = RuntimeEnvironment.getApplication() as Application
+        val manager = app.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        shadowOf(manager).setNextFocusRequestResponse(AudioManager.AUDIOFOCUS_REQUEST_FAILED)
+        audio.play(verse, 1)
+        preparedPlayer(0).invokePreparedListener()
+        assertEquals(RecitationFailure.FOCUS, states.last().failure)
+        assertTrue(File(directory, "ayah_1.mp3").isFile)
+    }
+
+    @Test
+    fun transientMayDuckStopsSpeechInsteadOfOverlappingOtherAudio() {
+        val app = RuntimeEnvironment.getApplication() as Application
+        val manager = app.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        audio.play(verse, 1)
+        preparedPlayer(0).invokePreparedListener()
+        shadowOf(manager).lastAudioFocusRequest.listener.onAudioFocusChange(
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK)
+        shadowOf(Looper.getMainLooper()).idle()
         assertEquals(RecitationPhase.IDLE, states.last().phase)
     }
 }

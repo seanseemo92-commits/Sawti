@@ -104,6 +104,7 @@ object QuranSource {
             val file = File(dir, "surah_${surah.number}.json")
             if (file.isFile) {
                 try {
+                    require(file.length() <= MAX_TEXT_BYTES) { "Cached Quran response too large" }
                     return@withContext parse(file.readText(Charsets.UTF_8), surah)
                 } catch (_: Exception) {
                     file.delete()
@@ -133,11 +134,14 @@ object QuranSource {
                     output.toString("UTF-8")
                 }
                 val checked = parse(response, surah)
+                currentCoroutineContext().ensureActive()
                 dir.mkdirs()
-                val tmp = File(dir, "surah_${surah.number}.tmp")
-                tmp.writeText(response, Charsets.UTF_8)
-                if (!tmp.renameTo(file)) {
-                    file.writeText(response, Charsets.UTF_8)
+                val tmp = File.createTempFile("surah_${surah.number}_", ".tmp", dir)
+                try {
+                    tmp.writeText(response, Charsets.UTF_8)
+                    currentCoroutineContext().ensureActive()
+                    if (!tmp.renameTo(file)) throw IOException("Cannot save Quran text")
+                } finally {
                     tmp.delete()
                 }
                 checked
