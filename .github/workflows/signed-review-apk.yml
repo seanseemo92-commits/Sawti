@@ -38,6 +38,21 @@ jobs:
           chmod +x gradlew
           ./gradlew --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug --continue
 
+      - name: Show first test failure diagnostics
+        if: failure()
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          for report in sorted(Path('app/build/test-results/testDebugUnitTest').glob('TEST-*.xml')):
+              failures = ET.parse(report).getroot().findall('.//failure')
+              if failures:
+                  print(report.name)
+                  print(failures[0].attrib.get('message', ''))
+                  print((failures[0].text or '')[:10000])
+                  break
+          PY
+
       - name: Load existing publisher identity privately
         env:
           GH_TOKEN: ${{ github.token }}
