@@ -45,7 +45,7 @@ class SemanticSeedPersistenceTest {
         // Reproduce the immediately preceding content baseline without changing the schema.
         db.openHelper.writableDatabase.execSQL("DELETE FROM categories WHERE id = 'transport'")
         val oldRows = db.wordDao().observeItems().first()
-        assertEquals(365, oldRows.size)
+        assertEquals(379, oldRows.size)
         val source = oldRows.single { it.semanticKey == "request.water" }
         val photo = File(context.filesDir, "photos/before-transport.jpg").apply {
             parentFile!!.mkdirs(); writeText("existing photo")
@@ -66,9 +66,9 @@ class SemanticSeedPersistenceTest {
         repo = RoomWordRepository(db, context, settings)
         repo.seedOrUpdateDefaults()
         val rows = db.wordDao().observeItems().first()
-        assertEquals(377, rows.size)
+        assertEquals(391, rows.size)
         assertEquals(12, rows.count { it.categoryId == "transport" })
-        assertEquals(377, rows.map { it.semanticKey }.distinct().size)
+        assertEquals(391, rows.map { it.semanticKey }.distinct().size)
         expectedRows.forEach { (id, expected) -> assertEquals(expected, rows.single { it.id == id }) }
         assertEquals(expectedProgress, db.progressDao().observeOutcomeCounts().first())
         assertEquals("existing photo", photo.readText())
@@ -114,7 +114,7 @@ class SemanticSeedPersistenceTest {
         assertEquals(expected.copy(photoPath = restored.photoPath, audioPath = restored.audioPath), restored)
         assertEquals("photo payload", File(requireNotNull(restored.photoPath)).readText())
         assertEquals("audio payload", File(requireNotNull(restored.audioPath)).readText())
-        assertEquals(377, db.wordDao().observeItems().first().size)
+        assertEquals(391, db.wordDao().observeItems().first().size)
         assertEquals(1, db.wordDao().semanticKeys().count { it == "food.bread" })
         assertEquals("word_bread", WordImageCatalog.imageFor(restored.toDomain()))
         assertEquals(CardDetails.LABEL or CardDetails.SPEECH or CardDetails.CUE or CardDetails.SENTENCE,
