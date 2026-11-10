@@ -12,7 +12,7 @@ Approved scope: shared animated toolbar/status-bar colors, direct home startup, 
 
 ## Stage 2 — launcher identity
 
-Pending: native speaking-person silhouette with sound waves from the mouth, including adaptive, monochrome and legacy day/night icons.
+Implemented a native speaking-person profile with three sound waves aligned to the mouth. Updated day/night adaptive vectors, the themed monochrome icon, the legacy foreground, and all 30 legacy PNG variants. The Android 12 system launch icon uses the same native vector. Validated XML decoding, PNG dimensions, day/night rendering, and the 32.67dp foreground radius inside the 33dp adaptive safe zone.
 
 ## Stage 3 — transport vocabulary and photos
 
@@ -20,4 +20,4 @@ Pending: stable concepts and 512px WebP photographs, nine dialect variants with 
 
 ## Validation
 
-Stage 1 CI: pending. On-device transition and TTS listening checks are reported separately from automated compilation/tests.
+Stage 1: commit `ecdd3664ce16fec8ce3bef10158a32a3710d9640`; Debug APK build, complete unit tests and lintDebug passed in run https://github.com/seanseemo92-commits/Sawti/actions/runs/42795357930. Stage 2 Android validation: pending. On-device transition and TTS listening checks are reported separately from automated compilation/tests.

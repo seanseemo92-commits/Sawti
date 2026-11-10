@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regenerate every legacy Sawti launcher size from its native conversation vectors.
+"""Regenerate every legacy Sawti launcher size from its native speaking-person vectors.
 
 The Android 26+ adaptive icon directly uses the same theme-specific VectorDrawable
 and the gradient in ic_launcher_background.xml. These are fallback PNGs for older
