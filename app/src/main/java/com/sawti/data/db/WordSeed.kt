@@ -5,6 +5,7 @@ import com.sawti.domain.model.PhonemicCue
 import com.sawti.domain.model.ArabicDialect
 import com.sawti.domain.model.CategoryIds
 import com.sawti.domain.model.TransportCatalog
+import com.sawti.domain.model.GreetingsCatalog
 
 /** Canonical Fusha vocabulary. Literal concept IDs are a permanent content contract.
  * Text, order, dialect and image filenames must never be used to generate these IDs.
@@ -442,6 +443,13 @@ object WordSeed {
             words = TransportCatalog.vehicles.map { vehicle ->
                 val form = vehicle.forms.getValue(ArabicDialect.STANDARD)
                 Word(vehicle.semanticKey, form.displayText, requireNotNull(form.speechText), vehicle.emoji)
+            },
+        ),
+        // Append-only seed: display priority is applied at projection time, not by rewriting
+        // existing Room category sortOrder or changing user-customized content.
+        Cat(GreetingsCatalog.CATEGORY_ID, "التحيات", 5,
+            words = GreetingsCatalog.greetings.map { greeting ->
+                Word(greeting.key, greeting.standardText, greeting.standardSpeech, greeting.emoji)
             },
         ),
     )
