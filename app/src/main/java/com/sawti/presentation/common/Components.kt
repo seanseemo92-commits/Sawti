@@ -198,6 +198,9 @@ fun ItemImage(item: WordItem, accent: Color, modifier: Modifier = Modifier,
                     contentScale = if (crop) ContentScale.Crop else ContentScale.Fit,
                     modifier = Modifier.fillMaxSize().then(if (fullBleed) Modifier else Modifier.clip(RoundedCornerShape(16.dp))))
             }
+            resId != null -> Image(painter = painterResource(resId), contentDescription = item.displayText,
+                contentScale = if (crop) ContentScale.Crop else ContentScale.Fit,
+                modifier = Modifier.fillMaxSize().then(if (fullBleed) Modifier else Modifier.clip(RoundedCornerShape(16.dp))))
             GreetingPhotoAtlas.slotFor(item) != null -> GreetingPhoto(
                 slot = requireNotNull(GreetingPhotoAtlas.slotFor(item)),
                 contentDescription = item.displayText,
@@ -205,9 +208,6 @@ fun ItemImage(item: WordItem, accent: Color, modifier: Modifier = Modifier,
                     if (fullBleed) Modifier else Modifier.clip(RoundedCornerShape(16.dp))
                 ),
             )
-            resId != null -> Image(painter = painterResource(resId), contentDescription = item.displayText,
-                contentScale = if (crop) ContentScale.Crop else ContentScale.Fit,
-                modifier = Modifier.fillMaxSize().then(if (fullBleed) Modifier else Modifier.clip(RoundedCornerShape(16.dp))))
             else -> Text(item.displayText.take(1), fontSize = glyphSize, fontWeight = FontWeight.ExtraBold, color = accent)
         }
     }
