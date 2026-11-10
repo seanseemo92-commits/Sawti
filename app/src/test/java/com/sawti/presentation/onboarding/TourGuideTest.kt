@@ -9,9 +9,15 @@ class TourGuideTest {
     @Test fun homeTargetsMatchRealScreen() {
         val steps = TourGuide.steps(TourGuide.HOME, setOf("family", "daily"))
         assertEquals(
-            listOf("top_caregiver", "home_quran", "home_family", "home_daily", "top_language"),
+            listOf("top_caregiver", "home_daily", "home_quran"),
             steps.map { it.target },
         )
+    }
+
+    @Test fun firstUseHasNoMoreThanThreeStops() {
+        val withAllCategories = TourGuide.steps(TourGuide.HOME, setOf("daily", "family", "cuisine", "routine"))
+        assertEquals(3, withAllCategories.size)
+        assertFalse(withAllCategories.any { it.target == "top_language" || it.target == "home_family" })
     }
 
     @Test fun emptyCategoriesNeverTargetMissingCards() {
