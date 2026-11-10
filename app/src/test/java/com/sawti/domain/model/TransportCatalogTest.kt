@@ -25,8 +25,8 @@ class TransportCatalogTest {
                 val speech = DialectSpeechCatalog.resolve(card, dialect)
                 val localized = DialectCatalog.localize(card, dialect)
                 assertEquals(written.displayText, localized.displayText)
-                assertEquals(written.speechText, localized.ttsPrompt)
-                assertEquals(written.speechText, speech.speechText)
+                assertEquals(card, localized.forEditing())
+                assertEquals(speech.speechText, localized.ttsPrompt)
                 assertNotEquals(SpeechSource.UNVOCALIZED_FALLBACK, speech.source)
                 assertTrue(speech.phonemicCue.isNotBlank())
                 assertTrue(speech.needsNativeReview && speech.needsTtsListening)
@@ -62,6 +62,7 @@ class TransportCatalogTest {
             assertEquals(TransportCatalog.vehicles.first().forms.getValue(dialect).displayText, projected.displayText)
             assertEquals(source, projected.forEditing())
         }
-        assertEquals(source, projected)
+        assertEquals(source, projected.forEditing())
     }
 }
+

@@ -146,6 +146,7 @@ jobs:
           unzip -t "$APK" > /dev/null
           cp "$APK" "dist/Sawti-v${RELEASE_VERSION}-Release.apk"
           "$BUILD_TOOLS/aapt2" dump resources "$APK" > "$RUNNER_TEMP/review-resources.txt"
+          python3 scripts/review_speech_corpus.py
           python3 scripts/summarize_review_build.py "$RUNNER_TEMP/review-resources.txt"
           (cd dist && sha256sum *.apk > SHA256SUMS.txt)
           if [[ -d app/build/outputs/about-review ]]; then

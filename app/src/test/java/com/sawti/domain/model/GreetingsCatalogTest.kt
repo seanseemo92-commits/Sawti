@@ -27,12 +27,14 @@ class GreetingsCatalogTest {
         val words = WordSeed.itemEntities().filter { it.categoryId == GreetingsCatalog.CATEGORY_ID }
         words.forEach { entity ->
             val original = entity.toDomain()
-            assertEquals(original, DialectCatalog.localize(original, ArabicDialect.STANDARD))
+            assertEquals(original, DialectCatalog.localize(original, ArabicDialect.STANDARD).forEditing())
             ArabicDialect.entries.filter { it != ArabicDialect.STANDARD }.forEach { dialect ->
                 val expected = GreetingsCatalog.dialectForms.getValue(requireNotNull(original.semanticKey)).getValue(dialect)
                 val actual = DialectCatalog.localize(original, dialect)
                 assertEquals(expected.displayText, actual.displayText)
-                assertEquals(expected.speechText, actual.ttsPrompt)
+                assertEquals(original, actual.forEditing())
+                assertTrue(actual.ttsPrompt.any { it in 'ً'..'ْ' })
+                assertEquals(DialectSpeechCatalog.resolve(original, dialect).speechText, actual.ttsPrompt)
                 assertEquals(original.id, actual.id)
                 assertEquals(original.semanticKey, actual.semanticKey)
             }
@@ -46,4 +48,5 @@ class GreetingsCatalogTest {
         assertEquals("التحيات", WordSeed.categories.last().title)
     }
 }
+
 

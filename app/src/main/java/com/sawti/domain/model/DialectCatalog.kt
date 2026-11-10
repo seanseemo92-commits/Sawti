@@ -1201,11 +1201,8 @@ object DialectCatalog {
         val item = value.forEditing()
         val key = item.semanticKey ?: return item
         if (item.categoryId.startsWith("custom_")) return item
-        if (dialect == ArabicDialect.STANDARD && !ArgonAuditOverrides.hasPatch(dialect, key)) return item
         val regional = if (dialect == ArabicDialect.STANDARD) null
             else RegionalDishesCatalog.variant(key, dialect)
-        if (dialect != ArabicDialect.STANDARD && regional == null && key !in words
-            && !ArgonAuditOverrides.hasPatch(dialect, key)) return item
         fun custom(flag: Int) = item.customTextFields and flag != 0
         val form = DialectSpeechCatalog.resolve(item, dialect)
         val projected = item.copy(
@@ -1216,6 +1213,8 @@ object DialectCatalog {
                 else regional?.sentencePrompt ?: TransportCatalog.sentencePrompt(key, dialect) ?: item.sentencePrompt,
             sourceDetails = CardDetails.from(item),
         )
-        return ArgonAuditOverrides.applySentence(item, dialect, projected)
+        val revised = ArgonAuditOverrides.applySentence(item, dialect, projected)
+        return if (revised.copy(sourceDetails = null) == item) item else revised
     }
 }
+

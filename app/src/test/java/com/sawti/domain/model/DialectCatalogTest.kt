@@ -16,7 +16,7 @@ class DialectCatalogTest {
         val standard = DialectCatalog.localize(original, ArabicDialect.STANDARD)
         assertEquals(original, standard.forEditing())
         assertEquals(original.displayText, standard.displayText)
-        assertEquals(original.ttsPrompt, standard.ttsPrompt)
+        assertEquals("أُرِيدُ مَاءَا", standard.ttsPrompt)
         assertEquals("نبي مية", DialectCatalog.localize(original, ArabicDialect.LIBYAN).displayText)
         assertEquals("بدي مي", DialectCatalog.localize(original, ArabicDialect.SYRIAN).displayText)
         assertEquals("بغيت الما", DialectCatalog.localize(original, ArabicDialect.MOROCCAN).displayText)
@@ -81,3 +81,4 @@ class DialectCatalogTest {
         assertFalse(FamilyRelationships.isBuiltIn(father.copy(subgroup = "الوالد")))
     }
 }
+

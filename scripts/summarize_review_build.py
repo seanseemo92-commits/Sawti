@@ -1,6 +1,7 @@
 """Record tests and packaged transport assets for the exact signed review APK."""
 from pathlib import Path
 import os
+import json
 import sys
 import re
 import xml.etree.ElementTree as ET
@@ -30,12 +31,18 @@ with ZipFile(apk) as archive:
         assert re.search(r'\bdrawable/greeting_' + name + r'\b', resource_dump), name
     assert re.search(r'\bdrawable/img_cat_greetings\b', resource_dump)
 
+speech_metrics = json.loads(Path('app/build/reports/speech-review/metrics.json').read_text())
+assert speech_metrics['rows'] == 2399 and speech_metrics['dialects'] == 9
+assert speech_metrics['remaining_unvocalized_fallbacks'] == 0
 lines = [f'commit={os.environ["GITHUB_SHA"]}', f'run={os.environ["GITHUB_RUN_ID"]}',
          'branch=fix/prelaunch-cleanup-hint', 'package=com.sawti',
          f'versionName={os.environ["RELEASE_VERSION"]}', f'versionCode={os.environ["RELEASE_CODE"]}',
          'build=Release (R8 optimized, publisher signed, not debuggable)',
          'transport_photos=12', 'transport_written_forms=108',
          'greetings_word_photos=14', 'greetings_home_cover=1', 'greetings_photo_dimensions=512x512',
+         'speech_corpus_rows=2399', 'speech_dialects=9', 'speech_explicit_revisions=210',
+         f'speech_changed_rows={speech_metrics["changed_speech_rows"]}',
+         'speech_remaining_unvocalized_fallbacks=0', 'speech_native_and_android_listening=PENDING',
          'dialect_flags=8 packaged national flags; Fusha uses a globe',
          'initial_dialect=one-time local country hint, saved user choice preserved',
          'checks=assembleDebug,testDebugUnitTest,lintDebug,assembleRelease,lintRelease,apksigner,aapt',

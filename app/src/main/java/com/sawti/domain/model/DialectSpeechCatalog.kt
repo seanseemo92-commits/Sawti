@@ -54,6 +54,8 @@ object DialectSpeechCatalog {
             source == SpeechSource.UNVOCALIZED_FALLBACK -> ""
             else -> variant?.phonemicCue ?: PhonemicCue.derive(speech)
         }
-        return ArgonAuditOverrides.applySpeech(item, dialect, SpeechForm(visible, speech, cue, source))
+        val audited = ArgonAuditOverrides.applySpeech(item, dialect, SpeechForm(visible, speech, cue, source))
+        return PronunciationCorrections.apply(item, dialect, audited)
     }
 }
+
