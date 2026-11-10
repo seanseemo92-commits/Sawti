@@ -13,3 +13,8 @@ This review build contains the new **التحيات** section; it is not a produ
 - Install signed APK over the existing app; make a backup first as a general precaution
 - Re-seed or reopen after update: existing family members, personal images, recordings, saved edits, backup and progress must survive
 - This delivery changes neither Room schema nor app version, nor merges main
+
+## Validation baseline
+- Newly seeded greeting cards: 14 (391 total foundation words), idempotent by semantic key
+- No Room schema changes; archived media and custom text remain owned by the user
+- Automated validation: debug compile, unit tests, lint, optimized signed Release and certificate verification before delivery
