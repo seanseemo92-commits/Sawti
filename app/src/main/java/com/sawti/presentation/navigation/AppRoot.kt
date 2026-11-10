@@ -9,6 +9,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -24,6 +25,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -45,6 +48,11 @@ import com.sawti.presentation.category.LibraryViewModel
 import com.sawti.presentation.common.SentenceStrip
 import com.sawti.presentation.common.LocalTouchDwell
 import com.sawti.presentation.home.HomeScreen
+import com.sawti.presentation.onboarding.LocalSpotlightRegistry
+import com.sawti.presentation.onboarding.SpotlightOverlay
+import com.sawti.presentation.onboarding.SpotlightRegistry
+import com.sawti.presentation.onboarding.TourGuide
+import com.sawti.presentation.onboarding.TourProgress
 import com.sawti.presentation.practice.PracticeRoute
 import com.sawti.presentation.practice.PracticeViewModel
 import com.sawti.presentation.progress.ProgressRoute
@@ -78,6 +86,51 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
     val operations = (context.applicationContext as SawtiApp).container.backupOperations
     val backup by operations.state.collectAsStateWithLifecycle()
     val backupLocked = backup.busy || backup.restartRequired
+    val tourProgress = remember(context) { TourProgress(context) }
+    val tourRegistry = remember { SpotlightRegistry() }
+    var activeTour by rememberSaveable { mutableStateOf<String?>(null) }
+    var tourIndex by rememberSaveable { mutableIntStateOf(0) }
+    var offerTour by rememberSaveable { mutableStateOf(false) }
+    val tourSteps = TourGuide.steps(activeTour ?: "", state.categories.map { it.id }.toSet())
+    val currentTourStep = tourSteps.getOrNull(tourIndex)
+    val finishTour: () -> Unit = {
+        activeTour?.let { tourProgress.complete(it) }
+        activeTour = null
+        tourIndex = 0
+    }
+    val beginTour: (String) -> Unit = { kind ->
+        if (!backupLocked && TourGuide.steps(kind, state.categories.map { it.id }.toSet()).isNotEmpty()) {
+            when (kind) {
+                TourGuide.HOME -> route = HOME
+                TourGuide.QURAN -> { quranSurahId = null; route = QURAN }
+                TourGuide.FAMILY -> if (state.categories.any { it.id == "family" }) route = CATEGORY_PREFIX + "family"
+            }
+            activeTour = kind
+            tourIndex = 0
+            offerTour = false
+        }
+    }
+    LaunchedEffect(route, state.isLoadingCategories, state.categoryLoadError, state.categories.size, backupLocked, activeTour, offerTour) {
+        if (route == HOME && !backupLocked && !state.isLoadingCategories &&
+            state.categoryLoadError == null && state.categories.isNotEmpty() &&
+            activeTour == null && !offerTour && !tourProgress.completed(TourGuide.HOME)) {
+            offerTour = true
+        }
+    }
+    LaunchedEffect(route, quranSurahId, state.isLoadingCategories, backupLocked, activeTour, offerTour) {
+        if (activeTour == null && !offerTour && !backupLocked && !state.isLoadingCategories) {
+            val kind = when {
+                route == QURAN && quranSurahId == null -> TourGuide.QURAN
+                route == QURAN && quranSurahId != null -> TourGuide.VERSE
+                route == CATEGORY_PREFIX + "family" -> TourGuide.FAMILY
+                else -> null
+            }
+            if (kind != null && !tourProgress.completed(kind)) {
+                activeTour = kind
+                tourIndex = 0
+            }
+        }
+    }
     val navigationLocked = { operations.state.value.let { it.busy || it.restartRequired } }
     LaunchedEffect(Unit) {
         library.messages.collect { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
@@ -112,6 +165,8 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
         route == QURAN -> Color(0xFF176448)
         else -> null
     }
+    CompositionLocalProvider(LocalSpotlightRegistry provides tourRegistry) {
+    Box(Modifier.fillMaxSize()) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
@@ -168,12 +223,14 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
                 LocalTouchDwell provides settings.touchDwell,
             ) {
                 when {
-                    route == QURAN -> QuranScreen(quranSurahId) { id ->
-                        if (!navigationLocked()) quranSurahId = id
-                    }
+                    route == QURAN -> QuranScreen(
+                        chosenSurahId = quranSurahId,
+                        onChooseSurah = { id -> if (!navigationLocked()) quranSurahId = id },
+                        focusFirstVerse = activeTour == TourGuide.VERSE,
+                    )
                     route == PRACTICE -> PracticeRoute(practice)
                     route == PROGRESS && state.caregiverMode -> ProgressRoute(progress)
-                    route == SETTINGS && state.caregiverMode -> SettingsRoute(settingsVm)
+                    route == SETTINGS && state.caregiverMode -> SettingsRoute(settingsVm, onStartTour = beginTour)
                     route == DIALECT -> DialectSettingsRoute(
                         settingsVm,
                         (context.applicationContext as SawtiApp).container.speech,
@@ -195,10 +252,47 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
                         isLoading = state.isLoadingCategories,
                         loadError = state.categoryLoadError,
                         retryEnabled = !backupLocked,
+                        tourTarget = if (activeTour == TourGuide.HOME) currentTourStep?.target else null,
                     )
                 }
             }
         }
+    }
+    if (currentTourStep != null && !backupLocked) {
+        SpotlightOverlay(
+            step = currentTourStep,
+            index = tourIndex,
+            total = tourSteps.size,
+            registry = tourRegistry,
+            reducedMotion = settings.performanceMode,
+            onPrevious = { tourIndex = (tourIndex - 1).coerceAtLeast(0) },
+            onNext = {
+                if (tourIndex + 1 < tourSteps.size) tourIndex++ else finishTour()
+            },
+            onSkip = finishTour,
+        )
+    }
+    }
+    }
+    BackHandler(enabled = (activeTour != null || offerTour) && !backupLocked) {
+        if (offerTour) {
+            offerTour = false
+            tourProgress.complete(TourGuide.HOME)
+        } else finishTour()
+    }
+    if (offerTour && !backupLocked) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { offerTour = false; tourProgress.complete(TourGuide.HOME) },
+            icon = { Text("✦", color = MaterialTheme.colorScheme.primary) },
+            title = { Text("خلّينا نعرّفك على صوتي", fontWeight = FontWeight.ExtraBold) },
+            text = { Text("جولة قصيرة بإضاءة هادئة توضّح أهم الميزات. تقدر تتخطاها أو ترجع لها من الإعدادات في أي وقت.") },
+            confirmButton = {
+                Button(onClick = { beginTour(TourGuide.HOME) }) { Text("ابدأ الجولة") }
+            },
+            dismissButton = {
+                TextButton(onClick = { offerTour = false; tourProgress.complete(TourGuide.HOME) }) { Text("لاحقًا") }
+            },
+        )
     }
     if (backup.busy) {
         androidx.compose.material3.AlertDialog(
