@@ -3,6 +3,22 @@ package com.sawti.domain.model
 /** Stable concept -> packaged drawable. No translation, label aliases or text guessing. */
 object WordImageCatalog {
     private val images = mapOf(
+        // Semantic identity drives imagery across all nine Arabic dialects. Large
+        // individual WebP resources replace the old 4x4 low-resolution atlas.
+        "greeting.salam" to "greeting_salam",
+        "greeting.reply" to "greeting_reply",
+        "greeting.hello" to "greeting_hello",
+        "greeting.welcome" to "greeting_welcome",
+        "greeting.how_are_you" to "greeting_how_are_you",
+        "greeting.fine" to "greeting_fine",
+        "greeting.good_morning" to "greeting_good_morning",
+        "greeting.good_evening" to "greeting_good_evening",
+        "greeting.brighten" to "greeting_brighten",
+        "greeting.good_health" to "greeting_good_health",
+        "greeting.goodbye" to "greeting_goodbye",
+        "greeting.safe" to "greeting_safe",
+        "greeting.thanks" to "greeting_thanks",
+        "greeting.bless" to "greeting_bless",
         "transport.car" to "word_transport_car",
         "transport.taxi" to "word_transport_taxi",
         "transport.bus" to "word_transport_bus",
