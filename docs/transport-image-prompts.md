@@ -1,6 +1,6 @@
 # Transport photographs
 
-AI-generated realistic adult vocabulary illustrations. Final packaged assets are RGB WebP 512 × 512. Source PNGs were generated with the built-in image tool, visually inspected, then downscaled.
+AI-generated realistic adult vocabulary illustrations. Packaged assets are RGB WebP 512 × 512. Source PNGs were generated with the built-in image tool, visually inspected, then downscaled.
 
 ## word_transport_car.webp
 
@@ -13,4 +13,16 @@ Use case: photorealistic-natural. Asset: a square adult Arabic AAC vocabulary ph
 ## word_transport_bus.webp
 
 Use case: photorealistic-natural. Asset: a square adult Arabic AAC vocabulary photograph for Sawti, showing exactly one distinct means of transport. Subject: one modern blue city passenger BUS with a long body, tall rectangular windows and passenger doors, parked at a quiet stop, full vehicle in front three-quarter view; no advertisements or text. Natural accurate real-world vehicle construction and proportions, realistic soft daylight, calm uncluttered setting, full vehicle contained within the image with a small 8 percent margin, dominant object occupying 75-85 percent of frame, crisp subject and subtle background blur. Consistent clean premium documentary photography suitable for an adult stroke survivor to identify the object easily in a small square card. No humans, brand names, logos, watermarks, legible license plates, captions, text, collage, illustration or toy-like 3D rendering. One 1024x1024 square image.
+
+## word_transport_minibus.webp
+
+Use case: photorealistic-natural. Asset: a square adult Arabic AAC vocabulary photograph for Sawti, showing exactly one distinct means of transport. Subject: one white passenger MINIBUS van, medium short body, high roof and two rows of large side passenger windows, parked on a simple quiet paved road, full vehicle in front three-quarter view; clearly smaller than a city bus. Natural accurate real-world vehicle construction and proportions, realistic soft daylight, calm uncluttered setting, full vehicle contained within the image with a small 8 percent margin, dominant object occupying 75-85 percent of frame, crisp subject and subtle background blur. Consistent clean premium documentary photography suitable for an adult stroke survivor to identify the object easily in a small square card. No humans, brand names, logos, watermarks, legible license plates, captions, text, collage, illustration or toy-like 3D rendering. One 1024x1024 square image.
+
+## word_transport_bicycle.webp
+
+Use case: photorealistic-natural. Asset: a square adult Arabic AAC vocabulary photograph for Sawti, showing exactly one distinct means of transport. Subject: one red practical adult city BICYCLE, upright with handlebars, saddle, pedals, chain and both complete wheels clearly visible, standing on its kickstand on simple pavement, three-quarter side view, no rider. Natural accurate real-world vehicle construction and proportions, realistic soft daylight, calm uncluttered setting, full vehicle contained within the image with a small 8 percent margin, dominant object occupying 75-85 percent of frame, crisp subject and subtle background blur. Consistent clean premium documentary photography suitable for an adult stroke survivor to identify the object easily in a small square card. No humans, brand names, logos, watermarks, legible license plates, captions, text, collage, illustration or toy-like 3D rendering. One 1024x1024 square image.
+
+## word_transport_motorcycle.webp
+
+Use case: photorealistic-natural. Asset: a square adult Arabic AAC vocabulary photograph for Sawti, showing exactly one distinct means of transport. Subject: one black and deep-blue adult street MOTORCYCLE, fuel tank, engine, handlebars, seat and both complete wheels clearly visible, parked on its side stand on clean pavement, three-quarter side view, no rider. Natural accurate real-world vehicle construction and proportions, realistic soft daylight, calm uncluttered setting, full vehicle contained within the image with a small 8 percent margin, dominant object occupying 75-85 percent of frame, crisp subject and subtle background blur. Consistent clean premium documentary photography suitable for an adult stroke survivor to identify the object easily in a small square card. No humans, brand names, logos, watermarks, legible license plates, captions, text, collage, illustration or toy-like 3D rendering. One 1024x1024 square image.
 

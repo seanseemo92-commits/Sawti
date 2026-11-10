@@ -20,4 +20,4 @@ Pending: stable concepts and 512px WebP photographs, nine dialect variants with 
 
 ## Validation
 
-Stage 1: commit `ecdd3664ce16fec8ce3bef10158a32a3710d9640`; Debug APK build, complete unit tests and lintDebug passed in run https://github.com/seanseemo92-commits/Sawti/actions/runs/42795357930. Stage 2 Android validation: pending. On-device transition and TTS listening checks are reported separately from automated compilation/tests.
+Stage 1: commit `ecdd3664ce16fec8ce3bef10158a32a3710d9640`; Debug APK build, complete unit tests and lintDebug passed in run https://github.com/seanseemo92-commits/Sawti/actions/runs/42795357930. Stage 2: commit `a37138e3077d72c21429306a065b06261c9d9097`; Debug APK build, unit tests and lintDebug passed in run https://github.com/seanseemo92-commits/Sawti/actions/runs/42796413089. On-device transition and TTS listening checks are reported separately from automated compilation/tests.
