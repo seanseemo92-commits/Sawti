@@ -1,4 +1,4 @@
-+name: Legacy greetings stock-photo import (manual only)
+name: Legacy greetings stock-photo import (manual only)
 
 on:
   # Current 1.2 artwork is generated and reviewed; do not overwrite it on documentation pushes.
