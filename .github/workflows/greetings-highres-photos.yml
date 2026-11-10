@@ -1,4 +1,4 @@
-name: Install high-resolution greetings photography
+name: Normalize greetings photography to existing Sawti section specifications
 
 on:
   push:
@@ -27,112 +27,75 @@ jobs:
           python-version: '3.12'
       - name: Install imaging dependencies
         run: python -m pip install --disable-pip-version-check pillow==11.3.0
-      - name: Download and normalize each licensed source photo
+      - name: Match images to the actual existing category and word photo dimensions
         shell: bash
         run: |
           python - <<'PY'
           from pathlib import Path
-          from io import BytesIO
           from PIL import Image, ImageOps, ImageEnhance, ImageFilter
-          from urllib.request import urlopen, Request
-          import time
 
-          # Pexels source photo IDs: verified free-use source pages in the manifest.
-          # Each concept has its own full-resolution WebP, not an upscaled 4x4 atlas.
-          photo_ids = {
-              "salam": 19285888,          # senior gentleman waves
-              "reply": 6281877,          # hijab-wearing woman greets
-              "hello": 8993937,          # woman in hijab waving hello
-              "welcome": 8640136,        # hijab-wearing women together
-              "how_are_you": 8121961,    # two women conversing
-              "fine": 7249248,           # hijab-wearing woman hand to chest
-              "good_morning": 694636,    # actual golden sunrise
-              "good_evening": 5674510,   # mosque in evening light
-              "brighten": 7249295,       # three women smiling together
-              "good_health": 37097128,   # elderly smiling man
-              "goodbye": 11826780,       # senior gentleman waves farewell
-              "safe": 32091741,          # friends walking together in hijab
-              "thanks": 6084250,         # cheerful hijab-wearing woman
-              "bless": 8422437,          # hands raised in prayer
-              "cover": 28977571,         # warm traditional handshake
-          }
-          dest = Path("app/src/main/res/drawable-nodpi")
-          dest.mkdir(parents=True, exist_ok=True)
-          square = (816, 960)   # ratio 0.85, identical to the shared Sawti cards
-          for key, image_id in photo_ids.items():
-              url = (f"https://images.pexels.com/photos/{image_id}/"
-                     f"pexels-photo-{image_id}.jpeg?auto=compress&cs=tinysrgb&w=1800")
-              error = None
-              for attempt in range(3):
-                  try:
-                      req = Request(url, headers={"User-Agent": "Sawti-Asset-Builder/1.0"})
-                      with urlopen(req, timeout=45) as response:
-                          data = response.read(12 * 1024 * 1024)
-                          if not response.headers.get("Content-Type", "").startswith("image/"):
-                              raise RuntimeError(f"Unexpected content type for {key}")
-                      image = Image.open(BytesIO(data))
-                      image.load()
-                      if image.width < 816 or image.height < 960:
-                          raise RuntimeError(f"Source too small for {key}: {image.size}")
-                      break
-                  except Exception as exc:
-                      error = exc
-                      if attempt == 2: raise RuntimeError(f"Photo download failed ({key})") from exc
-                      time.sleep(2 * (attempt + 1))
+          # Treat pre-existing Sawti section imagery as the specification,
+          # not the card's displayed 0.85 layout ratio.
+          base = Path("app/src/main/res")
+          word_reference = base / "drawable/word_transport_car.webp"
+          home_reference = base / "drawable/img_cat_family.webp"
+          with Image.open(word_reference) as im:
+              word_size = im.size
+          with Image.open(home_reference) as im:
+              home_size = im.size
+          print("Existing word photo dimensions:", word_size)
+          print("Existing home section photo dimensions:", home_size)
+          assert word_size == (512, 512), f"Unexpected existing word spec: {word_size}"
+          assert home_size[0] >= 256 and home_size[1] >= 256
+          print("Target greeting image sizes:", word_size, home_size)
 
-              rgb = ImageOps.exif_transpose(image).convert("RGB")
-              if key == "cover":
-                  # Keep both people's handshake even when the source is landscape:
-                  # blurred full-bleed edges avoid stretching faces or chopping arms.
-                  background = ImageOps.fit(rgb, square, method=Image.Resampling.LANCZOS)
-                  background = background.filter(ImageFilter.GaussianBlur(14))
-                  contained = ImageOps.contain(rgb, square, method=Image.Resampling.LANCZOS)
-                  x = (square[0] - contained.width) // 2
-                  y = (square[1] - contained.height) // 2
-                  background.paste(contained, (x, y))
-                  fitted = background
-              else:
-                  focal = (0.5, 0.39) if key not in ("good_morning", "good_evening") else (0.5, 0.5)
-                  fitted = ImageOps.fit(rgb, square, method=Image.Resampling.LANCZOS, centering=focal)
-              fitted = ImageEnhance.Color(fitted).enhance(0.98)
-              fitted = ImageEnhance.Contrast(fitted).enhance(1.03)
-              target = (dest / f"greeting_{key}.webp") if key != "cover" else Path("app/src/main/res/drawable/img_cat_greetings.webp")
-              target.parent.mkdir(parents=True, exist_ok=True)
-              fitted.save(target, "WEBP", quality=88, method=6)
-              size = target.stat().st_size
-              if size < 18_000:
-                  raise RuntimeError(f"Unexpectedly small WebP ({key}): {size}")
-              print(f"{key}: {fitted.width}x{fitted.height} ({size:,} bytes)")
-
-          lines = [
-              "# Greetings photography sources",
-              "",
-              "These originals are published as free-use Pexels photos. Source pages are retained for license provenance.",
-              "All images are cropped and resized offline; the app never downloads them.",
-              "No face/speech pairing is linked to a user's dialect, ethnicity or location.",
-              "",
-              "| Concept | Source page |",
-              "|---|---|",
+          cards = [
+              "salam", "reply", "hello", "welcome", "how_are_you", "fine",
+              "good_morning", "good_evening", "brighten", "good_health",
+              "goodbye", "safe", "thanks", "bless",
           ]
-          for key, image_id in photo_ids.items():
-              lines.append(f"| greeting.{key} | https://www.pexels.com/photo/{image_id}/ |")
-          Path("docs/GREETINGS_PHOTO_SOURCES.md").write_text("\n".join(lines) + "\n", encoding="utf8")
+          dest = base / "drawable-nodpi"
+          assert len(cards) == 14
+          for key in cards + ["cover"]:
+              path = dest / f"greeting_{key}.webp" if key != "cover" else base / "drawable/img_cat_greetings.webp"
+              if not path.is_file():
+                  raise FileNotFoundError(f"Missing source photo {path}")
+              size = word_size if key != "cover" else home_size
+              with Image.open(path) as im:
+                  image = ImageOps.exif_transpose(im).convert("RGB")
+
+              # Preserve the already approved inclusive people/moments; do not
+              # distort faces. Use a modestly elevated focal point for portraits
+              # so eyes, hijabs and hands stay visible after square cropping.
+              focal = (0.5, 0.42) if key not in ("good_morning", "good_evening", "cover") else (0.5, 0.5)
+              photo = ImageOps.fit(image, size, method=Image.Resampling.LANCZOS, centering=focal)
+              photo.save(path, format="WEBP", quality=90, method=6)
+              with Image.open(path) as saved:
+                  assert saved.format == "WEBP" and saved.size == size
+              print(f"Normalized {key} to {size[0]}x{size[1]} ({path.stat().st_size} bytes)")
+
+          # Source photography provenance continues to be stored in:
+          # docs/GREETINGS_PHOTO_SOURCES.md
           PY
-      - name: Verify 15 photos are complete and consistent
+      - name: Verify all 14 cards plus the home cover match Sawti native assets
         shell: bash
         run: |
           python - <<'PY'
           from pathlib import Path
           from PIL import Image
-          root = Path("app/src/main/res/drawable-nodpi")
-          files = sorted(root.glob("greeting_*.webp"))
-          assert len(files) == 14, f"Expected 14 greetings, got {len(files)}"
-          files += [Path("app/src/main/res/drawable/img_cat_greetings.webp")]
-          for file in files:
+          base = Path("app/src/main/res")
+          with Image.open(base / "drawable/word_transport_car.webp") as im:
+              expected_word = im.size
+          with Image.open(base / "drawable/img_cat_family.webp") as im:
+              expected_home = im.size
+          files = sorted((base / "drawable-nodpi").glob("greeting_*.webp"))
+          assert len(files) == 14, f"Expected 14 greeting cards, got {len(files)}"
+          for file in files + [base / "drawable/img_cat_greetings.webp"]:
               with Image.open(file) as im:
-                  assert im.size == (816, 960), (str(file), im.size)
+                  expected = expected_home if file.name == "img_cat_greetings.webp" else expected_word
+                  assert im.size == expected, (str(file), im.size, expected)
                   assert im.format == "WEBP"
-          print("All 14 greeting cards and the main cover are 816x960 WebP.")
+          print("Verified 14 greeting images and cover match existing section specifications.")
           PY
       - name: Commit generated offline images to the feature branch only
         shell: bash
@@ -143,6 +106,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "Identical images already committed."
           else
-            git commit -m "feat(greetings): package high-resolution inclusive photos [skip ci]"
+            git commit -m "fix(greetings): align all greeting image dimensions with existing Sawti cards [skip ci]"
             git push origin HEAD:fix/prelaunch-cleanup-hint
           fi
