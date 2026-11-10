@@ -36,3 +36,8 @@ This review build contains the new **التحيات** section; it is not a produ
 - All nine dialects share the same semantic-key image. Spoken and displayed language remains governed by the existing dialect engine, and caregivers' custom media override bundled imagery.
 - Attribution/source provenance: docs/GREETINGS_PHOTO_SOURCES.md.
 - Test all 14 tiles, light/dark mode, labels, audio, RTL, caregiver edit overrides, and installation over a previous signed build.
+
+## Final QA gate
+- Word image catalog now expects 347 stable photo mappings (333 prior plus 14 greetings).
+- The new 14-photo resource/dialect test validates all 15 816×960 bundled images and nine localizations.
+- Signed review artifact is named Sawti-Greetings-HQ-2026-11-10-Release.apk.
