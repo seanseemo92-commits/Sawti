@@ -4,16 +4,15 @@ This note accompanies a requested signed review APK. It is not a main-branch rel
 
 ## First use
 - A first-run optional tutorial appears only after category loading succeeds.
-- Tap **ابدأ الجولة** and verify the caregiver gear, Quran hero, family card, daily requests, and language icon.
+- Tap **ابدأ الجولة** and verify just three steps: caregiver gear, daily requests, Quran hero. The guide must not highlight family or language automatically.
 - Confirm the screen dims, only the target is highlighted, and the guide controls work without triggering underlying buttons.
 - Test **السابق**, **التالي**, **تخطي**, and completion. Reopen to verify it does not repeat.
 - Skip the tour and verify no forced onboarding on the next open.
 
 ## Contextual tours
-- Enter Quran for the first time and verify surah focus.
-- Open a surah after loading and verify reciter settings and the first verse focus.
-- Enter family and verify relatives and people-group guidance. Actual additions must still require caregiver mode.
-- With caregiver mode enabled, open Settings > **دليل استخدام صوتي** to replay the guides.
+- Enter Quran and Family normally: no automatic guide must interrupt navigation.
+- With caregiver mode enabled, open Settings > **دليل استخدام صوتي** to manually replay the general, Quran or Family guide.
+- Manually replay the Quran guide and verify surah focus; Family guide must show relatives/people group tabs. Actual additions still require caregiver mode.
 
 ## Compatibility
 - Verify RTL, portrait and landscape or tablet layout, system light/dark themes, extra-large text, and performance mode.
