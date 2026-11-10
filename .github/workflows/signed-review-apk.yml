@@ -1,0 +1,127 @@
+name: Sawti reviewed signed Release APK
+
+on:
+  push:
+    branches: [fix/prelaunch-cleanup-hint]
+  workflow_dispatch:
+
+permissions:
+  contents: write # Private pre-release fallback only if artifact quota is exhausted.
+  actions: read
+
+concurrency:
+  group: sawti-reviewed-apk
+  cancel-in-progress: false
+
+jobs:
+  reviewed-release:
+    if: >-
+      github.ref == 'refs/heads/fix/prelaunch-cleanup-hint' &&
+      (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deliver-apk]'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Validate canonical version
+        run: python3 scripts/verify_release.py
+
+      - name: Build debug and run complete tests and lint
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug --continue
+
+      - name: Load existing publisher identity privately
+        env:
+          GH_TOKEN: ${{ github.token }}
+          KEYSTORE_BASE64: ${{ secrets.SAWTI_RELEASE_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.SAWTI_RELEASE_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.SAWTI_RELEASE_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.SAWTI_RELEASE_KEY_PASSWORD }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          if [[ -n "$KEYSTORE_BASE64" && -n "$STORE_PASSWORD" && -n "$KEY_ALIAS" && -n "$KEY_PASSWORD" ]]; then
+            printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/sawti-review.jks"
+          elif [[ -z "$KEYSTORE_BASE64" && -z "$STORE_PASSWORD" && -z "$KEY_ALIAS" && -z "$KEY_PASSWORD" ]]; then
+            # Existing restricted publisher backup, recovered only inside this trusted branch runner.
+            mkdir -p "$RUNNER_TEMP/sawti-review-key"
+            gh run download 40346497322 --repo "$GITHUB_REPOSITORY" --name PRIVATE-MyWords-Publisher-Key-BACKUP --dir "$RUNNER_TEMP/sawti-review-key"
+            test -s "$RUNNER_TEMP/sawti-review-key/mywords-publisher.p12"
+            STORE_PASSWORD=$(sed -n 's/^Store and key password: //p' "$RUNNER_TEMP/sawti-review-key/KEEP_PRIVATE_SIGNING_INSTRUCTIONS.txt" | head -n 1 | tr -d '\r')
+            test -n "$STORE_PASSWORD"
+            echo "::add-mask::$STORE_PASSWORD"
+            KEY_PASSWORD="$STORE_PASSWORD"
+            KEY_ALIAS=mywords-release
+            cp "$RUNNER_TEMP/sawti-review-key/mywords-publisher.p12" "$RUNNER_TEMP/sawti-review.jks"
+          else
+            echo "::error::Signing secrets are partially configured."
+            exit 1
+          fi
+          echo "::add-mask::$STORE_PASSWORD"
+          echo "::add-mask::$KEY_PASSWORD"
+          test -s "$RUNNER_TEMP/sawti-review.jks"
+          {
+            echo "SAWTI_KEYSTORE_PATH=$RUNNER_TEMP/sawti-review.jks"
+            echo "SAWTI_KEYSTORE_PASSWORD=$STORE_PASSWORD"
+            echo "SAWTI_KEY_ALIAS=$KEY_ALIAS"
+            echo "SAWTI_KEY_PASSWORD=$KEY_PASSWORD"
+          } >> "$GITHUB_ENV"
+
+      - name: Build signed optimized Release and lint
+        run: ./gradlew --no-daemon :app:assembleRelease :app:lintRelease --continue
+
+      - name: Verify signature and package, then prepare APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK=app/build/outputs/apk/release/app-release.apk
+          BUILD_TOOLS=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
+          mkdir -p dist
+          "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$APK" > dist/APK-SIGNATURE.txt
+          grep -q 'Verified using v2 scheme.*true' dist/APK-SIGNATURE.txt
+          CERT=$(sed -n 's/^.*certificate SHA-256 digest: //p' dist/APK-SIGNATURE.txt | sort -u)
+          test "$CERT" = "754b679c29b0c8acf7c61ca265813d9528c0d0c3afe912b9319a6354cbd31b21"
+          "$BUILD_TOOLS/aapt" dump badging "$APK" > "$RUNNER_TEMP/review-badging.txt"
+          python3 scripts/verify_release.py "$RUNNER_TEMP/review-badging.txt"
+          unzip -t "$APK" > /dev/null
+          cp "$APK" dist/Sawti-Review-2026-11-10-Release.apk
+          python3 scripts/summarize_review_build.py
+          (cd dist && sha256sum *.apk > SHA256SUMS.txt)
+
+      - name: Upload reviewed signed APK
+        id: artifact
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sawti-reviewed-signed-Release
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Deliver private pre-release when artifact quota is unavailable
+        if: steps.artifact.outcome != 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release create "sawti-review-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" dist/* \
+            --target "$GITHUB_SHA" --prerelease --latest=false \
+            --title "صوتي - نسخة Release للمراجعة" \
+            --notes "نسخة مراجعة موقّعة من فرع العمل، بعد اختبارات الوحدة وLint وفحص توقيع الناشر. لا دمج مع main ولا تغيير للإصدار الرسمي. تفاصيل الالتزام والاختبارات والبصمة مرفقة."
+
+      - name: Remove private signing material
+        if: always()
+        run: |
+          rm -f "$RUNNER_TEMP/sawti-review.jks"
+          rm -rf "$RUNNER_TEMP/sawti-review-key"

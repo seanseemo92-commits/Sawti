@@ -117,6 +117,8 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
                 }
             }
             override fun onDone(utteranceId: String?) = finishUtterance(utteranceId)
+            override fun onStop(utteranceId: String?, interrupted: Boolean) =
+                finishUtterance(utteranceId, canceled = true)
             @Deprecated("Older TTS callback")
             override fun onError(utteranceId: String?) = finishUtterance(utteranceId, failed = true)
             override fun onError(utteranceId: String?, errorCode: Int) = finishUtterance(utteranceId, failed = true)
@@ -231,6 +233,11 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
         onCanceled: () -> Unit = onDone,
     ) {
         if (text.isBlank()) { onCanceled(); return }
+        if (text.length > TextToSpeech.getMaxSpeechInputLength()) {
+            _issue.value = SpeechIssue.PlaybackFailed
+            onCanceled()
+            return
+        }
         if (tts == null) {
             // A failing engine must not be re-created on every tap.
             if (SystemClock.elapsedRealtime() - lastEngineAttemptMs < ENGINE_RETRY_INTERVAL_MS) {
@@ -270,13 +277,13 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
         canceled?.invoke()
     }
 
-    private fun finishUtterance(completedId: String?, failed: Boolean = false) {
+    private fun finishUtterance(completedId: String?, failed: Boolean = false, canceled: Boolean = false) {
         main.post {
             if (completedId != null && completedId == utteranceId) {
                 utteranceId = null
                 onSpeechStart = null
                 val done = onSpeechDone
-                val canceled = onSpeechCanceled
+                val cancelCallback = onSpeechCanceled
                 onSpeechDone = null
                 onSpeechCanceled = null
                 // A callback can start a new word synchronously. Release this focus first.
@@ -285,8 +292,9 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
                 if (token != null) focus.release(token)
                 if (failed) {
                     _issue.value = SpeechIssue.PlaybackFailed
-                    canceled?.invoke()
-                } else done?.invoke()
+                    cancelCallback?.invoke()
+                } else if (canceled) cancelCallback?.invoke()
+                else done?.invoke()
             }
         }
     }

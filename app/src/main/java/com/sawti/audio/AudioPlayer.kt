@@ -7,9 +7,10 @@ import android.media.MediaPlayer
 class AudioPlayer(private val focus: AudioFocusController) {
     private var player: MediaPlayer? = null
     private var focusToken: Long? = null
+    private var onCanceled: (() -> Unit)? = null
 
     /** Returns false when the file could not be played, so the caller can fall back to TTS. */
-    fun play(path: String, onDone: () -> Unit = {}): Boolean {
+    fun play(path: String, onDone: () -> Unit = {}, onCanceled: () -> Unit = onDone): Boolean {
         stop()
         val token = focus.acquire { stop() } ?: return false
         focusToken = token
@@ -29,18 +30,24 @@ class AudioPlayer(private val focus: AudioFocusController) {
             )
             mp.setDataSource(path)
             mp.setOnCompletionListener {
-                if (player === mp) { stop(); onDone() }
+                if (player === mp) {
+                    this.onCanceled = null
+                    stop()
+                    onDone()
+                }
             }
             mp.setOnErrorListener { _, _, _ ->
-                if (player === mp) { stop(); onDone() }
+                if (player === mp) stop()
                 true
             }
             mp.prepare()
             player = mp
+            this.onCanceled = onCanceled
             mp.start()
             true
         } catch (_: Exception) {
             if (player === mp) player = null
+            this.onCanceled = null
             runCatching { mp.release() }
             if (focusToken == token) {
                 focusToken = null
@@ -52,6 +59,8 @@ class AudioPlayer(private val focus: AudioFocusController) {
 
     fun stop() {
         val current = player
+        val canceled = onCanceled
+        onCanceled = null
         player = null
         val token = focusToken
         focusToken = null
@@ -61,5 +70,8 @@ class AudioPlayer(private val focus: AudioFocusController) {
             runCatching { current.release() }
         }
         if (token != null) focus.release(token)
+        // Focus loss and explicit stops are terminal too: clear the AAC playing indicator.
+        // Clear ownership before invoking user code, which may start another clip.
+        canceled?.invoke()
     }
 }
