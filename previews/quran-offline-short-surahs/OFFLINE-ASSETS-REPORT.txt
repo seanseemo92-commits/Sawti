@@ -1,0 +1,3 @@
+Bundled Quran audio MP3 files: 201
+Bundled Uthmani surah texts: 13
+Quran passages (78 old files) remain included.
