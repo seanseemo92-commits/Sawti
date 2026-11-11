@@ -45,14 +45,14 @@ class AudioPlayerLifecycleTest {
         file.delete()
     }
 
-    @Test fun losingFocusClearsTheCardPlaybackIndicator() {
+    @Test fun permanentFocusLossClearsTheCardPlaybackIndicator() {
         val dispatcher = AudioDispatcher(SpeechManager(app, focus), audio)
         val card = WordItem(1, "transport", "", "سيارة", "سَيَّارَة", "سَـ...", null,
             file.path, null, "", "", semanticKey = "transport.car")
         dispatcher.play(card)
         assertTrue(dispatcher.playback.value.isSpeaking)
         val manager = app.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        shadowOf(manager).lastAudioFocusRequest.listener.onAudioFocusChange(AudioManager.AUDIOFOCUS_LOSS_TRANSIENT)
+        shadowOf(manager).lastAudioFocusRequest.listener.onAudioFocusChange(AudioManager.AUDIOFOCUS_LOSS)
         shadowOf(Looper.getMainLooper()).idle()
         assertFalse(dispatcher.playback.value.isSpeaking)
         assertEquals(ShadowMediaPlayer.State.END, created.single().state)
