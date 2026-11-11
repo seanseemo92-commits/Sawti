@@ -20,6 +20,7 @@ internal data class QuranUiState(
     val loading: Boolean = false,
     val loadError: String? = null,
     val audio: RecitationStatus = RecitationStatus(),
+    val fullCues: List<QuranFullCue> = emptyList(),
     val savedAyahs: Int = 0,
     val downloading: Boolean = false,
     val downloadError: String? = null,
@@ -40,6 +41,7 @@ internal class QuranViewModel(application: Application) : AndroidViewModel(appli
     private var loadJob: Job? = null
     private var downloadJob: Job? = null
     private var countJob: Job? = null
+    private var timingJob: Job? = null
     private var player = createPlayer()
 
     private fun createPlayer(): QuranAyahPlayer {
@@ -61,9 +63,11 @@ internal class QuranViewModel(application: Application) : AndroidViewModel(appli
         loadJob?.cancel()
         cancelDownload()
         countJob?.cancel()
+        timingJob?.cancel()
         player.stop()
         _state.update { it.copy(surahId = surah?.selectionId, verses = emptyList(),
-            loading = surah != null, loadError = null, savedAyahs = 0, downloadError = null) }
+            loading = surah != null, loadError = null, savedAyahs = 0, downloadError = null,
+            fullCues = emptyList()) }
         if (surah == null) return
         loadJob = viewModelScope.launch {
             try {
@@ -85,10 +89,12 @@ internal class QuranViewModel(application: Application) : AndroidViewModel(appli
         if (_state.value.reciter == reciter) return
         cancelDownload()
         countJob?.cancel()
+        timingJob?.cancel()
         ++playerGeneration
         player.release()
         cache = QuranAudioCache(app, reciter, usePackagedSurahs = true)
         _state.update { it.copy(reciter = reciter, audio = RecitationStatus(), savedAyahs = 0,
+            fullCues = emptyList(),
             downloadError = null) }
         player = createPlayer()
         preferences.edit().putString("selected_edition", reciter.editionId).apply()
@@ -110,6 +116,24 @@ internal class QuranViewModel(application: Application) : AndroidViewModel(appli
         val current = _state.value
         val surah = QuranSource.selections.firstOrNull { it.selectionId == current.surahId } ?: return
         if (current.loading || current.verses.isEmpty() || !QuranFullSources.available(surah)) return
+        timingJob?.cancel()
+        val selectionId = surah.selectionId
+        val requestedReciter = current.reciter
+        _state.update { it.copy(fullCues = emptyList()) }
+        // The full-audio download and timings run independently, so a slow API
+        // never blocks the patient's play button or first-time audio cache.
+        timingJob = viewModelScope.launch {
+            val cues = try {
+                QuranFullTimings.obtain(app, surah, requestedReciter)
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                emptyList()
+            }
+            if (_state.value.surahId == selectionId && _state.value.reciter == requestedReciter) {
+                _state.update { it.copy(fullCues = cues) }
+            }
+        }
         player.playFull(surah, current.verses.first(), current.repeats)
     }
 
@@ -161,6 +185,7 @@ internal class QuranViewModel(application: Application) : AndroidViewModel(appli
     }
 
     fun leaveScreen() {
+        timingJob?.cancel()
         player.stop()
         cancelDownload()
         ++loadGeneration
@@ -170,6 +195,7 @@ internal class QuranViewModel(application: Application) : AndroidViewModel(appli
     }
 
     override fun onCleared() {
+        timingJob?.cancel()
         ++playerGeneration
         player.release()
         super.onCleared()
