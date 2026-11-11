@@ -126,6 +126,19 @@ internal fun QuranContent(
             listState.animateScrollToItem(2)
         }
     }
+    // Only advance the page when the *actual audio position* enters a new
+    // timed verse/phrase; no timer-driven fake scrolling between verses.
+    val activeFullCue = if (state.audio.fullSelectionId == chosenSurahId &&
+        state.audio.phase in setOf(RecitationPhase.PLAYING, RecitationPhase.PAUSED)) {
+        state.fullCues.lastOrNull { it.startMs <= state.audio.positionMs }
+    } else null
+    val trackedVerseIndex = state.verses.indexOfFirst { it.itemKey == activeFullCue?.itemKey }
+    LaunchedEffect(chosenSurahId, state.audio.fullSelectionId, trackedVerseIndex) {
+        if (trackedVerseIndex >= 0 && state.audio.fullSelectionId == chosenSurahId) {
+            // Two stable items precede the list (heading and playback settings).
+            listState.animateScrollToItem(trackedVerseIndex + 2)
+        }
+    }
     LazyColumn(
         state = listState,
         modifier = Modifier.fillMaxSize().testTag("quran-content"),
@@ -204,7 +217,9 @@ internal fun QuranContent(
                     StaggeredCascade(row = index, modifier = Modifier.fillMaxWidth()) {
                         Box(modifier = if (index == 0) Modifier.spotlightAnchor("quran_verse") else Modifier) {
                             QuranVerseCard(verse, state.audio,
-                                onClick = { onPlay(verse) }, onStop = onStop)
+                                onClick = { onPlay(verse) }, onStop = onStop,
+                                trackedCue = state.fullCues.firstOrNull { it.itemKey == verse.itemKey },
+                                trackingSelectionId = chosenSurahId)
                         }
                     }
                 }
@@ -361,16 +376,32 @@ private fun QuranSettings(
 }
 
 @Composable
-internal fun QuranVerseCard(verse: QuranVerse, status: RecitationStatus, onClick: () -> Unit, onStop: () -> Unit) {
+internal fun QuranVerseCard(
+    verse: QuranVerse, status: RecitationStatus, onClick: () -> Unit, onStop: () -> Unit,
+    trackedCue: QuranFullCue? = null, trackingSelectionId: Int? = null,
+) {
     val colors = quranColors()
     val active = status.globalVerseNumber == verse.globalNumber && status.segmentKey == verse.segmentKey &&
         status.fullSelectionId == null && status.phase in setOf(RecitationPhase.PLAYING, RecitationPhase.BUFFERING, RecitationPhase.PAUSED)
+    val tracked = trackedCue != null && status.fullSelectionId == trackingSelectionId &&
+        status.phase in setOf(RecitationPhase.PLAYING, RecitationPhase.PAUSED) &&
+        status.positionMs >= trackedCue.startMs &&
+        status.positionMs < trackedCue.endMs
+    val progress = if (trackedCue != null && tracked) {
+        ((status.positionMs - trackedCue.startMs).toFloat() /
+            (trackedCue.endMs - trackedCue.startMs)).coerceIn(0f, 1f)
+    } else 0f
+    val performance = LocalPerformanceMode.current
+    val animatedProgress by animateFloatAsState(progress,
+        animationSpec = if (performance) snap() else tween(200),
+        label = "quran-recitation-progress")
     val buffering = active && status.phase == RecitationPhase.BUFFERING
     val paused = active && status.phase == RecitationPhase.PAUSED
     val unit = if (verse.segmentIndex == null) "الآية" else "المقطع"
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        QuranInteractiveSurface(onClick = onClick, active = active, tag = verse.itemKey,
+        QuranInteractiveSurface(onClick = onClick, active = active || tracked, tag = verse.itemKey,
             description = when {
+                tracked -> "$unit قيد التلاوة المتواصلة؛ اضغط لتشغيله منفردًا"
                 buffering -> "جارٍ تجهيز $unit"
                 paused -> "تلاوة $unit متوقفة مؤقتًا بسبب صوت آخر، وستستأنف بعد انتهائه"
                 active -> "$unit قيد التشغيل؛ اضغط للإعادة من البداية"
@@ -385,11 +416,11 @@ internal fun QuranVerseCard(verse: QuranVerse, status: RecitationStatus, onClick
                         Text("${verse.verseNumber}", modifier = Modifier.padding(horizontal = 13.dp, vertical = 6.dp),
                             color = colors.accent, fontWeight = FontWeight.Bold)
                     }
-                    Text(if (buffering) "جارٍ التجهيز…" else if (paused) "توقف مؤقت · ${verse.label}" else if (active) "تلاوة $unit · ${verse.label}" else verse.label,
+                    Text(if (tracked) "تتبع التلاوة · ${verse.label}" else if (buffering) "جارٍ التجهيز…" else if (paused) "توقف مؤقت · ${verse.label}" else if (active) "تلاوة $unit · ${verse.label}" else verse.label,
                         modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.labelLarge)
                     if (buffering) CircularProgressIndicator(Modifier.size(24.dp), color = colors.accent, strokeWidth = 2.dp)
-                    else Icon(if (active && !paused) Icons.Filled.Equalizer else Icons.Filled.PlayArrow,
+                    else Icon(if ((active || tracked) && !paused) Icons.Filled.Equalizer else Icons.Filled.PlayArrow,
                         contentDescription = null, tint = colors.accent, modifier = Modifier.size(27.dp))
                 }
                 Text(verse.uthmaniText, modifier = Modifier.fillMaxWidth().testTag(if (verse.segmentIndex == null) "quran-text-${verse.globalNumber}" else "quran-text-${verse.itemKey}"),
@@ -401,6 +432,15 @@ internal fun QuranVerseCard(verse: QuranVerse, status: RecitationStatus, onClick
                 if (active) Text(if (buffering) "يتم تجهيز $unit قبل التشغيل" else if (paused) "ستُستأنف التلاوة بعد انتهاء المقاطعة" else "اضغط $unit مجددًا للإعادة مع القارئ",
                     modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
+                if (tracked) {
+                    // Gentle gold progression, tied to media position (not guessed elapsed time).
+                    Box(Modifier.fillMaxWidth().height(4.dp).clip(RoundedCornerShape(4.dp))
+                        .background(colors.gold.copy(alpha = 0.22f))
+                        .testTag("quran-tracking-${verse.itemKey}")) {
+                        Box(Modifier.fillMaxWidth(animatedProgress).height(4.dp)
+                            .clip(RoundedCornerShape(4.dp)).background(colors.gold))
+                    }
+                }
             }
         }
         // A local stop action follows only this active ayah; there is no fixed player.
