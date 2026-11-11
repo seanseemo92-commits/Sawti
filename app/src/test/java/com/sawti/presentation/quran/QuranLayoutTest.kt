@@ -20,6 +20,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
@@ -50,7 +51,8 @@ class QuranLayoutTest {
     private val verse = QuranVerse(107, 3, 6200, "وَلَا يَحُضُّ عَلَىٰ طَعَامِ ٱلْمِسْكِينِ")
 
     private fun show(mode: ThemeMode, large: Boolean = false, active: Boolean = false,
-        dwell: TouchDwell = TouchDwell.OFF, onPlay: () -> Unit = {}, onFull: () -> Unit = {}) {
+        dwell: TouchDwell = TouchDwell.OFF, onPlay: () -> Unit = {}, onFull: () -> Unit = {},
+        tracked: Boolean = false) {
         compose.setContent {
             SawtiTheme(themeMode = mode, performanceMode = true) {
                 captureView = LocalView.current
@@ -60,7 +62,12 @@ class QuranLayoutTest {
                     Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
                         QuranContent(QuranUiState(surahId = 107, reciter = QuranReciter.HUSARY_MUALLIM,
                             verses = listOf(verse), savedAyahs = 1,
-                            audio = if (active) RecitationStatus(6200, RecitationPhase.PLAYING, 1) else RecitationStatus()),
+                            fullCues = if (tracked) listOf(QuranFullCue(verse.itemKey,100,5000)) else emptyList(),
+                            audio = if (tracked) RecitationStatus(
+                                phase = RecitationPhase.PLAYING, remaining = 1,
+                                fullSelectionId = 107, positionMs = 2000)
+                                else if (active) RecitationStatus(6200, RecitationPhase.PLAYING, 1)
+                                else RecitationStatus()),
                             107, {}, {}, {}, { onPlay() }, {}, {}, {}, onPlayFull = onFull)
                     }
                 }
@@ -109,6 +116,23 @@ class QuranLayoutTest {
         show(ThemeMode.LIGHT, onFull = { starts++ })
         compose.onNodeWithTag("quran-full-play").performScrollTo().assertIsDisplayed().performClick()
         compose.runOnIdle { assertEquals(1, starts) }
+    }
+
+    @Test fun continuousRecitationVisuallyTracksCurrentVerse() {
+        show(ThemeMode.LIGHT, tracked = true)
+        compose.onNodeWithTag("ayah-6200").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithTag("quran-tracking-ayah-6200", useUnmergedTree = true).assertExists()
+    }
+
+    @Test fun selectedPassagesHaveTheirOwnGoldSeparatorAfterThirteenSurahs() {
+        compose.setContent {
+            SawtiTheme(themeMode = ThemeMode.LIGHT, performanceMode = true) {
+                QuranContent(QuranUiState(), null, {}, {}, {}, {}, {}, {}, {})
+            }
+        }
+        compose.onNodeWithTag("quran-content").performScrollToIndex(15)
+        compose.onNodeWithTag("quran-selected-verses-divider").assertIsDisplayed()
+        compose.onNodeWithText("الآيات المختارة").assertIsDisplayed()
     }
 
     @Test fun packagedQuranFontSupportsQuranicMarks() {
