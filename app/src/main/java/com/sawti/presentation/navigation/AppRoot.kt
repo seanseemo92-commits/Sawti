@@ -6,9 +6,12 @@ import android.os.Process
 import android.speech.tts.TextToSpeech
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -325,7 +328,8 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
 }
 
 @Composable
-private fun CaregiverBanner(onOpenProgress: () -> Unit, onOpenSettings: () -> Unit) {
+@OptIn(ExperimentalLayoutApi::class)
+internal fun CaregiverBanner(onOpenProgress: () -> Unit, onOpenSettings: () -> Unit) {
     Surface(
         color = CaregiverTint,
         shape = RoundedCornerShape(16.dp),
@@ -333,7 +337,8 @@ private fun CaregiverBanner(onOpenProgress: () -> Unit, onOpenSettings: () -> Un
     ) {
         Column(Modifier.padding(start = 14.dp, end = 6.dp, top = 6.dp, bottom = 2.dp)) {
             Text(stringResource(R.string.caregiver_banner), color = CaregiverInk, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
-            Row {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 TextButton(onClick = onOpenProgress, modifier = Modifier.heightIn(min = 44.dp)) {
                     Text(stringResource(R.string.progress_tab), color = CaregiverInk, fontWeight = FontWeight.ExtraBold)
                 }

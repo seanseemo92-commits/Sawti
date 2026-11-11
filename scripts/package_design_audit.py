@@ -6,7 +6,7 @@ import json
 
 root = Path('app/build/outputs')
 cases = ('home-light-normal', 'home-light-large', 'home-dark-large', 'sentence-light-large',
-         'sentence-dark-large', 'practice-recall-large', 'practice-choice-large', 'progress-dark-large')
+         'sentence-dark-large', 'practice-recall-large', 'practice-choice-large', 'progress-dark-large', 'caregiver-large', 'tour-dark-large')
 metrics = {}
 with ZipFile('dist/CODE-DESIGN-AUDIT.zip', 'w', ZIP_DEFLATED) as archive:
     for stage in ('before', 'after'):

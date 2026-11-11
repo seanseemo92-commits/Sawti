@@ -10,11 +10,15 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -125,6 +129,7 @@ fun Modifier.spotlightAnchor(key: String): Modifier {
  * a caregiver long press. Device performance mode disables motion/pulsing.
  */
 @Composable
+@OptIn(ExperimentalLayoutApi::class)
 fun SpotlightOverlay(
     step: SpotlightStep,
     index: Int,
@@ -206,7 +211,7 @@ fun SpotlightOverlay(
             shadowElevation = if (reducedMotion) 0.dp else 8.dp,
         ) {
             Column(
-                Modifier.padding(horizontal = 18.dp, vertical = 14.dp),
+                Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 18.dp, vertical = 14.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -218,12 +223,11 @@ fun SpotlightOverlay(
                     style = MaterialTheme.typography.titleLarge)
                 Text(step.description, style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Row(verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                FlowRow(verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     TextButton(onClick = onSkip, modifier = Modifier.heightIn(min = 48.dp)) {
                         Text("تخطي")
                     }
-                    Spacer(Modifier.weight(1f))
                     if (index > 0) OutlinedButton(
                         onClick = onPrevious, modifier = Modifier.heightIn(min = 48.dp),
                     ) { Text("السابق") }

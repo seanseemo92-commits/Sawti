@@ -25,6 +25,10 @@ import com.sawti.data.db.toDomain
 import com.sawti.domain.model.*
 import com.sawti.presentation.common.SentenceStrip
 import com.sawti.presentation.home.HomeScreen
+import com.sawti.presentation.navigation.CaregiverBanner
+import com.sawti.presentation.onboarding.SpotlightOverlay
+import com.sawti.presentation.onboarding.SpotlightRegistry
+import com.sawti.presentation.onboarding.TourGuide
 import com.sawti.presentation.practice.*
 import com.sawti.presentation.progress.ProgressScreen
 import com.sawti.presentation.theme.SawtiTheme
@@ -157,4 +161,23 @@ class DesignAuditLayoutTest {
         checkText(context.getString(R.string.progress_reset), true)
         save("progress-dark-large")
     }
+    @Test fun caregiverLargeSettingsAndProgressAreReachable() {
+        var opened = 0
+        show(ThemeMode.LIGHT) { CaregiverBanner({ opened++ }, { opened++ }) }
+        val context = RuntimeEnvironment.getApplication()
+        tap(checkText(context.getString(R.string.progress_tab)))
+        tap(checkText(context.getString(R.string.settings_tab)))
+        if (!baseline) assertEquals(2, opened)
+        save("caregiver-large")
+    }
+    @Test fun tourLargeAllThreeControlsRemainReachable() {
+        var taps = 0
+        val step = TourGuide.steps(TourGuide.HOME, setOf("daily"))[1]
+        show(ThemeMode.DARK) { SpotlightOverlay(step, 1, 3, SpotlightRegistry(), true,
+            { taps++ }, { taps++ }, { taps++ }) }
+        for (label in listOf("تخطي", "السابق", "التالي")) tap(checkText(label, true))
+        if (!baseline) assertEquals(3, taps)
+        save("tour-dark-large")
+    }
+
 }
