@@ -98,7 +98,7 @@ class QuranPassageLayoutTest {
         show(2002, large = true)
         compose.onNodeWithText(QuranReciter.HUSARY_MUALLIM.displayName).performScrollTo().assertIsDisplayed()
         save("baqarah-large-settings")
-        card("segment-2_284_1").assertIsDisplayed()
+        card("segment-2_285_1").assertIsDisplayed()
         save("baqarah-large-first")
         card("segment-2_286_8").assertIsDisplayed()
         save("baqarah-large-last")

@@ -92,7 +92,7 @@ internal object QuranPassages {
         val root = JSONObject(raw)
         require(root.getInt("version") == 1)
         val sourceVerses = root.getJSONArray("verses")
-        require(sourceVerses.length() == 4)
+        require(sourceVerses.length() == 3)
         val selectionVerses = mutableMapOf<Int, MutableList<QuranVerse>>()
         val recordings = mutableMapOf<String, Clip>()
         val seen = mutableSetOf<Int>()
@@ -126,9 +126,9 @@ internal object QuranPassages {
                 "Quran passage text must preserve every character in order"
             }
         }
-        require(seen == setOf(255, 284, 285, 286))
-        require(selectionVerses.getValue(2001).size == 9 && selectionVerses.getValue(2002).size == 17)
-        require(selectionVerses.getValue(2002).map { it.verseNumber }.distinct() == listOf(284, 285, 286))
+        require(seen == setOf(255, 285, 286))
+        require(selectionVerses.getValue(2001).size == 9 && selectionVerses.getValue(2002).size == 13)
+        require(selectionVerses.getValue(2002).map { it.verseNumber }.distinct() == listOf(285, 286))
         return Catalog(selectionVerses.mapValues { it.value.toList() }, recordings.toMap())
     }
 }

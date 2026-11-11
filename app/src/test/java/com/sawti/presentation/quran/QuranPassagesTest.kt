@@ -26,9 +26,16 @@ class QuranPassagesTest {
 
     @Test fun fragmentsPreserveFullUthmaniTextAndOnlyTheFourApprovedAyahs() {
         val verses = QuranPassages.load(app, 2001) + QuranPassages.load(app, 2002)
-        assertEquals(26, verses.size)
-        assertEquals(26, verses.map { it.itemKey }.distinct().size)
-        assertEquals(listOf(255, 284, 285, 286), verses.map { it.verseNumber }.distinct())
+        assertEquals(22, verses.size)
+        assertEquals(22, verses.map { it.itemKey }.distinct().size)
+        assertEquals(listOf(255, 285, 286), verses.map { it.verseNumber }.distinct())
+        assertEquals(285, QuranPassages.load(app, 2002).first().verseNumber)
+        assertEquals(13, QuranPassages.load(app, 2002).size)
+        assertEquals("الآيتان 285–286 · 13 مقطعًا", QuranSource.selections.last().countLabel)
+        QuranReciter.entries.forEach { reader ->
+            val files = app.assets.list("quran_passages/${reader.editionId}").orEmpty()
+            assertEquals(0, files.count { it.startsWith("2_284_") })
+        }
         val catalog = JSONObject(app.assets.open("quran_passages/catalog.json").bufferedReader().readText())
             .getJSONArray("verses")
         for (i in 0 until catalog.length()) {
@@ -39,7 +46,7 @@ class QuranPassagesTest {
             assertTrue(parts.all { it.segmentCount == parts.size && it.globalNumber == it.verseNumber + 7 })
         }
         assertThrows(IllegalArgumentException::class.java) { QuranSource.checkAyah(262, 2, 254) }
-        assertThrows(IllegalArgumentException::class.java) { QuranSource.checkAyah(292, 2, 284) }
+        assertThrows(IllegalArgumentException::class.java) { QuranSource.checkAyah(291, 2, 284) }
     }
 
     @Test fun allThreeRecitersHaveCompleteOfflineAudioWithIndependentFiles() = runBlocking {
@@ -47,14 +54,14 @@ class QuranPassagesTest {
         val paths = mutableSetOf<String>()
         for (reciter in QuranReciter.entries) {
             val cache = QuranAudioCache(app, reciter) { error("Packaged passages must not use the network") }
-            assertEquals(26, cache.cachedCount(verses))
+            assertEquals(22, cache.cachedCount(verses))
             for (verse in verses) {
                 val file = cache.obtain(verse)
                 assertTrue(paths.add(file.absolutePath))
                 assertTrue(QuranMp3.isPlayable(file))
             }
         }
-        assertEquals(78, paths.size)
+        assertEquals(66, paths.size)
     }
 
     @Test fun damagedSegmentRestoresFromVerifiedAssetWithoutTouchingWholeAyah() = runBlocking {

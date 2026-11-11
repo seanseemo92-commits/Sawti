@@ -22,7 +22,7 @@ data class ShortSurah(
     val title: String get() = if (segmented) name else "سورة $name"
     val countLabel: String get() = when (selectionId) {
         2001 -> "الآية 255 · $segmentCount مقاطع"
-        2002 -> "الآيات 284–286 · $segmentCount مقطعًا"
+        2002 -> "الآيتان 285–286 · $segmentCount مقطعًا"
         else -> "$verseCount آيات"
     }
 }
@@ -62,7 +62,7 @@ object QuranSource {
     // Selection IDs are distinct from surah IDs: both passages belong to Al-Baqarah.
     val selections = shortSurahs + listOf(
         ShortSurah(2, "آية الكرسي", 1, selectionId = 2001, segmentCount = 9),
-        ShortSurah(2, "خواتيم البقرة", 3, selectionId = 2002, segmentCount = 17),
+        ShortSurah(2, "خواتيم البقرة", 2, selectionId = 2002, segmentCount = 13),
     )
 
     private const val API_BASE = "https://api.alquran.cloud/v1/surah"
@@ -76,7 +76,7 @@ object QuranSource {
 
     internal fun checkAyah(global: Int, surah: Int, local: Int) {
         if (surah == 2) {
-            require(local in setOf(255, 284, 285, 286) && global == local + 7) {
+            require(local in setOf(255, 285, 286) && global == local + 7) {
                 "Ayah does not belong to the selected Al-Baqarah passages"
             }
             return

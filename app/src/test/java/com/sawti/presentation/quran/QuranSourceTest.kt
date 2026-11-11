@@ -25,6 +25,7 @@ class QuranSourceTest {
         )
         assertThrows(IllegalArgumentException::class.java) { QuranSource.audioUrl(0) }
         assertThrows(IllegalArgumentException::class.java) { QuranSource.audioUrl(6237) }
+        assertThrows(IllegalArgumentException::class.java) { QuranSource.checkAyah(291, 2, 284) }
     }
 
     @Test

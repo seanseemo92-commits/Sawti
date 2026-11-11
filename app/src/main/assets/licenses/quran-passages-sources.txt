@@ -1,6 +1,6 @@
 Sawti Quran passage test assets
 
-Uthmani text: AlQuran.cloud / Islamic Network, 2:255 and 2:284-286.
+Uthmani text: AlQuran.cloud / Islamic Network, 2:255 and 2:285-286.
 https://api.alquran.cloud/v1/ayah/2:255/quran-uthmani
 Original letters, diacritics and Quran marks are preserved across fragments.
 

@@ -1,4 +1,4 @@
-"""Rebuild the four selected ayahs' private test assets from pinned recordings.
+"""Rebuild the three selected ayahs' private test assets from pinned recordings.
 
 Requires ffmpeg. No synthetic speech, word concatenation, gain changes, or reader
 substitution. Source audio is hash checked before use. Clip boundaries are
@@ -53,7 +53,7 @@ def main():
                 }
         catalog["verses"].append(item)
     (ASSETS / "quran_passages/catalog.json").write_text(json.dumps(catalog, ensure_ascii=False, indent=2) + "\n")
-    print("Prepared 26 text fragments and 78 recorded phrase clips; listening review remains pending.")
+    print("Prepared 22 text fragments and 66 recorded phrase clips; listening review remains pending.")
 
 
 if __name__ == "__main__":

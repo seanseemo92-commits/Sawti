@@ -5,7 +5,7 @@ Alafasy, Salah Bukhatir and Husary Muallim (**201** 128-kbps MP3
 files; one damaged original requires documented recovery), plus all 13 verified Uthmani response documents.
 
 This is a dev-branch, separately installable Debug test, not a published
-production release. The pre-existing 26 segmented cards and their 78 bundled
+production release. The pre-existing 22 segmented cards and their 66 bundled
 MP3 files remain unchanged. No reciter selection, verses, wording, timing,
 card design, audio focus or repeat behavior is modified.
 

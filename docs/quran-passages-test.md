@@ -6,7 +6,7 @@ Release. Work stays on `fix/prelaunch-cleanup-hint`; `main` is not modified.
 ## Content and interactions
 
 The existing scrolling list receives two entries: Ayat al-Kursi (2:255), and
-Al-Baqarah 2:284–286. They use the same cards, Quran font, green/gold tokens,
+Al-Baqarah 2:285–286. They use the same cards, Quran font, green/gold tokens,
 cascade, press feedback, touch dwell, per-card stop action, reciter selection,
 1/3/5 repetitions and lifecycle/audio-focus ownership as the existing surahs.
 There is no new pager, previous/next control, fixed player, playback queue or
@@ -16,7 +16,6 @@ are not replaced.
 | Ayah | Parts |
 |---|---:|
 | 2:255 | 9 |
-| 2:284 | 4 |
 | 2:285 | 5 |
 | 2:286 | 8 |
 
@@ -27,8 +26,8 @@ ayah from sharing playback highlights, list state or cache files.
 
 ## Recorded audio and provenance
 
-All 26 parts have a recording from each of the existing readers: Mishary
-Alafasy, Salah Bukhatir and Husary Muallim (78 files). These small fixed
+All 22 parts have a recording from each of the existing readers: Mishary
+Alafasy, Salah Bukhatir and Husary Muallim (66 files). These small fixed
 passages are bundled, so the new content works without a first network
 download. Playback still uses the existing player and a verified private file.
 No TTS, voice cloning, word concatenation or reader substitution is used.
@@ -70,7 +69,7 @@ identity when this property is absent. No publisher signing key is accessed.
 ## Validation
 
 `scripts/verify_quran_passages.py --decode` checks exact text reconstruction,
-26 unique parts, all three readers, 78 file/source hashes, durations and full
+22 unique parts, all three readers, 66 file/source hashes, durations and full
 FFmpeg decoding. Android tests cover all offline assets, corrupted segment
 recovery, preserved whole-ayah files, same-ayah segment identity, repeated
 taps, 3x repetition without advancement, both selections, scroll reachability,

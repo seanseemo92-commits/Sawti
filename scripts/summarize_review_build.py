@@ -35,7 +35,7 @@ speech_metrics = json.loads(Path('app/build/reports/speech-review/metrics.json')
 assert speech_metrics['rows'] == 2399 and speech_metrics['dialects'] == 9
 assert speech_metrics['remaining_unvocalized_fallbacks'] == 0
 lines = [f'commit={os.environ["GITHUB_SHA"]}', f'run={os.environ["GITHUB_RUN_ID"]}',
-         'branch=fix/prelaunch-cleanup-hint', 'package=com.sawti',
+         'branch=' + os.environ.get('GITHUB_REF_NAME', 'unknown'), 'package=com.sawti',
          f'versionName={os.environ["RELEASE_VERSION"]}', f'versionCode={os.environ["RELEASE_CODE"]}',
          'build=Release (R8 optimized, publisher signed, not debuggable)',
          'transport_photos=12', 'transport_written_forms=108',
