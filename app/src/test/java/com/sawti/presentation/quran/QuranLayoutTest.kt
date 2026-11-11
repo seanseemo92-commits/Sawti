@@ -50,7 +50,7 @@ class QuranLayoutTest {
     private val verse = QuranVerse(107, 3, 6200, "وَلَا يَحُضُّ عَلَىٰ طَعَامِ ٱلْمِسْكِينِ")
 
     private fun show(mode: ThemeMode, large: Boolean = false, active: Boolean = false,
-        dwell: TouchDwell = TouchDwell.OFF, onPlay: () -> Unit = {}) {
+        dwell: TouchDwell = TouchDwell.OFF, onPlay: () -> Unit = {}, onFull: () -> Unit = {}) {
         compose.setContent {
             SawtiTheme(themeMode = mode, performanceMode = true) {
                 captureView = LocalView.current
@@ -61,7 +61,7 @@ class QuranLayoutTest {
                         QuranContent(QuranUiState(surahId = 107, reciter = QuranReciter.HUSARY_MUALLIM,
                             verses = listOf(verse), savedAyahs = 1,
                             audio = if (active) RecitationStatus(6200, RecitationPhase.PLAYING, 1) else RecitationStatus()),
-                            107, {}, {}, {}, { onPlay() }, {}, {}, {})
+                            107, {}, {}, {}, { onPlay() }, {}, {}, {}, onPlayFull = onFull)
                     }
                 }
             }
@@ -102,6 +102,13 @@ class QuranLayoutTest {
         compose.onNodeWithText(QuranReciter.HUSARY_MUALLIM.displayName).performScrollTo().assertIsDisplayed()
         compose.onNodeWithTag("ayah-6200").performScrollTo().assertIsDisplayed()
         save("quran-large-text")
+    }
+
+    @Test fun fullRecitationButtonIsBelowReciterSettingsAndFiresOneAction() {
+        var starts = 0
+        show(ThemeMode.LIGHT, onFull = { starts++ })
+        compose.onNodeWithTag("quran-full-play").performScrollTo().assertIsDisplayed().performClick()
+        compose.runOnIdle { assertEquals(1, starts) }
     }
 
     @Test fun packagedQuranFontSupportsQuranicMarks() {
