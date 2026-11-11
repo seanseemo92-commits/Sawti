@@ -1,4 +1,4 @@
-name: Sawti Quran whole-recitation isolated test APK
+name: Sawti Quran whole-recitation and visual-tracking test APK
 
 on:
   push:
@@ -74,6 +74,12 @@ jobs:
           cp dist/Sawti-Quran-Full-Playback-TEST.apk dist/SHA256SUMS.txt dist/APK-METADATA.txt previews/quran-full-playback-test/
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          # Rebase the artifact working tree onto the most recent source commit.
+          # A stale checkout must never overwrite source work or fail its push.
+          git fetch origin feature/quran-full-recitation-cache-20261111
+          git reset --mixed FETCH_HEAD
           git add previews/quran-full-playback-test/
-          git diff --cached --quiet || git commit -m 'build(preview): deliver separate Quran full-playback test APK'
-          git push origin HEAD:feature/quran-full-recitation-cache-20261111
+          if ! git diff --cached --quiet; then
+            git commit -m 'build(preview): deliver unified Quran tracking and Baqarah ending test APK'
+            git push origin HEAD:feature/quran-full-recitation-cache-20261111
+          fi
