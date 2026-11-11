@@ -20,6 +20,7 @@ jobs:
       (github.ref == 'refs/heads/fix/prelaunch-cleanup-hint' || github.ref == 'refs/heads/release-candidate/sawti-v1.4-baqarah-285') &&
       (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deliver-apk]'))
     runs-on: ubuntu-latest
+    environment: production-release
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
@@ -108,7 +109,7 @@ jobs:
                   break
           PY
 
-      - name: Load existing publisher identity privately
+      - name: Load publisher key from protected secrets (fail closed)
         env:
           GH_TOKEN: ${{ github.token }}
           KEYSTORE_BASE64: ${{ secrets.SAWTI_RELEASE_KEYSTORE_BASE64 }}
@@ -119,25 +120,15 @@ jobs:
         run: |
           set -euo pipefail
           umask 077
-          if [[ -n "$KEYSTORE_BASE64" && -n "$STORE_PASSWORD" && -n "$KEY_ALIAS" && -n "$KEY_PASSWORD" ]]; then
-            printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/sawti-review.jks"
-          elif [[ -z "$KEYSTORE_BASE64" && -z "$STORE_PASSWORD" && -z "$KEY_ALIAS" && -z "$KEY_PASSWORD" ]]; then
-            # Existing restricted publisher backup, recovered only inside this trusted branch runner.
-            mkdir -p "$RUNNER_TEMP/sawti-review-key"
-            gh run download 40346497322 --repo "$GITHUB_REPOSITORY" --name PRIVATE-MyWords-Publisher-Key-BACKUP --dir "$RUNNER_TEMP/sawti-review-key"
-            test -s "$RUNNER_TEMP/sawti-review-key/mywords-publisher.p12"
-            STORE_PASSWORD=$(sed -n 's/^Store and key password: //p' "$RUNNER_TEMP/sawti-review-key/KEEP_PRIVATE_SIGNING_INSTRUCTIONS.txt" | head -n 1 | tr -d '\r')
-            test -n "$STORE_PASSWORD"
-            echo "::add-mask::$STORE_PASSWORD"
-            KEY_PASSWORD="$STORE_PASSWORD"
-            KEY_ALIAS=mywords-release
-            cp "$RUNNER_TEMP/sawti-review-key/mywords-publisher.p12" "$RUNNER_TEMP/sawti-review.jks"
-          else
-            echo "::error::Signing secrets are partially configured."
+          # Fail closed. Signing identity MUST come from protected secrets,
+          # never from a workflow artifact or hard-coded password.
+          if [[ -z "$KEYSTORE_BASE64" || -z "$STORE_PASSWORD" || -z "$KEY_ALIAS" || -z "$KEY_PASSWORD" ]]; then
+            echo "::error::Protected release signing secrets are missing or incomplete."
             exit 1
           fi
           echo "::add-mask::$STORE_PASSWORD"
           echo "::add-mask::$KEY_PASSWORD"
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/sawti-review.jks"
           test -s "$RUNNER_TEMP/sawti-review.jks"
           {
             echo "SAWTI_KEYSTORE_PATH=$RUNNER_TEMP/sawti-review.jks"
@@ -245,5 +236,4 @@ jobs:
         if: always()
         run: |
           rm -f "$RUNNER_TEMP/sawti-review.jks"
-          rm -rf "$RUNNER_TEMP/sawti-review-key"
 
