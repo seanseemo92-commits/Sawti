@@ -1,0 +1,161 @@
+{
+  "method": "verified MP3Quran API mapping; filenames from actual source listing",
+  "available": {
+    "ar.alafasy": [
+      {
+        "id": 123,
+        "name": "مشاري العفاسي",
+        "folder_url": "https://cdn.mp3quran.net/audio/mishary-alafasy/r1/",
+        "soar_count": 114,
+        "hasBaqarahEnd": true,
+        "alBaqarahEnd": [
+          {
+            "ayah": 285,
+            "startMs": 7454920,
+            "endMs": 7487820
+          },
+          {
+            "ayah": 286,
+            "startMs": 7487820,
+            "endMs": 7539060
+          }
+        ],
+        "ayatTimingRows": 286
+      }
+    ],
+    "salah.bukhatir": [
+      {
+        "id": 46,
+        "name": "صلاح بو خاطر",
+        "folder_url": "https://cdn.mp3quran.net/audio/salah-bukhatir/r1/",
+        "soar_count": 114,
+        "hasBaqarahEnd": true,
+        "alBaqarahEnd": [
+          {
+            "ayah": 285,
+            "startMs": 6737280,
+            "endMs": 6767360
+          },
+          {
+            "ayah": 286,
+            "startMs": 6767360,
+            "endMs": 6816680
+          }
+        ],
+        "ayatTimingRows": 286
+      },
+      {
+        "id": 250,
+        "name": "محمد البخيت",
+        "folder_url": "https://cdn.mp3quran.net/audio/muhammad-bukhait/r1/",
+        "soar_count": 114,
+        "hasBaqarahEnd": true,
+        "alBaqarahEnd": [
+          {
+            "ayah": 285,
+            "startMs": 8185760,
+            "endMs": 8220980
+          },
+          {
+            "ayah": 286,
+            "startMs": 8220980,
+            "endMs": 8277059
+          }
+        ],
+        "ayatTimingRows": 286
+      }
+    ],
+    "husary.muallim": [
+      {
+        "id": 118,
+        "name": "محمود خليل الحصري",
+        "folder_url": "https://cdn.mp3quran.net/audio/mahmoud-husary/r1/",
+        "soar_count": 114,
+        "hasBaqarahEnd": true,
+        "alBaqarahEnd": [
+          {
+            "ayah": 285,
+            "startMs": 11813199,
+            "endMs": 11867374
+          },
+          {
+            "ayah": 286,
+            "startMs": 11867374,
+            "endMs": 11956190
+          }
+        ],
+        "ayatTimingRows": 287
+      },
+      {
+        "id": 119,
+        "name": "محمود خليل الحصري",
+        "folder_url": "https://cdn.mp3quran.net/audio/mahmoud-husary/r2/",
+        "soar_count": 114,
+        "hasBaqarahEnd": true,
+        "alBaqarahEnd": [
+          {
+            "ayah": 285,
+            "startMs": 17435200,
+            "endMs": 17511660
+          },
+          {
+            "ayah": 286,
+            "startMs": 17511660,
+            "endMs": 17624540
+          }
+        ],
+        "ayatTimingRows": 286
+      },
+      {
+        "id": 120,
+        "name": "محمود خليل الحصري",
+        "folder_url": "https://cdn.mp3quran.net/audio/mahmoud-husary/r3/",
+        "soar_count": 114,
+        "hasBaqarahEnd": false,
+        "ayatTimingRows": 285
+      },
+      {
+        "id": 269,
+        "name": "محمود خليل الحصري",
+        "folder_url": "https://cdn.mp3quran.net/audio/mahmoud-husary/r4/",
+        "soar_count": 114,
+        "hasBaqarahEnd": false,
+        "ayatTimingRows": 285
+      },
+      {
+        "id": 270,
+        "name": "محمود خليل الحصري",
+        "folder_url": "https://cdn.mp3quran.net/audio/mahmoud-husary/r5/",
+        "soar_count": 114,
+        "hasBaqarahEnd": false,
+        "ayatTimingRows": 285
+      }
+    ]
+  },
+  "apiErrors": [],
+  "apiHost": "https://www.mp3quran.net",
+  "readsCount": 115,
+  "fullBaqarah": {
+    "ar.alafasy": {
+      "url": "https://cdn.mp3quran.net/download/audio/mishary-alafasy/r1/002.mp3",
+      "http": 200,
+      "bytes": 120641555,
+      "acceptsRanges": "bytes",
+      "contentType": "audio/mpeg"
+    },
+    "salah.bukhatir": {
+      "url": "https://cdn.mp3quran.net/download/audio/salah-bukhatir/r1/002.mp3",
+      "http": 200,
+      "bytes": 109142897,
+      "acceptsRanges": "bytes",
+      "contentType": "audio/mpeg"
+    },
+    "husary.muallim": {
+      "url": "https://archive.org/download/Mushaf_Moalim_3/002.mp3",
+      "http": 200,
+      "bytes": 55425024,
+      "acceptsRanges": "bytes",
+      "contentType": "audio/mpeg"
+    }
+  }
+}
