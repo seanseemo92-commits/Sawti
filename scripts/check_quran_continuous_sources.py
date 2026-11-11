@@ -117,6 +117,16 @@ def run():
                     contentType=resp.headers.get("Content-Type"))
         except Exception as exc:
             item["error"]=str(exc)[:250]
+        try:
+            import subprocess
+            probe = subprocess.check_output([
+                "ffprobe","-v","error","-show_entries","format=duration,bit_rate",
+                "-of","json",url],text=True,timeout=38)
+            fmt = json.loads(probe).get("format",{})
+            item["durationMs"]=round(float(fmt["duration"])*1000)
+            item["bitRate"]=int(fmt.get("bit_rate",0))
+        except Exception as exc:
+            item["probeError"]=str(exc)[:180]
         report["fullBaqarah"][key]=item
     REPORT.parent.mkdir(parents=True,exist_ok=True)
     REPORT.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
