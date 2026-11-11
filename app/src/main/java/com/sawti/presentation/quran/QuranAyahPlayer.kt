@@ -174,6 +174,10 @@ class QuranAyahPlayer(
                 playsLeft--
                 if (playsLeft > 0) {
                     try {
+                        // A repeat replays the invocation too; reset the displayed
+                        // position so the verse highlight doesn't remain on the
+                        // last ayah while audio starts over from the ta'awwudh.
+                        fullPositionMs = 0
                         mp.seekTo(0)
                         mp.start()
                         publish(verse, RecitationPhase.PLAYING)
