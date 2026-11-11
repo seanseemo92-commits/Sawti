@@ -119,6 +119,14 @@ internal object QuranFullTimings {
         rows: List<Triple<Int,Int,Int>>,
     ): List<QuranFullCue> {
         if (surah.selectionId == 2002) return fromPassagePlan(context,surah,reader,rows)
+        return shortSurahCues(surah,rows)
+    }
+
+    /** Verified source timestamps are absolute from playback position 0 (including any invocation). */
+    internal fun shortSurahCues(
+        surah: ShortSurah, rows: List<Triple<Int,Int,Int>>,
+    ): List<QuranFullCue> {
+        require(!surah.segmented && surah.number in 1..114)
         // MP3Quran's positions are absolute within the uninterrupted recording.
         // The opening ta'awwudh is not a Quran verse and must NOT be counted as
         // ayah 1. For Al-Fatiha MP3Quran reports: Alafasy 6420 ms and Salah
