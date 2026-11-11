@@ -37,14 +37,35 @@ class AppContainer(private val app: Application) {
     val settingsRepository by lazy { SettingsRepository(app) }
 }
 
+enum class StartupStatus { RECOVERING, READY, FAILED }
+
 class SawtiApp : Application() {
+    val startup = kotlinx.coroutines.flow.MutableStateFlow(StartupStatus.RECOVERING)
     val container by lazy { AppContainer(this) }
     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     override fun onCreate() {
         super.onCreate()
-        // Recovery must precede opening Room or preferences.
-        BackupManager.recoverIfInterrupted(this)
-        // LibraryViewModel owns vocabulary loading, failure reporting and retries.
+        if (!BackupManager.hasPendingRecovery(this)) {
+            startup.value = StartupStatus.READY
+            observeSettings()
+        } else retryRecovery()
+    }
+
+    fun retryRecovery() {
+        startup.value = StartupStatus.RECOVERING
+        appScope.launch {
+            try {
+                BackupManager.recoverIfInterrupted(this@SawtiApp)
+                startup.value = StartupStatus.READY
+                observeSettings()
+            } catch (error: Exception) {
+                android.util.Log.e("SawtiRecovery", "Startup recovery failed", error)
+                startup.value = StartupStatus.FAILED
+            }
+        }
+    }
+
+    private fun observeSettings() {
         appScope.launch {
             container.settingsRepository.state.collect { settings ->
                 withContext(Dispatchers.Main.immediate) {
@@ -55,3 +76,4 @@ class SawtiApp : Application() {
         }
     }
 }
+

@@ -405,7 +405,10 @@ class BackupManager(private val context: Context, private val database: AppDatab
                 File(db.path + "-journal"))
         }
 
-        /** Call synchronously from Application.onCreate BEFORE opening Room/SharedPreferences. */
+        fun hasPendingRecovery(context: Context): Boolean =
+            stateDir(context).exists() || committedMarker(context).exists()
+
+        /** Complete on IO before opening application Room/SharedPreferences consumers. */
         @Synchronized
         fun recoverIfInterrupted(context: Context) {
             val state = stateDir(context)
@@ -469,3 +472,4 @@ class BackupManager(private val context: Context, private val database: AppDatab
         }
     }
 }
+

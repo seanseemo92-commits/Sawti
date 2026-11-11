@@ -20,6 +20,7 @@ internal object RestoreSettingsValidator {
         "speech_rate" to SpeechRate.entries.map { it.name }.toSet(),
         "dialect" to ArabicDialect.entries.map { it.name }.toSet(),
         "touch_dwell" to TouchDwell.entries.map { it.name }.toSet(),
+        "quran_edition" to setOf("ar.alafasy", "salah.bukhatir", "husary.muallim"),
     )
 
     /** Returns canonical XML only after the complete input was accepted. Missing keys use defaults. */
@@ -113,3 +114,4 @@ internal object RestoreSettingsValidator {
         return output.toString()
     }
 }
+

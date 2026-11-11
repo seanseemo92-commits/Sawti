@@ -1,5 +1,6 @@
 package com.sawti
 
+import androidx.compose.foundation.layout.fillMaxSize
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -25,7 +26,7 @@ class MainActivity : ComponentActivity() {
     private val progressVm: ProgressViewModel by viewModels { ProgressViewModel.Factory(application) }
     private val settingsVm: SettingsViewModel by viewModels { SettingsViewModel.Factory(application) }
     override fun onStop() {
-        libraryVm.onAppBackgrounded()
+        if ((application as SawtiApp).startup.value == StartupStatus.READY) libraryVm.onAppBackgrounded()
         super.onStop()
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +44,29 @@ class MainActivity : ComponentActivity() {
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         setContent {
+            val app = application as SawtiApp
+            val startup by app.startup.collectAsStateWithLifecycle()
+            if (startup != StartupStatus.READY) {
+                androidx.compose.material3.MaterialTheme {
+                    androidx.compose.material3.Surface(modifier = androidx.compose.ui.Modifier.fillMaxSize()) {
+                        androidx.compose.foundation.layout.Column(
+                            horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+                            verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
+                        ) {
+                            if (startup == StartupStatus.RECOVERING) {
+                                androidx.compose.material3.CircularProgressIndicator()
+                                androidx.compose.material3.Text("جارٍ التحقق من البيانات المسترجعة…")
+                            } else {
+                                androidx.compose.material3.Text("تعذّر إكمال استرداد البيانات")
+                                androidx.compose.material3.Button(onClick = app::retryRecovery) {
+                                    androidx.compose.material3.Text("إعادة المحاولة")
+                                }
+                            }
+                        }
+                    }
+                }
+                return@setContent
+            }
             val settings by settingsVm.settings.collectAsStateWithLifecycle()
             SawtiTheme(
                 themeMode = settings.themeMode,
@@ -54,3 +78,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+

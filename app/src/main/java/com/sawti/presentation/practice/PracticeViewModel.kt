@@ -14,6 +14,7 @@ import com.sawti.domain.model.GreetingsCatalog
 import com.sawti.domain.model.PracticeMode
 import com.sawti.domain.model.PracticeOutcome
 import com.sawti.domain.model.QuestionPhrases
+import com.sawti.domain.model.WordImageCatalog
 import com.sawti.domain.model.WordItem
 import com.sawti.domain.repository.ProgressRepository
 import com.sawti.domain.repository.WordRepository
@@ -43,6 +44,7 @@ data class PracticeCard(val item: WordItem, val palette: Int)
 data class PracticeUiState(
     val exercise: Exercise = Exercise.RECALL,
     val ready: Boolean = false,
+    val loadError: Boolean = false,
     val card: PracticeCard? = null,
     val index: Int = 0,
     val total: Int = 0,
@@ -81,6 +83,7 @@ class PracticeViewModel(
     private var advanceJob: Job? = null
     private var questionJob: Job? = null
     private var practiceActive = false
+    private var observationJob: Job? = null
 
     fun onEnterPractice() {
         if (practiceActive) return
@@ -105,9 +108,16 @@ class PracticeViewModel(
             if (practiceActive) advance()
         }
     }
-    init {
-        viewModelScope.launch {
-            repository.observeCategories().catch { Log.e("SawtiPractice", "Category observation failed", it) }.collect { categories ->
+    init { observeCards() }
+
+    private fun observeCards() {
+        observationJob?.cancel()
+        _uiState.update { it.copy(loadError = false) }
+        observationJob = viewModelScope.launch {
+            repository.observeCategories().catch {
+                Log.e("SawtiPractice", "Category observation failed", it)
+                _uiState.update { state -> state.copy(loadError = true) }
+            }.collect { categories ->
                 recallPool = buildPool(categories, exercise = Exercise.RECALL)
                 choicePool = buildPool(categories, exercise = Exercise.CHOICE)
                 if (deck.isEmpty()) startRound()
@@ -119,9 +129,10 @@ class PracticeViewModel(
             c.items.filter { if (c.id == CategoryIds.FAMILY) it.photoPath != null else it.emoji.isNotBlank() || it.photoPath != null }
                 .map { PracticeCard(it, c.palette) }
         }
-        val emojiUse = cards.filter { it.item.photoPath == null }.groupingBy { it.item.emoji }.eachCount()
-        return cards.filter { it.item.photoPath != null || emojiUse[it.item.emoji] == 1 }
+        return cards.distinctBy { visualKey(it.item) }
     }
+    private fun visualKey(item: WordItem): String = item.photoPath ?: WordImageCatalog.imageFor(item) ?: item.displayText.take(1)
+
     private fun startRound(exercise: Exercise = _uiState.value.exercise) {
         advanceJob?.cancel()
         questionJob?.cancel()
@@ -149,7 +160,7 @@ class PracticeViewModel(
     }
     private fun pickDistractor(target: PracticeCard): PracticeCard? {
         val others = (choicePool + deck).distinctBy { it.item.id }.filter {
-            it.item.id != target.item.id && (it.item.photoPath != null || target.item.photoPath != null || it.item.emoji != target.item.emoji)
+            it.item.id != target.item.id && visualKey(it.item) != visualKey(target.item)
         }
         return others.filter { it.item.categoryId == target.item.categoryId }.ifEmpty { others }.randomOrNull()
     }
@@ -167,7 +178,9 @@ class PracticeViewModel(
     override fun setExercise(exercise: Exercise) {
         if (exercise != _uiState.value.exercise) startRound(exercise)
     }
-    override fun restart() = startRound()
+    override fun restart() {
+        if (_uiState.value.loadError) observeCards() else startRound()
+    }
     override fun hint() {
         val card = _uiState.value.card ?: return
         questionJob?.cancel()
@@ -234,4 +247,5 @@ class PracticeViewModel(
     }
     private companion object { const val ROUND_SIZE = 10 }
 }
+
 

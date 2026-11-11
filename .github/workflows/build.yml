@@ -1,7 +1,7 @@
 name: Sawti Android build and validation
 on:
   push:
-    branches: [main]
+    branches: [main, feature/quran-full-recitation-cache-20261111]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -97,3 +97,4 @@ jobs:
           path: app/build/outputs/apk/release/app-release-unsigned.apk
           if-no-files-found: error
           retention-days: 7
+

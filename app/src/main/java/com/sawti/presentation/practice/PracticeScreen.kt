@@ -92,6 +92,10 @@ fun PracticeScreen(state: PracticeUiState, actions: PracticeActions) {
         verticalArrangement = Arrangement.spacedBy(14.dp)) {
         ExerciseSwitch(state.exercise, actions::setExercise)
         when {
+            state.loadError -> Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text("تعذّر تحميل بطاقات التدريب")
+                androidx.compose.material3.Button(onClick = actions::restart) { Text("إعادة المحاولة") }
+            }
             !state.ready -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
             state.total == 0 -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(stringResource(R.string.practice_empty), fontSize = 20.sp, textAlign = TextAlign.Center)
@@ -231,4 +235,5 @@ private fun ChoiceCard(choice: PracticeCard, isTarget: Boolean, state: PracticeU
         }
     }
 }
+
 

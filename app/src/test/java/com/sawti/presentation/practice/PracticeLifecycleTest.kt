@@ -88,6 +88,17 @@ class PracticeLifecycleTest {
         model.setExercise(Exercise.CHOICE)
     }
 
+    @Test fun differentDishPhotosSurviveTheirSharedEmoji() {
+        val dishes = listOf(
+            WordItem(20, "cuisine", "طاجين تونسي", "طاجين", "🍳", semanticKey = "dish.tunisian.tajine"),
+            WordItem(21, "cuisine", "عجة بالمرقاز", "عجة", "🍳", semanticKey = "dish.tunisian.merguez_omelette"),
+        )
+        val method = PracticeViewModel::class.java.getDeclaredMethod("buildPool", List::class.java, Exercise::class.java)
+        method.isAccessible = true
+        val pool = method.invoke(model, listOf(Category("cuisine", "الأكلات", 0, false, dishes)), Exercise.CHOICE) as List<*>
+        assertEquals(2, pool.size)
+    }
+
     @After fun close() {
         model.onLeavePractice()
         Dispatchers.resetMain()
@@ -165,3 +176,4 @@ class PracticeLifecycleTest {
         assertEquals(1, logged)
     }
 }
+

@@ -29,10 +29,12 @@ internal data class QuranUiState(
 /** Screen jobs have explicit ownership; late cancellation cannot change a newer request. */
 internal class QuranViewModel(application: Application) : AndroidViewModel(application) {
     private val app = application as SawtiApp
-    private val preferences = app.getSharedPreferences("quran_reciter", Context.MODE_PRIVATE)
+    private val preferences = app.getSharedPreferences("settings", Context.MODE_PRIVATE)
     private val _state = MutableStateFlow(QuranUiState(reciter = QuranReciter.fromEdition(
-        preferences.getString("selected_edition", null)
+        preferences.getString("quran_edition", null)
+            ?: app.getSharedPreferences("quran_reciter", Context.MODE_PRIVATE).getString("selected_edition", null)
     )))
+    init { preferences.edit().putString("quran_edition", _state.value.reciter.editionId).apply() }
     val state = _state.asStateFlow()
     private var cache = QuranAudioCache(app, _state.value.reciter, usePackagedSurahs = true)
     private var playerGeneration = 0L
@@ -49,8 +51,10 @@ internal class QuranViewModel(application: Application) : AndroidViewModel(appli
         return QuranAyahPlayer(app, cache, app.container.audioFocus,
             beforePlay = { app.container.audioDispatcher.stop() }) { status ->
             if (owner == playerGeneration) {
+                val previous = _state.value.audio
                 _state.update { it.copy(audio = status) }
-                if (status.phase == RecitationPhase.PLAYING) refreshSavedCount()
+                if (status.phase == RecitationPhase.PLAYING && status.fullSelectionId == null &&
+                    (previous.phase != RecitationPhase.PLAYING || status.segmentKey != previous.segmentKey)) refreshSavedCount()
             }
         }
     }
@@ -97,7 +101,7 @@ internal class QuranViewModel(application: Application) : AndroidViewModel(appli
             fullCues = emptyList(),
             downloadError = null) }
         player = createPlayer()
-        preferences.edit().putString("selected_edition", reciter.editionId).apply()
+        preferences.edit().putString("quran_edition", reciter.editionId).apply()
         refreshSavedCount()
     }
 
@@ -201,3 +205,4 @@ internal class QuranViewModel(application: Application) : AndroidViewModel(appli
         super.onCleared()
     }
 }
+

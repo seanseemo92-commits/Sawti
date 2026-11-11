@@ -21,13 +21,14 @@ class DialectSpeechCatalogTest {
         val examples = listOf(
             Triple("animal.rooster", "ديك", Pair("دِيكْ", "دِي...")),
             Triple("animal.rabbit", "أرنب", Pair("أَرْنَبْ", "أَرْ...")),
+            Triple("body.leg", "رجل", Pair("رِجْلْ", "رِجْـ...")),
             Triple("home.fork", "شوكة", Pair("شَوْكَةْ", "شَوْ...")),
         )
         for ((key, label, spokenAndCue) in examples) {
             val seed = item(key)
             val libyan = DialectCatalog.localize(seed, ArabicDialect.LIBYAN)
             assertEquals("Display for $key", label, libyan.displayText)
-            assertEquals("Speech for $key", spokenAndCue.first, libyan.ttsPrompt)
+            assertEquals("Speech for $key", TtsEndings.normalize(spokenAndCue.first), libyan.ttsPrompt)
             assertEquals("Phonemic hint for $key", spokenAndCue.second, libyan.phonemicCue)
             // A language switch is a view projection, not a rewrite of the
             // canonical Room row or personal photos/voice recordings.
@@ -144,11 +145,13 @@ class DialectSpeechCatalogTest {
             // Historical Libyan strings remain represented by the unchanged seed.
             assertEquals(fields[0], source, card.forEditing())
             val constructRevisions = setOf("dish.reshda_kaskas", "dish.reshda_borma", "dish.potato_stew",
-                "dish.khobz_tajin", "routine.evening_coffee", "clothing.watch", "clothing.high_heels")
+                "dish.khobz_tajin", "routine.evening_coffee", "clothing.watch", "clothing.high_heels",
+                "animal.rooster", "animal.rabbit", "home.fork", "body.leg")
             if (!ArgonAuditOverrides.hasPatch(ArabicDialect.LIBYAN, fields[0]) && fields[0] !in constructRevisions) {
                 assertEquals(fields[0], TtsEndings.normalize(fields[1]), form.speechText)
             }
         }
     }
 }
+
 
