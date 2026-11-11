@@ -318,7 +318,7 @@ private fun QuranSettings(
                     }
                 }
             }
-            if (state.verses.isNotEmpty() && QuranFullSources.available(surah)) {
+            if (state.verses.isNotEmpty() && QuranFullSources.available(surah, state.reciter)) {
                 val fullStatus = state.audio
                 val isFullActive = fullStatus.fullSelectionId == surah.selectionId &&
                     fullStatus.phase in setOf(RecitationPhase.BUFFERING, RecitationPhase.PLAYING, RecitationPhase.PAUSED)
