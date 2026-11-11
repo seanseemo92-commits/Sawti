@@ -47,10 +47,7 @@ internal object QuranFullSources {
             QuranReciter.HUSARY_MUALLIM ->
                 // Dedicated whole-surah teaching recitation archives; never use a
                 // different reciter or a regular (non-muallim) Husary recording.
-                listOf(
-                    "https://archive.org/download/Mushaf_Moalim_3/$number.mp3",
-                    "https://archive.org/download/Islam47a/$number.mp3",
-                )
+                listOf("https://archive.org/download/Mushaf_Moalim_3/$number.mp3")
         }
     }
 }
