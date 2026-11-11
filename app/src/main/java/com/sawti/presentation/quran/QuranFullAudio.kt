@@ -253,6 +253,11 @@ internal class QuranFullAudioCache(
             currentCoroutineContext().ensureActive()
             if (saved.exists() && !saved.delete()) throw IOException("Cannot overwrite damaged ending")
             if (!clipped.renameTo(saved)) throw IOException("Unable to cache ending MP3")
+            // Now that the corrected MP3 is safely saved, reclaim the obsolete
+            // cached clip containing the trailing word of 2:284.
+            if (spec.openingBleedTrimMs > 0L) {
+                File(audioDir, "surah_2002.mp3").delete()
+            }
             return saved
         } finally {
             suffix.delete()
