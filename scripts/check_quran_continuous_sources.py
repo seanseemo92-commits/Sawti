@@ -121,7 +121,7 @@ def run():
             import subprocess, re, imageio_ffmpeg
             process = subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(),"-hide_banner","-i",url],
                                      capture_output=True,text=True,timeout=35)
-            match = re.search(r"Duration:\\s*(\\d+):(\\d+):([\\d.]+)",process.stderr)
+            match = re.search(r"Duration:\s*(\d+):(\d+):([\d.]+)",process.stderr)
             if not match:
                 raise RuntimeError("Audio source duration not declared")
             hours,mins,secs=match.groups()
