@@ -23,6 +23,12 @@ class SettingsRepository(
     // touching dialect choices, caregiver media, or the database.
     init {
         val editor = prefs.edit()
+        if (!prefs.contains("quran_edition")) {
+            val previous = context.applicationContext.getSharedPreferences("quran_reciter", Context.MODE_PRIVATE)
+                .getString("selected_edition", null)
+            val supported = setOf("ar.alafasy", "salah.bukhatir", "husary.muallim")
+            editor.putString("quran_edition", previous?.takeIf { it in supported } ?: "ar.alafasy")
+        }
         // Persist once. A saved manual choice (including Fusha) always wins on restart/restore/travel.
         if (!prefs.contains("dialect")) {
             val detected = runCatching(initialDialect).getOrDefault(ArabicDialect.STANDARD)
@@ -107,3 +113,4 @@ class SettingsRepository(
         _state.update { it.copy(hapticsEnabled = on) }
     }
 }
+

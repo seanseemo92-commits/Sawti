@@ -51,9 +51,13 @@ class SawtiApp : Application() {
         } else retryRecovery()
     }
 
+    private var recoveryJob: kotlinx.coroutines.Job? = null
+
+    @Synchronized
     fun retryRecovery() {
+        if (recoveryJob?.isActive == true) return
         startup.value = StartupStatus.RECOVERING
-        appScope.launch {
+        recoveryJob = appScope.launch {
             try {
                 BackupManager.recoverIfInterrupted(this@SawtiApp)
                 startup.value = StartupStatus.READY
