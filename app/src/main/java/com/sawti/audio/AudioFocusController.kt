@@ -10,8 +10,9 @@ import android.os.Looper
 
 /**
  * Shared, app-scoped audio focus for TTS and caregiver recordings.
- * Acquires transient may-duck focus before speaking; on focus loss we STOP spoken output,
- * rather than resuming a stale phrase after a phone call. Supports pre-O devices.
+ * Acquires transient may-duck focus before speaking. Different interruptions
+ * must not be conflated: notifications can duck speech, while phone calls
+ * temporarily pause pausable MediaPlayer sessions. Pre-O is supported.
  */
 class AudioFocusController(context: Context) {
     private val manager = context.applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -21,17 +22,27 @@ class AudioFocusController(context: Context) {
     private var activeRequest: AudioFocusRequest? = null
     private var activeListener: AudioManager.OnAudioFocusChangeListener? = null
 
-    fun acquire(onLost: () -> Unit): Long? = synchronized(lock) {
+    fun acquire(
+        onLost: () -> Unit,
+        onTransientLoss: () -> Unit = onLost,
+        onDuck: () -> Unit = onTransientLoss,
+        onGain: () -> Unit = {},
+    ): Long? = synchronized(lock) {
         clearCurrent()
         val token = leases.next()
         val listener = AudioManager.OnAudioFocusChangeListener { state ->
-            if (state == AudioManager.AUDIOFOCUS_LOSS ||
-                state == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT ||
-                state == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK
-            ) {
+            val callback = when (state) {
+                AudioManager.AUDIOFOCUS_LOSS -> onLost
+                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> onTransientLoss
+                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> onDuck
+                AudioManager.AUDIOFOCUS_GAIN -> onGain
+                else -> null
+            }
+            if (callback != null) {
                 handler.post {
+                    // A late focus gain/loss must never alter a replacement clip.
                     val stillOwned = synchronized(lock) { leases.owns(token) }
-                    if (stillOwned) runCatching { onLost() }
+                    if (stillOwned) runCatching { callback() }
                 }
             }
         }

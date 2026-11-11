@@ -58,6 +58,28 @@ class AudioPlayerLifecycleTest {
         assertEquals(ShadowMediaPlayer.State.END, created.single().state)
     }
 
+    @Test fun notificationsDuckPersonalRecordingsAndCallsPauseUntilFocusReturns() {
+        assertTrue(audio.play(file.path))
+        val current = created.single()
+        val manager = app.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val listener = shadowOf(manager).lastAudioFocusRequest.listener
+        listener.onAudioFocusChange(AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK)
+        shadowOf(Looper.getMainLooper()).idle()
+        assertEquals(ShadowMediaPlayer.State.STARTED, current.state)
+        listener.onAudioFocusChange(AudioManager.AUDIOFOCUS_GAIN)
+        shadowOf(Looper.getMainLooper()).idle()
+        listener.onAudioFocusChange(AudioManager.AUDIOFOCUS_LOSS_TRANSIENT)
+        shadowOf(Looper.getMainLooper()).idle()
+        assertEquals(ShadowMediaPlayer.State.PAUSED, current.state)
+        listener.onAudioFocusChange(AudioManager.AUDIOFOCUS_GAIN)
+        shadowOf(Looper.getMainLooper()).idle()
+        assertEquals(ShadowMediaPlayer.State.STARTED, current.state)
+        audio.stop()
+        listener.onAudioFocusChange(AudioManager.AUDIOFOCUS_GAIN)
+        shadowOf(Looper.getMainLooper()).idle()
+        assertEquals(ShadowMediaPlayer.State.END, current.state)
+    }
+
     @Test fun cancellationAndCompletionEachFireOnceAndStaleCallbacksAreIgnored() {
         var completed = 0
         var canceled = 0

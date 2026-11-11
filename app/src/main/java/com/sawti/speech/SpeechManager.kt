@@ -314,7 +314,10 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
             onCanceled()
             return
         }
-        val token = focus.acquire { stop() } ?: run { onCanceled(); return }
+        // A brief notification may duck TTS, but must not cancel the word.
+        // TTS does not support reliable mid-utterance pause/resume: a phone
+        // call or other exclusive transient interruption still cancels it.
+        val token = focus.acquire(onLost = { stop() }, onDuck = {}) ?: run { onCanceled(); return }
         val id = "sawti-${System.nanoTime()}"
         focusToken = token
         utteranceId = id
