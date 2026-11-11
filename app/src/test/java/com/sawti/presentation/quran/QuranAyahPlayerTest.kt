@@ -214,10 +214,11 @@ class QuranAyahPlayerTest {
             audio.play(verse, 1)
             val individual = preparedPlayer(1)
             individual.invokePreparedListener()
+            assertEquals(ShadowMediaPlayer.State.END, playing.state)
             playing.invokeCompletionListener()
             assertNull(states.last().fullSelectionId)
             assertEquals(verse.globalNumber, states.last().globalVerseNumber)
-            assertEquals(ShadowMediaPlayer.State.END, playing.state)
+            assertEquals(RecitationPhase.PLAYING, states.last().phase)
         } finally {
             wholeDirectory.deleteRecursively()
         }
