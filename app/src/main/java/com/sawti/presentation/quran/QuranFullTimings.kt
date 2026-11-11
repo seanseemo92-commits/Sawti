@@ -119,11 +119,15 @@ internal object QuranFullTimings {
         rows: List<Triple<Int,Int,Int>>,
     ): List<QuranFullCue> {
         if (surah.selectionId == 2002) return fromPassagePlan(context,surah,reader,rows)
-        val first = rows.first().second
+        // MP3Quran's positions are absolute within the uninterrupted recording.
+        // The opening ta'awwudh is not a Quran verse and must NOT be counted as
+        // ayah 1. For Al-Fatiha MP3Quran reports: Alafasy 6420 ms and Salah
+        // Bukhatir 3860 ms before the first verse (the basmala) begins.
+        // Subtracting rows.first().second made the on-screen highlight jump
+        // ahead of the audio by that amount, and could show two verses ahead.
         return rows.map { (verse,start,end) ->
-            val key = QuranSource.shortSurahs.first { it.number == surah.number }
-                .let { "ayah-${QuranSource.firstAyahGlobal(surah.number) + verse - 1}" }
-            QuranFullCue(key, (start-first).coerceAtLeast(0),end-first)
+            val key = "ayah-${QuranSource.firstAyahGlobal(surah.number) + verse - 1}"
+            QuranFullCue(key, start, end)
         }
     }
 
