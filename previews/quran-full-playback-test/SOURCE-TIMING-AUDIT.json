@@ -135,6 +135,62 @@
   "apiErrors": [],
   "apiHost": "https://www.mp3quran.net",
   "readsCount": 115,
+  "moshafEdits": {
+    "محمود خليل الحصري": [
+      {
+        "id": 270,
+        "name": "قالون عن نافع - مرتل",
+        "server": "https://cdn.mp3quran.net/audio/mahmoud-husary/r5/",
+        "surah_total": 114
+      },
+      {
+        "id": 269,
+        "name": "الدوري عن أبي عمرو - مرتل",
+        "server": "https://cdn.mp3quran.net/audio/mahmoud-husary/r4/",
+        "surah_total": 114
+      },
+      {
+        "id": 120,
+        "name": "ورش عن نافع - مرتل",
+        "server": "https://cdn.mp3quran.net/audio/mahmoud-husary/r3/",
+        "surah_total": 114
+      },
+      {
+        "id": 119,
+        "name": "حفص عن عاصم - المصحف المجود",
+        "server": "https://cdn.mp3quran.net/audio/mahmoud-husary/r2/",
+        "surah_total": 114
+      },
+      {
+        "id": 118,
+        "name": "حفص عن عاصم - مرتل",
+        "server": "https://cdn.mp3quran.net/audio/mahmoud-husary/r1/",
+        "surah_total": 114
+      }
+    ],
+    "مشاري العفاسي": [
+      {
+        "id": 124,
+        "name": "الدوري عن الكسائي - مرتل",
+        "server": "https://cdn.mp3quran.net/audio/mishary-alafasy/r2/",
+        "surah_total": 6
+      },
+      {
+        "id": 123,
+        "name": "حفص عن عاصم - مرتل",
+        "server": "https://cdn.mp3quran.net/audio/mishary-alafasy/r1/",
+        "surah_total": 114
+      }
+    ],
+    "صلاح بو خاطر": [
+      {
+        "id": 46,
+        "name": "حفص عن عاصم - مرتل",
+        "server": "https://cdn.mp3quran.net/audio/salah-bukhatir/r1/",
+        "surah_total": 114
+      }
+    ]
+  },
   "fullBaqarah": {
     "ar.alafasy": {
       "url": "https://cdn.mp3quran.net/download/audio/mishary-alafasy/r1/002.mp3",
