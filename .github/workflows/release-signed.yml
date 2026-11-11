@@ -117,7 +117,7 @@ jobs:
         run: |
           set -euo pipefail
           # Never overwrite an existing version or attach files to a different commit.
-          gh release create "v${RELEASE_VERSION}" dist/* --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "صوتي | Sawti v${RELEASE_VERSION}" --notes-file docs/release-4.6.0.md
+          gh release create "v${RELEASE_VERSION}" dist/* --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "صوتي | Sawti v${RELEASE_VERSION}" --notes-file "docs/release-${RELEASE_VERSION}.md"
       - name: Clean signing material
         if: always()
         run: |

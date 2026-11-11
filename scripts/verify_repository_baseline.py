@@ -42,4 +42,5 @@ for dpi in ('mdpi', 'hdpi', 'xhdpi', 'xxhdpi', 'xxxhdpi'):
 for path in root.rglob('*'):
     if path.is_file() and '.git' not in path.parts and 'build' not in path.parts:
         require(path.suffix.lower() not in ('.jks', '.p12', '.keystore'), 'Signing key found in repository source')
+require(Path(f'docs/release-{version}.md').is_file(), 'Release notes must match the current version')
 print(f'Repository baseline OK: Sawti {version} ({code}); RTL, manual backup, current launcher and schema intact')
