@@ -31,6 +31,25 @@ class QuranMp3TailTest {
         }
     }
 
+    @Test fun verifiedExtraTrimRemovesOldIntroWithoutReencodingRestOfClip() {
+        val original = File.createTempFile("original-baqarah", ".mp3")
+        val oldCut = File.createTempFile("old-baqarah-cut", ".mp3")
+        val corrected = File.createTempFile("new-baqarah-cut", ".mp3")
+        try {
+            syntheticMp3(original, 2500)
+            val oldLengthMs = QuranMp3Tail.cut(original, oldCut, 35_000)
+            val trimmedMs = QuranMp3Tail.cut(original, corrected, 35_000 - 1_250)
+            assertTrue(QuranMp3.isPlayable(corrected))
+            assertTrue(corrected.length() < oldCut.length())
+            assertEquals("Whole MP3 frames are retained after a ~1.25s later cut",
+                1_250, oldLengthMs - trimmedMs, 45)
+        } finally {
+            original.delete()
+            oldCut.delete()
+            corrected.delete()
+        }
+    }
+
     @Test fun refusesInsufficientTailRatherThanPublishingIncompleteRecitation() {
         val input = File.createTempFile("short-quran", ".mp3")
         val output = File.createTempFile("no-quran", ".mp3")
