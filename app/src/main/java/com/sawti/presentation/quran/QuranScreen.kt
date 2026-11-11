@@ -97,7 +97,8 @@ fun QuranScreen(chosenSurahId: Int?, onChooseSurah: (Int?) -> Unit, focusFirstVe
     }
     QuranContent(state, chosenSurahId, onChooseSurah, vm::selectReciter,
         vm::selectRepeats, vm::play, vm::stopAudio, vm::toggleDownload,
-        onRetry = { vm.openSurah(chosenSurahId, retry = true) }, focusFirstVerse = focusFirstVerse)
+        onRetry = { vm.openSurah(chosenSurahId, retry = true) },
+        focusFirstVerse = focusFirstVerse, onPlayFull = vm::playFull)
 }
 
 /** Content is separate from network/player ownership so layouts and taps can be tested offline. */
@@ -113,6 +114,7 @@ internal fun QuranContent(
     onDownload: () -> Unit,
     onRetry: () -> Unit,
     focusFirstVerse: Boolean = false,
+    onPlayFull: () -> Unit = {},
 ) {
     val surah = QuranSource.selections.firstOrNull { it.selectionId == chosenSurahId }
     val colors = quranColors()
@@ -151,7 +153,7 @@ internal fun QuranContent(
         } else {
             item(key = "settings") {
                 Box(Modifier.spotlightAnchor("quran_reciter")) {
-                    QuranSettings(state, onReciter, onRepeats, onDownload, surah.segmented)
+                    QuranSettings(state, onReciter, onRepeats, onDownload, surah, onPlayFull, onStop)
                 }
             }
             if (state.downloadError != null) item(key = "download-error") { ErrorText(state.downloadError) }
@@ -188,7 +190,7 @@ internal fun QuranContent(
             }
         }
         item(key = "source") {
-            Text("النص: AlQuran.cloud • التلاوات: Islamic Network وEveryAyah، مع مصدر احتياطي Maqra",
+            Text("النص: AlQuran.cloud • الآيات: EveryAyah • التسجيل الكامل: MP3Quran ومصادر المصحف المعلّم",
                 modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
@@ -243,7 +245,8 @@ private fun QuranSurahCard(surah: ShortSurah, onClick: () -> Unit) {
 @Composable
 private fun QuranSettings(
     state: QuranUiState, onReciter: (QuranReciter) -> Unit,
-    onRepeats: (Int) -> Unit, onDownload: () -> Unit, segmented: Boolean = false,
+    onRepeats: (Int) -> Unit, onDownload: () -> Unit,
+    surah: ShortSurah, onPlayFull: () -> Unit, onStop: () -> Unit,
 ) {
     val colors = quranColors()
     var expanded by remember { mutableStateOf(false) }
@@ -261,7 +264,7 @@ private fun QuranSettings(
                     }
                 }
             }
-            Text(if (segmented) "عدد مرات تكرار المقطع" else "عدد مرات تكرار الآية", style = MaterialTheme.typography.titleSmall,
+            Text(if (surah.segmented) "عدد مرات تكرار المقطع" else "عدد مرات تكرار الآية", style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 listOf(1, 3, 5).forEach { count ->
@@ -279,15 +282,56 @@ private fun QuranSettings(
                     }
                 }
             }
+            if (state.verses.isNotEmpty() && QuranFullSources.available(surah)) {
+                val fullStatus = state.audio
+                val isFullActive = fullStatus.fullSelectionId == surah.selectionId &&
+                    fullStatus.phase in setOf(RecitationPhase.BUFFERING, RecitationPhase.PLAYING, RecitationPhase.PAUSED)
+                val title = when (surah.selectionId) {
+                    2001 -> "تشغيل الآية كاملة"
+                    2002 -> "تشغيل خواتيم البقرة"
+                    else -> "تشغيل السورة كاملة"
+                }
+                Surface(shape = RoundedCornerShape(16.dp), color = colors.header,
+                    border = BorderStroke(1.dp, colors.gold.copy(alpha = 0.6f)),
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp)
+                        .clip(RoundedCornerShape(16.dp)).testTag("quran-full-play")
+                        .bounceClick(onClick = if (isFullActive) onStop else onPlayFull, accent = colors.gold)) {
+                    Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 13.dp),
+                        horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+                        when {
+                            isFullActive && fullStatus.phase == RecitationPhase.BUFFERING ->
+                                CircularProgressIndicator(Modifier.size(24.dp), color = colors.gold, strokeWidth = 2.dp)
+                            else -> Icon(if (isFullActive) Icons.Filled.Stop else Icons.Filled.PlayArrow,
+                                contentDescription = null, tint = colors.gold, modifier = Modifier.size(27.dp))
+                        }
+                        Spacer(Modifier.width(10.dp))
+                        Text(when {
+                            isFullActive && fullStatus.phase == RecitationPhase.BUFFERING -> "جارٍ تحميل التلاوة… · إلغاء"
+                            isFullActive && fullStatus.phase == RecitationPhase.PAUSED -> "إيقاف التلاوة المؤقتة"
+                            isFullActive -> "إيقاف التلاوة · المتبقي ${fullStatus.remaining}"
+                            else -> title
+                        }, color = Color.White, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center)
+                    }
+                }
+                Text("التسجيل الكامل يُحمّل أول مرة ويُحفظ للاستماع دون إنترنت",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth())
+            } else if (surah.selectionId == 2002) {
+                Text("تشغيل خواتيم البقرة متواصلة سيتوفر بعد التحقق من تسجيل واحد أصلي للآيتين.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth())
+            }
             if (state.verses.isNotEmpty()) {
                 if (state.savedAyahs == state.verses.size && !state.downloading) {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Filled.Check, null, tint = colors.accent)
-                        Text("التلاوة محفوظة للاستماع دون إنترنت", style = MaterialTheme.typography.bodyMedium,
+                        Text("الآيات منفردة محفوظة للاستماع دون إنترنت", style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.weight(1f))
                     }
                 } else {
-                    QuranAction(if (state.downloading) "إلغاء التنزيل · ${state.savedAyahs} من ${state.verses.size}" else if (segmented) "تحميل تلاوة المقاطع" else "تحميل تلاوة السورة",
+                    QuranAction(if (state.downloading) "إلغاء التنزيل · ${state.savedAyahs} من ${state.verses.size}" else if (surah.segmented) "تحميل تلاوة المقاطع" else "تحميل تلاوة السورة",
                         icon = if (state.downloading) Icons.Filled.Stop else Icons.Filled.Download, onClick = onDownload)
                 }
             }
@@ -299,7 +343,7 @@ private fun QuranSettings(
 internal fun QuranVerseCard(verse: QuranVerse, status: RecitationStatus, onClick: () -> Unit, onStop: () -> Unit) {
     val colors = quranColors()
     val active = status.globalVerseNumber == verse.globalNumber && status.segmentKey == verse.segmentKey &&
-        status.phase in setOf(RecitationPhase.PLAYING, RecitationPhase.BUFFERING, RecitationPhase.PAUSED)
+        status.fullSelectionId == null && status.phase in setOf(RecitationPhase.PLAYING, RecitationPhase.BUFFERING, RecitationPhase.PAUSED)
     val buffering = active && status.phase == RecitationPhase.BUFFERING
     val paused = active && status.phase == RecitationPhase.PAUSED
     val unit = if (verse.segmentIndex == null) "الآية" else "المقطع"
