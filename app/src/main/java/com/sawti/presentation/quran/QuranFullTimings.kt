@@ -45,15 +45,14 @@ internal object QuranFullTimings {
             val readId = matchingRead(reciter) ?: return@withContext emptyList()
             val root = File(app.filesDir, "quran_full_timing/${reciter.editionId}")
             val file = File(root, "selection_${surah.selectionId}_read_${readId}.json")
-            val data = if (file.isFile && file.length() <= MAX_JSON_BYTES) {
+            if (file.isFile) {
                 try {
+                    if (file.length() > MAX_JSON_BYTES) throw IOException("Cached timing oversized")
                     val parsed = parseTiming(file.readText(Charsets.UTF_8), surah)
                     if (parsed.isNotEmpty()) return@withContext cues(app, surah, reciter, parsed)
                     file.delete()
-                    null
-                } catch (_: Exception) { file.delete(); null }
-            } else null
-            if (data != null) return@withContext cues(app, surah, reciter, data)
+                } catch (_: Exception) { file.delete() }
+            }
             val conn = (URL("https://www.mp3quran.net/api/v3/ayat_timing?surah=${surah.number}&read=$readId")
                 .openConnection() as HttpURLConnection).apply {
                 connectTimeout = 12_000
