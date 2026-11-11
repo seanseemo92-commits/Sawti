@@ -684,7 +684,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("معلقة"),
         ),
         "home.fork" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("فرشيطة", "فَرْشِيطَهْ", "فَرْ..."),
+            ArabicDialect.LIBYAN to DialectForm("شوكة", "شَوْكَةْ", "شَوْ..."),
             ArabicDialect.SAUDI to DialectForm("شوكة"),
             ArabicDialect.EGYPTIAN to DialectForm("شوكة"),
             ArabicDialect.SYRIAN to DialectForm("شوكة"),
@@ -1170,7 +1170,7 @@ object DialectCatalog {
             ArabicDialect.LIBYAN to DialectForm("جمل", "جَمَلْ", "جَمَـ..."),
         ),
         "animal.rooster" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("سردوك", "سَرْدُوكْ", "سَرْ..."),
+            ArabicDialect.LIBYAN to DialectForm("ديك", "دِيكْ", "دِي..."),
             ArabicDialect.SAUDI to DialectForm("ديك"),
             ArabicDialect.EGYPTIAN to DialectForm("ديك", "دِيكْ"),
             ArabicDialect.SYRIAN to DialectForm("ديك"),
@@ -1180,7 +1180,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("ديك"),
         ),
         "animal.rabbit" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("قنية", "قُنَّيَّهْ", "قُنْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("أرنب", "أَرْنَبْ", "أَرْ..."),
             ArabicDialect.SAUDI to DialectForm("أرنب"),
             ArabicDialect.EGYPTIAN to DialectForm("أرنب"),
             ArabicDialect.SYRIAN to DialectForm("أرنب"),
