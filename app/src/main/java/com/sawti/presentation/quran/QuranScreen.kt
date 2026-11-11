@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -143,11 +144,31 @@ internal fun QuranContent(
                 Text("اختر السورة أو الآيات", style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
             }
-            itemsIndexed(QuranSource.selections, key = { _, chapter -> "surah-${chapter.selectionId}" }) { index, chapter ->
+            itemsIndexed(QuranSource.shortSurahs, key = { _, chapter -> "surah-${chapter.selectionId}" }) { index, chapter ->
                 StaggeredCascade(row = index, modifier = Modifier.fillMaxWidth()) {
                     Box(modifier = if (index == 0) Modifier.spotlightAnchor("quran_surah") else Modifier) {
                         QuranSurahCard(chapter) { onChooseSurah(chapter.selectionId) }
                     }
+                }
+            }
+            item(key = "selected-verses-divider") {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp)
+                        .testTag("quran-selected-verses-divider"),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    Box(Modifier.weight(1f).height(1.dp).background(colors.gold.copy(alpha = 0.55f)))
+                    Text("الآيات المختارة", color = colors.accent,
+                        fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
+                    Box(Modifier.weight(1f).height(1.dp).background(colors.gold.copy(alpha = 0.55f)))
+                }
+            }
+            itemsIndexed(QuranSource.selections.filter { it.segmented },
+                key = { _, passage -> "surah-${passage.selectionId}" }) { index, passage ->
+                StaggeredCascade(row = QuranSource.shortSurahs.size + index,
+                    modifier = Modifier.fillMaxWidth()) {
+                    QuranSurahCard(passage) { onChooseSurah(passage.selectionId) }
                 }
             }
         } else {
