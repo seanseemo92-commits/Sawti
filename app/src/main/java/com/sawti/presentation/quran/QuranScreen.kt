@@ -299,12 +299,18 @@ private fun QuranSettings(
 internal fun QuranVerseCard(verse: QuranVerse, status: RecitationStatus, onClick: () -> Unit, onStop: () -> Unit) {
     val colors = quranColors()
     val active = status.globalVerseNumber == verse.globalNumber && status.segmentKey == verse.segmentKey &&
-        status.phase in setOf(RecitationPhase.PLAYING, RecitationPhase.BUFFERING)
+        status.phase in setOf(RecitationPhase.PLAYING, RecitationPhase.BUFFERING, RecitationPhase.PAUSED)
     val buffering = active && status.phase == RecitationPhase.BUFFERING
+    val paused = active && status.phase == RecitationPhase.PAUSED
     val unit = if (verse.segmentIndex == null) "الآية" else "المقطع"
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         QuranInteractiveSurface(onClick = onClick, active = active, tag = verse.itemKey,
-            description = when { buffering -> "جارٍ تجهيز $unit"; active -> "$unit قيد التشغيل؛ اضغط للإعادة من البداية"; else -> "اضغط للاستماع إلى $unit" }) {
+            description = when {
+                buffering -> "جارٍ تجهيز $unit"
+                paused -> "تلاوة $unit متوقفة مؤقتًا بسبب صوت آخر، وستستأنف بعد انتهائه"
+                active -> "$unit قيد التشغيل؛ اضغط للإعادة من البداية"
+                else -> "اضغط للاستماع إلى $unit"
+            }) {
             Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 18.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
@@ -314,11 +320,11 @@ internal fun QuranVerseCard(verse: QuranVerse, status: RecitationStatus, onClick
                         Text("${verse.verseNumber}", modifier = Modifier.padding(horizontal = 13.dp, vertical = 6.dp),
                             color = colors.accent, fontWeight = FontWeight.Bold)
                     }
-                    Text(if (buffering) "جارٍ التجهيز…" else if (active) "تلاوة $unit · ${verse.label}" else verse.label,
+                    Text(if (buffering) "جارٍ التجهيز…" else if (paused) "توقف مؤقت · ${verse.label}" else if (active) "تلاوة $unit · ${verse.label}" else verse.label,
                         modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.labelLarge)
                     if (buffering) CircularProgressIndicator(Modifier.size(24.dp), color = colors.accent, strokeWidth = 2.dp)
-                    else Icon(if (active) Icons.Filled.Equalizer else Icons.Filled.PlayArrow,
+                    else Icon(if (active && !paused) Icons.Filled.Equalizer else Icons.Filled.PlayArrow,
                         contentDescription = null, tint = colors.accent, modifier = Modifier.size(27.dp))
                 }
                 Text(verse.uthmaniText, modifier = Modifier.fillMaxWidth().testTag(if (verse.segmentIndex == null) "quran-text-${verse.globalNumber}" else "quran-text-${verse.itemKey}"),
@@ -327,7 +333,7 @@ internal fun QuranVerseCard(verse: QuranVerse, status: RecitationStatus, onClick
                         textAlign = TextAlign.Center, textDirection = TextDirection.ContentOrRtl,
                         platformStyle = PlatformTextStyle(includeFontPadding = true)),
                     color = MaterialTheme.colorScheme.onSurface)
-                if (active) Text(if (buffering) "يتم تجهيز $unit قبل التشغيل" else "اضغط $unit مجددًا للإعادة مع القارئ",
+                if (active) Text(if (buffering) "يتم تجهيز $unit قبل التشغيل" else if (paused) "ستُستأنف التلاوة بعد انتهاء المقاطعة" else "اضغط $unit مجددًا للإعادة مع القارئ",
                     modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
             }

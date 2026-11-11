@@ -121,15 +121,63 @@ class QuranAyahPlayerTest {
     }
 
     @Test
-    fun transientMayDuckStopsSpeechInsteadOfOverlappingOtherAudio() {
+    fun notificationPausesAndResumesTheSameVerseWithoutLosingRepeats() {
+        val app = RuntimeEnvironment.getApplication() as Application
+        val manager = app.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        audio.play(verse, 3)
+        val current = preparedPlayer(0)
+        current.invokePreparedListener()
+        val focusListener = shadowOf(manager).lastAudioFocusRequest.listener
+        focusListener.onAudioFocusChange(AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK)
+        shadowOf(Looper.getMainLooper()).idle()
+        assertEquals(RecitationPhase.PAUSED, states.last().phase)
+        assertEquals(3, states.last().remaining)
+        assertEquals(ShadowMediaPlayer.State.PAUSED, current.state)
+        focusListener.onAudioFocusChange(AudioManager.AUDIOFOCUS_GAIN)
+        shadowOf(Looper.getMainLooper()).idle()
+        assertEquals(RecitationPhase.PLAYING, states.last().phase)
+        assertEquals(ShadowMediaPlayer.State.STARTED, current.state)
+        assertEquals(1, created.size)
+    }
+
+    @Test
+    fun callPausesAndResumesSameVerseUnlessUserExplicitlyStops() {
+        val app = RuntimeEnvironment.getApplication() as Application
+        val manager = app.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        audio.play(verse, 3)
+        val current = preparedPlayer(0)
+        current.invokePreparedListener()
+        val listener = shadowOf(manager).lastAudioFocusRequest.listener
+        listener.onAudioFocusChange(AudioManager.AUDIOFOCUS_LOSS_TRANSIENT)
+        shadowOf(Looper.getMainLooper()).idle()
+        assertEquals(RecitationPhase.PAUSED, states.last().phase)
+        assertEquals(ShadowMediaPlayer.State.PAUSED, current.state)
+        assertEquals(3, states.last().remaining)
+        listener.onAudioFocusChange(AudioManager.AUDIOFOCUS_GAIN)
+        shadowOf(Looper.getMainLooper()).idle()
+        assertEquals(RecitationPhase.PLAYING, states.last().phase)
+        assertEquals(ShadowMediaPlayer.State.STARTED, current.state)
+        audio.stop()
+        listener.onAudioFocusChange(AudioManager.AUDIOFOCUS_GAIN)
+        shadowOf(Looper.getMainLooper()).idle()
+        assertEquals(RecitationPhase.IDLE, states.last().phase)
+        assertEquals(ShadowMediaPlayer.State.END, current.state)
+    }
+
+    @Test
+    fun permanentFocusLossStopsAndDoesNotAutoResume() {
         val app = RuntimeEnvironment.getApplication() as Application
         val manager = app.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         audio.play(verse, 1)
-        preparedPlayer(0).invokePreparedListener()
-        shadowOf(manager).lastAudioFocusRequest.listener.onAudioFocusChange(
-            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK)
+        val current = preparedPlayer(0)
+        current.invokePreparedListener()
+        val listener = shadowOf(manager).lastAudioFocusRequest.listener
+        listener.onAudioFocusChange(AudioManager.AUDIOFOCUS_LOSS)
+        shadowOf(Looper.getMainLooper()).idle()
+        listener.onAudioFocusChange(AudioManager.AUDIOFOCUS_GAIN)
         shadowOf(Looper.getMainLooper()).idle()
         assertEquals(RecitationPhase.IDLE, states.last().phase)
+        assertEquals(ShadowMediaPlayer.State.END, current.state)
     }
     private fun registerSegment(verse: QuranVerse) {
         val app = RuntimeEnvironment.getApplication() as Application

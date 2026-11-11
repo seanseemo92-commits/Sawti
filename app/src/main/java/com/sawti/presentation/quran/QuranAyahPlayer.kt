@@ -14,7 +14,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 
-enum class RecitationPhase { IDLE, BUFFERING, PLAYING, ERROR }
+enum class RecitationPhase { IDLE, BUFFERING, PLAYING, PAUSED, ERROR }
 enum class RecitationFailure { DOWNLOAD, FOCUS, DECODER }
 
 data class RecitationStatus(
@@ -39,6 +39,7 @@ class QuranAyahPlayer(
     private var focusToken: Long? = null
     private var generation = 0L
     private var playsLeft = 0
+    private var pausedForFocus = false
     private var released = false
 
     fun play(verse: QuranVerse, repeatCount: Int) {
@@ -81,7 +82,42 @@ class QuranAyahPlayer(
             candidate.setDataSource(file.absolutePath)
             candidate.setOnPreparedListener { mp ->
                 if (mp !== player || !owns(request)) return@setOnPreparedListener
-                val token = focus.acquire { if (owns(request)) stop() }
+                val token = focus.acquire(
+                    onLost = { if (owns(request) && player === mp) stop() },
+                    onTransientLoss = {
+                        if (owns(request) && player === mp && !pausedForFocus) {
+                            runCatching { mp.pause() }
+                                .onSuccess {
+                                    pausedForFocus = true
+                                    publish(verse, RecitationPhase.PAUSED)
+                                }
+                                .onFailure { fail(verse, RecitationFailure.FOCUS) }
+                        }
+                    },
+                    // Quran is speech: pause for notification sounds so the
+                    // listener never misses part of a verse or repeat.
+                    onDuck = {
+                        if (owns(request) && player === mp && !pausedForFocus) {
+                            runCatching { mp.pause() }
+                                .onSuccess {
+                                    pausedForFocus = true
+                                    publish(verse, RecitationPhase.PAUSED)
+                                }
+                                .onFailure { fail(verse, RecitationFailure.FOCUS) }
+                        }
+                    },
+                    onGain = {
+                        if (owns(request) && player === mp) {
+                            if (pausedForFocus) {
+                                pausedForFocus = false
+                                runCatching {
+                                    mp.start()
+                                    publish(verse, RecitationPhase.PLAYING)
+                                }.onFailure { fail(verse, RecitationFailure.FOCUS) }
+                            }
+                        }
+                    },
+                )
                 if (token == null) {
                     fail(verse, RecitationFailure.FOCUS)
                     return@setOnPreparedListener
@@ -154,6 +190,7 @@ class QuranAyahPlayer(
     private fun clearPlayer() {
         val active = player
         player = null
+        pausedForFocus = false
         if (active != null) {
             runCatching { active.reset() }
             runCatching { active.release() }

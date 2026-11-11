@@ -8,19 +8,46 @@ class AudioPlayer(private val focus: AudioFocusController) {
     private var player: MediaPlayer? = null
     private var focusToken: Long? = null
     private var onCanceled: (() -> Unit)? = null
+    private var pausedForFocus = false
 
     /** Returns false when the file could not be played, so the caller can fall back to TTS. */
     fun play(path: String, onDone: () -> Unit = {}, onCanceled: () -> Unit = onDone): Boolean {
         stop()
-        val token = focus.acquire { stop() } ?: return false
-        focusToken = token
         val mp = try {
             MediaPlayer()
         } catch (_: Exception) {
-            focusToken = null
-            focus.release(token)
             return false
         }
+        val token = focus.acquire(
+            onLost = { if (player === mp) stop() },
+            onTransientLoss = {
+                if (player === mp && !pausedForFocus) {
+                    runCatching { mp.pause() }
+                        .onSuccess { pausedForFocus = true }
+                        .onFailure { stop() }
+                }
+            },
+            // Spoken words must not be missed underneath a notification.
+            onDuck = {
+                if (player === mp && !pausedForFocus) {
+                    runCatching { mp.pause() }
+                        .onSuccess { pausedForFocus = true }
+                        .onFailure { stop() }
+                }
+            },
+            onGain = {
+                if (player === mp) {
+                    if (pausedForFocus) {
+                        pausedForFocus = false
+                        runCatching { mp.start() }.onFailure { stop() }
+                    }
+                }
+            },
+        ) ?: run {
+            runCatching { mp.release() }
+            return false
+        }
+        focusToken = token
         return try {
             mp.setAudioAttributes(
                 AudioAttributes.Builder()
@@ -64,6 +91,7 @@ class AudioPlayer(private val focus: AudioFocusController) {
         player = null
         val token = focusToken
         focusToken = null
+        pausedForFocus = false
         if (current != null) {
             runCatching { current.stop() }
             // Always release, even if stop() throws IllegalStateException.

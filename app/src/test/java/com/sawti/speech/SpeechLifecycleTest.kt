@@ -3,6 +3,8 @@ package com.sawti.speech
 import android.app.Application
 import android.os.Bundle
 import android.os.Looper
+import android.content.Context
+import android.media.AudioManager
 import android.speech.tts.TextToSpeech
 import com.sawti.audio.AudioFocusController
 import java.util.Locale
@@ -58,6 +60,22 @@ class SpeechLifecycleTest {
         shadowOf(Looper.getMainLooper()).idle()
         manager.stop()
         assertEquals(1, done)
+        assertEquals(1, canceled)
+    }
+
+    @Test fun notificationDoesNotCancelTtsButTransientPhoneCallDoes() {
+        val app = RuntimeEnvironment.getApplication() as Application
+        val focus = app.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        var canceled = 0
+        manager.speak("أهلاً", onCanceled = { canceled++ })
+        val listener = shadowOf(focus).lastAudioFocusRequest.listener
+        listener.onAudioFocusChange(AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK)
+        shadowOf(Looper.getMainLooper()).idle()
+        assertEquals(0, canceled)
+        listener.onAudioFocusChange(AudioManager.AUDIOFOCUS_LOSS_TRANSIENT)
+        shadowOf(Looper.getMainLooper()).idle()
+        assertEquals(1, canceled)
+        manager.stop()
         assertEquals(1, canceled)
     }
 
