@@ -52,6 +52,29 @@ class QuranFullTimingsTest {
             cues.firstOrNull { 7080 >= it.startMs && 7080 < it.endMs }?.itemKey)
     }
 
+    @Test fun repeatedVerseStaysLitAfterFirstRecitationUntilNextVerseReallyStarts() {
+        // The official end of the first reading may be earlier than the
+        // beginning of the next verse when Salah Bukhatir repeats it.
+        val cues = listOf(
+            QuranFullCue("ayah-1", 3860, 7080),
+            QuranFullCue("ayah-2", 12000, 15000),
+            QuranFullCue("ayah-3", 19000, 22000),
+        )
+        assertNull(QuranFullTimings.activeCue(cues, 0)) // ta'awwudh
+        assertNull(QuranFullTimings.activeCue(cues, 3859))
+        assertEquals("ayah-1", QuranFullTimings.activeCue(cues, 3860)?.itemKey)
+        assertEquals("ayah-1", QuranFullTimings.activeCue(cues, 7080)?.itemKey)
+        assertEquals("ayah-1", QuranFullTimings.activeCue(cues, 10200)?.itemKey)
+        assertEquals("ayah-1", QuranFullTimings.activeCue(cues, 11999)?.itemKey)
+        assertEquals("ayah-2", QuranFullTimings.activeCue(cues, 12000)?.itemKey)
+        assertEquals("ayah-2", QuranFullTimings.activeCue(cues, 18500)?.itemKey)
+        assertEquals("ayah-3", QuranFullTimings.activeCue(cues, 19000)?.itemKey)
+        assertEquals("ayah-3", QuranFullTimings.activeCue(cues, 35000)?.itemKey)
+        // On entire-surah repeat the media position returns to zero, so
+        // there must be no lingering glow from the previous repetition.
+        assertNull(QuranFullTimings.activeCue(cues, 0))
+    }
+
     @Test fun shortSurahTimingsDoNotShiftExistingNonFatihaVerseOnsets() {
         val ikhlas = QuranSource.shortSurahs.first { it.number == 112 }
         val cues = QuranFullTimings.shortSurahCues(ikhlas,
