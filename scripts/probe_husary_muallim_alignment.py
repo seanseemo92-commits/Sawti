@@ -8,6 +8,7 @@ from __future__ import annotations
 import json, os, subprocess, tempfile, urllib.request, math
 from pathlib import Path
 import numpy as np
+import imageio_ffmpeg
 from scipy.signal import correlate
 OUT=Path("previews/quran-full-playback-test/HUSARY-ALIGNMENT-AUDIT.json")
 UA={"User-Agent":"Sawti-Research/1.4"}
