@@ -106,6 +106,59 @@ class QuranFullTimingsTest {
             QuranFullTimings.parseTiming(raw,selection))
     }
 
+    @Test fun salahBaqarah286RepeatedPhraseStartsOnFirstReadingNotSecond() {
+        val app = RuntimeEnvironment.getApplication() as Application
+        val end = QuranSource.selections.first { it.selectionId == 2002 }
+        val rows = listOf(
+            Triple(285, 6_737_280, 6_767_360),
+            Triple(286, 6_767_360, 6_816_680),
+        )
+        val cues = QuranFullTimings.fromPassagePlan(app, end, QuranReciter.SALAH_BUKHATIR, rows)
+        val fifth = cues.single { it.itemKey == "segment-2_286_5" }
+        val sixth = cues.single { it.itemKey == "segment-2_286_6" }
+        val seventh = cues.single { it.itemKey == "segment-2_286_7" }
+
+        // Previously a 4.65s first reading of "واعف عنا" was wrongly
+        // attributed to the fifth segment; the sixth only lit on repetition.
+        assertEquals(fifth.endMs, sixth.startMs)
+        assertEquals(sixth.endMs, seventh.startMs)
+        assertTrue("Both readings must fit in the sixth cue",
+            sixth.endMs - sixth.startMs in 8_500..9_500)
+        assertEquals(sixth.itemKey,
+            QuranFullTimings.activeCue(cues, sixth.startMs + 150)?.itemKey)
+        assertEquals(sixth.itemKey,
+            QuranFullTimings.activeCue(cues, sixth.startMs + 5_500)?.itemKey)
+        assertEquals(seventh.itemKey,
+            QuranFullTimings.activeCue(cues, seventh.startMs)?.itemKey)
+
+        val firstReading = QuranFullTimings.progressFraction(
+            sixth, seventh.startMs, sixth.startMs + 4_400)
+        val secondReading = QuranFullTimings.progressFraction(
+            sixth, seventh.startMs, sixth.startMs + 7_700)
+        assertTrue("Progress should not finish after first reading", firstReading in 0.40f..0.58f)
+        assertTrue("Progress should continue through the second reading", secondReading in 0.80f..0.96f)
+        assertEquals(1f,
+            QuranFullTimings.progressFraction(sixth, seventh.startMs, seventh.startMs), 0f)
+    }
+
+    @Test fun repeatedPhraseAdjustmentNeverChangesOtherReadersOrUnverifiedTimings() {
+        assertEquals(31_650,
+            QuranFullTimings.startOfWholePassagePhrase(
+                QuranReciter.SALAH_BUKHATIR, 286, 6, 36_300, 31_650))
+        assertEquals(36_300,
+            QuranFullTimings.startOfWholePassagePhrase(
+                QuranReciter.ALAFASY, 286, 6, 36_300, 31_650))
+        assertEquals(36_300,
+            QuranFullTimings.startOfWholePassagePhrase(
+                QuranReciter.HUSARY_MUALLIM, 286, 6, 36_300, 31_650))
+        assertEquals(36_300,
+            QuranFullTimings.startOfWholePassagePhrase(
+                QuranReciter.SALAH_BUKHATIR, 286, 7, 36_300, 31_650))
+        assertEquals(36_301,
+            QuranFullTimings.startOfWholePassagePhrase(
+                QuranReciter.SALAH_BUKHATIR, 286, 6, 36_301, 31_650))
+    }
+
     @Test fun fullAyatKursiHasNineOriginalPhrasePositionsPerReciter() = runBlocking {
         val app = RuntimeEnvironment.getApplication() as Application
         val selection = QuranSource.selections.first { it.selectionId == 2001 }
