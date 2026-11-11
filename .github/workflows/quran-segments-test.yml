@@ -1,0 +1,112 @@
+name: Sawti Quran passages Debug test APK
+
+on:
+  push:
+    branches: [fix/prelaunch-cleanup-hint]
+    paths:
+      - .github/workflows/quran-segments-test.yml
+      - app/src/main/java/com/sawti/presentation/quran/**
+      - app/src/main/assets/quran_passages/**
+      - app/src/test/java/com/sawti/presentation/quran/**
+      - scripts/verify_quran_passages.py
+  workflow_dispatch:
+
+permissions:
+  contents: write # Direct dev-branch download fallback; never a GitHub Release.
+
+concurrency:
+  group: sawti-quran-passages-debug
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    if: github.ref == 'refs/heads/fix/prelaunch-cleanup-hint'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Check exact Quran text, clip identities, and decoded audio
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg > /dev/null
+          python3 scripts/verify_quran_passages.py --decode
+
+      - name: Build isolated Debug APK and run all tests and Debug lint
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon -PquranPreview=true :app:assembleDebug :app:testDebugUnitTest :app:lintDebug --continue
+          git diff --exit-code -- app/schemas
+
+      - name: Summarize failures
+        if: failure()
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          for report in sorted(Path('app/build/test-results/testDebugUnitTest').glob('TEST-*.xml')):
+              root = ET.parse(report).getroot()
+              for failure in root.findall('.//failure'):
+                  print(report.name, failure.get('message', ''), (failure.text or '')[:7000])
+          PY
+
+      - name: Verify test package and prepare downloadable files
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          APK=app/build/outputs/apk/debug/app-debug.apk
+          BUILD_TOOLS=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
+          "$BUILD_TOOLS/aapt" dump badging "$APK" > dist/TEST-APK-METADATA.txt
+          grep -q "package: name='com.sawti.quranpreview'" dist/TEST-APK-METADATA.txt
+          grep -q 'application-debuggable' dist/TEST-APK-METADATA.txt
+          grep -q 'quran-test' dist/TEST-APK-METADATA.txt
+          "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$APK" > dist/TEST-APK-SIGNATURE.txt
+          cp "$APK" dist/Sawti-Quran-Passages-test.apk
+          (cd dist && sha256sum *.apk > SHA256SUMS.txt)
+          python3 - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          totals = dict(tests=0, failures=0, errors=0, skipped=0)
+          for path in Path('app/build/test-results/testDebugUnitTest').glob('TEST-*.xml'):
+              root = ET.parse(path).getroot()
+              for key in totals: totals[key] += int(root.get(key, 0))
+          assert totals['tests'] > 284 and not (totals['failures'] or totals['errors'] or totals['skipped'])
+          print(totals)
+          Path('dist/TEST-RESULTS.txt').write_text(str(totals) + '\n')
+          PY
+          if [ -d app/build/outputs/quran-passages-review ]; then
+            (cd app/build/outputs && zip -q -r ../../../dist/QURAN-PASSAGES-SCREENSHOTS.zip quran-passages-review)
+          fi
+
+      - name: Upload test APK, screenshots and validation reports
+        id: upload
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sawti-Quran-Passages-Debug-test
+          path: |
+            dist/*
+            app/build/test-results/testDebugUnitTest/
+            app/build/reports/lint-results-debug.*
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Make test files downloadable on the dev branch if artifact quota is full
+        if: steps.upload.outcome != 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p previews/quran-passages-test
+          cp dist/* previews/quran-passages-test/
+          if [ -d app/build/outputs/quran-passages-review ]; then cp app/build/outputs/quran-passages-review/*.png previews/quran-passages-test/; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add previews/quran-passages-test/
+          git diff --cached --quiet || git commit -m 'build: deliver Quran passages Debug test APK only'
+          git push origin HEAD:fix/prelaunch-cleanup-hint

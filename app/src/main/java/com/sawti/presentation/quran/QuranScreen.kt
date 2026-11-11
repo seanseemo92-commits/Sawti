@@ -114,7 +114,7 @@ internal fun QuranContent(
     onRetry: () -> Unit,
     focusFirstVerse: Boolean = false,
 ) {
-    val surah = QuranSource.shortSurahs.firstOrNull { it.number == chosenSurahId }
+    val surah = QuranSource.selections.firstOrNull { it.selectionId == chosenSurahId }
     val colors = quranColors()
     val listState = rememberLazyListState()
     LaunchedEffect(chosenSurahId) { listState.scrollToItem(0) }
@@ -130,27 +130,28 @@ internal fun QuranContent(
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         item(key = "heading") {
-            QuranHeading(if (surah == null) "القرآن الكريم" else "سورة ${surah.name}",
-                if (surah == null) "سور قصيرة للاستماع والتكرار" else
-                    "اضغط الآية للاستماع، واضغط مجددًا لتعيدها مع القارئ",
-                surah?.verseCount)
+            QuranHeading(surah?.title ?: "القرآن الكريم",
+                if (surah == null) "سور قصيرة وآيات مختارة للاستماع والتكرار" else
+                    if (surah.segmented) "اضغط المقطع للاستماع، واضغط مجددًا لتعيده مع القارئ"
+                    else "اضغط الآية للاستماع، واضغط مجددًا لتعيدها مع القارئ",
+                surah?.countLabel)
         }
         if (surah == null) {
             item(key = "choose") {
-                Text("اختر السورة", style = MaterialTheme.typography.titleLarge,
+                Text("اختر السورة أو الآيات", style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
             }
-            itemsIndexed(QuranSource.shortSurahs, key = { _, chapter -> "surah-${chapter.number}" }) { index, chapter ->
+            itemsIndexed(QuranSource.selections, key = { _, chapter -> "surah-${chapter.selectionId}" }) { index, chapter ->
                 StaggeredCascade(row = index, modifier = Modifier.fillMaxWidth()) {
                     Box(modifier = if (index == 0) Modifier.spotlightAnchor("quran_surah") else Modifier) {
-                        QuranSurahCard(chapter) { onChooseSurah(chapter.number) }
+                        QuranSurahCard(chapter) { onChooseSurah(chapter.selectionId) }
                     }
                 }
             }
         } else {
             item(key = "settings") {
                 Box(Modifier.spotlightAnchor("quran_reciter")) {
-                    QuranSettings(state, onReciter, onRepeats, onDownload)
+                    QuranSettings(state, onReciter, onRepeats, onDownload, surah.segmented)
                 }
             }
             if (state.downloadError != null) item(key = "download-error") { ErrorText(state.downloadError) }
@@ -176,7 +177,7 @@ internal fun QuranContent(
                         QuranAction("إعادة المحاولة", onClick = onRetry)
                     }
                 }
-                else -> itemsIndexed(state.verses, key = { _, verse -> "ayah-${verse.globalNumber}" }) { index, verse ->
+                else -> itemsIndexed(state.verses, key = { _, verse -> verse.itemKey }) { index, verse ->
                     StaggeredCascade(row = index, modifier = Modifier.fillMaxWidth()) {
                         Box(modifier = if (index == 0) Modifier.spotlightAnchor("quran_verse") else Modifier) {
                             QuranVerseCard(verse, state.audio,
@@ -196,7 +197,7 @@ internal fun QuranContent(
 }
 
 @Composable
-private fun QuranHeading(title: String, subtitle: String, verseCount: Int?) {
+private fun QuranHeading(title: String, subtitle: String, countLabel: String?) {
     val colors = quranColors()
     Surface(shape = CardShape, color = colors.header,
         border = BorderStroke(1.dp, colors.gold.copy(alpha = 0.4f)), modifier = Modifier.fillMaxWidth()) {
@@ -209,7 +210,7 @@ private fun QuranHeading(title: String, subtitle: String, verseCount: Int?) {
                 Text(title, fontSize = 25.sp, lineHeight = 34.sp, fontWeight = FontWeight.Bold,
                     color = Color.White, textAlign = TextAlign.Center, modifier = Modifier.weight(1f, fill = false))
             }
-            if (verseCount != null) Text("$verseCount آيات", color = colors.gold,
+            if (countLabel != null) Text(countLabel, color = colors.gold,
                 style = MaterialTheme.typography.labelLarge)
             Text(subtitle, color = Color(0xFFF2E4C6), textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodyMedium)
@@ -220,7 +221,7 @@ private fun QuranHeading(title: String, subtitle: String, verseCount: Int?) {
 @Composable
 private fun QuranSurahCard(surah: ShortSurah, onClick: () -> Unit) {
     val colors = quranColors()
-    QuranInteractiveSurface(onClick = onClick, tag = "surah-${surah.number}") {
+    QuranInteractiveSurface(onClick = onClick, tag = "surah-${surah.selectionId}") {
         Row(Modifier.fillMaxWidth().padding(18.dp), verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(14.dp)) {
             Box(Modifier.size(46.dp).background(colors.activeSurface, RoundedCornerShape(15.dp)),
@@ -228,9 +229,9 @@ private fun QuranSurahCard(surah: ShortSurah, onClick: () -> Unit) {
                 Icon(Icons.AutoMirrored.Outlined.MenuBook, contentDescription = null, tint = colors.accent)
             }
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                Text("سورة ${surah.name}", fontSize = 21.sp, fontWeight = FontWeight.Bold,
+                Text(surah.title, fontSize = 21.sp, fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface)
-                Text("${surah.verseCount} آيات", style = MaterialTheme.typography.bodyMedium,
+                Text(surah.countLabel, style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null,
@@ -242,7 +243,7 @@ private fun QuranSurahCard(surah: ShortSurah, onClick: () -> Unit) {
 @Composable
 private fun QuranSettings(
     state: QuranUiState, onReciter: (QuranReciter) -> Unit,
-    onRepeats: (Int) -> Unit, onDownload: () -> Unit,
+    onRepeats: (Int) -> Unit, onDownload: () -> Unit, segmented: Boolean = false,
 ) {
     val colors = quranColors()
     var expanded by remember { mutableStateOf(false) }
@@ -260,7 +261,7 @@ private fun QuranSettings(
                     }
                 }
             }
-            Text("عدد مرات تكرار الآية", style = MaterialTheme.typography.titleSmall,
+            Text(if (segmented) "عدد مرات تكرار المقطع" else "عدد مرات تكرار الآية", style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 listOf(1, 3, 5).forEach { count ->
@@ -286,7 +287,7 @@ private fun QuranSettings(
                             color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.weight(1f))
                     }
                 } else {
-                    QuranAction(if (state.downloading) "إلغاء التنزيل · ${state.savedAyahs} من ${state.verses.size}" else "تحميل تلاوة السورة",
+                    QuranAction(if (state.downloading) "إلغاء التنزيل · ${state.savedAyahs} من ${state.verses.size}" else if (segmented) "تحميل تلاوة المقاطع" else "تحميل تلاوة السورة",
                         icon = if (state.downloading) Icons.Filled.Stop else Icons.Filled.Download, onClick = onDownload)
                 }
             }
@@ -297,12 +298,13 @@ private fun QuranSettings(
 @Composable
 internal fun QuranVerseCard(verse: QuranVerse, status: RecitationStatus, onClick: () -> Unit, onStop: () -> Unit) {
     val colors = quranColors()
-    val active = status.globalVerseNumber == verse.globalNumber &&
+    val active = status.globalVerseNumber == verse.globalNumber && status.segmentKey == verse.segmentKey &&
         status.phase in setOf(RecitationPhase.PLAYING, RecitationPhase.BUFFERING)
     val buffering = active && status.phase == RecitationPhase.BUFFERING
+    val unit = if (verse.segmentIndex == null) "الآية" else "المقطع"
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        QuranInteractiveSurface(onClick = onClick, active = active, tag = "ayah-${verse.globalNumber}",
-            description = when { buffering -> "جارٍ تجهيز الآية"; active -> "الآية قيد التشغيل؛ اضغط لإعادتها من البداية"; else -> "اضغط للاستماع إلى الآية" }) {
+        QuranInteractiveSurface(onClick = onClick, active = active, tag = verse.itemKey,
+            description = when { buffering -> "جارٍ تجهيز $unit"; active -> "$unit قيد التشغيل؛ اضغط للإعادة من البداية"; else -> "اضغط للاستماع إلى $unit" }) {
             Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 18.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
@@ -312,26 +314,26 @@ internal fun QuranVerseCard(verse: QuranVerse, status: RecitationStatus, onClick
                         Text("${verse.verseNumber}", modifier = Modifier.padding(horizontal = 13.dp, vertical = 6.dp),
                             color = colors.accent, fontWeight = FontWeight.Bold)
                     }
-                    Text(if (buffering) "جارٍ التجهيز…" else if (active) "تلاوة الآية" else "الآية ${verse.verseNumber}",
+                    Text(if (buffering) "جارٍ التجهيز…" else if (active) "تلاوة $unit · ${verse.label}" else verse.label,
                         modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.labelLarge)
                     if (buffering) CircularProgressIndicator(Modifier.size(24.dp), color = colors.accent, strokeWidth = 2.dp)
                     else Icon(if (active) Icons.Filled.Equalizer else Icons.Filled.PlayArrow,
                         contentDescription = null, tint = colors.accent, modifier = Modifier.size(27.dp))
                 }
-                Text(verse.uthmaniText, modifier = Modifier.fillMaxWidth().testTag("quran-text-${verse.globalNumber}"),
+                Text(verse.uthmaniText, modifier = Modifier.fillMaxWidth().testTag(if (verse.segmentIndex == null) "quran-text-${verse.globalNumber}" else "quran-text-${verse.itemKey}"),
                     style = TextStyle(fontFamily = QuranFont, fontSynthesis = FontSynthesis.None,
                         fontWeight = FontWeight.Normal, fontSize = 30.sp, lineHeight = 62.sp,
                         textAlign = TextAlign.Center, textDirection = TextDirection.ContentOrRtl,
                         platformStyle = PlatformTextStyle(includeFontPadding = true)),
                     color = MaterialTheme.colorScheme.onSurface)
-                if (active) Text(if (buffering) "يتم حفظ الآية قبل تشغيلها" else "اضغط الآية مجددًا لتعيدها مع القارئ",
+                if (active) Text(if (buffering) "يتم تجهيز $unit قبل التشغيل" else "اضغط $unit مجددًا للإعادة مع القارئ",
                     modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
             }
         }
         // A local stop action follows only this active ayah; there is no fixed player.
-        if (active) QuranAction(if (buffering) "إلغاء تجهيز الآية" else "إيقاف التلاوة · المتبقي ${status.remaining}",
+        if (active) QuranAction(if (buffering) "إلغاء تجهيز $unit" else "إيقاف التلاوة · المتبقي ${status.remaining}",
             icon = Icons.Filled.Stop, onClick = onStop)
     }
 }

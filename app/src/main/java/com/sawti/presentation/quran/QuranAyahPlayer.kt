@@ -22,6 +22,7 @@ data class RecitationStatus(
     val phase: RecitationPhase = RecitationPhase.IDLE,
     val remaining: Int = 0,
     val failure: RecitationFailure? = null,
+    val segmentKey: String? = null,
 )
 
 /** A tap always restarts this ayah. There is deliberately no queue or whole-surah player. */
@@ -51,7 +52,7 @@ class QuranAyahPlayer(
         publish(verse, RecitationPhase.BUFFERING)
         downloadJob = scope.launch {
             try {
-                val file = cache.obtain(verse.globalNumber, verse.surahNumber, verse.verseNumber)
+                val file = cache.obtain(verse)
                 ensureActive()
                 if (owns(request)) prepareLocalPlayer(verse, file, request, 0)
             } catch (cancelled: CancellationException) {
@@ -65,7 +66,7 @@ class QuranAyahPlayer(
     private fun owns(request: Long) = !released && request == generation
 
     private fun publish(verse: QuranVerse, phase: RecitationPhase) {
-        update(RecitationStatus(verse.globalNumber, phase, playsLeft))
+        update(RecitationStatus(verse.globalNumber, phase, playsLeft, segmentKey = verse.segmentKey))
     }
 
     private fun prepareLocalPlayer(verse: QuranVerse, file: File, request: Long, attempt: Int) {
@@ -127,13 +128,13 @@ class QuranAyahPlayer(
         publish(verse, RecitationPhase.BUFFERING)
         downloadJob = scope.launch {
             try {
-                cache.invalidate(verse.globalNumber)
+                cache.invalidate(verse)
                 ensureActive()
                 if (!owns(request)) return@launch
                 if (attempt >= 1) {
                     fail(verse, RecitationFailure.DECODER)
                 } else {
-                    val file = cache.obtain(verse.globalNumber, verse.surahNumber, verse.verseNumber)
+                    val file = cache.obtain(verse)
                     ensureActive()
                     if (owns(request)) prepareLocalPlayer(verse, file, request, attempt + 1)
                 }
@@ -147,7 +148,7 @@ class QuranAyahPlayer(
 
     private fun fail(verse: QuranVerse, failure: RecitationFailure) {
         stop()
-        if (!released) update(RecitationStatus(verse.globalNumber, RecitationPhase.ERROR, failure = failure))
+        if (!released) update(RecitationStatus(verse.globalNumber, RecitationPhase.ERROR, failure = failure, segmentKey = verse.segmentKey))
     }
 
     private fun clearPlayer() {

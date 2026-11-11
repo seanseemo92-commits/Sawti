@@ -25,6 +25,8 @@ class QuranAudioCache(
         it.openConnection() as HttpURLConnection
     },
 ) {
+    private val context = context.applicationContext
+
     // Separate storage per reciter. Existing alafasy downloads remain intact.
     private val audioDir = File(context.applicationContext.filesDir, "quran_recitations/" + reciter.editionId)
 
@@ -34,13 +36,34 @@ class QuranAudioCache(
     }
 
     suspend fun cachedCount(verses: List<QuranVerse>): Int = withContext(Dispatchers.IO) {
-        verses.count { cachedFile(it.globalNumber) != null }
+        verses.count { if (it.segmentIndex != null) QuranPassages.hasRecording(context, it, reciter)
+            else cachedFile(it.globalNumber) != null }
     }
 
     suspend fun invalidate(number: Int) = withContext(Dispatchers.IO) {
         val target = targetFile(number)
         locks.getOrPut(target.absolutePath) { Mutex() }.withLock {
             if (target.exists() && !target.delete()) throw IOException("Cannot remove damaged recording")
+        }
+    }
+
+    suspend fun invalidate(verse: QuranVerse) {
+        if (verse.segmentIndex == null) invalidate(verse.globalNumber)
+        else withContext(Dispatchers.IO) {
+            val file = QuranPassages.target(context, verse, reciter)
+            locks.getOrPut(file.absolutePath) { Mutex() }.withLock {
+                if (file.exists() && !file.delete()) throw IOException("Cannot remove damaged segment")
+            }
+        }
+    }
+
+    suspend fun obtain(verse: QuranVerse): File {
+        if (verse.segmentIndex == null) return obtain(verse.globalNumber, verse.surahNumber, verse.verseNumber)
+        return withContext(Dispatchers.IO) {
+            val file = QuranPassages.target(context, verse, reciter)
+            locks.getOrPut(file.absolutePath) { Mutex() }.withLock {
+                QuranPassages.obtain(context, verse, reciter)
+            }
         }
     }
 

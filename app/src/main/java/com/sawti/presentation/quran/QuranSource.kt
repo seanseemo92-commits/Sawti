@@ -11,14 +11,35 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.io.IOException
 
-data class ShortSurah(val number: Int, val name: String, val verseCount: Int)
+data class ShortSurah(
+    val number: Int,
+    val name: String,
+    val verseCount: Int,
+    val selectionId: Int = number,
+    val segmentCount: Int? = null,
+) {
+    val segmented: Boolean get() = segmentCount != null
+    val title: String get() = if (segmented) name else "سورة $name"
+    val countLabel: String get() = when (selectionId) {
+        2001 -> "الآية 255 · $segmentCount مقاطع"
+        2002 -> "الآيات 284–286 · $segmentCount مقطعًا"
+        else -> "$verseCount آيات"
+    }
+}
 
 data class QuranVerse(
     val surahNumber: Int,
     val verseNumber: Int,
     val globalNumber: Int,
     val uthmaniText: String,
-)
+    val segmentIndex: Int? = null,
+    val segmentCount: Int? = null,
+) {
+    val segmentKey: String? get() = segmentIndex?.let { "${surahNumber}_${verseNumber}_$it" }
+    val itemKey: String get() = segmentKey?.let { "segment-$it" } ?: "ayah-$globalNumber"
+    val label: String get() = segmentIndex?.let { "الآية $verseNumber · المقطع $it من $segmentCount" }
+        ?: "الآية $verseNumber"
+}
 
 object QuranSource {
     // First-release set of shorter chapters, with al-Fatihah first.
@@ -38,6 +59,12 @@ object QuranSource {
         ShortSurah(104, "الهمزة", 9),
     )
 
+    // Selection IDs are distinct from surah IDs: both passages belong to Al-Baqarah.
+    val selections = shortSurahs + listOf(
+        ShortSurah(2, "آية الكرسي", 1, selectionId = 2001, segmentCount = 9),
+        ShortSurah(2, "خواتيم البقرة", 3, selectionId = 2002, segmentCount = 17),
+    )
+
     private const val API_BASE = "https://api.alquran.cloud/v1/surah"
     private const val MAX_TEXT_BYTES = 256 * 1024
     // Canonical Hafs global ayah numbering for the supported first-release surahs.
@@ -48,6 +75,12 @@ object QuranSource {
     )
 
     internal fun checkAyah(global: Int, surah: Int, local: Int) {
+        if (surah == 2) {
+            require(local in setOf(255, 284, 285, 286) && global == local + 7) {
+                "Ayah does not belong to the selected Al-Baqarah passages"
+            }
+            return
+        }
         val chapter = shortSurahs.firstOrNull { it.number == surah }
             ?: throw IllegalArgumentException("Unsupported surah")
         require(local in 1..chapter.verseCount && global == firstAyahs.getValue(surah) + local - 1) {
@@ -98,6 +131,7 @@ object QuranSource {
 
     suspend fun load(context: Context, surah: ShortSurah): List<QuranVerse> =
         withContext(Dispatchers.IO) {
+            if (surah.segmented) return@withContext QuranPassages.load(context, surah.selectionId)
             // Download once; subsequent visits can display verified text without internet.
             // Recordings are cached separately in filesDir by QuranAudioCache. None are bundled in the APK.
             val dir = File(context.filesDir, "quran_uthmani_cache")

@@ -131,4 +131,53 @@ class QuranAyahPlayerTest {
         shadowOf(Looper.getMainLooper()).idle()
         assertEquals(RecitationPhase.IDLE, states.last().phase)
     }
+    private fun registerSegment(verse: QuranVerse) {
+        val app = RuntimeEnvironment.getApplication() as Application
+        val file = QuranPassages.target(app, verse, QuranReciter.ALAFASY)
+        ShadowMediaPlayer.addMediaInfo(DataSource.toDataSource(file.absolutePath), ShadowMediaPlayer.MediaInfo(8_000, -1))
+    }
+
+    @Test
+    fun differentSegmentsOfTheSameAyahKeepIndependentPlaybackAndIgnoreStaleCompletion() {
+        val app = RuntimeEnvironment.getApplication() as Application
+        val parts = QuranPassages.load(app, 2001)
+        registerSegment(parts[0])
+        registerSegment(parts[1])
+        audio.play(parts[0], 1)
+        val first = preparedPlayer(0)
+        first.invokePreparedListener()
+        assertEquals(parts[0].segmentKey, states.last().segmentKey)
+        audio.play(parts[1], 1)
+        val second = preparedPlayer(1)
+        second.invokePreparedListener()
+        assertEquals(parts[1].segmentKey, states.last().segmentKey)
+        assertEquals(ShadowMediaPlayer.State.END, first.state)
+        first.invokeCompletionListener()
+        assertEquals(parts[1].segmentKey, states.last().segmentKey)
+        assertEquals(RecitationPhase.PLAYING, states.last().phase)
+    }
+
+    @Test
+    fun repeatedSegmentTapsRestartAndThreeRepeatsNeverAdvanceToAnotherPart() {
+        val app = RuntimeEnvironment.getApplication() as Application
+        val part = QuranPassages.load(app, 2002).first()
+        registerSegment(part)
+        audio.play(part, 3)
+        val old = preparedPlayer(0)
+        old.invokePreparedListener()
+        audio.play(part, 3)
+        val current = preparedPlayer(1)
+        current.invokePreparedListener()
+        old.invokeCompletionListener()
+        assertEquals(3, states.last().remaining)
+        current.invokeCompletionListener()
+        assertEquals(2, states.last().remaining)
+        assertEquals(part.segmentKey, states.last().segmentKey)
+        current.invokeCompletionListener()
+        assertEquals(1, states.last().remaining)
+        current.invokeCompletionListener()
+        assertEquals(RecitationPhase.IDLE, states.last().phase)
+        assertEquals(2, created.size)
+    }
+
 }

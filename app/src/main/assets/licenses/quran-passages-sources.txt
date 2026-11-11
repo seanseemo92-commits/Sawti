@@ -1,0 +1,22 @@
+Sawti Quran passage test assets
+
+Uthmani text: AlQuran.cloud / Islamic Network, 2:255 and 2:284-286.
+https://api.alquran.cloud/v1/ayah/2:255/quran-uthmani
+Original letters, diacritics and Quran marks are preserved across fragments.
+
+Recordings: EveryAyah.com, exact source URLs and SHA-256 in
+scripts/quran_passages_plan.json in the Sawti source repository.
+Alafasy_128kbps — Mishary Rashid Alafasy
+Salaah_AbdulRahman_Bukhatir_128kbps — Salah Bukhatir
+Husary_Muallim_128kbps — Mahmoud Khalil Al-Husary (Muallim)
+
+Word timing assistance for Alafasy and Husary:
+Collin Fair, quran-align, release 2016-11-24.
+https://github.com/cpfair/quran-align
+Creative Commons Attribution 4.0 International.
+https://creativecommons.org/licenses/by/4.0/
+Phrase boundaries have been adapted. Full license: quran-align-CC-BY-4.0.txt.
+This timing-data license does not establish rights to the source recordings.
+
+Human listening and Quranic stopping/starting review of these candidate test
+clips is pending. Automated alignment does not certify recitation boundaries.

@@ -15,6 +15,7 @@ android {
         targetSdk = 35
         versionCode = 5
         versionName = "1.4"
+        manifestPlaceholders["appLabel"] = "@string/app_name"
     }
 
     // The production key is supplied only at release time by GitHub Actions secrets.
@@ -31,6 +32,13 @@ android {
         }
     }
     buildTypes {
+        debug {
+            if (providers.gradleProperty("quranPreview").orNull == "true") {
+                applicationIdSuffix = ".quranpreview"
+                versionNameSuffix = "-quran-test"
+                manifestPlaceholders["appLabel"] = "صوتي — اختبار القرآن"
+            }
+        }
         release {
             isMinifyEnabled = true
             signingConfigs.findByName("production")?.let { signingConfig = it }

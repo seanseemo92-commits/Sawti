@@ -56,13 +56,13 @@ internal class QuranViewModel(application: Application) : AndroidViewModel(appli
     fun openSurah(id: Int?, retry: Boolean = false) {
         if (!retry && id == _state.value.surahId &&
             (_state.value.loading || _state.value.verses.isNotEmpty())) return
-        val surah = QuranSource.shortSurahs.firstOrNull { it.number == id }
+        val surah = QuranSource.selections.firstOrNull { it.selectionId == id }
         val request = ++loadGeneration
         loadJob?.cancel()
         cancelDownload()
         countJob?.cancel()
         player.stop()
-        _state.update { it.copy(surahId = surah?.number, verses = emptyList(),
+        _state.update { it.copy(surahId = surah?.selectionId, verses = emptyList(),
             loading = surah != null, loadError = null, savedAyahs = 0, downloadError = null) }
         if (surah == null) return
         loadJob = viewModelScope.launch {
@@ -130,7 +130,7 @@ internal class QuranViewModel(application: Application) : AndroidViewModel(appli
         downloadJob = viewModelScope.launch {
             try {
                 for (verse in verses) {
-                    currentCache.obtain(verse.globalNumber, verse.surahNumber, verse.verseNumber)
+                    currentCache.obtain(verse)
                     val count = currentCache.cachedCount(verses)
                     if (request == downloadGeneration) _state.update { it.copy(savedAyahs = count) }
                 }

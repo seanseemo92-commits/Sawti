@@ -1,0 +1,566 @@
+{
+  "version": 1,
+  "timingAttribution": "Collin Fair, quran-align 2016-11-24 (CC BY 4.0); phrase boundaries adapted. Salah boundaries assisted by canonical-text alignment; listening review pending.",
+  "verses": [
+    {
+      "ayah": 255,
+      "global": 262,
+      "text": "ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ لَا تَأْخُذُهُۥ سِنَةٌۭ وَلَا نَوْمٌۭ ۚ لَّهُۥ مَا فِى ٱلسَّمَٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۗ مَن ذَا ٱلَّذِى يَشْفَعُ عِندَهُۥٓ إِلَّا بِإِذْنِهِۦ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَىْءٍۢ مِّنْ عِلْمِهِۦٓ إِلَّا بِمَا شَآءَ ۚ وَسِعَ كُرْسِيُّهُ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضَ ۖ وَلَا يَـُٔودُهُۥ حِفْظُهُمَا ۚ وَهُوَ ٱلْعَلِىُّ ٱلْعَظِيمُ",
+      "textSource": "https://api.alquran.cloud/v1/ayah/2:255/quran-uthmani",
+      "textResponseSha256": "29a6aef2a506f0f62cf538d87a9870b1fa51142316afe5a5e04a393ea8fabafd",
+      "parts": [
+        {
+          "text": "ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ",
+          "wordEnd": 7,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 0,
+              "endMs": 8105
+            },
+            "salah.bukhatir": {
+              "startMs": 0,
+              "endMs": 6200
+            },
+            "husary.muallim": {
+              "startMs": 200,
+              "endMs": 13650
+            }
+          }
+        },
+        {
+          "text": "لَا تَأْخُذُهُۥ سِنَةٌۭ وَلَا نَوْمٌۭ ۚ",
+          "wordEnd": 12,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 8105,
+              "endMs": 13885
+            },
+            "salah.bukhatir": {
+              "startMs": 12650,
+              "endMs": 17500
+            },
+            "husary.muallim": {
+              "startMs": 17900,
+              "endMs": 23800
+            }
+          }
+        },
+        {
+          "text": "لَّهُۥ مَا فِى ٱلسَّمَٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۗ",
+          "wordEnd": 19,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 13885,
+              "endMs": 18305
+            },
+            "salah.bukhatir": {
+              "startMs": 17500,
+              "endMs": 22250
+            },
+            "husary.muallim": {
+              "startMs": 29250,
+              "endMs": 35400
+            }
+          }
+        },
+        {
+          "text": "مَن ذَا ٱلَّذِى يَشْفَعُ عِندَهُۥٓ إِلَّا بِإِذْنِهِۦ ۚ",
+          "wordEnd": 26,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 18305,
+              "endMs": 25915
+            },
+            "salah.bukhatir": {
+              "startMs": 22250,
+              "endMs": 28150
+            },
+            "husary.muallim": {
+              "startMs": 41200,
+              "endMs": 50250
+            }
+          }
+        },
+        {
+          "text": "يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ",
+          "wordEnd": 32,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 25915,
+              "endMs": 30225
+            },
+            "salah.bukhatir": {
+              "startMs": 28150,
+              "endMs": 33150
+            },
+            "husary.muallim": {
+              "startMs": 56000,
+              "endMs": 62700
+            }
+          }
+        },
+        {
+          "text": "وَلَا يُحِيطُونَ بِشَىْءٍۢ مِّنْ عِلْمِهِۦٓ إِلَّا بِمَا شَآءَ ۚ",
+          "wordEnd": 40,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 30225,
+              "endMs": 40075
+            },
+            "salah.bukhatir": {
+              "startMs": 33150,
+              "endMs": 41000
+            },
+            "husary.muallim": {
+              "startMs": 68300,
+              "endMs": 80300
+            }
+          }
+        },
+        {
+          "text": "وَسِعَ كُرْسِيُّهُ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضَ ۖ",
+          "wordEnd": 44,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 40075,
+              "endMs": 44585
+            },
+            "salah.bukhatir": {
+              "startMs": 41000,
+              "endMs": 45900
+            },
+            "husary.muallim": {
+              "startMs": 86000,
+              "endMs": 92050
+            }
+          }
+        },
+        {
+          "text": "وَلَا يَـُٔودُهُۥ حِفْظُهُمَا ۚ",
+          "wordEnd": 47,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 44585,
+              "endMs": 47905
+            },
+            "salah.bukhatir": {
+              "startMs": 45900,
+              "endMs": 49100
+            },
+            "husary.muallim": {
+              "startMs": 97250,
+              "endMs": 101950
+            }
+          }
+        },
+        {
+          "text": "وَهُوَ ٱلْعَلِىُّ ٱلْعَظِيمُ",
+          "wordEnd": 50,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 47905,
+              "endMs": 51770
+            },
+            "salah.bukhatir": {
+              "startMs": 49100,
+              "endMs": 53506
+            },
+            "husary.muallim": {
+              "startMs": 105400,
+              "endMs": 109170
+            }
+          }
+        }
+      ],
+      "sources": {
+        "ar.alafasy": {
+          "url": "https://everyayah.com/data/Alafasy_128kbps/002255.mp3",
+          "sha256": "00e62c8d72dcdb5f62dd87bb85e14abf3fc93d01c8171374baccbc913bb55833"
+        },
+        "salah.bukhatir": {
+          "url": "https://everyayah.com/data/Salaah_AbdulRahman_Bukhatir_128kbps/002255.mp3",
+          "sha256": "bfe6e7dcefdad1905f5690f28aebce3ec0ff1baae944b5363208fe2e606b4e78"
+        },
+        "husary.muallim": {
+          "url": "https://everyayah.com/data/Husary_Muallim_128kbps/002255.mp3",
+          "sha256": "dd9bf4c7cf855bbf0f4d5c6f6bf9163e895930090f9134fa975de6401be7d615"
+        }
+      }
+    },
+    {
+      "ayah": 284,
+      "global": 291,
+      "text": "لِّلَّهِ مَا فِى ٱلسَّمَٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۗ وَإِن تُبْدُوا۟ مَا فِىٓ أَنفُسِكُمْ أَوْ تُخْفُوهُ يُحَاسِبْكُم بِهِ ٱللَّهُ ۖ فَيَغْفِرُ لِمَن يَشَآءُ وَيُعَذِّبُ مَن يَشَآءُ ۗ وَٱللَّهُ عَلَىٰ كُلِّ شَىْءٍۢ قَدِيرٌ",
+      "textSource": "https://api.alquran.cloud/v1/ayah/2:284/quran-uthmani",
+      "textResponseSha256": "16951431a4aa3b6e9009c100ce901833f72cf6e0741478fb6df5b8ce07edda05",
+      "parts": [
+        {
+          "text": "لِّلَّهِ مَا فِى ٱلسَّمَٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۗ",
+          "wordEnd": 7,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 0,
+              "endMs": 4645
+            },
+            "salah.bukhatir": {
+              "startMs": 0,
+              "endMs": 5200
+            },
+            "husary.muallim": {
+              "startMs": 250,
+              "endMs": 7750
+            }
+          }
+        },
+        {
+          "text": "وَإِن تُبْدُوا۟ مَا فِىٓ أَنفُسِكُمْ أَوْ تُخْفُوهُ يُحَاسِبْكُم بِهِ ٱللَّهُ ۖ",
+          "wordEnd": 17,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 4645,
+              "endMs": 15935
+            },
+            "salah.bukhatir": {
+              "startMs": 5200,
+              "endMs": 13800
+            },
+            "husary.muallim": {
+              "startMs": 12250,
+              "endMs": 26750
+            }
+          }
+        },
+        {
+          "text": "فَيَغْفِرُ لِمَن يَشَآءُ وَيُعَذِّبُ مَن يَشَآءُ ۗ",
+          "wordEnd": 23,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 15935,
+              "endMs": 25275
+            },
+            "salah.bukhatir": {
+              "startMs": 13800,
+              "endMs": 22100
+            },
+            "husary.muallim": {
+              "startMs": 30550,
+              "endMs": 41350
+            }
+          }
+        },
+        {
+          "text": "وَٱللَّهُ عَلَىٰ كُلِّ شَىْءٍۢ قَدِيرٌ",
+          "wordEnd": 28,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 25275,
+              "endMs": 31000
+            },
+            "salah.bukhatir": {
+              "startMs": 22100,
+              "endMs": 27149
+            },
+            "husary.muallim": {
+              "startMs": 47250,
+              "endMs": 54060
+            }
+          }
+        }
+      ],
+      "sources": {
+        "ar.alafasy": {
+          "url": "https://everyayah.com/data/Alafasy_128kbps/002284.mp3",
+          "sha256": "93636d5ab2b44a2a9b436d4be402d4d38130519af09865a6839c6376a650cd8a"
+        },
+        "salah.bukhatir": {
+          "url": "https://everyayah.com/data/Salaah_AbdulRahman_Bukhatir_128kbps/002284.mp3",
+          "sha256": "b9808b5147459887de35d61652b354143d39618eb6fdb7dfc438cd951730d63a"
+        },
+        "husary.muallim": {
+          "url": "https://everyayah.com/data/Husary_Muallim_128kbps/002284.mp3",
+          "sha256": "acd562bec15c699e45b0648e6fb7a65d57592fef6bf72a81a1b5e19104376dd5"
+        }
+      }
+    },
+    {
+      "ayah": 285,
+      "global": 292,
+      "text": "ءَامَنَ ٱلرَّسُولُ بِمَآ أُنزِلَ إِلَيْهِ مِن رَّبِّهِۦ وَٱلْمُؤْمِنُونَ ۚ كُلٌّ ءَامَنَ بِٱللَّهِ وَمَلَٰٓئِكَتِهِۦ وَكُتُبِهِۦ وَرُسُلِهِۦ لَا نُفَرِّقُ بَيْنَ أَحَدٍۢ مِّن رُّسُلِهِۦ ۚ وَقَالُوا۟ سَمِعْنَا وَأَطَعْنَا ۖ غُفْرَانَكَ رَبَّنَا وَإِلَيْكَ ٱلْمَصِيرُ",
+      "textSource": "https://api.alquran.cloud/v1/ayah/2:285/quran-uthmani",
+      "textResponseSha256": "65766b77982063195ecbb7ce8ffba60a8ab744a7550077b03a0b1e53f22d0338",
+      "parts": [
+        {
+          "text": "ءَامَنَ ٱلرَّسُولُ بِمَآ أُنزِلَ إِلَيْهِ مِن رَّبِّهِۦ وَٱلْمُؤْمِنُونَ ۚ",
+          "wordEnd": 8,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 0,
+              "endMs": 10295
+            },
+            "salah.bukhatir": {
+              "startMs": 0,
+              "endMs": 7900
+            },
+            "husary.muallim": {
+              "startMs": 400,
+              "endMs": 13050
+            }
+          }
+        },
+        {
+          "text": "كُلٌّ ءَامَنَ بِٱللَّهِ وَمَلَٰٓئِكَتِهِۦ وَكُتُبِهِۦ وَرُسُلِهِۦ",
+          "wordEnd": 14,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 10295,
+              "endMs": 18445
+            },
+            "salah.bukhatir": {
+              "startMs": 7900,
+              "endMs": 14950
+            },
+            "husary.muallim": {
+              "startMs": 18300,
+              "endMs": 29695
+            }
+          }
+        },
+        {
+          "text": "لَا نُفَرِّقُ بَيْنَ أَحَدٍۢ مِّن رُّسُلِهِۦ ۚ",
+          "wordEnd": 20,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 18445,
+              "endMs": 23125
+            },
+            "salah.bukhatir": {
+              "startMs": 14950,
+              "endMs": 19400
+            },
+            "husary.muallim": {
+              "startMs": 29695,
+              "endMs": 36150
+            }
+          }
+        },
+        {
+          "text": "وَقَالُوا۟ سَمِعْنَا وَأَطَعْنَا ۖ",
+          "wordEnd": 23,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 23125,
+              "endMs": 26245
+            },
+            "salah.bukhatir": {
+              "startMs": 19400,
+              "endMs": 23100
+            },
+            "husary.muallim": {
+              "startMs": 41000,
+              "endMs": 46700
+            }
+          }
+        },
+        {
+          "text": "غُفْرَانَكَ رَبَّنَا وَإِلَيْكَ ٱلْمَصِيرُ",
+          "wordEnd": 27,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 26245,
+              "endMs": 32520
+            },
+            "salah.bukhatir": {
+              "startMs": 23100,
+              "endMs": 29212
+            },
+            "husary.muallim": {
+              "startMs": 49200,
+              "endMs": 56010
+            }
+          }
+        }
+      ],
+      "sources": {
+        "ar.alafasy": {
+          "url": "https://everyayah.com/data/Alafasy_128kbps/002285.mp3",
+          "sha256": "7df869559d653ba486b1b00b08922c72950b2fe9f203cc081e37b17c8d89e07f"
+        },
+        "salah.bukhatir": {
+          "url": "https://everyayah.com/data/Salaah_AbdulRahman_Bukhatir_128kbps/002285.mp3",
+          "sha256": "3d88f8707453add36d63fbc00df454de63fe229e6529a7ecc349d03c723e630b"
+        },
+        "husary.muallim": {
+          "url": "https://everyayah.com/data/Husary_Muallim_128kbps/002285.mp3",
+          "sha256": "ac58a044d331aa36706cce0e8c887faa9b3a1843a655c75906166a37d11e54e5"
+        }
+      }
+    },
+    {
+      "ayah": 286,
+      "global": 293,
+      "text": "لَا يُكَلِّفُ ٱللَّهُ نَفْسًا إِلَّا وُسْعَهَا ۚ لَهَا مَا كَسَبَتْ وَعَلَيْهَا مَا ٱكْتَسَبَتْ ۗ رَبَّنَا لَا تُؤَاخِذْنَآ إِن نَّسِينَآ أَوْ أَخْطَأْنَا ۚ رَبَّنَا وَلَا تَحْمِلْ عَلَيْنَآ إِصْرًۭا كَمَا حَمَلْتَهُۥ عَلَى ٱلَّذِينَ مِن قَبْلِنَا ۚ رَبَّنَا وَلَا تُحَمِّلْنَا مَا لَا طَاقَةَ لَنَا بِهِۦ ۖ وَٱعْفُ عَنَّا وَٱغْفِرْ لَنَا وَٱرْحَمْنَآ ۚ أَنتَ مَوْلَىٰنَا فَٱنصُرْنَا عَلَى ٱلْقَوْمِ ٱلْكَٰفِرِينَ",
+      "textSource": "https://api.alquran.cloud/v1/ayah/2:286/quran-uthmani",
+      "textResponseSha256": "5620f610f341369f5ce87a6b7ad5fdb2a22b19c2e62ab3c6b5e7101a30d95b4f",
+      "parts": [
+        {
+          "text": "لَا يُكَلِّفُ ٱللَّهُ نَفْسًا إِلَّا وُسْعَهَا ۚ",
+          "wordEnd": 6,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 0,
+              "endMs": 5215
+            },
+            "salah.bukhatir": {
+              "startMs": 0,
+              "endMs": 4850
+            },
+            "husary.muallim": {
+              "startMs": 100,
+              "endMs": 8000
+            }
+          }
+        },
+        {
+          "text": "لَهَا مَا كَسَبَتْ وَعَلَيْهَا مَا ٱكْتَسَبَتْ ۗ",
+          "wordEnd": 12,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 5215,
+              "endMs": 9565
+            },
+            "salah.bukhatir": {
+              "startMs": 4850,
+              "endMs": 9450
+            },
+            "husary.muallim": {
+              "startMs": 10600,
+              "endMs": 17600
+            }
+          }
+        },
+        {
+          "text": "رَبَّنَا لَا تُؤَاخِذْنَآ إِن نَّسِينَآ أَوْ أَخْطَأْنَا ۚ",
+          "wordEnd": 19,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 9565,
+              "endMs": 19235
+            },
+            "salah.bukhatir": {
+              "startMs": 9450,
+              "endMs": 16150
+            },
+            "husary.muallim": {
+              "startMs": 23450,
+              "endMs": 36100
+            }
+          }
+        },
+        {
+          "text": "رَبَّنَا وَلَا تَحْمِلْ عَلَيْنَآ إِصْرًۭا كَمَا حَمَلْتَهُۥ عَلَى ٱلَّذِينَ مِن قَبْلِنَا ۚ",
+          "wordEnd": 30,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 19235,
+              "endMs": 30575
+            },
+            "salah.bukhatir": {
+              "startMs": 16150,
+              "endMs": 25150
+            },
+            "husary.muallim": {
+              "startMs": 39400,
+              "endMs": 55500
+            }
+          }
+        },
+        {
+          "text": "رَبَّنَا وَلَا تُحَمِّلْنَا مَا لَا طَاقَةَ لَنَا بِهِۦ ۖ",
+          "wordEnd": 38,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 30575,
+              "endMs": 36945
+            },
+            "salah.bukhatir": {
+              "startMs": 25150,
+              "endMs": 31650
+            },
+            "husary.muallim": {
+              "startMs": 60200,
+              "endMs": 69600
+            }
+          }
+        },
+        {
+          "text": "وَٱعْفُ عَنَّا وَٱغْفِرْ لَنَا وَٱرْحَمْنَآ ۚ",
+          "wordEnd": 43,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 36945,
+              "endMs": 41905
+            },
+            "salah.bukhatir": {
+              "startMs": 36300,
+              "endMs": 40650
+            },
+            "husary.muallim": {
+              "startMs": 73900,
+              "endMs": 81000
+            }
+          }
+        },
+        {
+          "text": "أَنتَ مَوْلَىٰنَا",
+          "wordEnd": 45,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 41905,
+              "endMs": 44425
+            },
+            "salah.bukhatir": {
+              "startMs": 40650,
+              "endMs": 43200
+            },
+            "husary.muallim": {
+              "startMs": 85440,
+              "endMs": 88845
+            }
+          }
+        },
+        {
+          "text": "فَٱنصُرْنَا عَلَى ٱلْقَوْمِ ٱلْكَٰفِرِينَ",
+          "wordEnd": 49,
+          "bounds": {
+            "ar.alafasy": {
+              "startMs": 44425,
+              "endMs": 51490
+            },
+            "salah.bukhatir": {
+              "startMs": 43200,
+              "endMs": 49666
+            },
+            "husary.muallim": {
+              "startMs": 88845,
+              "endMs": 95960
+            }
+          }
+        }
+      ],
+      "sources": {
+        "ar.alafasy": {
+          "url": "https://everyayah.com/data/Alafasy_128kbps/002286.mp3",
+          "sha256": "ade9485c92413beaff9b40021459754eb79429848deb50f88e378c7347138b30"
+        },
+        "salah.bukhatir": {
+          "url": "https://everyayah.com/data/Salaah_AbdulRahman_Bukhatir_128kbps/002286.mp3",
+          "sha256": "4897d4ca69c8d1d82517da1837b65ca5a52932126977c3435053d419806a43f5"
+        },
+        "husary.muallim": {
+          "url": "https://everyayah.com/data/Husary_Muallim_128kbps/002286.mp3",
+          "sha256": "ac1bdacc26914f6fc7a2f3cbfc63824edec98e0e38152c5b52cf1dbb5db91ea9"
+        }
+      }
+    }
+  ]
+}
