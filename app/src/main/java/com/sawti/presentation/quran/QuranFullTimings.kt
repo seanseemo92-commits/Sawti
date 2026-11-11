@@ -193,6 +193,9 @@ internal object QuranFullTimings {
         val entries = JSONObject(raw).getJSONArray("verses")
         val output = mutableListOf<QuranFullCue>()
         val firstStart = sourceTimes?.firstOrNull()?.second ?: 0
+        val openingTrimMs = if (surah.selectionId == 2002 && sourceTimes != null) {
+            QuranFullSources.baqarahSpec(reciter)?.openingBleedTrimMs?.toInt() ?: 0
+        } else 0
         for (i in 0 until entries.length()) {
             val entry = entries.getJSONObject(i)
             val ayah = entry.getInt("ayah")
@@ -219,8 +222,15 @@ internal object QuranFullTimings {
                     // The whole Baqarah CDN recording and EveryAyah verse source have
                     // slightly different silence. Anchor the exact 285/286 boundary
                     // from the CDN timing, interpolate phrase cues within each verse.
-                    val sourceDuration = row.third - row.second
-                    val base = row.second - firstStart
+                    // The clip now begins AFTER any verified 2:284 bleed.
+                    // Keep first-verse and 286 boundaries at the same positions
+                    // in the newly cropped MP3; otherwise visual tracking drifts
+                    // even though the audio itself has been corrected.
+                    val clipTrim = if (ayah == 285) openingTrimMs else 0
+                    val sourceDuration = row.third - row.second - clipTrim
+                    val base = row.second - firstStart -
+                        (if (ayah > 285) openingTrimMs else 0)
+                    require(sourceDuration > 0 && base >= 0)
                     (base + (start.toLong()*sourceDuration/fullPartEnd).toInt()) to
                         (base + (end.toLong()*sourceDuration/fullPartEnd).toInt())
                 }
