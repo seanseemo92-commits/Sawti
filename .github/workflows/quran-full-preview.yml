@@ -5,8 +5,6 @@ on:
     branches: [feature/quran-full-recitation-cache-20261111]
     paths:
       - .github/workflows/quran-full-preview.yml
-      - app/src/main/java/com/sawti/presentation/quran/**
-      - app/src/test/java/com/sawti/presentation/quran/**
   workflow_dispatch:
 
 permissions:
