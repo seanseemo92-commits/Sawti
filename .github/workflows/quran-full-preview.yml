@@ -1,4 +1,4 @@
-name: Sawti Quran full recitation and Fatiha timing corrected APK
+name: Sawti Quran repeat-safe and Fatiha-aligned test APK
 
 on:
   push:
@@ -74,12 +74,25 @@ jobs:
           cp dist/Sawti-Quran-Full-Playback-TEST.apk dist/SHA256SUMS.txt dist/APK-METADATA.txt previews/quran-full-playback-test/
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          # Rebase the artifact working tree onto the most recent source commit.
-          # A stale checkout must never overwrite source work or fail its push.
-          git fetch origin feature/quran-full-recitation-cache-20261111
-          git reset --mixed FETCH_HEAD
-          git add previews/quran-full-playback-test/
-          if ! git diff --cached --quiet; then
-            git commit -m 'build(preview): deliver unified Quran tracking and Baqarah ending test APK'
-            git push origin HEAD:feature/quran-full-recitation-cache-20261111
-          fi
+          # Never publish an APK built from stale app source code.
+          # Retry benign non-fast-forward races caused by artifact-only pushes.
+          for attempt in 1 2 3 4 5; do
+            git fetch origin feature/quran-full-recitation-cache-20261111
+            if ! git diff --quiet "$GITHUB_SHA" FETCH_HEAD -- app/ build.gradle.kts settings.gradle.kts gradle/; then
+              echo "::error::Application source changed during this build. Generate a new APK from the latest commit."
+              exit 1
+            fi
+            git reset --mixed FETCH_HEAD
+            git add previews/quran-full-playback-test/
+            if git diff --cached --quiet; then
+              echo "Current preview APK and metadata already match."
+              exit 0
+            fi
+            git commit -m 'build(preview): deliver Fatiha-aligned and repeated-ayah tracking test APK'
+            if git push origin HEAD:feature/quran-full-recitation-cache-20261111; then
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "::error::Could not publish test APK after push retries."
+          exit 1
