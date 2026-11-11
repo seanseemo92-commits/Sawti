@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap
 class QuranAudioCache(
     context: Context,
     val reciter: QuranReciter = QuranReciter.ALAFASY,
+    private val usePackagedSurahs: Boolean = false,
     private val connectionFactory: (URL) -> HttpURLConnection = {
         it.openConnection() as HttpURLConnection
     },
@@ -37,7 +38,7 @@ class QuranAudioCache(
 
     suspend fun cachedCount(verses: List<QuranVerse>): Int = withContext(Dispatchers.IO) {
         verses.count { if (it.segmentIndex != null) QuranPassages.hasRecording(context, it, reciter)
-            else cachedFile(it.globalNumber) != null }
+            else (usePackagedSurahs && QuranBundledSurahs.hasRecording(context, it.globalNumber, reciter)) || cachedFile(it.globalNumber) != null }
     }
 
     suspend fun invalidate(number: Int) = withContext(Dispatchers.IO) {
@@ -80,6 +81,9 @@ class QuranAudioCache(
         // Playback and whole-surah downloads may request the same ayah.
         val lock = locks.getOrPut(target.absolutePath) { Mutex() }
         lock.withLock {
+            if (usePackagedSurahs) {
+                QuranBundledSurahs.obtain(context, globalVerseNumber, reciter, target)?.let { return@withLock it }
+            }
             cachedFile(globalVerseNumber)?.let { return@withLock it }
             if (!audioDir.isDirectory && !audioDir.mkdirs()) {
                 throw IOException("Unable to create Quran recordings directory")

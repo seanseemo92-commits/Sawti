@@ -33,7 +33,7 @@ internal class QuranViewModel(application: Application) : AndroidViewModel(appli
         preferences.getString("selected_edition", null)
     )))
     val state = _state.asStateFlow()
-    private var cache = QuranAudioCache(app, _state.value.reciter)
+    private var cache = QuranAudioCache(app, _state.value.reciter, usePackagedSurahs = true)
     private var playerGeneration = 0L
     private var loadGeneration = 0L
     private var downloadGeneration = 0L
@@ -87,7 +87,7 @@ internal class QuranViewModel(application: Application) : AndroidViewModel(appli
         countJob?.cancel()
         ++playerGeneration
         player.release()
-        cache = QuranAudioCache(app, reciter)
+        cache = QuranAudioCache(app, reciter, usePackagedSurahs = true)
         _state.update { it.copy(reciter = reciter, audio = RecitationStatus(), savedAyahs = 0,
             downloadError = null) }
         player = createPlayer()

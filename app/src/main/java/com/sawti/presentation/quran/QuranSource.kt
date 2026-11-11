@@ -132,8 +132,9 @@ object QuranSource {
     suspend fun load(context: Context, surah: ShortSurah): List<QuranVerse> =
         withContext(Dispatchers.IO) {
             if (surah.segmented) return@withContext QuranPassages.load(context, surah.selectionId)
-            // Download once; subsequent visits can display verified text without internet.
-            // Recordings are cached separately in filesDir by QuranAudioCache. None are bundled in the APK.
+            // Keep verified user-device caches, but ship all thirteen short surah texts
+            // so that opening any included surah works on a fresh offline installation.
+            // Their recordings are separately bundled and copied on demand by QuranAudioCache.
             val dir = File(context.filesDir, "quran_uthmani_cache")
             val file = File(dir, "surah_${surah.number}.json")
             if (file.isFile) {
@@ -144,6 +145,11 @@ object QuranSource {
                     file.delete()
                 }
             }
+            val assetPath = "quran_surahs/text/surah_${surah.number}.json"
+            val bundled = try {
+                context.assets.open(assetPath).bufferedReader(Charsets.UTF_8).use { it.readText() }
+            } catch (_: java.io.FileNotFoundException) { null }
+            if (bundled != null) return@withContext parse(bundled, surah)
             val connection = (URL("$API_BASE/${surah.number}/quran-uthmani")
                 .openConnection() as HttpURLConnection).apply {
                 connectTimeout = 12_000
