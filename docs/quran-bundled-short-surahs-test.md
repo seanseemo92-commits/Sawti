@@ -1,8 +1,8 @@
 # Sawti Quran 1.4 test — fully offline short surahs
 
 Scope: all **13** existing short surahs, **67** full ayahs, each recited by
-Alafasy, Salah Bukhatir and Husary Muallim (**201** original 128-kbps MP3
-files), plus all 13 verified Uthmani response documents.
+Alafasy, Salah Bukhatir and Husary Muallim (**201** 128-kbps MP3
+files; one damaged original requires documented recovery), plus all 13 verified Uthmani response documents.
 
 This is a dev-branch, separately installable Debug test, not a published
 production release. The pre-existing 26 segmented cards and their 78 bundled
@@ -28,6 +28,13 @@ Sources and credits:
 - Original recording rights remain with their respective rights-holders;
   neither EveryAyah nor the mirrors establish a blanket redistribution
   license. Confirm applicable permissions before any public distribution.
+
+The original Husary Muallim 113:5 file has a damaged MP3 frame in EveryAyah
+and its mirrors. A single exceptional tolerant decode/re-encode at 128kbps
+is permitted *only for this verse*, provided the resulting file decodes
+without errors and its duration differs by at most 2%. This is not lossless,
+and a person must verify that every word and ending is intact. The generated
+catalog records the operation. No other source may silently be re-encoded.
 
 Tests verify offline text, all 201 reader/ayah combinations, local playback,
 damaged-file recovery, asset checksums, MP3 decoding and the actual APK
