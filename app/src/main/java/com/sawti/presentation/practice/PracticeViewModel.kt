@@ -10,6 +10,7 @@ import com.sawti.audio.SoftChime
 import com.sawti.audio.AudioDispatcher
 import com.sawti.domain.model.Category
 import com.sawti.domain.model.CategoryIds
+import com.sawti.domain.model.GreetingsCatalog
 import com.sawti.domain.model.PracticeMode
 import com.sawti.domain.model.PracticeOutcome
 import com.sawti.domain.model.QuestionPhrases
@@ -26,6 +27,18 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 enum class Exercise { RECALL, CHOICE }
+
+/**
+ * The \"Where is...? / أين؟\" exercise needs objects/places that can be
+ * located in a photo. Social greetings are speech acts, not things one can
+ * locate, so they remain available for picture naming (RECALL) but must never
+ * become choice questions or distractor answers.
+ */
+internal fun practiceCategoryEligible(categoryId: String, exercise: Exercise): Boolean =
+    categoryId != CategoryIds.DAILY &&
+        (exercise != Exercise.CHOICE ||
+            (categoryId != "actions" && categoryId != GreetingsCatalog.CATEGORY_ID))
+
 data class PracticeCard(val item: WordItem, val palette: Int)
 data class PracticeUiState(
     val exercise: Exercise = Exercise.RECALL,
@@ -95,14 +108,14 @@ class PracticeViewModel(
     init {
         viewModelScope.launch {
             repository.observeCategories().catch { Log.e("SawtiPractice", "Category observation failed", it) }.collect { categories ->
-                recallPool = buildPool(categories, excludeActions = false)
-                choicePool = buildPool(categories, excludeActions = true)
+                recallPool = buildPool(categories, exercise = Exercise.RECALL)
+                choicePool = buildPool(categories, exercise = Exercise.CHOICE)
                 if (deck.isEmpty()) startRound()
             }
         }
     }
-    private fun buildPool(categories: List<Category>, excludeActions: Boolean): List<PracticeCard> {
-        val cards = categories.filter { it.id != CategoryIds.DAILY && !(excludeActions && it.id == "actions") }.flatMap { c ->
+    private fun buildPool(categories: List<Category>, exercise: Exercise): List<PracticeCard> {
+        val cards = categories.filter { practiceCategoryEligible(it.id, exercise) }.flatMap { c ->
             c.items.filter { if (c.id == CategoryIds.FAMILY) it.photoPath != null else it.emoji.isNotBlank() || it.photoPath != null }
                 .map { PracticeCard(it, c.palette) }
         }
