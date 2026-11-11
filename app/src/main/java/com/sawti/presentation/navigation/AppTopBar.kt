@@ -59,6 +59,7 @@ import com.sawti.presentation.theme.HeaderColors
 import com.sawti.presentation.theme.headerColors
 import com.sawti.presentation.theme.headerContentColor
 import androidx.core.view.WindowInsetsControllerCompat
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private const val HOLD_MS = 3000
@@ -171,7 +172,12 @@ private fun SettingsGear(caregiverMode: Boolean, onToggle: () -> Unit, ink: Colo
                         haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                         var completed = false
                         val hold = scope.launch {
-                            progress.animateTo(1f, tween(HOLD_MS, easing = LinearEasing))
+                            // Animation duration changes with system motion settings; a
+                            // monotonic coroutine delay keeps the safety hold at 3 seconds.
+                            launch {
+                                progress.animateTo(1f, tween(HOLD_MS, easing = LinearEasing))
+                            }
+                            delay(HOLD_MS.toLong())
                             completed = true
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             currentToggle()
