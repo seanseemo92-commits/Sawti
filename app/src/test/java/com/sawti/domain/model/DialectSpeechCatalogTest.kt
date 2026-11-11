@@ -17,6 +17,36 @@ class DialectSpeechCatalogTest {
         assertEquals("إِمِّيَّهْ", DialectCatalog.localize(item("food.water"), ArabicDialect.LIBYAN).ttsPrompt)
     }
 
+    @Test fun userReviewedLibyanWordsCorrectTextSpeechAndRetrievalCues() {
+        val examples = listOf(
+            Triple("animal.rooster", "ديك", Pair("دِيكْ", "دِي...")),
+            Triple("animal.rabbit", "أرنب", Pair("أَرْنَبْ", "أَرْ...")),
+            Triple("home.fork", "شوكة", Pair("شَوْكَةْ", "شَوْ...")),
+        )
+        for ((key, label, spokenAndCue) in examples) {
+            val seed = item(key)
+            val libyan = DialectCatalog.localize(seed, ArabicDialect.LIBYAN)
+            assertEquals("Display for $key", label, libyan.displayText)
+            assertEquals("Speech for $key", spokenAndCue.first, libyan.ttsPrompt)
+            assertEquals("Phonemic hint for $key", spokenAndCue.second, libyan.phonemicCue)
+            // A language switch is a view projection, not a rewrite of the
+            // canonical Room row or personal photos/voice recordings.
+            assertEquals(seed, libyan.forEditing())
+            assertEquals(seed, DialectCatalog.localize(libyan, ArabicDialect.STANDARD))
+        }
+    }
+
+    @Test fun LibyanCorrectionsDoNotLeakIntoTunisianOrMoroccanTerminology() {
+        assertEquals("سردوك",
+            DialectCatalog.localize(item("animal.rooster"), ArabicDialect.TUNISIAN).displayText)
+        assertEquals("قنية",
+            DialectCatalog.localize(item("animal.rabbit"), ArabicDialect.MOROCCAN).displayText)
+        assertEquals("فرشيطة",
+            DialectCatalog.localize(item("home.fork"), ArabicDialect.TUNISIAN).displayText)
+        assertEquals("فورشيطة",
+            DialectCatalog.localize(item("home.fork"), ArabicDialect.MOROCCAN).displayText)
+    }
+
     @Test fun canonicalFushaSourceRemainsReversibleAfterPausalProjection() {
         for (entity in WordSeed.itemEntities()) {
             val source = entity.toDomain()
