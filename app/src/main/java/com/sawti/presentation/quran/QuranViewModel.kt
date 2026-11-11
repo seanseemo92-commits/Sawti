@@ -115,7 +115,7 @@ internal class QuranViewModel(application: Application) : AndroidViewModel(appli
     fun playFull() {
         val current = _state.value
         val surah = QuranSource.selections.firstOrNull { it.selectionId == current.surahId } ?: return
-        if (current.loading || current.verses.isEmpty() || !QuranFullSources.available(surah)) return
+        if (current.loading || current.verses.isEmpty() || !QuranFullSources.available(surah, current.reciter)) return
         timingJob?.cancel()
         val selectionId = surah.selectionId
         val requestedReciter = current.reciter
