@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
@@ -48,6 +49,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -134,6 +136,7 @@ private fun QuranHeroCard(onClick: () -> Unit) {
     val performance = LocalPerformanceMode.current
     val green = if (dark) Color(0xFF103A31) else Color(0xFF124E40)
     val gold = Color(0xFFE8CE91)
+    val largeText = LocalDensity.current.fontScale >= 1.2f
 
     // One image-backed card, like the other Sawti categories. The Quran artwork
     // is only a photo; all Arabic copy stays native, legible and accessible.
@@ -146,8 +149,10 @@ private fun QuranHeroCard(onClick: () -> Unit) {
         shadowElevation = if (performance) 0.dp else if (dark) 4.dp else 8.dp,
     ) {
         Box(
-            modifier = Modifier.fillMaxWidth().height(168.dp).background(green),
+            modifier = Modifier.fillMaxWidth().heightIn(min = 168.dp).background(green),
         ) {
+            // The backdrop follows the measured copy instead of imposing its intrinsic height.
+            Box(Modifier.matchParentSize()) {
             // In RTL, End is the physical left: the photo fills most of the card.
             Image(
                 painter = painterResource(R.drawable.img_quran_hero),
@@ -169,9 +174,11 @@ private fun QuranHeroCard(onClick: () -> Unit) {
                 )
             )
 
+            if (largeText) Box(Modifier.fillMaxSize().background(green.copy(alpha = 0.9f)))
+            }
             Column(
                 modifier = Modifier.align(Alignment.CenterStart)
-                    .fillMaxWidth(0.53f)
+                    .fillMaxWidth(if (largeText) 1f else 0.53f)
                     .padding(start = 13.dp, end = 13.dp, top = 9.dp, bottom = 9.dp),
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(5.dp),
@@ -188,7 +195,7 @@ private fun QuranHeroCard(onClick: () -> Unit) {
                     fontSize = 21.sp,
                     lineHeight = 28.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    maxLines = 1,
+                    maxLines = if (largeText) 2 else 1,
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(

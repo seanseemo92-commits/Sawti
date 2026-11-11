@@ -147,7 +147,7 @@ fun SettingsRoute(viewModel: SettingsViewModel, onStartTour: (String) -> Unit = 
         }
         SettingBlock("شريط تركيب الجملة") {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("إظهار شريط لتجميع الكلمات ثم نطقها كجملة متصلة. الضغط المطوّل ينطق البطاقة مباشرةً.", modifier = Modifier.weight(1f))
+                Text("إظهار شريط لتجميع الكلمات ثم نطقها بالترتيب. الضغط المطوّل ينطق البطاقة مباشرةً.", modifier = Modifier.weight(1f))
                 Switch(checked = settings.sentenceStripEnabled, onCheckedChange = viewModel::setSentenceStripEnabled)
             }
         }

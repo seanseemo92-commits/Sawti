@@ -62,6 +62,22 @@ jobs:
           print('Prior complete tests and both Lint variants verified; only packaging verification changed.')
           PY
 
+      - name: Capture the published baseline before checking corrected layouts
+        if: contains(github.event.head_commit.message, '[audit-baseline]')
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/sawti-fixed-ui"
+          paths=(app/src/main/java/com/sawti/presentation/home/HomeScreen.kt app/src/main/java/com/sawti/presentation/practice/PracticeScreen.kt app/src/main/java/com/sawti/presentation/common/SentenceStrip.kt)
+          restore_ui() {
+            for path in "${paths[@]}"; do cp "$RUNNER_TEMP/sawti-fixed-ui/$(basename "$path")" "$path"; done
+          }
+          for path in "${paths[@]}"; do cp "$path" "$RUNNER_TEMP/sawti-fixed-ui/$(basename "$path")"; done
+          trap restore_ui EXIT
+          for path in "${paths[@]}"; do git show "4694c3f7c463bb181f3171e3380c1bd844d6c62e:$path" > "$path"; done
+          chmod +x gradlew
+          SAWTI_AUDIT_BASELINE=1 ./gradlew --no-daemon :app:testDebugUnitTest --tests com.sawti.presentation.DesignAuditLayoutTest
+
       - name: Build debug and run complete tests and lint
         if: ${{ !contains(github.event.head_commit.message, '[package-retry]') }}
         run: |
@@ -147,6 +163,7 @@ jobs:
           cp "$APK" "dist/Sawti-v${RELEASE_VERSION}-Release.apk"
           "$BUILD_TOOLS/aapt2" dump resources "$APK" > "$RUNNER_TEMP/review-resources.txt"
           python3 scripts/review_speech_corpus.py
+          if [[ -d app/build/outputs/design-audit-before ]]; then python3 scripts/package_design_audit.py; fi
           python3 scripts/summarize_review_build.py "$RUNNER_TEMP/review-resources.txt"
           (cd dist && sha256sum *.apk > SHA256SUMS.txt)
           if [[ -d app/build/outputs/about-review ]]; then

@@ -12,6 +12,8 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,7 +23,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Backspace
+import androidx.compose.material.icons.automirrored.filled.Backspace
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
@@ -51,11 +53,14 @@ import com.sawti.presentation.theme.LocalIsDark
 import com.sawti.presentation.theme.LocalPerformanceMode
 import java.io.File
 
+internal val SentencePlayBlue = Color(0xFF0369A1)
+
 /**
  * Clean island dock: no Material shadow and no loud coloured container.
  * Sentence composition and TTS sequencing remain in the original ViewModel.
  */
 @Composable
+@OptIn(ExperimentalLayoutApi::class)
 fun SentenceStrip(
     pieces: List<SentencePiece>,
     speakingPieceIndex: Int?,
@@ -82,12 +87,12 @@ fun SentenceStrip(
                 .padding(horizontal = 13.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("جملتي", color = foreground,
+            FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
+                verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("جملتي", modifier = Modifier.align(Alignment.CenterVertically), color = foreground,
                     fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
-                Spacer(Modifier.weight(1f))
                 IconButton(onClick = onBackspace, enabled = pieces.isNotEmpty()) {
-                    Icon(Icons.Filled.Backspace, contentDescription = "حذف آخر كلمة",
+                    Icon(Icons.AutoMirrored.Filled.Backspace, contentDescription = "حذف آخر كلمة",
                         modifier = Modifier.size(20.dp))
                 }
                 IconButton(onClick = onClear, enabled = pieces.isNotEmpty()) {
@@ -99,7 +104,7 @@ fun SentenceStrip(
                     enabled = pieces.isNotEmpty(),
                     shape = RoundedCornerShape(50),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF0284C7),
+                        containerColor = SentencePlayBlue,
                         contentColor = Color.White,
                         disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                     ),
