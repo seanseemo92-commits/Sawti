@@ -170,12 +170,13 @@ class DesignAuditLayoutTest {
         if (!baseline) assertEquals(2, opened)
         save("caregiver-large")
     }
-    @Test fun tourLargeAllThreeControlsRemainReachable() {
+    @Test @Config(qualifiers = "w640dp-h320dp")
+    fun tourLargeAllThreeControlsRemainReachable() {
         var taps = 0
-        val step = TourGuide.steps(TourGuide.HOME, setOf("daily"))[1]
-        show(ThemeMode.DARK) { SpotlightOverlay(step, 1, 3, SpotlightRegistry(), true,
+        val step = TourGuide.steps(TourGuide.FAMILY)[1]
+        show(ThemeMode.DARK) { SpotlightOverlay(step, 1, 2, SpotlightRegistry(), true,
             { taps++ }, { taps++ }, { taps++ }) }
-        for (label in listOf("تخطي", "السابق", "التالي")) tap(checkText(label, true))
+        for (label in listOf("تخطي", "السابق", "إنهاء")) tap(checkText(label, true))
         if (!baseline) assertEquals(3, taps)
         save("tour-dark-large")
     }
