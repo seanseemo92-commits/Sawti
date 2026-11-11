@@ -65,7 +65,7 @@ def main():
     assert seen == {(surah, ayah) for surah, n in CHAPTERS.items() for ayah in range(1, n+1)}
     actual = {str(file.relative_to(ASSETS)) for file in ASSETS.rglob("*.mp3")}
     assert actual == assets_expected and len(actual) == 201
-    print("VERIFIED: 13 Uthmani surah texts, 67 ayahs, 201 unmodified reciter recordings, all hashes.")
+    print("VERIFIED: 13 Uthmani surah texts, 67 ayahs, 201 SHA-256 checked MP3 files, one recorded source repair.")
 
 
 if __name__ == "__main__":

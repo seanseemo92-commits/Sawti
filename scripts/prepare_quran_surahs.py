@@ -224,7 +224,7 @@ def main():
                for x in verses for name, audio in x["audio"].items()
                if audio["processing"] != "unaltered"]
     print("Recorded deviations from original bitstreams:", repairs, flush=True)
-    print("Packaged 13 exact Uthmani texts and 201 original 128kbps ayah MP3s; human review pending.")
+    print("Packaged 13 Uthmani texts and 201 128kbps ayah clips; one source needed a documented repair; human review pending.")
 
 
 if __name__ == "__main__":
