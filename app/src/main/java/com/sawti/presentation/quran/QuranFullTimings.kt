@@ -38,6 +38,19 @@ internal object QuranFullTimings {
         QuranReciter.HUSARY_MUALLIM -> null
     }
 
+    /**
+     * Keep highlighting one verse through any within-verse repeat or brief
+     * silence. The *next verse's verified start*, not this verse's early end,
+     * is the transition point. There is deliberately no highlight during the
+     * opening ta'awwudh (before the first recorded verse onset).
+     *
+     * The final verse remains highlighted until playback actually stops.
+     */
+    internal fun activeCue(cues: List<QuranFullCue>, positionMs: Int): QuranFullCue? {
+        if (positionMs < 0 || cues.isEmpty()) return null
+        return cues.lastOrNull { positionMs >= it.startMs }
+    }
+
     suspend fun obtain(context: Context, surah: ShortSurah, reciter: QuranReciter): List<QuranFullCue> =
         withContext(Dispatchers.IO) {
             val app = context.applicationContext
