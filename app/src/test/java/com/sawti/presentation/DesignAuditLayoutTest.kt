@@ -46,7 +46,7 @@ import org.robolectric.annotation.GraphicsMode
 import org.robolectric.annotation.LooperMode
 
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [34], application = Application::class, qualifiers = "w320dp-h640dp")
+@Config(sdk = [33], application = Application::class, qualifiers = "w320dp-h640dp")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @LooperMode(LooperMode.Mode.PAUSED)
 class DesignAuditLayoutTest {
@@ -94,11 +94,21 @@ class DesignAuditLayoutTest {
                 measurements.put(JSONObject().put("text", text).put("bounds", bounds.toString())
                     .put("size", layout.size.toString()).put("constraints", layout.layoutInput.constraints.toString())
                     .put("font", layout.layoutInput.style.fontSize.toString()).put("paragraphHeight", layout.multiParagraph.height)
+                    .put("paragraphWidth", layout.multiParagraph.width)
+                    .put("maxLineWidth", (0 until layout.lineCount).maxOfOrNull { layout.getLineRight(it) - layout.getLineLeft(it) } ?: 0f)
                     .put("overflowWidth", layout.didOverflowWidth).put("overflowHeight", layout.didOverflowHeight)
                     .put("lines", layout.lineCount).put("ellipsis", (0 until layout.lineCount).any { layout.isLineEllipsized(it) }))
             }
-            if (layouts.any { layout -> layout.didOverflowWidth || layout.didOverflowHeight ||
-                    (0 until layout.lineCount).any { layout.isLineEllipsized(it) } }) issues += "Text clipped: $text"
+            // The semantics fast-text adapter can give MultiParagraph the original maxWidth
+            // even when the measured Text is shrink-wrapped. Compare actual line advances,
+            // not the paragraph container width (which mislabels short RTL labels as clipped).
+            if (layouts.any { layout ->
+                    layout.multiParagraph.height > bounds.height + 1f ||
+                    (0 until layout.lineCount).any { line ->
+                        layout.isLineEllipsized(line) ||
+                            layout.getLineRight(line) - layout.getLineLeft(line) > bounds.width + 1f
+                    }
+                }) issues += "Text clipped: $text"
         }.onFailure { issues += "Cannot measure $text: ${it.javaClass.simpleName}" }
         return node
     }
@@ -113,7 +123,7 @@ class DesignAuditLayoutTest {
             view.draw(Canvas(bitmap))
             File(directory, "$name.png").outputStream().use { assertTrue(bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)) }
             bitmap.recycle()
-            File(directory, "$name.json").writeText(JSONObject().put("case", name).put("baseline", baseline)
+            File(directory, "$name.json").writeText(JSONObject().put("case", name).put("baseline", baseline).put("sdk", android.os.Build.VERSION.SDK_INT)
                 .put("issues", org.json.JSONArray(issues)).put("measurements", measurements).toString())
             println("DESIGN_AUDIT_CASE $name baseline=$baseline issues=${issues.size}: ${issues.joinToString()}")
         }
