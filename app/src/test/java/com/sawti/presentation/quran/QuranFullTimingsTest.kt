@@ -27,7 +27,7 @@ class QuranFullTimingsTest {
         assertEquals(4,rows.size)
         assertEquals(Triple(1,0,2000),rows.first())
         assertEquals(Triple(4,6000,8000),rows.last())
-        val missing = complete.replace(Regex(""",\\{\"ayah\":4[^}]+}"""),"")
+        val missing = """[{"ayah":1,"start_time":0,"end_time":2000},{"ayah":2,"start_time":2000,"end_time":4000},{"ayah":3,"start_time":4000,"end_time":6000}]"""
         assertTrue(QuranFullTimings.parseTiming(missing,surah).isEmpty())
     }
 
