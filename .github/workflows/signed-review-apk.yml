@@ -86,6 +86,7 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug --continue
+          git diff --exit-code -- app/schemas
 
       - name: Show first test failure diagnostics
         if: failure()

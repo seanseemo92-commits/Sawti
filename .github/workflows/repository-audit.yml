@@ -20,10 +20,8 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Export the actual current Room schema
         run: |
-          if [[ ! -s app/schemas/com.sawti.data.db.AppDatabase/1.json ]]; then
-            chmod +x gradlew
-            ./gradlew --no-daemon :app:kspDebugKotlin
-          fi
+          chmod +x gradlew
+          ./gradlew --no-daemon :app:kspDebugKotlin
           python3 - <<'PYSCHEMA'
           import base64, gzip
           from pathlib import Path
