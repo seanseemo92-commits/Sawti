@@ -179,6 +179,50 @@ class QuranAyahPlayerTest {
         assertEquals(RecitationPhase.IDLE, states.last().phase)
         assertEquals(ShadowMediaPlayer.State.END, current.state)
     }
+    @Test
+    fun completeRecitationUsesOneFileAndResumesAfterNotificationThenStopsOnAyahTap() {
+        val app = RuntimeEnvironment.getApplication() as Application
+        val wholeDirectory = File(app.filesDir, "quran_full_recitations/ar.alafasy")
+        wholeDirectory.mkdirs()
+        val complete = File(wholeDirectory, "surah_1.mp3")
+        complete.writeBytes(ByteArray(417 * 4).apply {
+            for (offset in indices step 417) {
+                this[offset] = 0xFF.toByte()
+                this[offset + 1] = 0xFB.toByte()
+                this[offset + 2] = 0x90.toByte()
+            }
+        })
+        ShadowMediaPlayer.addMediaInfo(DataSource.toDataSource(complete.absolutePath), ShadowMediaPlayer.MediaInfo(12_000, -1))
+        try {
+            val surah = QuranSource.shortSurahs.first()
+            val manager = app.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            audio.playFull(surah, verse, 3)
+            val playing = preparedPlayer(0)
+            playing.invokePreparedListener()
+            assertEquals(1, states.last().fullSelectionId)
+            assertNull(states.last().globalVerseNumber)
+            assertEquals(3, states.last().remaining)
+            val listener = shadowOf(manager).lastAudioFocusRequest.listener
+            listener.onAudioFocusChange(AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK)
+            shadowOf(Looper.getMainLooper()).idle()
+            assertEquals(RecitationPhase.PAUSED, states.last().phase)
+            listener.onAudioFocusChange(AudioManager.AUDIOFOCUS_GAIN)
+            shadowOf(Looper.getMainLooper()).idle()
+            assertEquals(RecitationPhase.PLAYING, states.last().phase)
+            playing.invokeCompletionListener()
+            assertEquals(2, states.last().remaining)
+            audio.play(verse, 1)
+            val individual = preparedPlayer(1)
+            individual.invokePreparedListener()
+            playing.invokeCompletionListener()
+            assertNull(states.last().fullSelectionId)
+            assertEquals(verse.globalNumber, states.last().globalVerseNumber)
+            assertEquals(ShadowMediaPlayer.State.END, playing.state)
+        } finally {
+            wholeDirectory.deleteRecursively()
+        }
+    }
+
     private fun registerSegment(verse: QuranVerse) {
         val app = RuntimeEnvironment.getApplication() as Application
         val file = QuranPassages.target(app, verse, QuranReciter.ALAFASY)
