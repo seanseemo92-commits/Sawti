@@ -88,6 +88,8 @@ object QuranSource {
         }
     }
 
+    internal fun firstAyahGlobal(surahNumber: Int): Int = firstAyahs.getValue(surahNumber)
+
     // Islamic Network's CDN uses the global Quran verse number, NOT the local surah index.
     fun audioUrl(globalVerseNumber: Int): String =
         audioUrl(globalVerseNumber, QuranReciter.ALAFASY)
