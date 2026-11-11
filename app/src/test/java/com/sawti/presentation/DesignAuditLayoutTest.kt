@@ -54,6 +54,7 @@ class DesignAuditLayoutTest {
     private lateinit var view: View
     private val baseline = System.getenv("SAWTI_AUDIT_BASELINE") == "1"
     private val issues = mutableListOf<String>()
+    private val measurements = org.json.JSONArray()
     private val calls = mutableListOf<String>()
     private val actions = Proxy.newProxyInstance(PracticeActions::class.java.classLoader,
         arrayOf(PracticeActions::class.java)) { proxy, method, args ->
@@ -89,6 +90,13 @@ class DesignAuditLayoutTest {
                 issues += "Outside horizontal viewport: $text"
             val layouts = mutableListOf<TextLayoutResult>()
             node.performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
+            layouts.forEach { layout ->
+                measurements.put(JSONObject().put("text", text).put("bounds", bounds.toString())
+                    .put("size", layout.size.toString()).put("constraints", layout.layoutInput.constraints.toString())
+                    .put("font", layout.layoutInput.style.fontSize.toString()).put("paragraphHeight", layout.multiParagraph.height)
+                    .put("overflowWidth", layout.didOverflowWidth).put("overflowHeight", layout.didOverflowHeight)
+                    .put("lines", layout.lineCount).put("ellipsis", (0 until layout.lineCount).any { layout.isLineEllipsized(it) }))
+            }
             if (layouts.any { layout -> layout.didOverflowWidth || layout.didOverflowHeight ||
                     (0 until layout.lineCount).any { layout.isLineEllipsized(it) } }) issues += "Text clipped: $text"
         }.onFailure { issues += "Cannot measure $text: ${it.javaClass.simpleName}" }
@@ -106,7 +114,7 @@ class DesignAuditLayoutTest {
             File(directory, "$name.png").outputStream().use { assertTrue(bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)) }
             bitmap.recycle()
             File(directory, "$name.json").writeText(JSONObject().put("case", name).put("baseline", baseline)
-                .put("issues", org.json.JSONArray(issues)).toString())
+                .put("issues", org.json.JSONArray(issues)).put("measurements", measurements).toString())
             println("DESIGN_AUDIT_CASE $name baseline=$baseline issues=${issues.size}: ${issues.joinToString()}")
         }
         if (!baseline) assertTrue("$name: ${issues.joinToString()}", issues.isEmpty())
