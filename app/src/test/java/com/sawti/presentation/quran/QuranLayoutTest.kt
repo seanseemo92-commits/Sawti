@@ -52,7 +52,7 @@ class QuranLayoutTest {
 
     private fun show(mode: ThemeMode, large: Boolean = false, active: Boolean = false,
         dwell: TouchDwell = TouchDwell.OFF, onPlay: () -> Unit = {}, onFull: () -> Unit = {},
-        tracked: Boolean = false) {
+        tracked: Boolean = false, trackingPositionMs: Int = 2000) {
         compose.setContent {
             SawtiTheme(themeMode = mode, performanceMode = true) {
                 captureView = LocalView.current
@@ -65,7 +65,7 @@ class QuranLayoutTest {
                             fullCues = if (tracked) listOf(QuranFullCue(verse.itemKey,100,5000)) else emptyList(),
                             audio = if (tracked) RecitationStatus(
                                 phase = RecitationPhase.PLAYING, remaining = 1,
-                                fullSelectionId = 107, positionMs = 2000)
+                                fullSelectionId = 107, positionMs = trackingPositionMs)
                                 else if (active) RecitationStatus(6200, RecitationPhase.PLAYING, 1)
                                 else RecitationStatus()),
                             107, {}, {}, {}, { onPlay() }, {}, {}, {}, onPlayFull = onFull)
@@ -120,6 +120,14 @@ class QuranLayoutTest {
 
     @Test fun continuousRecitationVisuallyTracksCurrentVerse() {
         show(ThemeMode.LIGHT, tracked = true)
+        compose.onNodeWithTag("ayah-6200").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithTag("quran-tracking-ayah-6200", useUnmergedTree = true).assertExists()
+    }
+
+    @Test fun verseGlowDoesNotDisappearAfterFirstReadingOrDuringRepeatedAyah() {
+        // Original segment cue ends at 5s, but reciter may repeat its ayah
+        // inside the same uninterrupted source before starting the next.
+        show(ThemeMode.LIGHT, tracked = true, trackingPositionMs = 7000)
         compose.onNodeWithTag("ayah-6200").performScrollTo().assertIsDisplayed()
         compose.onNodeWithTag("quran-tracking-ayah-6200", useUnmergedTree = true).assertExists()
     }
