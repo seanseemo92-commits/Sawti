@@ -27,7 +27,7 @@ def download(url,path,rangeHeader=None):
                 f.write(b)
         return {"status":status,"contentRange":r.headers.get("Content-Range"),"length":Path(path).stat().st_size}
 def decode(path):
-    return np.frombuffer(subprocess.check_output(["ffmpeg","-nostdin","-hide_banner","-loglevel","error","-i",str(path),"-ac","1","-ar","2000","-f","s16le","-"],timeout=120),dtype=np.int16).astype(np.float32)/32768.
+    return np.frombuffer(subprocess.check_output([imageio_ffmpeg.get_ffmpeg_exe(),"-nostdin","-hide_banner","-loglevel","error","-i",str(path),"-ac","1","-ar","2000","-f","s16le","-"],timeout=120),dtype=np.int16).astype(np.float32)/32768.
 def aligned(a,b):
     # waveform fingerprint: source clip a embedded in full-tail b at the same speed.
     # Try both signs; normalised peak is meaningful ONLY for matching source session.
