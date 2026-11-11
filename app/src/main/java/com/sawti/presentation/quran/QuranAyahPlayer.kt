@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 
@@ -24,6 +25,7 @@ data class RecitationStatus(
     val failure: RecitationFailure? = null,
     val segmentKey: String? = null,
     val fullSelectionId: Int? = null,
+    val positionMs: Int = 0,
 )
 
 /** Per-ayah taps restart the selected clip. Optional full recordings use the same single owner. */
@@ -39,6 +41,9 @@ class QuranAyahPlayer(
     private var fullSurah: ShortSurah? = null
     private var player: MediaPlayer? = null
     private var downloadJob: Job? = null
+    private var progressJob: Job? = null
+    private var fullPositionMs = 0
+    private var currentPhase: RecitationPhase = RecitationPhase.IDLE
     private var focusToken: Long? = null
     private var generation = 0L
     private var playsLeft = 0
@@ -96,9 +101,11 @@ class QuranAyahPlayer(
 
     private fun publish(verse: QuranVerse, phase: RecitationPhase) {
         val full = fullSurah
+        currentPhase = phase
         update(RecitationStatus(if (full == null) verse.globalNumber else null, phase, playsLeft,
             segmentKey = if (full == null) verse.segmentKey else null,
-            fullSelectionId = full?.selectionId))
+            fullSelectionId = full?.selectionId,
+            positionMs = if (full != null) fullPositionMs else 0))
     }
 
     private fun prepareLocalPlayer(verse: QuranVerse, file: File, request: Long, attempt: Int) {
@@ -157,6 +164,7 @@ class QuranAyahPlayer(
                 try {
                     mp.start()
                     publish(verse, RecitationPhase.PLAYING)
+                    monitorFullPlayback(mp, request)
                 } catch (_: Exception) {
                     recoverDecode(verse, request, attempt)
                 }
@@ -186,6 +194,27 @@ class QuranAyahPlayer(
             candidate.prepareAsync()
         } catch (_: Exception) {
             recoverDecode(verse, request, attempt)
+        }
+    }
+
+    /** MediaPlayer is authoritative; no wall-clock guess while buffering, paused or repeating. */
+    private fun monitorFullPlayback(mp: MediaPlayer, request: Long) {
+        progressJob?.cancel()
+        if (fullSurah == null) return
+        progressJob = scope.launch {
+            var previous = -1000
+            while (owns(request) && player === mp && fullSurah != null) {
+                delay(120)
+                if (currentPhase != RecitationPhase.PLAYING || pausedForFocus) continue
+                val position = runCatching { mp.currentPosition }.getOrNull() ?: break
+                if (position < 0 || (kotlin.math.abs(position - previous) < 130 && position != 0)) continue
+                previous = position
+                fullPositionMs = position
+                val full = fullSurah ?: break
+                update(RecitationStatus(
+                    phase = RecitationPhase.PLAYING, remaining = playsLeft,
+                    fullSelectionId = full.selectionId, positionMs = position))
+            }
         }
     }
 
@@ -226,6 +255,8 @@ class QuranAyahPlayer(
     }
 
     private fun clearPlayer() {
+        progressJob?.cancel()
+        progressJob = null
         val active = player
         player = null
         pausedForFocus = false
@@ -244,6 +275,8 @@ class QuranAyahPlayer(
         playsLeft = 0
         clearPlayer()
         fullSurah = null
+        fullPositionMs = 0
+        currentPhase = RecitationPhase.IDLE
         update(RecitationStatus())
     }
 
