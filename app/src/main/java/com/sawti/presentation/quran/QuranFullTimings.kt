@@ -152,7 +152,32 @@ internal object QuranFullTimings {
         }
     }
 
-    private fun fromPassagePlan(
+    /**
+     * The clipped per-phrase file for Salah 2:286/6 starts at its SECOND
+     * reading (36,300 ms). In the original uncut source the first reading
+     * starts at 31,650 ms, immediately after 2:286/5.
+     *
+     * The previous implementation assigned that 4,650 ms first reading to
+     * segment 5, because the original catalog describes only the extracted
+     * second-reading clip. The user-supplied playback recording confirms it:
+     * highlight phrase 6 from the first \"واعف عنا\" through both repetitions.
+     *
+     * This is explicitly source+reader+phrase scoped. Do not shift arbitrary
+     * catalog pauses, sources, or other reciters by guessing.
+     */
+    internal fun startOfWholePassagePhrase(
+        reciter: QuranReciter, ayah: Int, part: Int,
+        catalogStartMs: Int, precedingEndMs: Int?,
+    ): Int {
+        if (reciter == QuranReciter.SALAH_BUKHATIR &&
+            ayah == 286 && part == 6 &&
+            catalogStartMs == 36_300 && precedingEndMs == 31_650) {
+            return precedingEndMs
+        }
+        return catalogStartMs
+    }
+
+    internal fun fromPassagePlan(
         context: Context, surah: ShortSurah, reciter: QuranReciter,
         sourceTimes: List<Triple<Int,Int,Int>>?,
     ): List<QuranFullCue> {
@@ -176,8 +201,13 @@ internal object QuranFullTimings {
             require(fullPartEnd > 0)
             for (p in 0 until parts.length()) {
                 val times = parts.getJSONObject(p).getJSONObject("audio").getJSONObject(reciter.editionId)
-                val start = times.getInt("startMs")
+                val catalogStart = times.getInt("startMs")
                 val end = times.getInt("endMs")
+                val previousEnd = if (p == 0) null else
+                    parts.getJSONObject(p - 1).getJSONObject("audio")
+                        .getJSONObject(reciter.editionId).getInt("endMs")
+                val start = startOfWholePassagePhrase(
+                    reciter, ayah, p + 1, catalogStart, previousEnd)
                 val (mappedStart,mappedEnd) = if (row == null) start to end else {
                     // The whole Baqarah CDN recording and EveryAyah verse source have
                     // slightly different silence. Anchor the exact 285/286 boundary
