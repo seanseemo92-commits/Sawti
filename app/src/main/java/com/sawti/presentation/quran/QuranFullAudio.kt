@@ -30,6 +30,8 @@ internal data class BaqarahEndingSpec(
     val ayah285StartMs: Long,
     val ayah286StartMs: Long,
     val lastAyahEndMs: Long,
+    /** Trim only verified bleed from the previous ayah; not a generic reader-wide offset. */
+    val openingBleedTrimMs: Long = 0L,
 )
 
 internal object QuranFullSources {
@@ -42,7 +44,8 @@ internal object QuranFullSources {
             120641555L, 7454920L, 7487820L, 7539060L)
         QuranReciter.SALAH_BUKHATIR -> BaqarahEndingSpec(
             "https://cdn.mp3quran.net/download/audio/salah-bukhatir/r1/002.mp3",
-            109142897L, 6737280L, 6767360L, 6816680L)
+            109142897L, 6737280L, 6767360L, 6816680L,
+            openingBleedTrimMs = 1_250L)
         QuranReciter.HUSARY_MUALLIM -> null
     }
 
@@ -236,8 +239,15 @@ internal class QuranFullAudioCache(
                 }
             } finally { conn.disconnect() }
             currentCoroutineContext().ensureActive()
-            val clipDuration = QuranMp3Tail.cut(suffix,clipped,duration-spec.ayah285StartMs)
-            val expected = spec.lastAyahEndMs - spec.ayah285StartMs
+            // Salah's original source contains the trailing word of 2:284 at
+            // the old cut boundary. The reviewed screen recording shows ~1.25 s
+            // of leftover speech before "آمن الرسول" begins. Advance the
+            // frame-aligned crop by that source-scoped amount, retaining MP3
+            // decoder pre-roll and the full first word of 2:285.
+            val clipDuration = QuranMp3Tail.cut(
+                suffix, clipped, duration - spec.ayah285StartMs - spec.openingBleedTrimMs)
+            val expected = spec.lastAyahEndMs -
+                spec.ayah285StartMs - spec.openingBleedTrimMs
             if (clipDuration !in (expected-1500L)..(expected+16_000L))
                 throw IOException("Cropped final verses mismatch timing")
             currentCoroutineContext().ensureActive()
@@ -252,7 +262,13 @@ internal class QuranFullAudioCache(
 
     private fun target(surah: ShortSurah): File {
         require(QuranFullSources.available(surah, reciter))
-        return File(audioDir, "surah_${surah.selectionId}.mp3")
+        // A new file name prevents earlier, incorrectly cropped 2:285 audio
+        // from being silently reused after this upgrade. Other saved surahs
+        // (and Alafasy's unchanged Baqarah clip) retain their original cache.
+        val name = if (surah.selectionId == 2002 &&
+            reciter == QuranReciter.SALAH_BUKHATIR) "surah_2002_crop_v2.mp3"
+            else "surah_${surah.selectionId}.mp3"
+        return File(audioDir, name)
     }
 
     private companion object {
