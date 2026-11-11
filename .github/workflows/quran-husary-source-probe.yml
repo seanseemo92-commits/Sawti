@@ -16,8 +16,7 @@ jobs:
         with: {persist-credentials: true}
       - name: Install waveform analysis tools
         run: |
-          sudo apt-get update -qq && sudo apt-get install -y ffmpeg > /dev/null
-          python3 -m pip install --quiet --break-system-packages numpy scipy
+          python3 -m pip install --quiet --break-system-packages imageio-ffmpeg numpy scipy
       - name: Check Husary original source against complete Baqarah ending
         run: python3 scripts/probe_husary_muallim_alignment.py
       - name: Save source identity report without media
