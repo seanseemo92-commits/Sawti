@@ -75,7 +75,7 @@ class QuranAyahPlayer(
     /** A single original recording, downloaded on first use and retained privately. */
     fun playFull(surah: ShortSurah, representativeVerse: QuranVerse, repeatCount: Int) {
         require(repeatCount in setOf(1, 3, 5))
-        require(QuranFullSources.available(surah))
+        require(QuranFullSources.available(surah, cache.reciter))
         require(representativeVerse.surahNumber == surah.number)
         if (released) return
         stop()
