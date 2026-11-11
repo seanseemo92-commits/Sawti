@@ -106,6 +106,33 @@ class QuranFullTimingsTest {
             QuranFullTimings.parseTiming(raw,selection))
     }
 
+    @Test fun salahBaqarah285ClipStartsAtAmanAlRasulAndKeeps286CuesAligned() {
+        val spec = requireNotNull(QuranFullSources.baqarahSpec(QuranReciter.SALAH_BUKHATIR))
+        assertEquals(1_250L, spec.openingBleedTrimMs)
+        assertEquals(0L,
+            requireNotNull(QuranFullSources.baqarahSpec(QuranReciter.ALAFASY)).openingBleedTrimMs)
+
+        val app = RuntimeEnvironment.getApplication() as Application
+        val ending = QuranSource.selections.first { it.selectionId == 2002 }
+        val times = listOf(
+            Triple(285, 6_737_280, 6_767_360),
+            Triple(286, 6_767_360, 6_816_680))
+        val cues = QuranFullTimings.fromPassagePlan(
+            app, ending, QuranReciter.SALAH_BUKHATIR, times)
+        val first = cues.single { it.itemKey == "segment-2_285_1" }
+        val last285 = cues.single { it.itemKey == "segment-2_285_5" }
+        val first286 = cues.single { it.itemKey == "segment-2_286_1" }
+        assertEquals("Clip must begin with 285 itself, not word from 284", 0, first.startMs)
+        // 30,080 ms originally included 1,250 ms of source bleed.
+        assertEquals(28_830, last285.endMs)
+        assertEquals("The next ayah starts exactly where 285 ends",
+            last285.endMs, first286.startMs)
+        assertEquals(first286.itemKey,
+            QuranFullTimings.activeCue(cues, 28_830)?.itemKey)
+        assertEquals(last285.itemKey,
+            QuranFullTimings.activeCue(cues, 28_829)?.itemKey)
+    }
+
     @Test fun salahBaqarah286RepeatedPhraseStartsOnFirstReadingNotSecond() {
         val app = RuntimeEnvironment.getApplication() as Application
         val end = QuranSource.selections.first { it.selectionId == 2002 }
