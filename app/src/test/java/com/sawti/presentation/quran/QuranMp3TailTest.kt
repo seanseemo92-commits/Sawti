@@ -41,8 +41,8 @@ class QuranMp3TailTest {
             val trimmedMs = QuranMp3Tail.cut(original, corrected, 35_000 - 1_250)
             assertTrue(QuranMp3.isPlayable(corrected))
             assertTrue(corrected.length() < oldCut.length())
-            assertEquals("Whole MP3 frames are retained after a ~1.25s later cut",
-                1_250, oldLengthMs - trimmedMs, 45)
+            assertTrue("Whole MP3 frames are retained after a ~1.25s later cut",
+                kotlin.math.abs((oldLengthMs - trimmedMs) - 1_250) <= 45)
         } finally {
             original.delete()
             oldCut.delete()
