@@ -67,6 +67,7 @@ jobs:
           PYREPORT
       - name: Upload validation and speech review reports
         if: always()
+        continue-on-error: true  # Storage quota must not invalidate tests.
         uses: actions/upload-artifact@v4
         with:
           name: Sawti-validation-reports
@@ -80,6 +81,7 @@ jobs:
           retention-days: 14
       - name: Upload test APK (full path only)
         if: ${{ env.FULL_BUILD == 'true' }}
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: Sawti-debug-ci
@@ -88,6 +90,7 @@ jobs:
           retention-days: 7
       - name: Upload unsigned R8 Release APK for validation only (full path only)
         if: ${{ env.FULL_BUILD == 'true' }}
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: Sawti-unsigned-release-ci
