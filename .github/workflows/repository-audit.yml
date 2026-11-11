@@ -1,0 +1,19 @@
+name: Validate current source audit baseline
+on:
+  push:
+    branches: [fix/prelaunch-cleanup-hint]
+    paths: [.github/workflows/build.yml, .github/workflows/repository-audit.yml, scripts/verify_repository_baseline.py]
+permissions:
+  contents: read
+jobs:
+  baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify canonical version and current foundation
+        run: |
+          python3 scripts/verify_release.py
+          python3 scripts/verify_repository_baseline.py
