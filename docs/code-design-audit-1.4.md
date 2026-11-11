@@ -40,3 +40,17 @@
 تُقاس حدود السطور وارتفاعها والاختصار الفعلي والوصول للأزرار. لا نعتمد على `didOverflowWidth` وحده: أظهر سجل القياس أن عرض الفقرة في مسار semantics للنص السريع أوسع من صندوق النص المحتضن للحروف، رغم ظهور الحروف كاملة في الرسم الأصلي.
 
 المراجع: [إتاحة Android](https://developer.android.com/guide/topics/ui/accessibility/apps)، [تحديث StateFlow الذري](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/update.html).
+
+## نتيجة التحقق النهائية
+
+نجح [البناء الموقّع 42963193848](https://github.com/seanseemo92-commits/Sawti/actions/runs/42963193848) على مصدر التطبيق `b74f8a6c4f1004901d93f9249f1b1fc8d6e49f0e`: 284 اختبارًا، دون فشل أو أخطاء أو تخطٍّ. نجح assembleDebug وtestDebugUnitTest وlintDebug وassembleRelease وlintRelease، ثم فحص APK الفعلي بالتوقيع وبيانات الحزمة ومواردها.
+
+نجحت 11 حالة واجهة على API 33. في المقارنة مع 1.3، رُصد 17 مؤشرًا للقص أو عدم ظهور التحكم، وأصبحت صفرًا بعد الإصلاح. المؤشرات ليست 17 عيبًا مستقلًا؛ يمكن أن ينتج التحكم الواحد عدة مؤشرات. الحالة العادية للرئيسية، والتقدم، وبعض ترتيبات الأزرار كانت سليمة أصلًا، ولذلك نفرق بين إصلاحات الأعطال وتحسينات التنظيم والتباين. تحقق اختبار مستقل من رجوع الشاشة إلى بداية السؤال بعد الانتقال من حالة ممررة.
+
+نجح [فحص ثبات المصدر والمخطط 42962242489](https://github.com/seanseemo92-commits/Sawti/actions/runs/42962242489): أعيد توليد مخطط Room وقورن بالملف المحفوظ في Git دون فرق. لم يتغير إصدار قاعدة البيانات أو تعريف جداول المستخدم.
+
+[نسخة المراجعة الموقعة 1.4](https://github.com/seanseemo92-commits/Sawti/releases/tag/sawti-review-42963193848-1) تتضمن APK وBUILD-INFO والتوقيع وSPEECH-REVIEW و[مقارنة التصميم قبل الإصلاح وبعده](https://github.com/seanseemo92-commits/Sawti/releases/download/sawti-review-42963193848-1/CODE-DESIGN-AUDIT.zip). لم تتغير النسخة الرسمية 1.3 أو فرع main. يتطلب اعتماد النشر الرسمي قرارًا لاحقًا بعد مراجعة النتيجة، ولا يعني نجاح المحاكاة اعتمادًا سمعيًا أو اختبارًا فعليًا على الهاتف.
+
+بصمة APK SHA-256: `c17554873280a940a003fdfdfd1aabe9b1c62a2c0080c553ec0c4a0874044b10`.
+
+شهادة الناشر SHA-256: `754b679c29b0c8acf7c61ca265813d9528c0d0c3afe912b9319a6354cbd31b21`.
