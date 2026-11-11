@@ -59,9 +59,34 @@ def validated_mp3(path: Path) -> bool:
             "-show_entries", "stream=codec_name", "-of", "default=noprint_wrappers=1:nokey=1",
             str(path),
         ], text=True, timeout=30).strip()
-        return probe == "mp3"
+        if probe != "mp3":
+            return False
+        decoded = subprocess.run([
+            "ffmpeg", "-nostdin", "-v", "error", "-xerror", "-i", str(path),
+            "-f", "null", "-",
+        ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=40)
+        return decoded.returncode == 0
     except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
         return False
+
+
+def lossless_remux(source: Path) -> bool:
+    """Try discarding malformed framing without decoding/re-encoding good audio."""
+    repaired = source.with_suffix(".remux.mp3")
+    try:
+        subprocess.run([
+            "ffmpeg", "-nostdin", "-y", "-v", "error", "-err_detect", "ignore_err",
+            "-i", str(source), "-map", "0:a:0", "-c:a", "copy",
+            "-write_xing", "0", str(repaired),
+        ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=40)
+        if validated_mp3(repaired) and repaired.stat().st_size >= source.stat().st_size * 0.90:
+            repaired.replace(source)
+            return True
+        return False
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired, OSError):
+        return False
+    finally:
+        repaired.unlink(missing_ok=True)
 
 
 def store_mp3(chapter: int, ayah: int, reader: str):
@@ -72,6 +97,7 @@ def store_mp3(chapter: int, ayah: int, reader: str):
     urls = [
         f"https://everyayah.com/data/{folder}/{filename}",
         f"https://huggingface.co/datasets/maqra-project/{mirror}/resolve/main/{filename}",
+        f"https://verse.mp3quran.net/data/{folder}/{filename}",
     ]
     if not validated_mp3(target):
         failures = []
@@ -82,7 +108,8 @@ def store_mp3(chapter: int, ayah: int, reader: str):
                     temporary = target.with_suffix(".download")
                     temporary.write_bytes(data)
                     if not validated_mp3(temporary):
-                        raise ValueError(f"Not valid MP3: {url}")
+                        if not lossless_remux(temporary):
+                            raise ValueError(f"Unrepairable MP3 decode error: {url}")
                     temporary.replace(target)
                     break
                 except Exception as exc:
