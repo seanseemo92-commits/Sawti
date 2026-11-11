@@ -11,8 +11,8 @@ import android.os.Looper
 /**
  * Shared, app-scoped audio focus for TTS and caregiver recordings.
  * Acquires transient may-duck focus before speaking. Different interruptions
- * must not be conflated: notifications can duck speech, while phone calls
- * temporarily pause pausable MediaPlayer sessions. Pre-O is supported.
+ * must not be conflated: notifications and calls pause pausable speech
+ * sessions, then resume them on focus gain. Pre-O is supported.
  */
 class AudioFocusController(context: Context) {
     private val manager = context.applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager

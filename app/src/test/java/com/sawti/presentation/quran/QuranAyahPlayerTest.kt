@@ -121,7 +121,7 @@ class QuranAyahPlayerTest {
     }
 
     @Test
-    fun notificationDucksWithoutStoppingOrReplayingTheVerse() {
+    fun notificationPausesAndResumesTheSameVerseWithoutLosingRepeats() {
         val app = RuntimeEnvironment.getApplication() as Application
         val manager = app.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         audio.play(verse, 3)
@@ -130,11 +130,12 @@ class QuranAyahPlayerTest {
         val focusListener = shadowOf(manager).lastAudioFocusRequest.listener
         focusListener.onAudioFocusChange(AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK)
         shadowOf(Looper.getMainLooper()).idle()
-        assertEquals(RecitationPhase.PLAYING, states.last().phase)
+        assertEquals(RecitationPhase.PAUSED, states.last().phase)
         assertEquals(3, states.last().remaining)
-        assertEquals(ShadowMediaPlayer.State.STARTED, current.state)
+        assertEquals(ShadowMediaPlayer.State.PAUSED, current.state)
         focusListener.onAudioFocusChange(AudioManager.AUDIOFOCUS_GAIN)
         shadowOf(Looper.getMainLooper()).idle()
+        assertEquals(RecitationPhase.PLAYING, states.last().phase)
         assertEquals(ShadowMediaPlayer.State.STARTED, current.state)
         assertEquals(1, created.size)
     }

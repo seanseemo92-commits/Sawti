@@ -9,7 +9,6 @@ class AudioPlayer(private val focus: AudioFocusController) {
     private var focusToken: Long? = null
     private var onCanceled: (() -> Unit)? = null
     private var pausedForFocus = false
-    private var duckedForFocus = false
 
     /** Returns false when the file could not be played, so the caller can fall back to TTS. */
     fun play(path: String, onDone: () -> Unit = {}, onCanceled: () -> Unit = onDone): Boolean {
@@ -28,16 +27,16 @@ class AudioPlayer(private val focus: AudioFocusController) {
                         .onFailure { stop() }
                 }
             },
+            // Spoken words must not be missed underneath a notification.
             onDuck = {
                 if (player === mp && !pausedForFocus) {
-                    runCatching { mp.setVolume(0.25f, 0.25f) }
-                        .onSuccess { duckedForFocus = true }
+                    runCatching { mp.pause() }
+                        .onSuccess { pausedForFocus = true }
+                        .onFailure { stop() }
                 }
             },
             onGain = {
                 if (player === mp) {
-                    if (duckedForFocus) runCatching { mp.setVolume(1f, 1f) }
-                    duckedForFocus = false
                     if (pausedForFocus) {
                         pausedForFocus = false
                         runCatching { mp.start() }.onFailure { stop() }
@@ -93,7 +92,6 @@ class AudioPlayer(private val focus: AudioFocusController) {
         val token = focusToken
         focusToken = null
         pausedForFocus = false
-        duckedForFocus = false
         if (current != null) {
             runCatching { current.stop() }
             // Always release, even if stop() throws IllegalStateException.

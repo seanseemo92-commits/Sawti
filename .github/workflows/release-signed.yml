@@ -90,14 +90,10 @@ jobs:
           "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$APK" > "$RUNNER_TEMP/new-cert.txt"
           cat "$RUNNER_TEMP/new-cert.txt"
           grep -q 'Verified using v2 scheme.*true' "$RUNNER_TEMP/new-cert.txt"
-          mkdir -p "$RUNNER_TEMP/previous-release"
-          gh release download v4.4 --repo "$GITHUB_REPOSITORY" --pattern 'Sawti-v4.4-Release.apk' --dir "$RUNNER_TEMP/previous-release"
-          "$BUILD_TOOLS/apksigner" verify --print-certs "$RUNNER_TEMP/previous-release/Sawti-v4.4-Release.apk" > "$RUNNER_TEMP/old-cert.txt"
-          cat "$RUNNER_TEMP/old-cert.txt"
+          # Historical v4.4 Release assets may be unavailable. Trust only the
+          # previously pinned, verified publisher certificate SHA-256, fail closed.
           NEW_CERT=$(sed -n 's/^.*certificate SHA-256 digest: //p' "$RUNNER_TEMP/new-cert.txt" | sort -u)
-          OLD_CERT=$(sed -n 's/^.*certificate SHA-256 digest: //p' "$RUNNER_TEMP/old-cert.txt" | sort -u)
           test "$NEW_CERT" = "754b679c29b0c8acf7c61ca265813d9528c0d0c3afe912b9319a6354cbd31b21"
-          test "$NEW_CERT" = "$OLD_CERT"
           "$BUILD_TOOLS/aapt" dump badging "$APK" > "$RUNNER_TEMP/apk-badging.txt"
           python3 scripts/verify_release.py "$RUNNER_TEMP/apk-badging.txt"
           jarsigner -verify "$AAB" > "$RUNNER_TEMP/aab-verification.txt"
