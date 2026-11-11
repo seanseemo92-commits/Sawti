@@ -400,9 +400,7 @@ internal fun QuranVerseCard(
         // Stretch the bar over the *entire* interval in which this phrase is
         // recited, including repeated readings. End at the NEXT phrase onset
         // instead of filling early then holding at 100% during the second pass.
-        val completionMs = maxOf(trackedCue.endMs, nextCueStartMs ?: trackedCue.endMs)
-        ((status.positionMs - trackedCue.startMs).toFloat() /
-            (completionMs - trackedCue.startMs)).coerceIn(0f, 1f)
+        QuranFullTimings.progressFraction(trackedCue, nextCueStartMs, status.positionMs)
     } else 0f
     val performance = LocalPerformanceMode.current
     val animatedProgress by animateFloatAsState(progress,
