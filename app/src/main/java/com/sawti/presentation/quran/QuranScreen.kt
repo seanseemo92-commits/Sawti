@@ -130,11 +130,10 @@ internal fun QuranContent(
     // timed verse/phrase; no timer-driven fake scrolling between verses.
     val activeFullCue = if (state.audio.fullSelectionId == chosenSurahId &&
         state.audio.phase in setOf(RecitationPhase.PLAYING, RecitationPhase.PAUSED)) {
-        // Leave the verse cards unlit during the introductory ta'awwudh and
-        // any untimed gaps. Never advance to a verse before its actual onset.
-        state.fullCues.firstOrNull {
-            state.audio.positionMs >= it.startMs && state.audio.positionMs < it.endMs
-        }
+        // Stay on this verse through its repetitions and pauses. Transition
+        // only at the following verse onset, never at an early end marker.
+        // The opening ta'awwudh stays unlit until verse one really begins.
+        QuranFullTimings.activeCue(state.fullCues, state.audio.positionMs)
     } else null
     val trackedVerseIndex = state.verses.indexOfFirst { it.itemKey == activeFullCue?.itemKey }
     LaunchedEffect(chosenSurahId, state.audio.fullSelectionId, trackedVerseIndex) {
@@ -223,7 +222,8 @@ internal fun QuranContent(
                             QuranVerseCard(verse, state.audio,
                                 onClick = { onPlay(verse) }, onStop = onStop,
                                 trackedCue = state.fullCues.firstOrNull { it.itemKey == verse.itemKey },
-                                trackingSelectionId = chosenSurahId)
+                                trackingSelectionId = chosenSurahId,
+                                trackingActiveKey = activeFullCue?.itemKey)
                         }
                     }
                 }
@@ -383,15 +383,17 @@ private fun QuranSettings(
 internal fun QuranVerseCard(
     verse: QuranVerse, status: RecitationStatus, onClick: () -> Unit, onStop: () -> Unit,
     trackedCue: QuranFullCue? = null, trackingSelectionId: Int? = null,
+    trackingActiveKey: String? = null,
 ) {
     val colors = quranColors()
     val active = status.globalVerseNumber == verse.globalNumber && status.segmentKey == verse.segmentKey &&
         status.fullSelectionId == null && status.phase in setOf(RecitationPhase.PLAYING, RecitationPhase.BUFFERING, RecitationPhase.PAUSED)
     val tracked = trackedCue != null && status.fullSelectionId == trackingSelectionId &&
         status.phase in setOf(RecitationPhase.PLAYING, RecitationPhase.PAUSED) &&
-        status.positionMs >= trackedCue.startMs &&
-        status.positionMs < trackedCue.endMs
+        trackingActiveKey == verse.itemKey
     val progress = if (trackedCue != null && tracked) {
+        // If the reciter repeats this ayah after the normal first ending, the
+        // bar stays full and the gold glow remains until the NEXT ayah starts.
         ((status.positionMs - trackedCue.startMs).toFloat() /
             (trackedCue.endMs - trackedCue.startMs)).coerceIn(0f, 1f)
     } else 0f
