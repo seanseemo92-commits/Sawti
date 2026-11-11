@@ -29,11 +29,22 @@ class QuranFullAudioTest {
         }
     }
 
-    @Test fun finalBaqarahVersesNeverPretendTwoSeparateAyahFilesAreOneContinuousRecording() {
+    @Test fun finalBaqarahVersesUseOneSourceWholeTrackWithBoundedRangeExtraction() {
         val ending = QuranSource.selections.first { it.selectionId == 2002 }
-        assertFalse(QuranFullSources.available(ending))
+        for (reader in listOf(QuranReciter.ALAFASY, QuranReciter.SALAH_BUKHATIR)) {
+            assertTrue(QuranFullSources.available(ending, reader))
+            val spec = requireNotNull(QuranFullSources.baqarahSpec(reader))
+            assertEquals(spec.fullUrl, QuranFullSources.urls(ending,reader).single())
+            assertTrue(spec.fullUrl.endsWith("/002.mp3"))
+            assertTrue(spec.auditedBytes > 70_000_000L)
+            assertTrue(spec.ayah285StartMs < spec.ayah286StartMs)
+            assertTrue(spec.ayah286StartMs < spec.lastAyahEndMs)
+        }
+        // A mismatched normal/mujawwad Husary timeline must NEVER be
+        // applied to the distinct teacher's recording.
+        assertFalse(QuranFullSources.available(ending, QuranReciter.HUSARY_MUALLIM))
         assertThrows(IllegalArgumentException::class.java) {
-            QuranFullSources.urls(ending, QuranReciter.SALAH_BUKHATIR)
+            QuranFullSources.urls(ending, QuranReciter.HUSARY_MUALLIM)
         }
     }
 
