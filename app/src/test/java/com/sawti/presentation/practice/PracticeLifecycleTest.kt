@@ -8,6 +8,7 @@ import com.sawti.audio.AudioFocusController
 import com.sawti.audio.AudioPlayer
 import com.sawti.audio.SoftChime
 import com.sawti.domain.model.Category
+import com.sawti.domain.model.GreetingsCatalog
 import com.sawti.domain.model.WordItem
 import com.sawti.domain.repository.ProgressRepository
 import com.sawti.domain.repository.WordRepository
@@ -59,10 +60,19 @@ class PracticeLifecycleTest {
             WordItem(2, "transport", "قطار", "قِطَار", "🚆"),
             WordItem(3, "transport", "طائرة", "طَائِرَة", "✈️"),
         )
+        // Greeting photos are visible in picture naming, but nonsensical
+        // in the \"أين...؟\" choice questions shown in the user's recording.
+        val greetings = listOf(
+            WordItem(4, GreetingsCatalog.CATEGORY_ID, "السلام عليكم", "السَّلَامُ عَلَيْكُمْ", "🤝"),
+            WordItem(5, GreetingsCatalog.CATEGORY_ID, "صباح الخير", "صَبَاحُ الْخَيْرِ", "🌅"),
+        )
         val words = Proxy.newProxyInstance(WordRepository::class.java.classLoader,
             arrayOf(WordRepository::class.java)) { _, method, _ ->
             when (method.name) {
-                "observeCategories" -> flowOf(listOf(Category("transport", "المواصلات", 0, false, cards)))
+                "observeCategories" -> flowOf(listOf(
+                    Category("transport", "المواصلات", 0, false, cards),
+                    Category(GreetingsCatalog.CATEGORY_ID, "التحيات", 0, false, greetings),
+                ))
                 else -> error("Unexpected repository call: ${method.name}")
             }
         } as WordRepository
@@ -81,6 +91,38 @@ class PracticeLifecycleTest {
     @After fun close() {
         model.onLeavePractice()
         Dispatchers.resetMain()
+    }
+
+    @Test fun greetingCategoryIsNotAWhereQuestionOrDistractor() {
+        assertFalse(practiceCategoryEligible(GreetingsCatalog.CATEGORY_ID, Exercise.CHOICE))
+        assertTrue(practiceCategoryEligible(GreetingsCatalog.CATEGORY_ID, Exercise.RECALL))
+        assertFalse(practiceCategoryEligible("actions", Exercise.CHOICE))
+        // Rebuild a shuffled question deck several times. Neither the target
+        // nor its alternative may contain a greeting.
+        repeat(12) {
+            model.restart()
+            val state = model.uiState.value
+            assertEquals(Exercise.CHOICE, state.exercise)
+            assertTrue(state.total > 0)
+            assertNotNull(state.card)
+            assertEquals("transport", state.card!!.item.categoryId)
+            assertEquals(2, state.choices.size)
+            assertTrue(state.choices.all { it.item.categoryId == "transport" })
+        }
+    }
+
+    @Test fun greetingsStayAvailableInPictureNamingPractice() {
+        model.setExercise(Exercise.RECALL)
+        val initial = model.uiState.value
+        assertEquals(5, initial.total)
+        val seen = mutableSetOf<String>()
+        while (!model.uiState.value.finished) {
+            val card = model.uiState.value.card ?: break
+            seen += card.item.categoryId
+            model.skip()
+        }
+        assertTrue("Picture naming should still include greetings", GreetingsCatalog.CATEGORY_ID in seen)
+        assertTrue("Other categories must remain", "transport" in seen)
     }
 
     @Test fun leavingBeforeTheQuestionDelayPreventsBackgroundSpeech() {
