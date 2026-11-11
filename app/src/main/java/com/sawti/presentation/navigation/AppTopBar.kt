@@ -165,18 +165,24 @@ private fun SettingsGear(caregiverMode: Boolean, onToggle: () -> Unit, ink: Colo
             }
             .pointerInput(Unit) {
                 detectTapGestures(
-                    onTap = {
-                        Toast.makeText(context, R.string.settings_hint, Toast.LENGTH_SHORT).show()
-                    },
                     onPress = {
+                        // A short tactile confirmation is immediate; the ring still requires
+                        // a full three-second hold before caregiver mode is switched.
+                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        var completed = false
                         val hold = scope.launch {
                             progress.animateTo(1f, tween(HOLD_MS, easing = LinearEasing))
+                            completed = true
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             currentToggle()
                         }
-                        tryAwaitRelease()
+                        val released = tryAwaitRelease()
                         hold.cancel()
-                        scope.launch { progress.snapTo(0f) }
+                        progress.snapTo(0f)
+                        // Never show the "hold for 3 seconds" hint after a successful hold.
+                        if (released && !completed) {
+                            Toast.makeText(context, R.string.settings_hint, Toast.LENGTH_SHORT).show()
+                        }
                     },
                 )
             },

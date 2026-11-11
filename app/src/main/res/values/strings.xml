@@ -7,7 +7,7 @@
     <string name="practice_title">تمرين الكلمات</string>
     <string name="practice_icon_desc">تمرين استرجاع الكلمات</string>
     <string name="settings_gear_desc">وضع المرافق</string>
-    <string name="settings_hint">اضغط مطولاً لمدة ٣ ثوانٍ لفتح وضع المرافق</string>
+    <string name="settings_hint">استمر بالضغط ٣ ثوانٍ لفتح أو إغلاق وضع المرافق</string>
     <string name="caregiver_banner">وضع المرافق مفعّل · اضغط مطولاً على الترس ٣ ثوانٍ للإغلاق</string>
     <string name="back">رجوع</string>
 
