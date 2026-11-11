@@ -212,7 +212,7 @@ internal class QuranFullAudioCache(
                 if (conn.responseCode != HttpURLConnection.HTTP_PARTIAL)
                     throw IOException("Host refused byte range; avoiding full chapter download")
                 val contentRange = conn.getHeaderField("Content-Range").orEmpty()
-                val match = Regex("""bytes (\\d+)-(\\d+)/(\\d+)""").matchEntire(contentRange)
+                val match = Regex("""bytes (\d+)-(\d+)/(\d+)""").matchEntire(contentRange)
                     ?: throw IOException("Invalid Baqarah byte-range headers")
                 if (match.groupValues[1].toLong()!=start ||
                     match.groupValues[2].toLong()!=sourceLength-1 ||
