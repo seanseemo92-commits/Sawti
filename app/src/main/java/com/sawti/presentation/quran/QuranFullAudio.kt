@@ -1,6 +1,7 @@
 package com.sawti.presentation.quran
 
 import android.content.Context
+import android.media.MediaMetadataRetriever
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -19,16 +20,44 @@ import kotlinx.coroutines.withContext
  * Whole recordings, as delivered by the source, never assembled from verse MP3s.
  * They are downloaded only on first use and persisted under filesDir, outside the APK.
  *
- * The two final verses of Al-Baqarah require a separately verified contiguous
- * two-ayah source. Do not silently substitute the ~70 MB entire chapter or
- * concatenate the existing 002285/002286 files.
+ * The final two verses of Al-Baqarah are extracted without recompression
+ * from the original continuous recording using a bounded HTTP byte range.
+ * The entire ~100 MB chapter is never saved or downloaded to the device.
  */
+internal data class BaqarahEndingSpec(
+    val fullUrl: String,
+    val auditedBytes: Long,
+    val ayah285StartMs: Long,
+    val ayah286StartMs: Long,
+    val lastAyahEndMs: Long,
+)
+
 internal object QuranFullSources {
-    fun available(surah: ShortSurah): Boolean = surah.selectionId != 2002 &&
-        (surah.selectionId == 2001 || QuranSource.shortSurahs.any { it.number == surah.number && it.selectionId == surah.selectionId })
+    // These two source editions have recorded verse 285/286 timestamps in the
+    // SAME MP3Quran read whose exact whole-MP3 URL is used below. Do not use
+    // the normal Husary timings with the separate Muallim archive recording.
+    fun baqarahSpec(reader: QuranReciter): BaqarahEndingSpec? = when (reader) {
+        QuranReciter.ALAFASY -> BaqarahEndingSpec(
+            "https://cdn.mp3quran.net/download/audio/mishary-alafasy/r1/002.mp3",
+            120641555L, 7454920L, 7487820L, 7539060L)
+        QuranReciter.SALAH_BUKHATIR -> BaqarahEndingSpec(
+            "https://cdn.mp3quran.net/download/audio/salah-bukhatir/r1/002.mp3",
+            109142897L, 6737280L, 6767360L, 6816680L)
+        QuranReciter.HUSARY_MUALLIM -> null
+    }
+
+    fun available(surah: ShortSurah, reader: QuranReciter? = null): Boolean =
+        when (surah.selectionId) {
+            2001 -> true
+            2002 -> reader != null && baqarahSpec(reader) != null
+            else -> QuranSource.shortSurahs.any {
+                it.number == surah.number && it.selectionId == surah.selectionId
+            }
+        }
 
     fun urls(surah: ShortSurah, reciter: QuranReciter): List<String> {
-        require(available(surah)) { "No verified uninterrupted recording for this selection" }
+        require(available(surah,reciter)) { "No verified uninterrupted recording for this selection" }
+        if (surah.selectionId == 2002) return listOf(requireNotNull(baqarahSpec(reciter)).fullUrl)
         if (surah.selectionId == 2001) {
             val folder = when (reciter) {
                 QuranReciter.ALAFASY -> "Alafasy_128kbps"
@@ -56,6 +85,18 @@ internal class QuranFullAudioCache(
     context: Context,
     private val reciter: QuranReciter,
     private val connectionFactory: (URL) -> HttpURLConnection = { it.openConnection() as HttpURLConnection },
+    private val durationProvider: (String) -> Long = { address ->
+        // MediaMetadataRetriever uses the HTTP source's seek metadata rather
+        // than transferring the entire 100MB chapter into phone storage.
+        val probe = MediaMetadataRetriever()
+        try {
+            probe.setDataSource(address, emptyMap<String, String>())
+            probe.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLongOrNull()
+                ?: throw IOException("Cannot verify source MP3 duration")
+        } finally {
+            probe.release()
+        }
+    },
 ) {
     private val audioDir = File(context.applicationContext.filesDir, "quran_full_recitations/${reciter.editionId}")
 
@@ -76,6 +117,11 @@ internal class QuranFullAudioCache(
             cachedFile(surah)?.let { return@withLock it }
             if (!audioDir.exists() && !audioDir.mkdirs())
                 throw IOException("Unable to create whole-surah recordings directory")
+            if (surah.selectionId == 2002) {
+                // Never publish a full 2:285–286 file from verse-by-verse
+                // stitched clips or from an unverified alternate edition.
+                return@withLock obtainBaqarahEnding(requireNotNull(QuranFullSources.baqarahSpec(reciter)),file)
+            }
             val part = File.createTempFile("surah_${surah.selectionId}_", ".part", audioDir)
             try {
                 var lastFailure: Exception? = null
@@ -131,8 +177,81 @@ internal class QuranFullAudioCache(
         }
     }
 
+    private suspend fun obtainBaqarahEnding(spec: BaqarahEndingSpec, saved: File): File {
+        // Checking the source byte length prevents silently applying old
+        // timing metadata to a changed or replaced 002.mp3.
+        currentCoroutineContext().ensureActive()
+        val head = connectionFactory(URL(spec.fullUrl))
+        val sourceLength = try {
+            head.requestMethod = "HEAD"
+            head.connectTimeout = 15_000
+            head.readTimeout = 20_000
+            if (head.responseCode != HttpURLConnection.HTTP_OK)
+                throw IOException("Full Baqarah source HEAD failed")
+            val bytes = head.contentLengthLong
+            if (bytes != spec.auditedBytes)
+                throw IOException("Source recording changed: reverify Baqarah timings")
+            if (!head.getHeaderField("Accept-Ranges").orEmpty().contains("bytes",ignoreCase=true))
+                throw IOException("Source does not advertise bounded-range downloading")
+            bytes
+        } finally { head.disconnect() }
+        val duration = durationProvider(spec.fullUrl)
+        if (duration !in (spec.lastAyahEndMs - 2500L)..(spec.lastAyahEndMs + 15_000L))
+            throw IOException("Whole recording duration mismatches source timing")
+        val start = (sourceLength - MAX_BYTES).coerceAtLeast(0)
+        val suffix = File.createTempFile("baqarah_full_tail_", ".range", audioDir)
+        val clipped = File.createTempFile("baqarah_285_286_", ".part", audioDir)
+        try {
+            val conn = connectionFactory(URL(spec.fullUrl))
+            try {
+                conn.connectTimeout = 15_000
+                conn.readTimeout = 30_000
+                conn.instanceFollowRedirects = true
+                conn.setRequestProperty("Range","bytes=$start-${sourceLength-1}")
+                conn.setRequestProperty("Accept","audio/mpeg,audio/*")
+                if (conn.responseCode != HttpURLConnection.HTTP_PARTIAL)
+                    throw IOException("Host refused byte range; avoiding full chapter download")
+                val contentRange = conn.getHeaderField("Content-Range").orEmpty()
+                val match = Regex("""bytes (\\d+)-(\\d+)/(\\d+)""").matchEntire(contentRange)
+                    ?: throw IOException("Invalid Baqarah byte-range headers")
+                if (match.groupValues[1].toLong()!=start ||
+                    match.groupValues[2].toLong()!=sourceLength-1 ||
+                    match.groupValues[3].toLong()!=sourceLength)
+                    throw IOException("Incorrect byte-range response")
+                conn.inputStream.use { input ->
+                    FileOutputStream(suffix).use { out ->
+                        val buffer=ByteArray(8192)
+                        var total=0L
+                        while (true) {
+                            currentCoroutineContext().ensureActive()
+                            val n=input.read(buffer)
+                            if (n<0) break
+                            total+=n
+                            if (total>MAX_BYTES) throw IOException("Bounded range exceeded")
+                            out.write(buffer,0,n)
+                        }
+                        if (total!=sourceLength-start) throw IOException("Truncated Baqarah ending range")
+                        out.fd.sync()
+                    }
+                }
+            } finally { conn.disconnect() }
+            currentCoroutineContext().ensureActive()
+            val clipDuration = QuranMp3Tail.cut(suffix,clipped,duration-spec.ayah285StartMs)
+            val expected = spec.lastAyahEndMs - spec.ayah285StartMs
+            if (clipDuration !in (expected-1500L)..(expected+16_000L))
+                throw IOException("Cropped final verses mismatch timing")
+            currentCoroutineContext().ensureActive()
+            if (saved.exists() && !saved.delete()) throw IOException("Cannot overwrite damaged ending")
+            if (!clipped.renameTo(saved)) throw IOException("Unable to cache ending MP3")
+            return saved
+        } finally {
+            suffix.delete()
+            clipped.delete()
+        }
+    }
+
     private fun target(surah: ShortSurah): File {
-        require(QuranFullSources.available(surah))
+        require(QuranFullSources.available(surah, reciter))
         return File(audioDir, "surah_${surah.selectionId}.mp3")
     }
 
