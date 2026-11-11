@@ -1,4 +1,4 @@
-name: Sawti Quran Baqarah 285 clean opening and synced tracking APK
+name: Sawti preview - greetings removed from question exercise APK
 
 on:
   push:
@@ -88,7 +88,7 @@ jobs:
               echo "Current preview APK and metadata already match."
               exit 0
             fi
-            git commit -m 'build(preview): deliver correctly cropped 285 and synced 286 full-playback APK'
+            git commit -m 'build(preview): deliver greetings-free question practice and Quran fixes APK'
             if git push origin HEAD:feature/quran-full-recitation-cache-20261111; then
               exit 0
             fi
