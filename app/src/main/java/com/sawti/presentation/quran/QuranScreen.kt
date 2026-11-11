@@ -130,7 +130,11 @@ internal fun QuranContent(
     // timed verse/phrase; no timer-driven fake scrolling between verses.
     val activeFullCue = if (state.audio.fullSelectionId == chosenSurahId &&
         state.audio.phase in setOf(RecitationPhase.PLAYING, RecitationPhase.PAUSED)) {
-        state.fullCues.lastOrNull { it.startMs <= state.audio.positionMs }
+        // Leave the verse cards unlit during the introductory ta'awwudh and
+        // any untimed gaps. Never advance to a verse before its actual onset.
+        state.fullCues.firstOrNull {
+            state.audio.positionMs >= it.startMs && state.audio.positionMs < it.endMs
+        }
     } else null
     val trackedVerseIndex = state.verses.indexOfFirst { it.itemKey == activeFullCue?.itemKey }
     LaunchedEffect(chosenSurahId, state.audio.fullSelectionId, trackedVerseIndex) {
