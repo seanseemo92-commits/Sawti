@@ -197,21 +197,24 @@
       "http": 200,
       "bytes": 120641555,
       "acceptsRanges": "bytes",
-      "contentType": "audio/mpeg"
+      "contentType": "audio/mpeg",
+      "probeError": "[Errno 2] No such file or directory: 'ffprobe'"
     },
     "salah.bukhatir": {
       "url": "https://cdn.mp3quran.net/download/audio/salah-bukhatir/r1/002.mp3",
       "http": 200,
       "bytes": 109142897,
       "acceptsRanges": "bytes",
-      "contentType": "audio/mpeg"
+      "contentType": "audio/mpeg",
+      "probeError": "[Errno 2] No such file or directory: 'ffprobe'"
     },
     "husary.muallim": {
       "url": "https://archive.org/download/Mushaf_Moalim_3/002.mp3",
       "http": 200,
       "bytes": 55425024,
       "acceptsRanges": "bytes",
-      "contentType": "audio/mpeg"
+      "contentType": "audio/mpeg",
+      "probeError": "[Errno 2] No such file or directory: 'ffprobe'"
     }
   }
 }
