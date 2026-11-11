@@ -118,13 +118,14 @@ def run():
         except Exception as exc:
             item["error"]=str(exc)[:250]
         try:
-            import subprocess
-            probe = subprocess.check_output([
-                "ffprobe","-v","error","-show_entries","format=duration,bit_rate",
-                "-of","json",url],text=True,timeout=38)
-            fmt = json.loads(probe).get("format",{})
-            item["durationMs"]=round(float(fmt["duration"])*1000)
-            item["bitRate"]=int(fmt.get("bit_rate",0))
+            import subprocess, re, imageio_ffmpeg
+            process = subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(),"-hide_banner","-i",url],
+                                     capture_output=True,text=True,timeout=35)
+            match = re.search(r"Duration:\\s*(\\d+):(\\d+):([\\d.]+)",process.stderr)
+            if not match:
+                raise RuntimeError("Audio source duration not declared")
+            hours,mins,secs=match.groups()
+            item["durationMs"]=round((int(hours)*3600+int(mins)*60+float(secs))*1000)
         except Exception as exc:
             item["probeError"]=str(exc)[:180]
         report["fullBaqarah"][key]=item
