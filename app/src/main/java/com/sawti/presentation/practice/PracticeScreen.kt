@@ -38,6 +38,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -82,7 +83,11 @@ fun PracticeRoute(viewModel: PracticeViewModel) {
 fun PracticeScreen(state: PracticeUiState, actions: PracticeActions) {
     BoxWithConstraints(Modifier.fillMaxSize()) {
     val contentHeight = maxOf(maxHeight, 560.dp * LocalDensity.current.fontScale.coerceAtLeast(1f))
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+    val scrollState = rememberScrollState()
+    LaunchedEffect(state.card?.item?.id, state.index, state.exercise, state.finished) {
+        scrollState.scrollTo(0)
+    }
+    Column(Modifier.fillMaxSize().verticalScroll(scrollState)) {
     Column(Modifier.fillMaxWidth().height(contentHeight).padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(14.dp)) {
         ExerciseSwitch(state.exercise, actions::setExercise)

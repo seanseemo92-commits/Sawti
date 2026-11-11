@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -197,6 +200,18 @@ class DesignAuditLayoutTest {
         for (label in listOf("تخطي", "السابق", "إنهاء")) tap(checkText(label, true))
         if (!baseline) assertEquals(3, taps)
         save("tour-dark-large")
+    }
+
+    @Test fun nextQuestionRestoresTheTopAfterLargeTextScrolling() {
+        val item = WordSeed.itemEntities().first { it.semanticKey == "greeting.goodbye" }.toDomain().copy(id = 1)
+        var state by mutableStateOf(PracticeUiState(ready = true, total = 8, card = PracticeCard(item, 5), revealed = true))
+        show(ThemeMode.LIGHT) { PracticeScreen(state, actions) }
+        val context = RuntimeEnvironment.getApplication()
+        checkText(context.getString(R.string.practice_next), true)
+        compose.runOnIdle { state = state.copy(index = 1, revealed = false,
+            card = PracticeCard(item.copy(id = 2, displayText = "مرحبًا"), 5)) }
+        checkText(context.getString(R.string.practice_mode_recall))
+        save("practice-next-large")
     }
 
 }
