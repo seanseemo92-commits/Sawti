@@ -23,9 +23,10 @@ data class RecitationStatus(
     val remaining: Int = 0,
     val failure: RecitationFailure? = null,
     val segmentKey: String? = null,
+    val fullSelectionId: Int? = null,
 )
 
-/** A tap always restarts this ayah. There is deliberately no queue or whole-surah player. */
+/** Per-ayah taps restart the selected clip. Optional full recordings use the same single owner. */
 class QuranAyahPlayer(
     context: Context,
     private val cache: QuranAudioCache,
@@ -34,6 +35,8 @@ class QuranAyahPlayer(
     private val update: (RecitationStatus) -> Unit,
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private val fullCache = QuranFullAudioCache(context, cache.reciter)
+    private var fullSurah: ShortSurah? = null
     private var player: MediaPlayer? = null
     private var downloadJob: Job? = null
     private var focusToken: Long? = null
@@ -64,10 +67,38 @@ class QuranAyahPlayer(
         }
     }
 
+    /** A single original recording, downloaded on first use and retained privately. */
+    fun playFull(surah: ShortSurah, representativeVerse: QuranVerse, repeatCount: Int) {
+        require(repeatCount in setOf(1, 3, 5))
+        require(QuranFullSources.available(surah))
+        require(representativeVerse.surahNumber == surah.number)
+        if (released) return
+        stop()
+        beforePlay()
+        fullSurah = surah
+        val request = generation
+        playsLeft = repeatCount
+        publish(representativeVerse, RecitationPhase.BUFFERING)
+        downloadJob = scope.launch {
+            try {
+                val file = fullCache.obtain(surah)
+                ensureActive()
+                if (owns(request)) prepareLocalPlayer(representativeVerse, file, request, 0)
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                if (owns(request)) fail(representativeVerse, RecitationFailure.DOWNLOAD)
+            }
+        }
+    }
+
     private fun owns(request: Long) = !released && request == generation
 
     private fun publish(verse: QuranVerse, phase: RecitationPhase) {
-        update(RecitationStatus(verse.globalNumber, phase, playsLeft, segmentKey = verse.segmentKey))
+        val full = fullSurah
+        update(RecitationStatus(if (full == null) verse.globalNumber else null, phase, playsLeft,
+            segmentKey = if (full == null) verse.segmentKey else null,
+            fullSelectionId = full?.selectionId))
     }
 
     private fun prepareLocalPlayer(verse: QuranVerse, file: File, request: Long, attempt: Int) {
@@ -164,13 +195,14 @@ class QuranAyahPlayer(
         publish(verse, RecitationPhase.BUFFERING)
         downloadJob = scope.launch {
             try {
-                cache.invalidate(verse)
+                val full = fullSurah
+                if (full == null) cache.invalidate(verse) else fullCache.invalidate(full)
                 ensureActive()
                 if (!owns(request)) return@launch
                 if (attempt >= 1) {
                     fail(verse, RecitationFailure.DECODER)
                 } else {
-                    val file = cache.obtain(verse)
+                    val file = if (full == null) cache.obtain(verse) else fullCache.obtain(full)
                     ensureActive()
                     if (owns(request)) prepareLocalPlayer(verse, file, request, attempt + 1)
                 }
@@ -183,8 +215,14 @@ class QuranAyahPlayer(
     }
 
     private fun fail(verse: QuranVerse, failure: RecitationFailure) {
+        val full = fullSurah
         stop()
-        if (!released) update(RecitationStatus(verse.globalNumber, RecitationPhase.ERROR, failure = failure, segmentKey = verse.segmentKey))
+        if (!released) update(RecitationStatus(
+            globalVerseNumber = if (full == null) verse.globalNumber else null,
+            phase = RecitationPhase.ERROR, failure = failure,
+            segmentKey = if (full == null) verse.segmentKey else null,
+            fullSelectionId = full?.selectionId,
+        ))
     }
 
     private fun clearPlayer() {
@@ -205,6 +243,7 @@ class QuranAyahPlayer(
         downloadJob = null
         playsLeft = 0
         clearPlayer()
+        fullSurah = null
         update(RecitationStatus())
     }
 
