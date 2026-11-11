@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [feature/quran-full-recitation-cache-20261111]
-    paths: [.github/workflows/quran-source-timing-audit.yml]
+    paths: [.github/workflows/quran-source-timing-audit.yml, scripts/check_quran_continuous_sources.py]
 permissions:
   contents: write
 concurrency:
