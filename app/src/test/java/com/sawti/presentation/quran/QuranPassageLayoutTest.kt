@@ -58,6 +58,12 @@ class QuranPassageLayoutTest {
         }
     }
 
+    private fun card(tag: String): SemanticsNodeInteraction {
+        // LazyColumn does not compose distant items until it scrolls to them.
+        compose.onNodeWithTag("quran-content").performScrollToNode(hasTestTag(tag))
+        return compose.onNodeWithTag(tag)
+    }
+
     private fun save(name: String) {
         compose.runOnIdle {
             val bitmap = Bitmap.createBitmap(capture.width, capture.height, Bitmap.Config.ARGB_8888)
@@ -72,38 +78,38 @@ class QuranPassageLayoutTest {
     @Test fun ayatAlKursiUsesTheSameScrollableCardsAndRepeatedTaps() {
         val taps = mutableListOf<String>()
         show(2001, onPlay = { taps += it.itemKey })
-        compose.onNodeWithTag("segment-2_255_1").performScrollTo().assertIsDisplayed().performClick().performClick()
+        card("segment-2_255_1").assertIsDisplayed().performClick().performClick()
         assertEquals(listOf("segment-2_255_1", "segment-2_255_1"), taps)
         save("kursi-light")
-        compose.onNodeWithTag("segment-2_255_9").performScrollTo().assertIsDisplayed().performClick()
+        card("segment-2_255_9").assertIsDisplayed().performClick()
         assertEquals("segment-2_255_9", taps.last())
     }
 
     @Test fun onlySelectedPartOfAnAyahGetsTheActiveStopAction() {
         show(2001, dark = true, active = true)
-        compose.onNodeWithTag("segment-2_255_1").performScrollTo().assertIsDisplayed()
+        card("segment-2_255_1").assertIsDisplayed()
         save("kursi-dark-active")
         compose.onAllNodesWithText("إيقاف التلاوة · المتبقي 3").assertCountEquals(1)
-        compose.onNodeWithTag("segment-2_255_2").performScrollTo().assertIsDisplayed()
-        compose.onNodeWithTag("segment-2_255_9").performScrollTo().assertIsDisplayed()
+        card("segment-2_255_2").assertIsDisplayed()
+        card("segment-2_255_9").assertIsDisplayed()
     }
 
     @Test fun lastBaqarahPartAndLongReciterNameStayReachableAtDoubleTextSize() {
         show(2002, large = true)
         compose.onNodeWithText(QuranReciter.HUSARY_MUALLIM.displayName).performScrollTo().assertIsDisplayed()
         save("baqarah-large-settings")
-        compose.onNodeWithTag("segment-2_284_1").performScrollTo().assertIsDisplayed()
+        card("segment-2_284_1").assertIsDisplayed()
         save("baqarah-large-first")
-        compose.onNodeWithTag("segment-2_286_8").performScrollTo().assertIsDisplayed()
+        card("segment-2_286_8").assertIsDisplayed()
         save("baqarah-large-last")
     }
 
     @Test fun bothNewEntriesCanBeSelectedIndependentlyInTheExistingList() {
         var chosen: Int? = null
         show(null, onChoose = { chosen = it })
-        compose.onNodeWithTag("surah-2001").performScrollTo().assertIsDisplayed().performClick()
+        card("surah-2001").assertIsDisplayed().performClick()
         assertEquals(2001, chosen)
-        compose.onNodeWithTag("surah-2002").performScrollTo().assertIsDisplayed().performClick()
+        card("surah-2002").assertIsDisplayed().performClick()
         assertEquals(2002, chosen)
         save("passages-list")
     }
