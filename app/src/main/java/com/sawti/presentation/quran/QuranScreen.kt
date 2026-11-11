@@ -223,7 +223,11 @@ internal fun QuranContent(
                                 onClick = { onPlay(verse) }, onStop = onStop,
                                 trackedCue = state.fullCues.firstOrNull { it.itemKey == verse.itemKey },
                                 trackingSelectionId = chosenSurahId,
-                                trackingActiveKey = activeFullCue?.itemKey)
+                                trackingActiveKey = activeFullCue?.itemKey,
+                                nextCueStartMs = state.fullCues
+                                    .indexOfFirst { it.itemKey == verse.itemKey }
+                                    .takeIf { it >= 0 }
+                                    ?.let { state.fullCues.getOrNull(it + 1)?.startMs })
                         }
                     }
                 }
@@ -384,6 +388,7 @@ internal fun QuranVerseCard(
     verse: QuranVerse, status: RecitationStatus, onClick: () -> Unit, onStop: () -> Unit,
     trackedCue: QuranFullCue? = null, trackingSelectionId: Int? = null,
     trackingActiveKey: String? = null,
+    nextCueStartMs: Int? = null,
 ) {
     val colors = quranColors()
     val active = status.globalVerseNumber == verse.globalNumber && status.segmentKey == verse.segmentKey &&
@@ -392,10 +397,12 @@ internal fun QuranVerseCard(
         status.phase in setOf(RecitationPhase.PLAYING, RecitationPhase.PAUSED) &&
         trackingActiveKey == verse.itemKey
     val progress = if (trackedCue != null && tracked) {
-        // If the reciter repeats this ayah after the normal first ending, the
-        // bar stays full and the gold glow remains until the NEXT ayah starts.
+        // Stretch the bar over the *entire* interval in which this phrase is
+        // recited, including repeated readings. End at the NEXT phrase onset
+        // instead of filling early then holding at 100% during the second pass.
+        val completionMs = maxOf(trackedCue.endMs, nextCueStartMs ?: trackedCue.endMs)
         ((status.positionMs - trackedCue.startMs).toFloat() /
-            (trackedCue.endMs - trackedCue.startMs)).coerceIn(0f, 1f)
+            (completionMs - trackedCue.startMs)).coerceIn(0f, 1f)
     } else 0f
     val performance = LocalPerformanceMode.current
     val animatedProgress by animateFloatAsState(progress,
