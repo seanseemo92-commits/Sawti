@@ -51,6 +51,13 @@ internal object QuranFullTimings {
         return cues.lastOrNull { positionMs >= it.startMs }
     }
 
+    /** A single gentle progress cycle covers both readings of a repeated phrase. */
+    internal fun progressFraction(cue: QuranFullCue, nextStartMs: Int?, positionMs: Int): Float {
+        val completion = maxOf(cue.endMs, nextStartMs ?: cue.endMs)
+        return ((positionMs - cue.startMs).toFloat() /
+            (completion - cue.startMs)).coerceIn(0f, 1f)
+    }
+
     suspend fun obtain(context: Context, surah: ShortSurah, reciter: QuranReciter): List<QuranFullCue> =
         withContext(Dispatchers.IO) {
             val app = context.applicationContext
