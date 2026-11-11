@@ -51,6 +51,9 @@ def main():
             relative = f"{reader}/{surah:03d}{ayah:03d}.mp3"
             assert recording["asset"] == "quran_surahs/" + relative
             assert "everyayah.com/data/" in recording["source"]
+            assert recording["processing"] in {"unaltered", "lossless_remux", "reencoded_known_corrupt_frame"}
+            if recording["processing"] == "reencoded_known_corrupt_frame":
+                assert (reader, surah, ayah) == ("husary.muallim", 113, 5)
             asset = ASSETS / relative
             assert 1024 < asset.stat().st_size <= 12 * 1024 * 1024
             assert digest(asset) == recording["sha256"]
