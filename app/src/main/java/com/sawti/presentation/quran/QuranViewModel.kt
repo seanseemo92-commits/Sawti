@@ -105,6 +105,14 @@ internal class QuranViewModel(application: Application) : AndroidViewModel(appli
         player.play(verse, _state.value.repeats)
     }
 
+    /** Whole recording is independent from per-ayah bundled audio and never enters the APK. */
+    fun playFull() {
+        val current = _state.value
+        val surah = QuranSource.selections.firstOrNull { it.selectionId == current.surahId } ?: return
+        if (current.loading || current.verses.isEmpty() || !QuranFullSources.available(surah)) return
+        player.playFull(surah, current.verses.first(), current.repeats)
+    }
+
     fun stopAudio() = player.stop()
 
     private fun refreshSavedCount() {
