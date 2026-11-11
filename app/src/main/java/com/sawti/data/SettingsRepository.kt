@@ -13,15 +13,25 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 /** Small SharedPreferences-backed store for display settings. */
-class SettingsRepository(context: Context) {
+class SettingsRepository(
+    context: Context,
+    initialDialect: () -> ArabicDialect = { DeviceDialectResolver.detect(context.applicationContext) },
+) {
     private val prefs = context.applicationContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
 
     // Old four-step onboarding is retired. Mark existing installs completed without
     // touching dialect choices, caregiver media, or the database.
     init {
-        if (!prefs.getBoolean("onboarding_completed", false)) {
-            prefs.edit().putBoolean("onboarding_completed", true).apply()
+        val editor = prefs.edit()
+        // Persist once. A saved manual choice (including Fusha) always wins on restart/restore/travel.
+        if (!prefs.contains("dialect")) {
+            val detected = runCatching(initialDialect).getOrDefault(ArabicDialect.STANDARD)
+            editor.putString("dialect", detected.name)
         }
+        if (!prefs.getBoolean("onboarding_completed", false)) {
+            editor.putBoolean("onboarding_completed", true)
+        }
+        editor.apply()
     }
 
     private val _state = MutableStateFlow(load())

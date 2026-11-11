@@ -10,14 +10,14 @@ class WordSeedFoundationTest {
             .bufferedReader().use { it.readLines().filter(String::isNotBlank).toSet() }
         val words = WordSeed.itemEntities()
         val actual = words.map { "${it.semanticKey}\t${it.categoryId}" }
-        assertEquals(365, words.size)
+        assertEquals(391, words.size)
         assertEquals(words.size, actual.distinct().size)
         assertEquals(words.size, words.map { it.semanticKey }.distinct().size)
         assertEquals(expected, actual.toSet())
         val format = Regex("[a-z]+(?:[._][a-z0-9]+)+")
         assertTrue(words.all { it.semanticKey?.matches(format) == true })
         assertTrue(words.all { it.displayText.isNotBlank() && it.ttsPrompt.isNotBlank() })
-        assertEquals(12, WordSeed.categories.size)
+        assertEquals(14, WordSeed.categories.size)
         assertEquals(WordSeed.categories.size, WordSeed.categories.map { it.id }.distinct().size)
     }
 

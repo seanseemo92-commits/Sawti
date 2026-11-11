@@ -72,5 +72,5 @@ object CategoryIds {
     const val FAMILY = "family"
     const val DAILY = "daily"
     const val CUISINE = "cuisine"
+    const val TRANSPORT = "transport"
 }
-

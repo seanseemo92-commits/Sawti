@@ -54,7 +54,17 @@ class RoomWordRepository(
                         DialectCatalog.localize(item.toDomain(), settings.dialect)
                     },
                 )
-            }
+            }.sortedWith(
+                compareBy<Category> {
+                    // Display-only priority: Quran is the separate full-width hero card,
+                    // then Greetings and Family share the first phone grid row.
+                    when (it.id) {
+                        "greetings" -> 0
+                        CategoryIds.FAMILY -> 1
+                        else -> 2
+                    }
+                }.thenBy { it.sortOrder },
+            )
         }
 
     override suspend fun seedOrUpdateDefaults() = db.storage.cleanupIfActive {

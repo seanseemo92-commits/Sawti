@@ -116,12 +116,13 @@ private const val CascadeMaxRows = 10
 @Composable
 fun AdultAccentBar(color: Color) { Box(Modifier.fillMaxWidth().height(3.dp).background(color)) }
 
-fun Modifier.bounceClick(onLongClick: (() -> Unit)? = null, onClick: () -> Unit, accent: Color? = null): Modifier = composed {
+fun Modifier.bounceClick(onLongClick: (() -> Unit)? = null, onClick: () -> Unit, accent: Color? = null,
+    interactionSource: MutableInteractionSource? = null): Modifier = composed {
     val haptic = LocalHapticFeedback.current
     val dwell = LocalTouchDwell.current
     val currentClick by rememberUpdatedState(onClick)
     val currentLongClick by rememberUpdatedState(onLongClick)
-    val source = remember { MutableInteractionSource() }
+    val source = interactionSource ?: remember { MutableInteractionSource() }
     var dwellPressed by remember { mutableStateOf(false) }
     val pressed by source.collectIsPressedAsState()
     val performance = LocalPerformanceMode.current

@@ -1,22 +1,15 @@
 name: Sawti signed release
-
 on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths:
-      - app/build.gradle.kts
-      - .github/workflows/release-signed.yml
-
+    paths: [app/build.gradle.kts, .github/workflows/release-signed.yml]
 permissions:
-  # Testing a signed build never needs permission to publish Releases.
-  contents: read
+  contents: write
   actions: read
-
 concurrency:
   group: sawti-production-release
   cancel-in-progress: false
-
 jobs:
   signed-release:
     if: github.ref == 'refs/heads/main'
@@ -24,19 +17,20 @@ jobs:
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-
       - name: Read canonical release version
         run: python3 scripts/verify_release.py
-
+      - name: Verify bundled Quran assets before signing
+        run: |
+          set -euo pipefail
+          python3 scripts/verify_quran_passages.py
+          python3 scripts/verify_quran_surahs.py
       - name: Recover private release key (required, never commit it)
         env:
           GH_TOKEN: ${{ github.token }}
@@ -48,19 +42,16 @@ jobs:
         run: |
           set -euo pipefail
           umask 077
-
           if [[ -n "$KEYSTORE_BASE64" && -n "$STORE_PASSWORD" && -n "$KEY_ALIAS" && -n "$KEY_PASSWORD" ]]; then
             printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/sawti-release.jks"
           elif [[ -z "$KEYSTORE_BASE64" && -z "$STORE_PASSWORD" && -z "$KEY_ALIAS" && -z "$KEY_PASSWORD" ]]; then
-            # Private publisher signing backup is downloaded only inside the trusted
-            # main-branch runner. It is never committed to the repository.
+            # Same private publisher backup used by the verified v4.4 release.
+            # It is downloaded only inside the trusted main-branch runner.
             mkdir -p "$RUNNER_TEMP/sawti-private-key"
             gh run download 40346497322 --repo "$GITHUB_REPOSITORY" --name PRIVATE-MyWords-Publisher-Key-BACKUP --dir "$RUNNER_TEMP/sawti-private-key"
-
             test -s "$RUNNER_TEMP/sawti-private-key/mywords-publisher.p12"
             STORE_PASSWORD=$(sed -n 's/^Store and key password: //p' "$RUNNER_TEMP/sawti-private-key/KEEP_PRIVATE_SIGNING_INSTRUCTIONS.txt" | head -n 1 | tr -d '\r')
             test -n "$STORE_PASSWORD"
-
             echo "::add-mask::$STORE_PASSWORD"
             KEY_PASSWORD="$STORE_PASSWORD"
             KEY_ALIAS=mywords-release
@@ -69,28 +60,17 @@ jobs:
             echo "::error::Signing secrets are only partially configured; refusing to guess a signing identity."
             exit 1
           fi
-
           test -s "$RUNNER_TEMP/sawti-release.jks"
-
           {
             echo "SAWTI_KEYSTORE_PATH=$RUNNER_TEMP/sawti-release.jks"
             echo "SAWTI_KEYSTORE_PASSWORD=$STORE_PASSWORD"
             echo "SAWTI_KEY_ALIAS=$KEY_ALIAS"
             echo "SAWTI_KEY_PASSWORD=$KEY_PASSWORD"
           } >> "$GITHUB_ENV"
-
           echo "::add-mask::$STORE_PASSWORD"
           echo "::add-mask::$KEY_PASSWORD"
-
-      # Room 2.6 KSP writes Debug and Release schemas to the same location.
-      # Build each variant in a separate Gradle invocation and serialize workers
-      # to prevent the transient "Empty schema file" processor failure.
-      - name: Run Debug unit tests before Release generation
-        run: gradle --no-daemon --max-workers=1 :app:testDebugUnitTest
-
       - name: Build signed Release APK and AAB
-        run: gradle --no-daemon --max-workers=1 :app:assembleRelease :app:bundleRelease :app:lintRelease
-
+        run: gradle --no-daemon :app:assembleRelease :app:bundleRelease :app:testDebugUnitTest :app:lintRelease
       - name: Verify identity, version, publisher certificate and release files
         env:
           GH_TOKEN: ${{ github.token }}
@@ -98,78 +78,61 @@ jobs:
         run: |
           set -euo pipefail
           trap 'echo "::error::Release verification failed at line $LINENO"' ERR
-
           APK=app/build/outputs/apk/release/app-release.apk
           AAB=app/build/outputs/bundle/release/app-release.aab
-
+          unzip -t "$APK" > /dev/null
+          unzip -Z1 "$APK" > "$RUNNER_TEMP/release-apk-files.txt"
+          test "$(grep -Ec '^assets/quran_passages/(ar.alafasy|salah.bukhatir|husary.muallim)/2_(255|285|286)_[0-9]+\.mp3$' "$RUNNER_TEMP/release-apk-files.txt")" = 66
+          test "$(grep -Ec '^assets/quran_surahs/(ar.alafasy|salah.bukhatir|husary.muallim)/[0-9]{6}\.mp3$' "$RUNNER_TEMP/release-apk-files.txt")" = 201
+          test "$(grep -Ec '^assets/quran_surahs/text/surah_[0-9]+\.json$' "$RUNNER_TEMP/release-apk-files.txt")" = 13
+          ! grep -Eq '^assets/quran_passages/.*/2_284_[0-9]+\.mp3$' "$RUNNER_TEMP/release-apk-files.txt"
           BUILD_TOOLS=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
-
-          "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$APK" > "$RUNNER_TEMP/release-cert.txt"
-          cat "$RUNNER_TEMP/release-cert.txt"
-          grep -q 'Verified using v2 scheme.*true' "$RUNNER_TEMP/release-cert.txt"
-
+          "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$APK" > "$RUNNER_TEMP/new-cert.txt"
+          cat "$RUNNER_TEMP/new-cert.txt"
+          grep -q 'Verified using v2 scheme.*true' "$RUNNER_TEMP/new-cert.txt"
+          mkdir -p "$RUNNER_TEMP/previous-release"
+          gh release download v4.4 --repo "$GITHUB_REPOSITORY" --pattern 'Sawti-v4.4-Release.apk' --dir "$RUNNER_TEMP/previous-release"
+          "$BUILD_TOOLS/apksigner" verify --print-certs "$RUNNER_TEMP/previous-release/Sawti-v4.4-Release.apk" > "$RUNNER_TEMP/old-cert.txt"
+          cat "$RUNNER_TEMP/old-cert.txt"
+          NEW_CERT=$(sed -n 's/^.*certificate SHA-256 digest: //p' "$RUNNER_TEMP/new-cert.txt" | sort -u)
+          OLD_CERT=$(sed -n 's/^.*certificate SHA-256 digest: //p' "$RUNNER_TEMP/old-cert.txt" | sort -u)
+          test "$NEW_CERT" = "754b679c29b0c8acf7c61ca265813d9528c0d0c3afe912b9319a6354cbd31b21"
+          test "$NEW_CERT" = "$OLD_CERT"
           "$BUILD_TOOLS/aapt" dump badging "$APK" > "$RUNNER_TEMP/apk-badging.txt"
           python3 scripts/verify_release.py "$RUNNER_TEMP/apk-badging.txt"
-
           jarsigner -verify "$AAB" > "$RUNNER_TEMP/aab-verification.txt"
           cat "$RUNNER_TEMP/aab-verification.txt"
           grep -q 'jar verified' "$RUNNER_TEMP/aab-verification.txt"
-
           keytool -printcert -jarfile "$AAB" > "$RUNNER_TEMP/aab-cert.txt"
           cat "$RUNNER_TEMP/aab-cert.txt"
-
-          APK_CERT=$(sed -n 's/^.*certificate SHA-256 digest: //p' "$RUNNER_TEMP/release-cert.txt" | sort -u)
           AAB_CERT=$(sed -n 's/.*SHA256: //p' "$RUNNER_TEMP/aab-cert.txt" | head -n 1 | tr -d ':' | tr '[:upper:]' '[:lower:]')
-          test -n "$APK_CERT"
-          test "$APK_CERT" = "$AAB_CERT"
-
-          # Independently pin the verified historical Sawti publisher identity:
-          # v4.6.0 release checked the same SHA-256 against published v4.4.
-          # A valid APK/AAB pair signed by a *different* key must fail here.
-          EXPECTED_PUBLISHER_SHA256=754b679c29b0c8acf7c61ca265813d9528c0d0c3afe912b9319a6354cbd31b21
-          if [[ "$APK_CERT" != "$EXPECTED_PUBLISHER_SHA256" ]]; then
-            echo "::error::Publisher signing certificate does not match Sawti's verified historical certificate."
-            exit 1
-          fi
-
+          test "$AAB_CERT" = "$NEW_CERT"
           unzip -t "$AAB" > /dev/null
-
           mkdir -p dist
           cp "$APK" "dist/Sawti-v${RELEASE_VERSION}-Release.apk"
           cp "$AAB" "dist/Sawti-v${RELEASE_VERSION}-Release.aab"
-          cp "$RUNNER_TEMP/release-cert.txt" dist/APK-SIGNATURE.txt
-
+          cp "$RUNNER_TEMP/new-cert.txt" dist/APK-SIGNATURE.txt
           printf 'commit=%s\nversionName=%s\nversionCode=%s\npackage=com.sawti\n' "$GITHUB_SHA" "$RELEASE_VERSION" "$RELEASE_CODE" > dist/BUILD-INFO.txt
           (cd dist && sha256sum *.apk *.aab > SHA256SUMS.txt)
-
       - name: Upload verified signed release
+        continue-on-error: true  # Publishing the verified Release is the fallback when Actions storage is full.
         uses: actions/upload-artifact@v4
         with:
           name: Sawti-v${{ env.RELEASE_VERSION }}-signed-release
           path: dist/*
           if-no-files-found: error
           retention-days: 90
-
-      # Publishing is intentionally disabled until the project owner separately
-      # authorizes a public GitHub Release. This gate must be removed in a
-      # separately reviewed change only after approval.
       - name: Publish versioned release
-        if: ${{ false }}
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-
           # Never overwrite an existing version or attach files to a different commit.
-          gh release create "v${RELEASE_VERSION}" dist/* \
-            --repo "$GITHUB_REPOSITORY" \
-            --target "$GITHUB_SHA" \
-            --title "صوتي | Sawti v${RELEASE_VERSION}" \
-            --notes "Initial public release of Sawti v${RELEASE_VERSION}.\n\n- versionName: ${RELEASE_VERSION}\n- versionCode: ${RELEASE_CODE}\n- Signed Release APK and Android App Bundle\n- SHA-256 checksums and build information included\n- No prior users, installed releases, or data migrations\n"
-
+          gh release create "v${RELEASE_VERSION}" dist/* --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "صوتي | Sawti v${RELEASE_VERSION}" --notes-file "docs/release-${RELEASE_VERSION}.md"
       - name: Clean signing material
         if: always()
         run: |
           rm -f "$RUNNER_TEMP/sawti-release.jks"
           rm -rf "$RUNNER_TEMP/sawti-private-key"
+

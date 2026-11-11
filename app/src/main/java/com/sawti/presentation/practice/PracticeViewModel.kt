@@ -66,6 +66,32 @@ class PracticeViewModel(
     private var choicePool: List<PracticeCard> = emptyList()
     private var deck: List<PracticeCard> = emptyList()
     private var advanceJob: Job? = null
+    private var questionJob: Job? = null
+    private var practiceActive = false
+
+    fun onEnterPractice() {
+        if (practiceActive) return
+        practiceActive = true
+        val state = _uiState.value
+        if (state.exercise == Exercise.CHOICE && state.card != null && !state.finished) {
+            if (state.solved) scheduleAdvance() else replayQuestion()
+        }
+    }
+
+    fun onLeavePractice() {
+        practiceActive = false
+        advanceJob?.cancel()
+        questionJob?.cancel()
+        voice.stop()
+    }
+
+    private fun scheduleAdvance() {
+        advanceJob?.cancel()
+        if (practiceActive) advanceJob = viewModelScope.launch {
+            delay(1800)
+            if (practiceActive) advance()
+        }
+    }
     init {
         viewModelScope.launch {
             repository.observeCategories().catch { Log.e("SawtiPractice", "Category observation failed", it) }.collect { categories ->
@@ -85,6 +111,7 @@ class PracticeViewModel(
     }
     private fun startRound(exercise: Exercise = _uiState.value.exercise) {
         advanceJob?.cancel()
+        questionJob?.cancel()
         voice.stop()
         val pool = if (exercise == Exercise.RECALL) recallPool else choicePool
         deck = if (exercise == Exercise.CHOICE && pool.size < 2) emptyList() else pool.shuffled().take(ROUND_SIZE)
@@ -114,6 +141,7 @@ class PracticeViewModel(
         return others.filter { it.item.categoryId == target.item.categoryId }.ifEmpty { others }.randomOrNull()
     }
     private fun advance() {
+        questionJob?.cancel()
         val next = _uiState.value.index + 1
         if (next >= deck.size) {
             voice.stop()
@@ -129,12 +157,14 @@ class PracticeViewModel(
     override fun restart() = startRound()
     override fun hint() {
         val card = _uiState.value.card ?: return
+        questionJob?.cancel()
         voice.hint(card.item)
         _uiState.update { it.copy(hintUsed = true) }
     }
     override fun reveal() {
         val card = _uiState.value.card ?: return
         _uiState.update { it.copy(revealed = true) }
+        questionJob?.cancel()
         voice.play(card.item)
     }
     /** Unaided recall = SELF; recall after the phonemic hint = CUED. */
@@ -153,29 +183,35 @@ class PracticeViewModel(
         advance()
     }
     override fun replayQuestion() {
-        val card = _uiState.value.card ?: return
-        viewModelScope.launch {
+        questionJob?.cancel()
+        val state = _uiState.value
+        val card = state.card ?: return
+        if (!practiceActive || state.finished || state.solved || state.exercise != Exercise.CHOICE) return
+        questionJob = viewModelScope.launch {
             delay(350)
-            voice.say(QuestionPhrases.where(card.item))
+            if (practiceActive && _uiState.value.card?.item?.id == card.item.id && !_uiState.value.solved) {
+                voice.say(QuestionPhrases.where(card.item))
+            }
         }
     }
     override fun choose(wordId: Long) {
         val s = _uiState.value
         val card = s.card ?: return
         if (s.exercise != Exercise.CHOICE || s.solved || wordId in s.wrongIds) return
+        questionJob?.cancel()
+        voice.stop()
         if (wordId == card.item.id) {
             val firstTry = s.wrongIds.isEmpty()
             if (firstTry) log(card.item.id, PracticeMode.CHOICE, PracticeOutcome.CORRECT)
             chime.play()
             _uiState.update { it.copy(solved = true, score = if (firstTry) it.score + 1 else it.score) }
-            advanceJob?.cancel()
-            advanceJob = viewModelScope.launch { delay(1800); advance() }
+            scheduleAdvance()
         } else {
             if (s.wrongIds.isEmpty()) log(card.item.id, PracticeMode.CHOICE, PracticeOutcome.WRONG)
             _uiState.update { it.copy(wrongIds = it.wrongIds + wordId) }
         }
     }
-    override fun onCleared() { voice.stop() }
+    override fun onCleared() { onLeavePractice() }
     class Factory(private val app: Application) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -185,3 +221,4 @@ class PracticeViewModel(
     }
     private companion object { const val ROUND_SIZE = 10 }
 }
+

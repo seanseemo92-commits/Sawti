@@ -1,0 +1,56 @@
+name: Sawti Argon corrections preview APK
+on:
+  workflow_dispatch:
+    inputs:
+      upload_artifacts:
+        description: 'Upload debug APK and test reports (requires available artifact quota)'
+        type: boolean
+        required: false
+        default: false
+permissions:
+  contents: read
+jobs:
+  audit-preview:
+    # Manual historical preview; routine changes use the current signed/audit workflows.
+    if: github.event_name == 'workflow_dispatch' 
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build debug APK
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon :app:assembleDebug
+      - name: Test and lint
+        # No second wrapper download attempt when the build step failed.
+        if: success()
+        run: ./gradlew --no-daemon :app:testDebugUnitTest :app:lintDebug --continue
+      - name: Validate optimized Release build
+        if: success()
+        run: ./gradlew --no-daemon :app:assembleRelease :app:lintRelease --continue
+      - name: Upload Sawti Argon preview APK
+        # Push runs verify code without consuming artifact storage.
+        # Upload only when explicitly requested and quota is available.
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.upload_artifacts }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sawti-Argon-preview-debug
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Upload test reports
+        # Push runs verify code without consuming artifact storage.
+        # Upload only when explicitly requested and quota is available.
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.upload_artifacts }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sawti-Argon-preview-test-reports
+          path: |
+            app/build/test-results/
+            app/build/reports/
+          if-no-files-found: warn

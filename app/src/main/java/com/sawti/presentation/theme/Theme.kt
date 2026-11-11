@@ -57,6 +57,9 @@ val InkOnDark = Color(0xFFF1F5F9)
 /** Azure/cyan used for the breathing voice aura and dark-mode accents. */
 val VoiceAura = Color(0xFF38BDF8)
 
+/** Distinct coral with >= 4.5:1 contrast against white Arabic card labels. */
+val GreetingsCoral = Color(0xFFB14D57)
+
 // ---------------------------------------------------------------------------
 // Category palettes
 // ---------------------------------------------------------------------------
@@ -134,10 +137,30 @@ fun paletteOf(index: Int): CategoryPalette {
 }
 
 /**
+ * Greetings uses a distinct warm coral palette rather than borrowing the purple preset.
+ * The entire existing ceramic/rounded/bounce UI system is reused unchanged.
+ */
+@Composable
+fun categoryPaletteFor(categoryId: String, paletteIndex: Int): CategoryPalette {
+    if (categoryId != "greetings") return paletteOf(paletteIndex)
+    val coral = GreetingsCoral
+    return if (LocalIsDark.current) CategoryPalette(
+        pastel = Color(0xFF38232B),
+        banner = coral,
+        accent = Color(0xFFF2A7AC),
+    ) else CategoryPalette(
+        pastel = Color(0xFFF9EBED),
+        banner = coral,
+        accent = coral,
+    )
+}
+
+/**
  * Consistent saturated card banners across category tiles and vocabulary cards.
  * The darker vibrant values preserve the readability of bold white Arabic text.
  */
 fun categoryBannerColor(categoryId: String, fallback: Color): Color = when (categoryId) {
+    "greetings" -> GreetingsCoral // distinctive warm coral; separate from Family blue and Daily teal
     "family" -> Color(0xFF1769A8)       // blue
     "cuisine" -> Color(0xFF99502B)       // warm brown
     "daily" -> Color(0xFF087E82)        // teal
@@ -149,6 +172,7 @@ fun categoryBannerColor(categoryId: String, fallback: Color): Color = when (cate
     "clothes" -> Color(0xFF67449A)
     "body" -> Color(0xFF176F8C)
     "actions" -> Color(0xFF295F9A)
+    "transport" -> Color(0xFF126C80)     // petrol blue
     "animals" -> Color(0xFF357746)
     else -> fallback
 }
@@ -222,3 +246,4 @@ fun SawtiTheme(
         )
     }
 }
+

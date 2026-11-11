@@ -13,8 +13,9 @@ android {
         applicationId = "com.sawti"
         minSdk = 24
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 5
+        versionName = "1.4"
+        manifestPlaceholders["appLabel"] = "@string/app_name"
     }
 
     // The production key is supplied only at release time by GitHub Actions secrets.
@@ -31,6 +32,13 @@ android {
         }
     }
     buildTypes {
+        debug {
+            if (providers.gradleProperty("quranPreview").orNull == "true") {
+                applicationIdSuffix = ".quranpreview"
+                versionNameSuffix = "-quran-test"
+                manifestPlaceholders["appLabel"] = "صوتي — اختبار القرآن"
+            }
+        }
         release {
             isMinifyEnabled = true
             signingConfigs.findByName("production")?.let { signingConfig = it }
@@ -43,7 +51,14 @@ android {
     }
     kotlinOptions { jvmTarget = "17" }
     buildFeatures { compose = true }
-    testOptions { unitTests.isIncludeAndroidResources = true }
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+        unitTests.all {
+            // Robolectric resolves Android runtime jars independently of Gradle repositories.
+            // Use the canonical Maven Central endpoint instead of its repo1 alias.
+            it.systemProperty("robolectric.dependency.repo.url", "https://repo.maven.apache.org/maven2")
+        }
+    }
 }
 
 dependencies {
@@ -59,6 +74,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.compose.ui:ui-tooling-preview")
     debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     // Room: categories + word items (family, daily phrases, educational sets)
     implementation("androidx.room:room-runtime:2.6.1")
@@ -73,6 +89,8 @@ dependencies {
 dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.robolectric:robolectric:4.14.1")
+    testImplementation("androidx.compose.ui:ui-test-junit4")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
 }
 
 
@@ -80,3 +98,4 @@ dependencies {
 ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
 }
+

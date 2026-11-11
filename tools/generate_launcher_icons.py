@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regenerate every legacy Sawti launcher size from its native conversation vectors.
+"""Regenerate every legacy Sawti launcher size from its native speaking-person vectors.
 
 The Android 26+ adaptive icon directly uses the same theme-specific VectorDrawable
 and the gradient in ic_launcher_background.xml. These are fallback PNGs for older
@@ -20,8 +20,8 @@ NS = {"a": "http://schemas.android.com/apk/res/android"}
 ANDROID = "{http://schemas.android.com/apk/res/android}"
 DENSITIES = {"mdpi": 48, "hdpi": 72, "xhdpi": 96, "xxhdpi": 144, "xxxhdpi": 192}
 BACKGROUND = {
-    "light": [(189, 233, 255), (115, 120, 243), (163, 98, 235)],
-    "dark": [(7, 26, 56), (23, 39, 87), (53, 34, 106)],
+    "light": [(125, 19, 112), (83, 11, 113), (35, 13, 103)],
+    "dark": [(125, 19, 112), (83, 11, 113), (35, 13, 103)],
 }
 
 
@@ -79,8 +79,13 @@ def compose_icon(mode, pixels, rounded):
     # Render at higher than target resolution for anti-aliased edges.
     oversample = 4
     n = pixels * oversample
-    img = background(mode, n)
-    img.alpha_composite(foreground(mode, n))
+    # Adaptive launchers display the central 72dp of the 108dp layers.
+    # Match that visual scale in legacy icons instead of adding a second inset.
+    full_size = n * 3 // 2
+    full = background(mode, full_size)
+    full.alpha_composite(foreground(mode, full_size))
+    inset = (full_size - n) // 2
+    img = full.crop((inset, inset, inset + n, inset + n))
     if rounded:
         mask = Image.new("L", (n, n), 0)
         draw = ImageDraw.Draw(mask)

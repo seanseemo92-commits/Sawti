@@ -1,0 +1,109 @@
+name: Legacy greetings stock-photo import (manual only)
+
+on:
+  # Current 1.2 artwork is generated and reviewed; do not overwrite it on documentation pushes.
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sawti-greetings-photo-assets
+  cancel-in-progress: false
+
+jobs:
+  photos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install imaging dependencies
+        run: python -m pip install --disable-pip-version-check pillow==11.3.0
+      - name: Match images to the actual existing category and word photo dimensions
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image, ImageOps, ImageEnhance, ImageFilter
+
+          # Treat pre-existing Sawti section imagery as the specification,
+          # not the card's displayed 0.85 layout ratio.
+          base = Path("app/src/main/res")
+          word_reference = base / "drawable/word_transport_car.webp"
+          home_reference = base / "drawable/img_cat_family.webp"
+          with Image.open(word_reference) as im:
+              word_size = im.size
+          with Image.open(home_reference) as im:
+              home_size = im.size
+          print("Existing word photo dimensions:", word_size)
+          print("Existing home section photo dimensions:", home_size)
+          assert word_size == (512, 512), f"Unexpected existing word spec: {word_size}"
+          assert home_size[0] >= 256 and home_size[1] >= 256
+          print("Target greeting image sizes:", word_size, home_size)
+
+          cards = [
+              "salam", "reply", "hello", "welcome", "how_are_you", "fine",
+              "good_morning", "good_evening", "brighten", "good_health",
+              "goodbye", "safe", "thanks", "bless",
+          ]
+          dest = base / "drawable-nodpi"
+          assert len(cards) == 14
+          for key in cards + ["cover"]:
+              path = dest / f"greeting_{key}.webp" if key != "cover" else base / "drawable/img_cat_greetings.webp"
+              if not path.is_file():
+                  raise FileNotFoundError(f"Missing source photo {path}")
+              size = word_size if key != "cover" else home_size
+              with Image.open(path) as im:
+                  image = ImageOps.exif_transpose(im).convert("RGB")
+
+              # Preserve the already approved inclusive people/moments; do not
+              # distort faces. Use a modestly elevated focal point for portraits
+              # so eyes, hijabs and hands stay visible after square cropping.
+              focal = (0.5, 0.42) if key not in ("good_morning", "good_evening", "cover") else (0.5, 0.5)
+              photo = ImageOps.fit(image, size, method=Image.Resampling.LANCZOS, centering=focal)
+              photo.save(path, format="WEBP", quality=90, method=6)
+              with Image.open(path) as saved:
+                  assert saved.format == "WEBP" and saved.size == size
+              print(f"Normalized {key} to {size[0]}x{size[1]} ({path.stat().st_size} bytes)")
+
+          # Source photography provenance continues to be stored in:
+          # docs/GREETINGS_PHOTO_SOURCES.md
+          PY
+      - name: Verify all 14 cards plus the home cover match Sawti native assets
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          base = Path("app/src/main/res")
+          with Image.open(base / "drawable/word_transport_car.webp") as im:
+              expected_word = im.size
+          with Image.open(base / "drawable/img_cat_family.webp") as im:
+              expected_home = im.size
+          files = sorted((base / "drawable-nodpi").glob("greeting_*.webp"))
+          assert len(files) == 14, f"Expected 14 greeting cards, got {len(files)}"
+          for file in files + [base / "drawable/img_cat_greetings.webp"]:
+              with Image.open(file) as im:
+                  expected = expected_home if file.name == "img_cat_greetings.webp" else expected_word
+                  assert im.size == expected, (str(file), im.size, expected)
+                  assert im.format == "WEBP"
+          print("Verified 14 greeting images and cover match existing section specifications.")
+          PY
+      - name: Commit generated offline images to the feature branch only
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/src/main/res/drawable-nodpi/greeting_*.webp app/src/main/res/drawable/img_cat_greetings.webp docs/GREETINGS_PHOTO_SOURCES.md
+          if git diff --cached --quiet; then
+            echo "Identical images already committed."
+          else
+            git commit -m "fix(greetings): align all greeting image dimensions with existing Sawti cards [skip ci]"
+            git push origin HEAD:fix/prelaunch-cleanup-hint
+          fi
+

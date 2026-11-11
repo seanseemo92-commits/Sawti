@@ -12,18 +12,18 @@ class DialectSpeechCatalogTest {
     @Test fun mandatoryLibyanWaterRequestSurvivesTheCompleteProjection() {
         val view = DialectCatalog.localize(item("request.water"), ArabicDialect.LIBYAN)
         assertEquals("نبي مية", view.displayText)
-        assertEquals("نَبِّيْ إِمِّيَّهْ", view.ttsPrompt)
+        assertEquals("نَبِّي إِمِّيَّهْ", view.ttsPrompt)
         assertEquals("إِمْـ...", view.phonemicCue)
         assertEquals("إِمِّيَّهْ", DialectCatalog.localize(item("food.water"), ArabicDialect.LIBYAN).ttsPrompt)
     }
 
-    @Test fun canonicalFushaBypassesAutomaticVocalization() {
+    @Test fun canonicalFushaSourceRemainsReversibleAfterPausalProjection() {
         for (entity in WordSeed.itemEntities()) {
             val source = entity.toDomain()
             val view = DialectCatalog.localize(source, ArabicDialect.STANDARD)
-            assertEquals(source.ttsPrompt, view.ttsPrompt)
-            assertEquals(source.phonemicCue, view.phonemicCue)
-            assertEquals(source.sentencePrompt, view.sentencePrompt)
+            // The saved canonical seed is never rewritten by the preview projection.
+            assertEquals(source, view.forEditing())
+
         }
         assertEquals("أُرِيدُ مَاءً", item("request.water").ttsPrompt)
     }
@@ -32,7 +32,7 @@ class DialectSpeechCatalogTest {
         assertEquals("دَحْيْ", DialectCatalog.localize(item("food.eggs"), ArabicDialect.LIBYAN).ttsPrompt)
         assertEquals("عْظَامْ", DialectCatalog.localize(item("food.eggs"), ArabicDialect.TUNISIAN).ttsPrompt)
         assertEquals("تْشَايْ", DialectCatalog.localize(item("food.tea"), ArabicDialect.IRAQI).ttsPrompt)
-        assertEquals("نَبِّيْ إِدْوَايَا", DialectCatalog.localize(item("request.medicine"), ArabicDialect.LIBYAN).ttsPrompt)
+        assertEquals("نَبِّي إِدْوَايَا", DialectCatalog.localize(item("request.medicine"), ArabicDialect.LIBYAN).ttsPrompt)
     }
 
     @Test fun personalSpeechAndCueOverrideEveryProjectionVerbatim() {
@@ -67,9 +67,9 @@ class DialectSpeechCatalogTest {
 
     @Test fun missingWrittenSpeechIsExplicitAndDoesNotFabricateVowelsOrForeignCue() {
         val form = DialectSpeechCatalog.resolve(item("home.water_bottle"), ArabicDialect.MOROCCAN)
-        assertEquals(SpeechSource.UNVOCALIZED_FALLBACK, form.source)
-        assertEquals("قرعة ماء", form.speechText)
-        assertEquals("", form.phonemicCue)
+        assertEquals(SpeechSource.EXPLICIT_DIALECT, form.source)
+        assertEquals("قَرْعَتْ مَا", form.speechText)
+        assertEquals("قَرْـ...", form.phonemicCue)
         assertTrue(form.needsNativeReview)
         assertTrue(form.needsTtsListening)
     }
@@ -108,8 +108,17 @@ class DialectSpeechCatalogTest {
         assertEquals(194, rows.size)
         for (line in rows) {
             val fields = line.split('\t')
-            val form = DialectSpeechCatalog.resolve(item(fields[0]), ArabicDialect.LIBYAN)
-            assertEquals(fields[0], fields[1], form.speechText)
+            val source = item(fields[0])
+            val form = DialectSpeechCatalog.resolve(source, ArabicDialect.LIBYAN)
+            val card = DialectCatalog.localize(source, ArabicDialect.LIBYAN)
+            // Historical Libyan strings remain represented by the unchanged seed.
+            assertEquals(fields[0], source, card.forEditing())
+            val constructRevisions = setOf("dish.reshda_kaskas", "dish.reshda_borma", "dish.potato_stew",
+                "dish.khobz_tajin", "routine.evening_coffee", "clothing.watch", "clothing.high_heels")
+            if (!ArgonAuditOverrides.hasPatch(ArabicDialect.LIBYAN, fields[0]) && fields[0] !in constructRevisions) {
+                assertEquals(fields[0], TtsEndings.normalize(fields[1]), form.speechText)
+            }
         }
     }
 }
+

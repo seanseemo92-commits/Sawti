@@ -1,49 +1,63 @@
 package com.sawti.domain.model
 
 /**
- * Natural spoken endings: a ttsPrompt never ends with I'rab (case endings / tanween).
- *  - final ة (taa marbuta) becomes هْ  (Ha' with sukun), e.g. كُوجِينَة → كُوجِينَهْ
- *  - final case marks (fatha / damma / kasra / tanween) are removed
- *  - a final consonant (including و / ي) gets a sukun (مُحَمَّدْ, نُورِيْ); words ending in alef (ا / ى) are left alone
- * Idempotent, so it can safely run on seed data, on top-ups and on caregiver edits.
+ * Pausal pronunciation for a built-in card spoken as one utterance. Never a persistence
+ * migration or a filter on arbitrary TTS/user text. Internal case vowels and construct
+ * endings belong to the phrase lexicon, not to an automatic word-by-word rule.
  */
 object TtsEndings {
-    private const val SUKUN = '\u0652'
-    private const val SHADDA = '\u0651'
-    private val CASE_MARKS = setOf('\u064B', '\u064C', '\u064D', '\u064E', '\u064F', '\u0650')
-    private val LONG_VOWEL_LETTERS = setOf('ا', 'ى') // alef / alef-maqsura cannot carry a sukun
+    private const val SUKUN = 'ْ'
+    private const val FATHATAN = 'ً'
+    private val caseMarks = setOf('ً', 'ٌ', 'ٍ', 'َ', 'ُ', 'ِ')
+    private fun isMark(c: Char) = c in 'ً'..'ٟ' || c == 'ٰ'
+    private fun isArabicLetter(c: Char) = c in 'ء'..'ي' || c in "ٱپچڤگ"
 
-    private fun isMark(c: Char) = c in '\u064B'..'\u065F' || c == '\u0670'
+    /** Preserve ay/aw diphthongs, consonantal y/w, gemination and Maghrebi clusters. */
+    private fun repairLongVowels(text: String): String = buildString {
+        for (index in text.indices) {
+            val c = text[index]
+            if (c == SUKUN && index > 1 && text[index - 1] in "يو") {
+                var start = index - 2
+                while (start >= 0 && isMark(text[start])) start--
+                val marks = text.substring(start + 1, index - 1)
+                val vowel = if (text[index - 1] == 'ي') 'ِ' else 'ُ'
+                if (vowel in marks && marks.none { it in caseMarks && it != vowel } && SUKUN !in marks) continue
+            }
+            append(c)
+        }
+    }
 
     fun normalize(tts: String): String {
-        val original = tts.trim()
-        if (original.isEmpty()) return original
+        val original = repairLongVowels(tts)
+        var end = original.length
+        while (end > 0 && !(original[end - 1].isLetter() || isMark(original[end - 1]))) end--
+        if (end == 0) return original
+        val body = original.substring(0, end)
+        val tail = original.substring(end)
 
-        // keep trailing punctuation such as "؟" out of the way
-        var body = original
-        var tail = ""
-        while (body.isNotEmpty() && !(body.last().isLetter() || isMark(body.last()))) {
-            tail = body.last() + tail
-            body = body.dropLast(1)
+        // Both common Unicode spellings of fathatan retain the supporting long aa.
+        if (body.endsWith("ًا") || body.endsWith("ًى")) {
+            return body.dropLast(2) + "َ" + body.last() + tail
         }
-        if (body.isEmpty()) return original
+        if (body.endsWith("اً") || body.endsWith("ىً")) {
+            val stem = body.dropLast(2)
+            val marks = stem.takeLastWhile(::isMark)
+            return stem + (if ('َ' in marks) "" else "َ") + body[body.lastIndex - 1] + tail
+        }
 
-        // "…ًا" (tanween fatha on alif): drop it, the word ends on its last letter
-        if (body.endsWith("\u064Bا")) body = body.dropLast(2)
-
-        var i = body.length
-        while (i > 0 && isMark(body[i - 1])) i--
-        if (i == 0) return original
-
-        val letter = body[i - 1]
-        val base = body.substring(0, i - 1)
-        val kept = body.substring(i).filter { it !in CASE_MARKS }
-
+        var index = body.length
+        while (index > 0 && isMark(body[index - 1])) index--
+        if (index == 0 || !isArabicLetter(body[index - 1])) return original
+        val letter = body[index - 1]
+        val base = body.substring(0, index - 1)
+        val marks = body.substring(index)
+        val kept = marks.filter { it !in caseMarks }
         val fixed = when {
-            letter == 'ة' -> base + "ه" + SUKUN
-            letter in LONG_VOWEL_LETTERS -> base + letter + kept
-            SUKUN in kept || SHADDA in kept -> base + letter + kept
-            else -> base + letter + kept + SUKUN
+            letter == 'ة' -> base + "هْ"
+            letter in "اىوي" -> base + letter + kept
+            FATHATAN in marks -> base + letter + kept + "َا"
+            marks.any { it in caseMarks } -> base + letter + kept + if (SUKUN in kept) "" else "ْ"
+            else -> body
         }
         return fixed + tail
     }

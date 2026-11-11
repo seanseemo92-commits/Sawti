@@ -5,16 +5,22 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -32,6 +38,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,12 +47,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sawti.presentation.theme.cardElevation
 import com.sawti.R
@@ -56,19 +65,30 @@ import com.sawti.presentation.theme.AppBarBlue
 import com.sawti.presentation.theme.HintAmber
 import com.sawti.presentation.theme.LocalIsDark
 import com.sawti.presentation.theme.LocalPerformanceMode
-import com.sawti.presentation.theme.paletteOf
+import com.sawti.presentation.theme.categoryPaletteFor
 
 private val Correct = Color(0xFF2E7D32)
 
 @Composable
 fun PracticeRoute(viewModel: PracticeViewModel) {
+    LifecycleResumeEffect(viewModel) {
+        viewModel.onEnterPractice()
+        onPauseOrDispose { viewModel.onLeavePractice() }
+    }
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     PracticeScreen(state, viewModel)
 }
 
 @Composable
 fun PracticeScreen(state: PracticeUiState, actions: PracticeActions) {
-    Column(Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally,
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+    val contentHeight = maxOf(maxHeight, 560.dp * LocalDensity.current.fontScale.coerceAtLeast(1f))
+    val scrollState = rememberScrollState()
+    LaunchedEffect(state.card?.item?.id, state.index, state.exercise, state.finished) {
+        scrollState.scrollTo(0)
+    }
+    Column(Modifier.fillMaxSize().verticalScroll(scrollState)) {
+    Column(Modifier.fillMaxWidth().height(contentHeight).padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(14.dp)) {
         ExerciseSwitch(state.exercise, actions::setExercise)
         when {
@@ -80,6 +100,8 @@ fun PracticeScreen(state: PracticeUiState, actions: PracticeActions) {
             state.exercise == Exercise.RECALL -> RecallContent(state, actions)
             else -> ChoiceContent(state, actions)
         }
+    }
+    }
     }
 }
 
@@ -95,9 +117,10 @@ private fun ExerciseSwitch(selected: Exercise, onSelect: (Exercise) -> Unit) {
                 color = if (on) selectedContainer else MaterialTheme.colorScheme.surface,
                 contentColor = if (on) selectedContent else MaterialTheme.colorScheme.onSurface,
                 shadowElevation = cardElevation(if (on) 4.dp else 1.dp),
-                modifier = Modifier.weight(1f).height(48.dp).clip(RoundedCornerShape(24.dp)).clickable { onSelect(exercise) }) {
+                modifier = Modifier.weight(1f).heightIn(min = 48.dp).clip(RoundedCornerShape(24.dp)).clickable { onSelect(exercise) }) {
                 Box(contentAlignment = Alignment.Center) {
-                    Text(stringResource(label), fontSize = 17.sp, fontWeight = FontWeight.ExtraBold)
+                    Text(stringResource(label), modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp),
+                        fontSize = 17.sp, fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center)
                 }
             }
         }
@@ -123,9 +146,10 @@ private fun FinishedContent(state: PracticeUiState, onRestart: () -> Unit) {
 }
 
 @Composable
+@OptIn(ExperimentalLayoutApi::class)
 private fun RecallContent(state: PracticeUiState, actions: PracticeActions) {
     val card = state.card ?: return
-    val palette = paletteOf(card.palette)
+    val palette = categoryPaletteFor(card.item.categoryId, card.palette)
     Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(14.dp)) {
         ProgressHeader(state, palette.banner, palette.pastel)
         Surface(shape = RoundedCornerShape(32.dp), color = MaterialTheme.colorScheme.surface,
@@ -140,13 +164,15 @@ private fun RecallContent(state: PracticeUiState, actions: PracticeActions) {
             }
         }
         if (!state.revealed) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+            FlowRow(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalArrangement = Arrangement.spacedBy(14.dp)) {
                 HintButton(onClick = actions::hint, size = 64)
                 ActionPill(label = stringResource(R.string.practice_reveal), icon = Icons.Filled.Visibility,
                     color = palette.banner, onClick = actions::reveal)
             }
         } else {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            FlowRow(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 ActionPill(label = stringResource(if (state.hintUsed) R.string.practice_known_cued else R.string.practice_known),
                     icon = Icons.Filled.Check, color = palette.banner, onClick = actions::known)
                 ActionPill(label = stringResource(R.string.practice_next), icon = Icons.AutoMirrored.Filled.ArrowForward,
@@ -159,7 +185,7 @@ private fun RecallContent(state: PracticeUiState, actions: PracticeActions) {
 @Composable
 private fun ChoiceContent(state: PracticeUiState, actions: PracticeActions) {
     val card = state.card ?: return
-    val palette = paletteOf(card.palette)
+    val palette = categoryPaletteFor(card.item.categoryId, card.palette)
     Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(14.dp)) {
         ProgressHeader(state, palette.banner, palette.pastel)
         ActionPill(label = stringResource(R.string.choice_replay), icon = Icons.AutoMirrored.Filled.VolumeUp,
@@ -178,7 +204,7 @@ private fun ChoiceContent(state: PracticeUiState, actions: PracticeActions) {
 private fun ChoiceCard(choice: PracticeCard, isTarget: Boolean, state: PracticeUiState,
     onChoose: (Long) -> Unit, modifier: Modifier = Modifier) {
     val haptic = LocalHapticFeedback.current
-    val palette = paletteOf(choice.palette)
+    val palette = categoryPaletteFor(choice.item.categoryId, choice.palette)
     val wrong = choice.item.id in state.wrongIds
     val solvedHere = state.solved && isTarget
     val scale by animateFloatAsState(targetValue = if (solvedHere) 1.05f else 1f,
@@ -205,3 +231,4 @@ private fun ChoiceCard(choice: PracticeCard, isTarget: Boolean, state: PracticeU
         }
     }
 }
+

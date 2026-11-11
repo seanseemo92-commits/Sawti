@@ -6,9 +6,13 @@ import android.os.Process
 import android.speech.tts.TextToSpeech
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -24,6 +28,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -45,21 +51,32 @@ import com.sawti.presentation.category.LibraryViewModel
 import com.sawti.presentation.common.SentenceStrip
 import com.sawti.presentation.common.LocalTouchDwell
 import com.sawti.presentation.home.HomeScreen
+import com.sawti.presentation.onboarding.LocalSpotlightRegistry
+import com.sawti.presentation.onboarding.SpotlightOverlay
+import com.sawti.presentation.onboarding.SpotlightRegistry
+import com.sawti.presentation.onboarding.TourGuide
+import com.sawti.presentation.onboarding.TourProgress
 import com.sawti.presentation.practice.PracticeRoute
 import com.sawti.presentation.practice.PracticeViewModel
 import com.sawti.presentation.progress.ProgressRoute
 import com.sawti.presentation.progress.ProgressViewModel
+import com.sawti.presentation.quran.QuranScreen
 import com.sawti.presentation.settings.DialectSettingsRoute
+import com.sawti.presentation.settings.AboutScreen
 import com.sawti.presentation.settings.SettingsRoute
 import com.sawti.presentation.settings.SettingsViewModel
 import com.sawti.presentation.theme.CaregiverInk
 import com.sawti.presentation.theme.CaregiverTint
+import com.sawti.presentation.theme.categoryBannerColor
+import com.sawti.presentation.theme.paletteOf
 import com.sawti.speech.SpeechIssue
 
 private const val HOME = "home"
+private const val QURAN = "quran"
 private const val PRACTICE = "practice"
 private const val PROGRESS = "progress"
 private const val SETTINGS = "settings"
+private const val ABOUT = "about"
 private const val DIALECT = "dialect"
 private const val CATEGORY_PREFIX = "category:"
 
@@ -68,17 +85,50 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
     val state by library.uiState.collectAsStateWithLifecycle()
     val settings by settingsVm.settings.collectAsStateWithLifecycle()
     var route by rememberSaveable { mutableStateOf(HOME) }
+    var quranSurahId by rememberSaveable { mutableStateOf<Int?>(null) }
     var manageCategories by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
     val operations = (context.applicationContext as SawtiApp).container.backupOperations
     val backup by operations.state.collectAsStateWithLifecycle()
     val backupLocked = backup.busy || backup.restartRequired
+    val tourProgress = remember(context) { TourProgress(context) }
+    val tourRegistry = remember { SpotlightRegistry() }
+    var activeTour by rememberSaveable { mutableStateOf<String?>(null) }
+    var tourIndex by rememberSaveable { mutableIntStateOf(0) }
+    var offerTour by rememberSaveable { mutableStateOf(false) }
+    val tourSteps = TourGuide.steps(activeTour ?: "", state.categories.map { it.id }.toSet())
+    val currentTourStep = tourSteps.getOrNull(tourIndex)
+    val finishTour: () -> Unit = {
+        activeTour?.let { tourProgress.complete(it) }
+        activeTour = null
+        tourIndex = 0
+    }
+    val beginTour: (String) -> Unit = { kind ->
+        if (!backupLocked && TourGuide.steps(kind, state.categories.map { it.id }.toSet()).isNotEmpty()) {
+            when (kind) {
+                TourGuide.HOME -> route = HOME
+                TourGuide.QURAN -> { quranSurahId = null; route = QURAN }
+                TourGuide.FAMILY -> if (state.categories.any { it.id == "family" }) route = CATEGORY_PREFIX + "family"
+            }
+            activeTour = kind
+            tourIndex = 0
+            offerTour = false
+        }
+    }
+    LaunchedEffect(route, state.isLoadingCategories, state.categoryLoadError, state.categories.size, backupLocked, activeTour, offerTour) {
+        if (route == HOME && !backupLocked && !state.isLoadingCategories &&
+            state.categoryLoadError == null && state.categories.isNotEmpty() &&
+            activeTour == null && !offerTour && !tourProgress.completed(TourGuide.HOME)) {
+            offerTour = true
+        }
+    }
+    // Contextual section tours are replay-only from Settings: never interrupt normal navigation.
     val navigationLocked = { operations.state.value.let { it.busy || it.restartRequired } }
     LaunchedEffect(Unit) {
         library.messages.collect { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
     }
     LaunchedEffect(state.caregiverMode, route) {
-        if ((route == PROGRESS || route == SETTINGS) && !state.caregiverMode) route = HOME
+        if ((route == PROGRESS || route == SETTINGS || route == ABOUT) && !state.caregiverMode) route = HOME
     }
     val category = if (route.startsWith(CATEGORY_PREFIX)) {
         state.categories.firstOrNull { it.id == route.removePrefix(CATEGORY_PREFIX) }
@@ -86,26 +136,41 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
     LaunchedEffect(state.categories, route) {
         if (route.startsWith(CATEGORY_PREFIX) && state.categories.isNotEmpty() && category == null) route = HOME
     }
-    BackHandler(enabled = route != HOME || backupLocked) {
-        if (!navigationLocked()) route = HOME
+    val navigateBack: () -> Unit = {
+        if (!navigationLocked()) {
+            if (route == QURAN && quranSurahId != null) quranSurahId = null
+            else if (route == ABOUT) route = SETTINGS
+            else route = HOME
+        }
     }
+    BackHandler(enabled = route != HOME || backupLocked, onBack = navigateBack)
     val title = when {
+        route == QURAN -> "القرآن الكريم"
         route == PRACTICE -> stringResource(R.string.practice_title)
         route == PROGRESS -> stringResource(R.string.progress_title)
         route == SETTINGS -> stringResource(R.string.settings_title)
+        route == ABOUT -> stringResource(R.string.about_title)
         route == DIALECT -> "اللغة والصوت"
         category != null -> category.title
         else -> stringResource(R.string.app_title)
     }
+    val sectionColor = when {
+        category != null -> categoryBannerColor(category.id, paletteOf(category.palette).banner)
+        route == QURAN -> Color(0xFF176448)
+        else -> null
+    }
+    CompositionLocalProvider(LocalSpotlightRegistry provides tourRegistry) {
+    Box(Modifier.fillMaxSize()) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             Column {
                 AppTopBar(
                     title = title,
+                    sectionColor = sectionColor,
                     showBack = route != HOME,
                     caregiverMode = state.caregiverMode,
-                    onBack = { if (!navigationLocked()) route = HOME },
+                    onBack = navigateBack,
                     onPractice = { if (!navigationLocked()) route = PRACTICE },
                     onDialects = { if (!navigationLocked()) route = DIALECT },
                     onToggleCaregiver = { if (!navigationLocked()) library.toggleCaregiver() },
@@ -152,9 +217,16 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
                 LocalTouchDwell provides settings.touchDwell,
             ) {
                 when {
+                    route == QURAN -> QuranScreen(
+                        chosenSurahId = quranSurahId,
+                        onChooseSurah = { id -> if (!navigationLocked()) quranSurahId = id },
+                        focusFirstVerse = activeTour == TourGuide.VERSE,
+                    )
                     route == PRACTICE -> PracticeRoute(practice)
                     route == PROGRESS && state.caregiverMode -> ProgressRoute(progress)
-                    route == SETTINGS && state.caregiverMode -> SettingsRoute(settingsVm)
+                    route == SETTINGS && state.caregiverMode -> SettingsRoute(settingsVm, onStartTour = beginTour,
+                        onOpenAbout = { if (!navigationLocked()) route = ABOUT })
+                    route == ABOUT && state.caregiverMode -> AboutScreen()
                     route == DIALECT -> DialectSettingsRoute(
                         settingsVm,
                         (context.applicationContext as SawtiApp).container.speech,
@@ -165,14 +237,58 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
                         categories = state.categories,
                         speakingItemId = state.playbackVisual.activeWordId.takeIf { state.playbackVisual.isSpeaking },
                         onOpen = { id -> if (!navigationLocked()) route = CATEGORY_PREFIX + id },
+                        onOpenQuran = {
+                            if (!navigationLocked()) {
+                                library.onAppBackgrounded()
+                                quranSurahId = null
+                                route = QURAN
+                            }
+                        },
                         onRetry = { if (!navigationLocked()) library.retryLoad() },
                         isLoading = state.isLoadingCategories,
                         loadError = state.categoryLoadError,
                         retryEnabled = !backupLocked,
+                        tourTarget = if (activeTour == TourGuide.HOME) currentTourStep?.target else null,
                     )
                 }
             }
         }
+    }
+    if (currentTourStep != null && !backupLocked) {
+        SpotlightOverlay(
+            step = currentTourStep,
+            index = tourIndex,
+            total = tourSteps.size,
+            registry = tourRegistry,
+            reducedMotion = settings.performanceMode,
+            onPrevious = { tourIndex = (tourIndex - 1).coerceAtLeast(0) },
+            onNext = {
+                if (tourIndex + 1 < tourSteps.size) tourIndex++ else finishTour()
+            },
+            onSkip = finishTour,
+        )
+    }
+    }
+    }
+    BackHandler(enabled = (activeTour != null || offerTour) && !backupLocked) {
+        if (offerTour) {
+            offerTour = false
+            tourProgress.complete(TourGuide.HOME)
+        } else finishTour()
+    }
+    if (offerTour && !backupLocked) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { offerTour = false; tourProgress.complete(TourGuide.HOME) },
+            icon = { Text("✦", color = MaterialTheme.colorScheme.primary) },
+            title = { Text("خلّينا نعرّفك على صوتي", fontWeight = FontWeight.ExtraBold) },
+            text = { Text("ثلاث خطوات بسيطة تعرّفك على أهم ميزات صوتي. تقدر تتخطاها أو ترجع لها من الإعدادات.") },
+            confirmButton = {
+                Button(onClick = { beginTour(TourGuide.HOME) }) { Text("ابدأ الجولة") }
+            },
+            dismissButton = {
+                TextButton(onClick = { offerTour = false; tourProgress.complete(TourGuide.HOME) }) { Text("لاحقًا") }
+            },
+        )
     }
     if (backup.busy) {
         androidx.compose.material3.AlertDialog(
@@ -212,7 +328,8 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
 }
 
 @Composable
-private fun CaregiverBanner(onOpenProgress: () -> Unit, onOpenSettings: () -> Unit) {
+@OptIn(ExperimentalLayoutApi::class)
+internal fun CaregiverBanner(onOpenProgress: () -> Unit, onOpenSettings: () -> Unit) {
     Surface(
         color = CaregiverTint,
         shape = RoundedCornerShape(16.dp),
@@ -220,7 +337,8 @@ private fun CaregiverBanner(onOpenProgress: () -> Unit, onOpenSettings: () -> Un
     ) {
         Column(Modifier.padding(start = 14.dp, end = 6.dp, top = 6.dp, bottom = 2.dp)) {
             Text(stringResource(R.string.caregiver_banner), color = CaregiverInk, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
-            Row {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 TextButton(onClick = onOpenProgress, modifier = Modifier.heightIn(min = 44.dp)) {
                     Text(stringResource(R.string.progress_tab), color = CaregiverInk, fontWeight = FontWeight.ExtraBold)
                 }
@@ -260,3 +378,4 @@ private fun SpeechIssueBanner(issue: SpeechIssue, onInstall: () -> Unit) {
         }
     }
 }
+

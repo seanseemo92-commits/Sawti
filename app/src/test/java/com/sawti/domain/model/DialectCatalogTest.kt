@@ -13,7 +13,10 @@ class DialectCatalogTest {
         val original = item("request.water")
         assertEquals("أريد ماءً", original.displayText)
         assertEquals("أُرِيدُ مَاءً", original.ttsPrompt)
-        assertEquals(original, DialectCatalog.localize(original, ArabicDialect.STANDARD))
+        val standard = DialectCatalog.localize(original, ArabicDialect.STANDARD)
+        assertEquals(original, standard.forEditing())
+        assertEquals(original.displayText, standard.displayText)
+        assertEquals("أُرِيدُ مَاءَا", standard.ttsPrompt)
         assertEquals("نبي مية", DialectCatalog.localize(original, ArabicDialect.LIBYAN).displayText)
         assertEquals("بدي مي", DialectCatalog.localize(original, ArabicDialect.SYRIAN).displayText)
         assertEquals("بغيت الما", DialectCatalog.localize(original, ArabicDialect.MOROCCAN).displayText)
@@ -66,7 +69,9 @@ class DialectCatalogTest {
     @Test fun sentenceHintsRemainAvailableInDefaultFusha() {
         val source = item("request.tea")
         assertFalse(source.sentencePrompt.isNullOrBlank())
-        assertEquals(source.sentencePrompt, DialectCatalog.localize(source, ArabicDialect.STANDARD).sentencePrompt)
+        val view = DialectCatalog.localize(source, ArabicDialect.STANDARD)
+        assertEquals("عِنْدَ الطَّلَبِ أَقُولُ: أريد شايًا", view.sentencePrompt)
+        assertEquals(source, view.forEditing())
     }
 
     @Test fun relationshipAndPersonalNameAreDistinct() {
@@ -76,3 +81,4 @@ class DialectCatalogTest {
         assertFalse(FamilyRelationships.isBuiltIn(father.copy(subgroup = "الوالد")))
     }
 }
+

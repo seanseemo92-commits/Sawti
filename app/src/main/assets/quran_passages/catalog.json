@@ -1,0 +1,604 @@
+{
+  "version": 1,
+  "verses": [
+    {
+      "ayah": 255,
+      "global": 262,
+      "text": "ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ لَا تَأْخُذُهُۥ سِنَةٌۭ وَلَا نَوْمٌۭ ۚ لَّهُۥ مَا فِى ٱلسَّمَٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۗ مَن ذَا ٱلَّذِى يَشْفَعُ عِندَهُۥٓ إِلَّا بِإِذْنِهِۦ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَىْءٍۢ مِّنْ عِلْمِهِۦٓ إِلَّا بِمَا شَآءَ ۚ وَسِعَ كُرْسِيُّهُ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضَ ۖ وَلَا يَـُٔودُهُۥ حِفْظُهُمَا ۚ وَهُوَ ٱلْعَلِىُّ ٱلْعَظِيمُ",
+      "textSource": "https://api.alquran.cloud/v1/ayah/2:255/quran-uthmani",
+      "textResponseSha256": "29a6aef2a506f0f62cf538d87a9870b1fa51142316afe5a5e04a393ea8fabafd",
+      "parts": [
+        {
+          "text": "ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ",
+          "audio": {
+            "ar.alafasy": {
+              "asset": "quran_passages/ar.alafasy/2_255_1.mp3",
+              "sha256": "141291f88444274519c518dba331cea54cc12f758dd6516e479de2b1bf1f7f1e",
+              "sourceSha256": "00e62c8d72dcdb5f62dd87bb85e14abf3fc93d01c8171374baccbc913bb55833",
+              "startMs": 0,
+              "endMs": 8105
+            },
+            "salah.bukhatir": {
+              "asset": "quran_passages/salah.bukhatir/2_255_1.mp3",
+              "sha256": "02d6085370bf2c994c5d9699e89d7bb26447bcfc7d63349a0cb1ce055c9ee73d",
+              "sourceSha256": "bfe6e7dcefdad1905f5690f28aebce3ec0ff1baae944b5363208fe2e606b4e78",
+              "startMs": 0,
+              "endMs": 6200
+            },
+            "husary.muallim": {
+              "asset": "quran_passages/husary.muallim/2_255_1.mp3",
+              "sha256": "c868c4d4b50bca507ab4c03b5263ec1c17abcae6957538a72a36c268364750fc",
+              "sourceSha256": "dd9bf4c7cf855bbf0f4d5c6f6bf9163e895930090f9134fa975de6401be7d615",
+              "startMs": 200,
+              "endMs": 13650
+            }
+          }
+        },
+        {
+          "text": "لَا تَأْخُذُهُۥ سِنَةٌۭ وَلَا نَوْمٌۭ ۚ",
+          "audio": {
+            "ar.alafasy": {
+              "asset": "quran_passages/ar.alafasy/2_255_2.mp3",
+              "sha256": "c89864131eda995160106408a0c0158f47a32ec19c5509232bd138e15c1fab0a",
+              "sourceSha256": "00e62c8d72dcdb5f62dd87bb85e14abf3fc93d01c8171374baccbc913bb55833",
+              "startMs": 8105,
+              "endMs": 13885
+            },
+            "salah.bukhatir": {
+              "asset": "quran_passages/salah.bukhatir/2_255_2.mp3",
+              "sha256": "756a6dc3938245fec5e0bdf65215725a4927b25aa3f95134df0289d5f4ea7ca6",
+              "sourceSha256": "bfe6e7dcefdad1905f5690f28aebce3ec0ff1baae944b5363208fe2e606b4e78",
+              "startMs": 12650,
+              "endMs": 17500
+            },
+            "husary.muallim": {
+              "asset": "quran_passages/husary.muallim/2_255_2.mp3",
+              "sha256": "a4c062342f1ae27bc05d97d7722988feaff2f8e70715d21fb0cd7c7a4cea0f18",
+              "sourceSha256": "dd9bf4c7cf855bbf0f4d5c6f6bf9163e895930090f9134fa975de6401be7d615",
+              "startMs": 17900,
+              "endMs": 23800
+            }
+          }
+        },
+        {
+          "text": "لَّهُۥ مَا فِى ٱلسَّمَٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۗ",
+          "audio": {
+            "ar.alafasy": {
+              "asset": "quran_passages/ar.alafasy/2_255_3.mp3",
+              "sha256": "23a7a623cb3081a3317c5d783ee25b790579d22ef62327771f1ab4a103e7f162",
+              "sourceSha256": "00e62c8d72dcdb5f62dd87bb85e14abf3fc93d01c8171374baccbc913bb55833",
+              "startMs": 13885,
+              "endMs": 18305
+            },
+            "salah.bukhatir": {
+              "asset": "quran_passages/salah.bukhatir/2_255_3.mp3",
+              "sha256": "fd9f52d77a51f807c4bc64b53e2cb8bdc9878b73cc25791f496f4b8055b9330c",
+              "sourceSha256": "bfe6e7dcefdad1905f5690f28aebce3ec0ff1baae944b5363208fe2e606b4e78",
+              "startMs": 17500,
+              "endMs": 22250
+            },
+            "husary.muallim": {
+              "asset": "quran_passages/husary.muallim/2_255_3.mp3",
+              "sha256": "cfb84169b98ff2b05770c6d9541f8af6ae9e5d4f2911afd962075dec3c38ea61",
+              "sourceSha256": "dd9bf4c7cf855bbf0f4d5c6f6bf9163e895930090f9134fa975de6401be7d615",
+              "startMs": 29250,
+              "endMs": 35400
+            }
+          }
+        },
+        {
+          "text": "مَن ذَا ٱلَّذِى يَشْفَعُ عِندَهُۥٓ إِلَّا بِإِذْنِهِۦ ۚ",
+          "audio": {
+            "ar.alafasy": {
+              "asset": "quran_passages/ar.alafasy/2_255_4.mp3",
+              "sha256": "9146b0617a449b6eba18c39b6915e60a5cb9ed14f6bf4bf37242b3271b73f00f",
+              "sourceSha256": "00e62c8d72dcdb5f62dd87bb85e14abf3fc93d01c8171374baccbc913bb55833",
+              "startMs": 18305,
+              "endMs": 25915
+            },
+            "salah.bukhatir": {
+              "asset": "quran_passages/salah.bukhatir/2_255_4.mp3",
+              "sha256": "0c1e30f1d3580cee8cafafcb8966e6f38d2e0acf5f8103ca6938d5f524f82cbd",
+              "sourceSha256": "bfe6e7dcefdad1905f5690f28aebce3ec0ff1baae944b5363208fe2e606b4e78",
+              "startMs": 22250,
+              "endMs": 28150
+            },
+            "husary.muallim": {
+              "asset": "quran_passages/husary.muallim/2_255_4.mp3",
+              "sha256": "e090d52f0433312213f3ebdc27f56b2e9804251f09447e81db62a473ff06d68d",
+              "sourceSha256": "dd9bf4c7cf855bbf0f4d5c6f6bf9163e895930090f9134fa975de6401be7d615",
+              "startMs": 41200,
+              "endMs": 50250
+            }
+          }
+        },
+        {
+          "text": "يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ",
+          "audio": {
+            "ar.alafasy": {
+              "asset": "quran_passages/ar.alafasy/2_255_5.mp3",
+              "sha256": "08e55ceb645848567c4ea6578ef27f3e691cfbe8802117189991455a58382c8c",
+              "sourceSha256": "00e62c8d72dcdb5f62dd87bb85e14abf3fc93d01c8171374baccbc913bb55833",
+              "startMs": 25915,
+              "endMs": 30225
+            },
+            "salah.bukhatir": {
+              "asset": "quran_passages/salah.bukhatir/2_255_5.mp3",
+              "sha256": "0895daebbdbc5fdcee41f86b7b4f9964988aa716dc45c635c6f5b49c4279627b",
+              "sourceSha256": "bfe6e7dcefdad1905f5690f28aebce3ec0ff1baae944b5363208fe2e606b4e78",
+              "startMs": 28150,
+              "endMs": 33150
+            },
+            "husary.muallim": {
+              "asset": "quran_passages/husary.muallim/2_255_5.mp3",
+              "sha256": "be6bf777f11cf279832c21227901e884cbcda643108f775bdba7bd94aa794a35",
+              "sourceSha256": "dd9bf4c7cf855bbf0f4d5c6f6bf9163e895930090f9134fa975de6401be7d615",
+              "startMs": 56000,
+              "endMs": 62700
+            }
+          }
+        },
+        {
+          "text": "وَلَا يُحِيطُونَ بِشَىْءٍۢ مِّنْ عِلْمِهِۦٓ إِلَّا بِمَا شَآءَ ۚ",
+          "audio": {
+            "ar.alafasy": {
+              "asset": "quran_passages/ar.alafasy/2_255_6.mp3",
+              "sha256": "26af0cd1b94c2982297ce94115f0eb92e547baa9b51f967ef4d61a5e4b3b5c94",
+              "sourceSha256": "00e62c8d72dcdb5f62dd87bb85e14abf3fc93d01c8171374baccbc913bb55833",
+              "startMs": 30225,
+              "endMs": 40075
+            },
+            "salah.bukhatir": {
+              "asset": "quran_passages/salah.bukhatir/2_255_6.mp3",
+              "sha256": "977a02470b94b50390e7698c81931c4e2becad90619aa64ae296c5840b0a1259",
+              "sourceSha256": "bfe6e7dcefdad1905f5690f28aebce3ec0ff1baae944b5363208fe2e606b4e78",
+              "startMs": 33150,
+              "endMs": 41000
+            },
+            "husary.muallim": {
+              "asset": "quran_passages/husary.muallim/2_255_6.mp3",
+              "sha256": "491c9cd3e028128211bb876441b64fadb6da174dce5a6658a993b00114539a4b",
+              "sourceSha256": "dd9bf4c7cf855bbf0f4d5c6f6bf9163e895930090f9134fa975de6401be7d615",
+              "startMs": 68300,
+              "endMs": 80300
+            }
+          }
+        },
+        {
+          "text": "وَسِعَ كُرْسِيُّهُ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضَ ۖ",
+          "audio": {
+            "ar.alafasy": {
+              "asset": "quran_passages/ar.alafasy/2_255_7.mp3",
+              "sha256": "645a8681416d27ddf044e5dad32d3d62046b392b8adb5f73b58d51d3a6707ba9",
+              "sourceSha256": "00e62c8d72dcdb5f62dd87bb85e14abf3fc93d01c8171374baccbc913bb55833",
+              "startMs": 40075,
+              "endMs": 44585
+            },
+            "salah.bukhatir": {
+              "asset": "quran_passages/salah.bukhatir/2_255_7.mp3",
+              "sha256": "899742364f9dc9a059d22e730c17c19b0d7d37fbdeaa33ab04791a882a8bf21b",
+              "sourceSha256": "bfe6e7dcefdad1905f5690f28aebce3ec0ff1baae944b5363208fe2e606b4e78",
+              "startMs": 41000,
+              "endMs": 45900
+            },
+            "husary.muallim": {
+              "asset": "quran_passages/husary.muallim/2_255_7.mp3",
+              "sha256": "5b268cea36298e087be0916628776e2ddf20b0f77b966bcfde074d44ee81198a",
+              "sourceSha256": "dd9bf4c7cf855bbf0f4d5c6f6bf9163e895930090f9134fa975de6401be7d615",
+              "startMs": 86000,
+              "endMs": 92050
+            }
+          }
+        },
+        {
+          "text": "وَلَا يَـُٔودُهُۥ حِفْظُهُمَا ۚ",
+          "audio": {
+            "ar.alafasy": {
+              "asset": "quran_passages/ar.alafasy/2_255_8.mp3",
+              "sha256": "13eafbba5818b071dc7b346670e161731dd98ccca10ccb90c07e7cba176d75f8",
+              "sourceSha256": "00e62c8d72dcdb5f62dd87bb85e14abf3fc93d01c8171374baccbc913bb55833",
+              "startMs": 44585,
+              "endMs": 47905
+            },
+            "salah.bukhatir": {
+              "asset": "quran_passages/salah.bukhatir/2_255_8.mp3",
+              "sha256": "85e0ebda18b034cba455affa6437b7744f5d617c1e213d401f4b07c818d5eb75",
+              "sourceSha256": "bfe6e7dcefdad1905f5690f28aebce3ec0ff1baae944b5363208fe2e606b4e78",
+              "startMs": 45900,
+              "endMs": 49100
+            },
+            "husary.muallim": {
+              "asset": "quran_passages/husary.muallim/2_255_8.mp3",
+              "sha256": "eafc9ae617f9ec13d19efe94415346713dbc61a54477dca69150d39ab6514470",
+              "sourceSha256": "dd9bf4c7cf855bbf0f4d5c6f6bf9163e895930090f9134fa975de6401be7d615",
+              "startMs": 97250,
+              "endMs": 101950
+            }
+          }
+        },
+        {
+          "text": "وَهُوَ ٱلْعَلِىُّ ٱلْعَظِيمُ",
+          "audio": {
+            "ar.alafasy": {
+              "asset": "quran_passages/ar.alafasy/2_255_9.mp3",
+              "sha256": "9be59bbc2b93b3cf3101373b071e38685433af39dff096602a38de5cb018f40e",
+              "sourceSha256": "00e62c8d72dcdb5f62dd87bb85e14abf3fc93d01c8171374baccbc913bb55833",
+              "startMs": 47905,
+              "endMs": 51770
+            },
+            "salah.bukhatir": {
+              "asset": "quran_passages/salah.bukhatir/2_255_9.mp3",
+              "sha256": "0acf28a5c32def4e9d775042ec232c5a5d410776925d5d0601458a47e578bd46",
+              "sourceSha256": "bfe6e7dcefdad1905f5690f28aebce3ec0ff1baae944b5363208fe2e606b4e78",
+              "startMs": 49100,
+              "endMs": 53506
+            },
+            "husary.muallim": {
+              "asset": "quran_passages/husary.muallim/2_255_9.mp3",
+              "sha256": "2f26e1da92edf65e29ac3045a2d7068094470327360acdb2f2b8a0ae52210e82",
+              "sourceSha256": "dd9bf4c7cf855bbf0f4d5c6f6bf9163e895930090f9134fa975de6401be7d615",
+              "startMs": 105400,
+              "endMs": 109170
+            }
+          }
+        }
+      ]
+    },
+    {
+      "ayah": 285,
+      "global": 292,
+      "text": "ءَامَنَ ٱلرَّسُولُ بِمَآ أُنزِلَ إِلَيْهِ مِن رَّبِّهِۦ وَٱلْمُؤْمِنُونَ ۚ كُلٌّ ءَامَنَ بِٱللَّهِ وَمَلَٰٓئِكَتِهِۦ وَكُتُبِهِۦ وَرُسُلِهِۦ لَا نُفَرِّقُ بَيْنَ أَحَدٍۢ مِّن رُّسُلِهِۦ ۚ وَقَالُوا۟ سَمِعْنَا وَأَطَعْنَا ۖ غُفْرَانَكَ رَبَّنَا وَإِلَيْكَ ٱلْمَصِيرُ",
+      "textSource": "https://api.alquran.cloud/v1/ayah/2:285/quran-uthmani",
+      "textResponseSha256": "65766b77982063195ecbb7ce8ffba60a8ab744a7550077b03a0b1e53f22d0338",
+      "parts": [
+        {
+          "text": "ءَامَنَ ٱلرَّسُولُ بِمَآ أُنزِلَ إِلَيْهِ مِن رَّبِّهِۦ وَٱلْمُؤْمِنُونَ ۚ",
+          "audio": {
+            "ar.alafasy": {
+              "asset": "quran_passages/ar.alafasy/2_285_1.mp3",
+              "sha256": "beae224dfd8e5daae0e8b577ff91383ed43a8b8901271c61010d42f7cc6a2780",
+              "sourceSha256": "7df869559d653ba486b1b00b08922c72950b2fe9f203cc081e37b17c8d89e07f",
+              "startMs": 0,
+              "endMs": 10295
+            },
+            "salah.bukhatir": {
+              "asset": "quran_passages/salah.bukhatir/2_285_1.mp3",
+              "sha256": "caffcc020403094046655660b00b8f24ad984f3b995d3f766ea0a66c1dfb28ea",
+              "sourceSha256": "3d88f8707453add36d63fbc00df454de63fe229e6529a7ecc349d03c723e630b",
+              "startMs": 0,
+              "endMs": 7900
+            },
+            "husary.muallim": {
+              "asset": "quran_passages/husary.muallim/2_285_1.mp3",
+              "sha256": "6a0491a7686ebaf657b3ffd85e5c86fcb807bcb0143fdc5b94f0d7bdea5e4cd5",
+              "sourceSha256": "ac58a044d331aa36706cce0e8c887faa9b3a1843a655c75906166a37d11e54e5",
+              "startMs": 400,
+              "endMs": 13050
+            }
+          }
+        },
+        {
+          "text": "كُلٌّ ءَامَنَ بِٱللَّهِ وَمَلَٰٓئِكَتِهِۦ وَكُتُبِهِۦ وَرُسُلِهِۦ",
+          "audio": {
+            "ar.alafasy": {
+              "asset": "quran_passages/ar.alafasy/2_285_2.mp3",
+              "sha256": "82d815544fec5abbc5f07f32cba9b4e69f67da93408cd9b23cad4486c2e49dea",
+              "sourceSha256": "7df869559d653ba486b1b00b08922c72950b2fe9f203cc081e37b17c8d89e07f",
+              "startMs": 10295,
+              "endMs": 18445
+            },
+            "salah.bukhatir": {
+              "asset": "quran_passages/salah.bukhatir/2_285_2.mp3",
+              "sha256": "ece68b365a2d2190d62398e0787e8da68d2a9237013fe9b28b831fc02153ad1d",
+              "sourceSha256": "3d88f8707453add36d63fbc00df454de63fe229e6529a7ecc349d03c723e630b",
+              "startMs": 7900,
+              "endMs": 14950
+            },
+            "husary.muallim": {
+              "asset": "quran_passages/husary.muallim/2_285_2.mp3",
+              "sha256": "52e3b76abd2c361fc6bb000dff29a38ed5fafeff0ecd4b14db38b40aa85e5fc9",
+              "sourceSha256": "ac58a044d331aa36706cce0e8c887faa9b3a1843a655c75906166a37d11e54e5",
+              "startMs": 18300,
+              "endMs": 29695
+            }
+          }
+        },
+        {
+          "text": "لَا نُفَرِّقُ بَيْنَ أَحَدٍۢ مِّن رُّسُلِهِۦ ۚ",
+          "audio": {
+            "ar.alafasy": {
+              "asset": "quran_passages/ar.alafasy/2_285_3.mp3",
+              "sha256": "001275644b5b80038b584a1f7e9b8f495df290d8972d2147411b846d960bb4b5",
+              "sourceSha256": "7df869559d653ba486b1b00b08922c72950b2fe9f203cc081e37b17c8d89e07f",
+              "startMs": 18445,
+              "endMs": 23125
+            },
+            "salah.bukhatir": {
+              "asset": "quran_passages/salah.bukhatir/2_285_3.mp3",
+              "sha256": "2dc0f65f31a0eff86435bb97a94392fd58ffa9a6b1011f766851203594c1dfa8",
+              "sourceSha256": "3d88f8707453add36d63fbc00df454de63fe229e6529a7ecc349d03c723e630b",
+              "startMs": 14950,
+              "endMs": 19400
+            },
+            "husary.muallim": {
+              "asset": "quran_passages/husary.muallim/2_285_3.mp3",
+              "sha256": "eebaf5d5a2eafabba4224ea6e04f4772a52628fe93bb3800d2b7e887f61b58c1",
+              "sourceSha256": "ac58a044d331aa36706cce0e8c887faa9b3a1843a655c75906166a37d11e54e5",
+              "startMs": 29695,
+              "endMs": 36150
+            }
+          }
+        },
+        {
+          "text": "وَقَالُوا۟ سَمِعْنَا وَأَطَعْنَا ۖ",
+          "audio": {
+            "ar.alafasy": {
+              "asset": "quran_passages/ar.alafasy/2_285_4.mp3",
+              "sha256": "55eb64ab72b535c50c05f195fbe50f62ab91f55e5479b40d6b3d9e18b736d8eb",
+              "sourceSha256": "7df869559d653ba486b1b00b08922c72950b2fe9f203cc081e37b17c8d89e07f",
+              "startMs": 23125,
+              "endMs": 26245
+            },
+            "salah.bukhatir": {
+              "asset": "quran_passages/salah.bukhatir/2_285_4.mp3",
+              "sha256": "955bd039bf287aae8d0a8ff4a462ef1d478dbe1cd7feaa4a649a1d5316e44173",
+              "sourceSha256": "3d88f8707453add36d63fbc00df454de63fe229e6529a7ecc349d03c723e630b",
+              "startMs": 19400,
+              "endMs": 23100
+            },
+            "husary.muallim": {
+              "asset": "quran_passages/husary.muallim/2_285_4.mp3",
+              "sha256": "653eb0b15a72f3c8263e8f326c993faf5285c82d6e9f56266c92f3c5477d3196",
+              "sourceSha256": "ac58a044d331aa36706cce0e8c887faa9b3a1843a655c75906166a37d11e54e5",
+              "startMs": 41000,
+              "endMs": 46700
+            }
+          }
+        },
+        {
+          "text": "غُفْرَانَكَ رَبَّنَا وَإِلَيْكَ ٱلْمَصِيرُ",
+          "audio": {
+            "ar.alafasy": {
+              "asset": "quran_passages/ar.alafasy/2_285_5.mp3",
+              "sha256": "3820237a397461f708ecf2d5beb6208104e457a3b760bcf047a53120b66878cb",
+              "sourceSha256": "7df869559d653ba486b1b00b08922c72950b2fe9f203cc081e37b17c8d89e07f",
+              "startMs": 26245,
+              "endMs": 32520
+            },
+            "salah.bukhatir": {
+              "asset": "quran_passages/salah.bukhatir/2_285_5.mp3",
+              "sha256": "a81cd85bb17bf4b346374e65fab4bb9b42996afe3587a965cc0a739b513e31a7",
+              "sourceSha256": "3d88f8707453add36d63fbc00df454de63fe229e6529a7ecc349d03c723e630b",
+              "startMs": 23100,
+              "endMs": 29212
+            },
+            "husary.muallim": {
+              "asset": "quran_passages/husary.muallim/2_285_5.mp3",
+              "sha256": "447ebed44335822e6c316f91f66a76efd72732a6e02a32fd06406e33d9965924",
+              "sourceSha256": "ac58a044d331aa36706cce0e8c887faa9b3a1843a655c75906166a37d11e54e5",
+              "startMs": 49200,
+              "endMs": 56010
+            }
+          }
+        }
+      ]
+    },
+    {
+      "ayah": 286,
+      "global": 293,
+      "text": "لَا يُكَلِّفُ ٱللَّهُ نَفْسًا إِلَّا وُسْعَهَا ۚ لَهَا مَا كَسَبَتْ وَعَلَيْهَا مَا ٱكْتَسَبَتْ ۗ رَبَّنَا لَا تُؤَاخِذْنَآ إِن نَّسِينَآ أَوْ أَخْطَأْنَا ۚ رَبَّنَا وَلَا تَحْمِلْ عَلَيْنَآ إِصْرًۭا كَمَا حَمَلْتَهُۥ عَلَى ٱلَّذِينَ مِن قَبْلِنَا ۚ رَبَّنَا وَلَا تُحَمِّلْنَا مَا لَا طَاقَةَ لَنَا بِهِۦ ۖ وَٱعْفُ عَنَّا وَٱغْفِرْ لَنَا وَٱرْحَمْنَآ ۚ أَنتَ مَوْلَىٰنَا فَٱنصُرْنَا عَلَى ٱلْقَوْمِ ٱلْكَٰفِرِينَ",
+      "textSource": "https://api.alquran.cloud/v1/ayah/2:286/quran-uthmani",
+      "textResponseSha256": "5620f610f341369f5ce87a6b7ad5fdb2a22b19c2e62ab3c6b5e7101a30d95b4f",
+      "parts": [
+        {
+          "text": "لَا يُكَلِّفُ ٱللَّهُ نَفْسًا إِلَّا وُسْعَهَا ۚ",
+          "audio": {
+            "ar.alafasy": {
+              "asset": "quran_passages/ar.alafasy/2_286_1.mp3",
+              "sha256": "5ee255685efd29a1f98d49f3788fc0ab22c85c5c2433ad559e4e7356bbb24ac5",
+              "sourceSha256": "ade9485c92413beaff9b40021459754eb79429848deb50f88e378c7347138b30",
+              "startMs": 0,
+              "endMs": 5215
+            },
+            "salah.bukhatir": {
+              "asset": "quran_passages/salah.bukhatir/2_286_1.mp3",
+              "sha256": "b56677cd25cd0f89849e7f74a5fbf080ce94592c76dd9016a046143ff0c76c53",
+              "sourceSha256": "4897d4ca69c8d1d82517da1837b65ca5a52932126977c3435053d419806a43f5",
+              "startMs": 0,
+              "endMs": 4850
+            },
+            "husary.muallim": {
+              "asset": "quran_passages/husary.muallim/2_286_1.mp3",
+              "sha256": "930e102e1c77882a9c27277e0472f11adaba929bd605a109e4bad1a263b9cee2",
+              "sourceSha256": "ac1bdacc26914f6fc7a2f3cbfc63824edec98e0e38152c5b52cf1dbb5db91ea9",
+              "startMs": 100,
+              "endMs": 8000
+            }
+          }
+        },
+        {
+          "text": "لَهَا مَا كَسَبَتْ وَعَلَيْهَا مَا ٱكْتَسَبَتْ ۗ",
+          "audio": {
+            "ar.alafasy": {
+              "asset": "quran_passages/ar.alafasy/2_286_2.mp3",
+              "sha256": "4369cc98afca4faebcf8aa0beb8b08cc9da9e51c054774c4e2ab87bf75e49e92",
+              "sourceSha256": "ade9485c92413beaff9b40021459754eb79429848deb50f88e378c7347138b30",
+              "startMs": 5215,
+              "endMs": 9565
+            },
+            "salah.bukhatir": {
+              "asset": "quran_passages/salah.bukhatir/2_286_2.mp3",
+              "sha256": "98cf9239cf5b449110da4638e3f826f6601ce029d403ca0e00a5072cc9fa3380",
+              "sourceSha256": "4897d4ca69c8d1d82517da1837b65ca5a52932126977c3435053d419806a43f5",
+              "startMs": 4850,
+              "endMs": 9450
+            },
+            "husary.muallim": {
+              "asset": "quran_passages/husary.muallim/2_286_2.mp3",
+              "sha256": "e2668ac7069912a480537a8b162c343b844f0fe60ae1470c72486d426da1e9c2",
+              "sourceSha256": "ac1bdacc26914f6fc7a2f3cbfc63824edec98e0e38152c5b52cf1dbb5db91ea9",
+              "startMs": 10600,
+              "endMs": 17600
+            }
+          }
+        },
+        {
+          "text": "رَبَّنَا لَا تُؤَاخِذْنَآ إِن نَّسِينَآ أَوْ أَخْطَأْنَا ۚ",
+          "audio": {
+            "ar.alafasy": {
+              "asset": "quran_passages/ar.alafasy/2_286_3.mp3",
+              "sha256": "0643b2ccd44f4b802847ae81c7369f7aae48960829cb164139a900cc55e4fd48",
+              "sourceSha256": "ade9485c92413beaff9b40021459754eb79429848deb50f88e378c7347138b30",
+              "startMs": 9565,
+              "endMs": 19235
+            },
+            "salah.bukhatir": {
+              "asset": "quran_passages/salah.bukhatir/2_286_3.mp3",
+              "sha256": "43a859f4859fff374b7af56404267b1aa06511048497185b199e98e979f851a5",
+              "sourceSha256": "4897d4ca69c8d1d82517da1837b65ca5a52932126977c3435053d419806a43f5",
+              "startMs": 9450,
+              "endMs": 16150
+            },
+            "husary.muallim": {
+              "asset": "quran_passages/husary.muallim/2_286_3.mp3",
+              "sha256": "60264e19d56d919127eabbc35af47a0840b53bd046c5e5cfa238f6567c7698a6",
+              "sourceSha256": "ac1bdacc26914f6fc7a2f3cbfc63824edec98e0e38152c5b52cf1dbb5db91ea9",
+              "startMs": 23450,
+              "endMs": 36100
+            }
+          }
+        },
+        {
+          "text": "رَبَّنَا وَلَا تَحْمِلْ عَلَيْنَآ إِصْرًۭا كَمَا حَمَلْتَهُۥ عَلَى ٱلَّذِينَ مِن قَبْلِنَا ۚ",
+          "audio": {
+            "ar.alafasy": {
+              "asset": "quran_passages/ar.alafasy/2_286_4.mp3",
+              "sha256": "5fa0271cb3a6e3de6732f7377cc6b4503a65651b8b202669b8d9a1052671f649",
+              "sourceSha256": "ade9485c92413beaff9b40021459754eb79429848deb50f88e378c7347138b30",
+              "startMs": 19235,
+              "endMs": 30575
+            },
+            "salah.bukhatir": {
+              "asset": "quran_passages/salah.bukhatir/2_286_4.mp3",
+              "sha256": "8787f6f26384d6f690483d3fc38c4858f062ef816921961a399e9007f7960b96",
+              "sourceSha256": "4897d4ca69c8d1d82517da1837b65ca5a52932126977c3435053d419806a43f5",
+              "startMs": 16150,
+              "endMs": 25150
+            },
+            "husary.muallim": {
+              "asset": "quran_passages/husary.muallim/2_286_4.mp3",
+              "sha256": "22d88a6fe9fe07be4aec305e6a0ab808fd22c65ea30e91d9e9c0e0f5927ba2e1",
+              "sourceSha256": "ac1bdacc26914f6fc7a2f3cbfc63824edec98e0e38152c5b52cf1dbb5db91ea9",
+              "startMs": 39400,
+              "endMs": 55500
+            }
+          }
+        },
+        {
+          "text": "رَبَّنَا وَلَا تُحَمِّلْنَا مَا لَا طَاقَةَ لَنَا بِهِۦ ۖ",
+          "audio": {
+            "ar.alafasy": {
+              "asset": "quran_passages/ar.alafasy/2_286_5.mp3",
+              "sha256": "4683821cc97f670b06569d191178c7b373624b20dc31e5048321464d3d053005",
+              "sourceSha256": "ade9485c92413beaff9b40021459754eb79429848deb50f88e378c7347138b30",
+              "startMs": 30575,
+              "endMs": 36945
+            },
+            "salah.bukhatir": {
+              "asset": "quran_passages/salah.bukhatir/2_286_5.mp3",
+              "sha256": "0160c57d217024ceca1af7bc902f7d6392bbd56626ceacaa7799a87ef8592c4f",
+              "sourceSha256": "4897d4ca69c8d1d82517da1837b65ca5a52932126977c3435053d419806a43f5",
+              "startMs": 25150,
+              "endMs": 31650
+            },
+            "husary.muallim": {
+              "asset": "quran_passages/husary.muallim/2_286_5.mp3",
+              "sha256": "5227003c6e67a05fa57c1fae6dfc809baf496147176fa37854e16c0749710605",
+              "sourceSha256": "ac1bdacc26914f6fc7a2f3cbfc63824edec98e0e38152c5b52cf1dbb5db91ea9",
+              "startMs": 60200,
+              "endMs": 69600
+            }
+          }
+        },
+        {
+          "text": "وَٱعْفُ عَنَّا وَٱغْفِرْ لَنَا وَٱرْحَمْنَآ ۚ",
+          "audio": {
+            "ar.alafasy": {
+              "asset": "quran_passages/ar.alafasy/2_286_6.mp3",
+              "sha256": "cd9984ef3bfef5c18fb4be70bb50d947ef61d78ac545c4e8a8341f0f16493e5c",
+              "sourceSha256": "ade9485c92413beaff9b40021459754eb79429848deb50f88e378c7347138b30",
+              "startMs": 36945,
+              "endMs": 41905
+            },
+            "salah.bukhatir": {
+              "asset": "quran_passages/salah.bukhatir/2_286_6.mp3",
+              "sha256": "43357394382091dbca2ebdd5d3eb37b8ef1717611885dd72324c90cd0e20f948",
+              "sourceSha256": "4897d4ca69c8d1d82517da1837b65ca5a52932126977c3435053d419806a43f5",
+              "startMs": 36300,
+              "endMs": 40650
+            },
+            "husary.muallim": {
+              "asset": "quran_passages/husary.muallim/2_286_6.mp3",
+              "sha256": "fb4a76b7feb3322e6ac062791e937b0db49e6e56d22971358fbd270fd4ca221a",
+              "sourceSha256": "ac1bdacc26914f6fc7a2f3cbfc63824edec98e0e38152c5b52cf1dbb5db91ea9",
+              "startMs": 73900,
+              "endMs": 81000
+            }
+          }
+        },
+        {
+          "text": "أَنتَ مَوْلَىٰنَا",
+          "audio": {
+            "ar.alafasy": {
+              "asset": "quran_passages/ar.alafasy/2_286_7.mp3",
+              "sha256": "729ca2d8c9776088faaded3fe0440aa8d418f55226c04779bcb600c6889d57b4",
+              "sourceSha256": "ade9485c92413beaff9b40021459754eb79429848deb50f88e378c7347138b30",
+              "startMs": 41905,
+              "endMs": 44425
+            },
+            "salah.bukhatir": {
+              "asset": "quran_passages/salah.bukhatir/2_286_7.mp3",
+              "sha256": "456c6445f6352aa8197bd9d281a075eacbb68b3131a5c010b4f32635e8fa7681",
+              "sourceSha256": "4897d4ca69c8d1d82517da1837b65ca5a52932126977c3435053d419806a43f5",
+              "startMs": 40650,
+              "endMs": 43200
+            },
+            "husary.muallim": {
+              "asset": "quran_passages/husary.muallim/2_286_7.mp3",
+              "sha256": "096fe357a0b90371ff7442bd4aa94b6eacda0623c9853c857ce3a8bb4bc6928e",
+              "sourceSha256": "ac1bdacc26914f6fc7a2f3cbfc63824edec98e0e38152c5b52cf1dbb5db91ea9",
+              "startMs": 85440,
+              "endMs": 88845
+            }
+          }
+        },
+        {
+          "text": "فَٱنصُرْنَا عَلَى ٱلْقَوْمِ ٱلْكَٰفِرِينَ",
+          "audio": {
+            "ar.alafasy": {
+              "asset": "quran_passages/ar.alafasy/2_286_8.mp3",
+              "sha256": "fd49f8bdd7c818b6a32f96c42fa6d064af133ac23c9ba39fbd07ed587ca2eb63",
+              "sourceSha256": "ade9485c92413beaff9b40021459754eb79429848deb50f88e378c7347138b30",
+              "startMs": 44425,
+              "endMs": 51490
+            },
+            "salah.bukhatir": {
+              "asset": "quran_passages/salah.bukhatir/2_286_8.mp3",
+              "sha256": "eab1ba728b531b3d6d37b7ba39fb2c85ae7782b47a713c8070f4a914e54a02b0",
+              "sourceSha256": "4897d4ca69c8d1d82517da1837b65ca5a52932126977c3435053d419806a43f5",
+              "startMs": 43200,
+              "endMs": 49666
+            },
+            "husary.muallim": {
+              "asset": "quran_passages/husary.muallim/2_286_8.mp3",
+              "sha256": "6ad6de55f4bb44a1e7038688d30abf5e17b0f1bdbddb00faec5edec9f8e20182",
+              "sourceSha256": "ac1bdacc26914f6fc7a2f3cbfc63824edec98e0e38152c5b52cf1dbb5db91ea9",
+              "startMs": 88845,
+              "endMs": 95960
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

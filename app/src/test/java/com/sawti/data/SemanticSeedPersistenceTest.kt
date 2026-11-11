@@ -41,6 +41,58 @@ class SemanticSeedPersistenceTest {
     }
     @After fun close() { db.close() }
 
+    @Test fun addingTransportToAnExistingDatabasePreservesEditsMediaAndPracticeHistory() = runBlocking {
+        // Reproduce the immediately preceding content baseline without changing the schema.
+        db.openHelper.writableDatabase.execSQL("DELETE FROM categories WHERE id = 'transport'")
+        val oldRows = db.wordDao().observeItems().first()
+        assertEquals(379, oldRows.size)
+        val source = oldRows.single { it.semanticKey == "request.water" }
+        val photo = File(context.filesDir, "photos/before-transport.jpg").apply {
+            parentFile!!.mkdirs(); writeText("existing photo")
+        }
+        val audio = File(context.filesDir, "custom_audio/before-transport.m4a").apply {
+            parentFile!!.mkdirs(); writeText("existing voice")
+        }
+        repo.updateDetails(source.id, "طلبي", "صوتي", "تلميحي", "جملتي", "123")
+        db.wordDao().updatePhoto(source.id, photo.path)
+        db.wordDao().updateAudio(source.id, audio.path)
+        db.progressDao().insertAttempt(com.sawti.data.db.ProgressRecordEntity(
+            wordId = source.id, timestamp = 123L, mode = "RECALL", outcome = "CUED"))
+        val expectedRows = db.wordDao().observeItems().first().associateBy { it.id }
+        val expectedProgress = db.progressDao().observeOutcomeCounts().first()
+        repeat(2) { repo.seedOrUpdateDefaults() }
+        db.close()
+        db = AppDatabase.build(context)
+        repo = RoomWordRepository(db, context, settings)
+        repo.seedOrUpdateDefaults()
+        val rows = db.wordDao().observeItems().first()
+        assertEquals(391, rows.size)
+        assertEquals(12, rows.count { it.categoryId == "transport" })
+        assertEquals(391, rows.map { it.semanticKey }.distinct().size)
+        expectedRows.forEach { (id, expected) -> assertEquals(expected, rows.single { it.id == id }) }
+        assertEquals(expectedProgress, db.progressDao().observeOutcomeCounts().first())
+        assertEquals("existing photo", photo.readText())
+        assertEquals("existing voice", audio.readText())
+    }
+
+    @Test fun greetingsAreFirstBesideFamilyAndReseedingPreservesPersonalEdits() = runBlocking {
+        val displayed = repo.observeCategories().first()
+        assertEquals(listOf("greetings", "family"), displayed.take(2).map { it.id })
+        assertEquals(14, displayed.first().items.size)
+        val original = db.wordDao().observeItems().first().single { it.semanticKey == "greeting.salam" }
+        repo.updateDetails(original.id, "تحيتي الشخصية", "نطقي الشخصي", "تلميحي", null, "")
+        val saved = requireNotNull(db.wordDao().wordById(original.id))
+        repeat(2) { repo.seedOrUpdateDefaults() }
+        settings.setDialect(ArabicDialect.MOROCCAN)
+        val after = repo.observeCategories().first()
+        assertEquals(listOf("greetings", "family"), after.take(2).map { it.id })
+        assertEquals(14, after.first().items.size)
+        assertEquals(saved, db.wordDao().wordById(original.id))
+        val customized = after.first().items.single { it.id == original.id }
+        assertEquals("تحيتي الشخصية", customized.displayText)
+        assertEquals("نطقي الشخصي", customized.ttsPrompt)
+    }
+
     @Test fun reseedingRenamedCardDoesNotDuplicateResetOrRetargetIt() = runBlocking {
         val dao = db.wordDao()
         val water = dao.observeItems().first().single { it.semanticKey == "request.water" }
@@ -80,7 +132,7 @@ class SemanticSeedPersistenceTest {
         assertEquals(expected.copy(photoPath = restored.photoPath, audioPath = restored.audioPath), restored)
         assertEquals("photo payload", File(requireNotNull(restored.photoPath)).readText())
         assertEquals("audio payload", File(requireNotNull(restored.audioPath)).readText())
-        assertEquals(365, db.wordDao().observeItems().first().size)
+        assertEquals(391, db.wordDao().observeItems().first().size)
         assertEquals(1, db.wordDao().semanticKeys().count { it == "food.bread" })
         assertEquals("word_bread", WordImageCatalog.imageFor(restored.toDomain()))
         assertEquals(CardDetails.LABEL or CardDetails.SPEECH or CardDetails.CUE or CardDetails.SENTENCE,

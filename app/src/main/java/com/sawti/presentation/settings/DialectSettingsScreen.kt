@@ -8,6 +8,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -60,6 +62,8 @@ fun DialectSettingsRoute(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text("اللهجة وطريقة الكلام", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+        Text("تُختار اللهجة تلقائيًا عند الاستخدام الأول، ويمكنك تغييرها هنا في أي وقت.",
+            style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Text(
             "تتغيّر العبارات الأساسية المكتوبة والمنطوقة فوراً. الأسماء والكلمات المخصصة والتسجيلات التي أضفتها تبقى كما هي. بعض الكلمات لم تُترجم بعد.",
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -73,6 +77,8 @@ fun DialectSettingsRoute(
             ) {
                 Row(Modifier.padding(horizontal = 12.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(selected = selected, onClick = { settingsVm.setDialect(dialect) })
+                    DialectFlag(dialect)
+                    Spacer(Modifier.width(12.dp))
                     Column(Modifier.weight(1f)) {
                         Text(dialect.label, fontWeight = FontWeight.SemiBold)
                         Text(DialectSpeechCatalog.resolve(sample, dialect).displayText, style = MaterialTheme.typography.bodySmall)

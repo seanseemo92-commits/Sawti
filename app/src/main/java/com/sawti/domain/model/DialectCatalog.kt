@@ -1189,25 +1189,32 @@ object DialectCatalog {
             ArabicDialect.MOROCCAN to DialectForm("قنية"),
             ArabicDialect.ALGERIAN to DialectForm("قنية"),
         ),
-    )
+    ) + TransportCatalog.dialectForms + GreetingsCatalog.dialectForms
 
-    fun text(semanticKey: String, dialect: ArabicDialect, fallback: String): String =
-        if (dialect == ArabicDialect.STANDARD) fallback else words[semanticKey]?.get(dialect)?.displayText ?: fallback
+    fun text(semanticKey: String, dialect: ArabicDialect, fallback: String): String {
+        val original = if (dialect == ArabicDialect.STANDARD) fallback
+            else words[semanticKey]?.get(dialect)?.displayText ?: fallback
+        return ArgonAuditOverrides.overrideLabel(dialect, semanticKey, original)
+    }
 
     fun localize(value: WordItem, dialect: ArabicDialect): WordItem {
         val item = value.forEditing()
         val key = item.semanticKey ?: return item
-        if (dialect == ArabicDialect.STANDARD || item.categoryId.startsWith("custom_")) return item
+        if (item.categoryId.startsWith("custom_")) return item
+        val regional = if (dialect == ArabicDialect.STANDARD) null
+            else RegionalDishesCatalog.variant(key, dialect)
         fun custom(flag: Int) = item.customTextFields and flag != 0
-        val regional = RegionalDishesCatalog.variant(key, dialect)
-        if (regional == null && key !in words) return item
         val form = DialectSpeechCatalog.resolve(item, dialect)
-        return item.copy(
-            displayText = form.displayText, ttsPrompt = form.speechText,
+        val projected = item.copy(
+            displayText = form.displayText,
+            ttsPrompt = form.speechText,
             phonemicCue = form.phonemicCue,
             sentencePrompt = if (custom(CardDetails.SENTENCE)) item.sentencePrompt
-                else regional?.sentencePrompt ?: item.sentencePrompt,
+                else regional?.sentencePrompt ?: TransportCatalog.sentencePrompt(key, dialect) ?: item.sentencePrompt,
             sourceDetails = CardDetails.from(item),
         )
+        val revised = ArgonAuditOverrides.applySentence(item, dialect, projected)
+        return if (revised.copy(sourceDetails = null) == item) item else revised
     }
 }
+
