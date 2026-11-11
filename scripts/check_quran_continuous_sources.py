@@ -83,6 +83,23 @@ def run():
                 report["available"][key].append(summary)
     except Exception as exc:
         report["apiErrors"].append(str(exc))
+    # Obtain *mushaf editions*, not only reader names. A teacher's recitation
+    # must never be conflated with the same reader's normal/Warsh edition.
+    try:
+        data,_=api("reciters?language=ar")
+        catalog=listify(data)
+        detail={}
+        for v in catalog:
+            if not isinstance(v,dict): continue
+            names=(str(v.get("name",""))+" "+str(v.get("id",""))).lower()
+            if ("الحصري" not in names and "العفاسي" not in names and "بو خاطر" not in names):
+                continue
+            detail[str(v.get("name"))]=[{"id":m.get("id"),"name":m.get("name"),
+                "server":m.get("server"),"surah_total":m.get("surah_total")} for m in v.get("moshaf",[])]
+        report["moshafEdits"]=detail
+    except Exception as exc:
+        report["moshafError"]=str(exc)[:200]
+
     # HEAD source availability, bounded: NEVER read/download all of Al-Baqarah in audit.
     urls={
         "ar.alafasy":"https://cdn.mp3quran.net/download/audio/mishary-alafasy/r1/002.mp3",
