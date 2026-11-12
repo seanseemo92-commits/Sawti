@@ -21,6 +21,33 @@ class InitialDialectSettingsTest {
     @Before fun setup() {
         context = RuntimeEnvironment.getApplication()
         context.getSharedPreferences("settings", Context.MODE_PRIVATE).edit().clear().commit()
+        context.getSharedPreferences("quran_reciter", Context.MODE_PRIVATE).edit().clear().commit()
+    }
+
+    @Test fun savedReciterMigratesBeforeTheFirstBackupWithoutOpeningQuran() {
+        context.getSharedPreferences("quran_reciter", Context.MODE_PRIVATE).edit()
+            .putString("selected_edition", "salah.bukhatir").commit()
+        SettingsRepository(context)
+        assertEquals("salah.bukhatir", context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+            .getString("quran_edition", null))
+    }
+
+    @Test fun restoredReciterWinsOverTheOldDeviceSelection() {
+        context.getSharedPreferences("settings", Context.MODE_PRIVATE).edit()
+            .putString("quran_edition", "husary.muallim").commit()
+        context.getSharedPreferences("quran_reciter", Context.MODE_PRIVATE).edit()
+            .putString("selected_edition", "salah.bukhatir").commit()
+        SettingsRepository(context)
+        assertEquals("husary.muallim", context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+            .getString("quran_edition", null))
+    }
+
+    @Test fun retiredOrUnknownLegacyReciterFallsBackToAlafasy() {
+        context.getSharedPreferences("quran_reciter", Context.MODE_PRIVATE).edit()
+            .putString("selected_edition", "removed-reader").commit()
+        SettingsRepository(context)
+        assertEquals("ar.alafasy", context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+            .getString("quran_edition", null))
     }
 
     @Test fun firstChoiceIsPersistedAndNeverRedetectedAfterManualSelection() {

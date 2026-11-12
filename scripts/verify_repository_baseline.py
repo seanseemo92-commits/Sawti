@@ -18,6 +18,16 @@ android = '{http://schemas.android.com/apk/res/android}'
 manifest = ET.parse('app/src/main/AndroidManifest.xml').getroot()
 app = manifest.find('application')
 require(app is not None and app.get(android + 'allowBackup') == 'false', 'Cloud backup must stay disabled')
+require(app.get(android + 'dataExtractionRules') == '@xml/data_extraction_rules',
+        'Explicit Android 12+ backup and transfer exclusions are missing')
+rules = ET.parse('app/src/main/res/xml/data_extraction_rules.xml').getroot()
+domains = {'root', 'file', 'database', 'sharedpref', 'external', 'device_root',
+           'device_file', 'device_database', 'device_sharedpref'}
+for mode in ('cloud-backup', 'device-transfer'):
+    section = rules.find(mode)
+    require(section is not None and not section.findall('include'), 'Automatic backup was re-enabled')
+    require({(entry.get('domain'), entry.get('path')) for entry in section.findall('exclude')} ==
+            {(domain, '.') for domain in domains}, 'Personal data exclusion is incomplete: ' + mode)
 require(app.get(android + 'supportsRtl') == 'true', 'Arabic RTL support missing')
 strings = ET.parse('app/src/main/res/values/strings.xml').getroot()
 require(any(e.get('name') == 'app_name' and e.text == 'صوتي' for e in strings), 'Wrong app name')
@@ -42,5 +52,9 @@ for dpi in ('mdpi', 'hdpi', 'xhdpi', 'xxhdpi', 'xxxhdpi'):
 for path in root.rglob('*'):
     if path.is_file() and '.git' not in path.parts and 'build' not in path.parts:
         require(path.suffix.lower() not in ('.jks', '.p12', '.keystore'), 'Signing key found in repository source')
+        if path.suffix in ('.kt', '.kts', '.xml'):
+            require(re.search(r'(?:Warning: truncated output|\d+ tokens truncated|Total output lines:)',
+                              path.read_text(encoding='utf-8')) is None,
+                    'Truncated tool output found inside application source: ' + str(path))
 require(Path(f'docs/release-{version}.md').is_file(), 'Release notes must match the current version')
 print(f'Repository baseline OK: Sawti {version} ({code}); RTL, manual backup, current launcher and schema intact')

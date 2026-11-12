@@ -112,10 +112,17 @@ class PracticeViewModel(
 
     private fun observeCards() {
         observationJob?.cancel()
-        _uiState.update { it.copy(loadError = false) }
+        advanceJob?.cancel()
+        questionJob?.cancel()
+        voice.stop()
+        deck = emptyList()
+        _uiState.value = PracticeUiState(exercise = _uiState.value.exercise)
         observationJob = viewModelScope.launch {
             repository.observeCategories().catch {
                 Log.e("SawtiPractice", "Category observation failed", it)
+                advanceJob?.cancel()
+                questionJob?.cancel()
+                voice.stop()
                 _uiState.update { state -> state.copy(loadError = true) }
             }.collect { categories ->
                 recallPool = buildPool(categories, exercise = Exercise.RECALL)
@@ -176,7 +183,12 @@ class PracticeViewModel(
         viewModelScope.launch { progress.log(wordId, mode, outcome) }
     }
     override fun setExercise(exercise: Exercise) {
-        if (exercise != _uiState.value.exercise) startRound(exercise)
+        val state = _uiState.value
+        if (exercise == state.exercise) return
+        if (state.loadError || !state.ready) {
+            _uiState.update { it.copy(exercise = exercise) }
+            if (state.loadError) observeCards()
+        } else startRound(exercise)
     }
     override fun restart() {
         if (_uiState.value.loadError) observeCards() else startRound()

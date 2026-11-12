@@ -33,7 +33,9 @@ class DialectSpeechCatalogTest {
             // A language switch is a view projection, not a rewrite of the
             // canonical Room row or personal photos/voice recordings.
             assertEquals(seed, libyan.forEditing())
-            assertEquals(seed, DialectCatalog.localize(libyan, ArabicDialect.STANDARD))
+            val standard = DialectCatalog.localize(seed, ArabicDialect.STANDARD)
+            assertEquals(standard, DialectCatalog.localize(libyan, ArabicDialect.STANDARD))
+            assertEquals(seed, standard.forEditing())
         }
     }
 

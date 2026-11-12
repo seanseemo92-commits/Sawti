@@ -17,6 +17,11 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   android:
+    # The delivery workflow runs the complete checks and signs the same commit.
+    if: >-
+      !(github.event_name == 'push' &&
+        github.ref == 'refs/heads/feature/quran-full-recitation-cache-20261111' &&
+        contains(github.event.head_commit.message, '[deliver-rc]'))
     runs-on: ubuntu-latest
     timeout-minutes: 35
     env:

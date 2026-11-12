@@ -38,6 +38,17 @@ class RestoreSettingsValidatorTest {
         assertTrue(parse("<map/>").contains("map"))
     }
 
+    @Test fun allSupportedQuranRecitersSurviveBackupValidation() {
+        for (reader in listOf("ar.alafasy", "salah.bukhatir", "husary.muallim")) {
+            val xml = parse("""<map><string name="quran_edition">$reader</string></map>""")
+            assertTrue(xml.contains(reader))
+            assertEquals(xml, parse(xml))
+        }
+        assertThrows(Exception::class.java) {
+            parse("""<map><string name="quran_edition">unknown-reader</string></map>""")
+        }
+    }
+
     @Test fun rejectsWrongTypesAndValues() {
         listOf(
             """<map><string name="onboarding_completed">yes</string></map>""",

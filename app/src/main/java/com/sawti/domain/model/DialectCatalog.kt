@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 18495)
-Total output lines: 1221
-
 package com.sawti.domain.model
 
 /** Dialect projections use immutable concept IDs. Fusha is the saved source.
@@ -482,7 +479,189 @@ object DialectCatalog {
             ArabicDialect.SAUDI to DialectForm("شوربة"),
             ArabicDialect.EGYPTIAN to DialectForm("شوربة"),
             ArabicDialect.SYRIAN to DialectForm("شوربة"),
-            ArabicDialect.IRAQI to DialectForm("شور…2495 tokens truncated…     ArabicDialect.ALGERIAN to DialectForm("كاس"),
+            ArabicDialect.IRAQI to DialectForm("شوربة"),
+            ArabicDialect.TUNISIAN to DialectForm("شربة"),
+            ArabicDialect.MOROCCAN to DialectForm("شوربة"),
+            ArabicDialect.ALGERIAN to DialectForm("شوربة"),
+        ),
+        "food.meat" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("لحم", "لَحْمْ", "لَحْـ..."),
+        ),
+        "food.chicken" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("دجاج", "دَجَاجْ", "دَجَا..."),
+            ArabicDialect.SAUDI to DialectForm("دجاج"),
+            ArabicDialect.EGYPTIAN to DialectForm("فراخ"),
+            ArabicDialect.SYRIAN to DialectForm("جاج"),
+            ArabicDialect.IRAQI to DialectForm("دجاج"),
+            ArabicDialect.TUNISIAN to DialectForm("دجاج"),
+            ArabicDialect.MOROCCAN to DialectForm("دجاج", "دْجَاجْ"),
+            ArabicDialect.ALGERIAN to DialectForm("دجاج"),
+        ),
+        "food.fish" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("حوت (سمك)", "حُوتْ", "حُو..."),
+            ArabicDialect.SAUDI to DialectForm("سمك", "سِمَكْ"),
+            ArabicDialect.EGYPTIAN to DialectForm("سمك", "سَمَكْ"),
+            ArabicDialect.SYRIAN to DialectForm("سمك", "سَمَكْ"),
+            ArabicDialect.IRAQI to DialectForm("سمچ", "سِمَتْشْ"),
+            ArabicDialect.TUNISIAN to DialectForm("حوت", "حُوتْ"),
+            ArabicDialect.MOROCCAN to DialectForm("حوت", "حُوتْ"),
+            ArabicDialect.ALGERIAN to DialectForm("حوت", "حُوتْ"),
+        ),
+        "food.olives" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("زيتون", "زَيْتُونْ", "زَيْـ..."),
+        ),
+        "food.oil" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("زيت", "زَيْتْ", "زَيْـ..."),
+        ),
+        "food.tea" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("شاهي", "شَاهِي", "شَا..."),
+            ArabicDialect.SAUDI to DialectForm("شاهي", "شَاهِيْ"),
+            ArabicDialect.EGYPTIAN to DialectForm("شاي", "شَايْ"),
+            ArabicDialect.SYRIAN to DialectForm("شاي", "شَايْ"),
+            ArabicDialect.IRAQI to DialectForm("جاي", "تْشَايْ"),
+            ArabicDialect.TUNISIAN to DialectForm("تاي", "تَايْ"),
+            ArabicDialect.MOROCCAN to DialectForm("أتاي", "أَتَايْ"),
+            ArabicDialect.ALGERIAN to DialectForm("أتاي", "أَتَايْ"),
+        ),
+        "food.coffee" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("قهوة", "قَهْوَهْ", "قَهْـ..."),
+        ),
+        "food.juice" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("عصير", "عَصِيرْ", "عَصِيـ..."),
+            ArabicDialect.SAUDI to DialectForm("عصير"),
+            ArabicDialect.EGYPTIAN to DialectForm("عصير"),
+            ArabicDialect.SYRIAN to DialectForm("عصير"),
+            ArabicDialect.IRAQI to DialectForm("عصير"),
+            ArabicDialect.TUNISIAN to DialectForm("عصير"),
+            ArabicDialect.MOROCCAN to DialectForm("عصير"),
+            ArabicDialect.ALGERIAN to DialectForm("عصير"),
+        ),
+        "food.water" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("مية", "إِمِّيَّهْ", "إِمْـ..."),
+            ArabicDialect.SAUDI to DialectForm("ماي", "مَايْ"),
+            ArabicDialect.EGYPTIAN to DialectForm("مية", "مَيَّهْ"),
+            ArabicDialect.SYRIAN to DialectForm("مي", "مَيّْ"),
+            ArabicDialect.IRAQI to DialectForm("ماي", "مَايْ"),
+            ArabicDialect.TUNISIAN to DialectForm("ما"),
+            ArabicDialect.MOROCCAN to DialectForm("الما"),
+            ArabicDialect.ALGERIAN to DialectForm("الما"),
+        ),
+        "food.honey" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("عسل", "عَسَلْ", "عَسَـ..."),
+        ),
+        "food.biscuit" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("بسكويت", "بِسْكُوِيتْ", "بِسْـ..."),
+        ),
+        "food.salt" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("ملح", "مِلْحْ", "مِلْـ..."),
+        ),
+        "food.sugar" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("سكر", "سُكَّرْ", "سُكْـ..."),
+        ),
+        "home.bed" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("سرير", "سَرِيرْ", "سَرِيـ..."),
+        ),
+        "home.pillow" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("مخدة", "مِخَدَّهْ", "مِخَـ..."),
+            ArabicDialect.SAUDI to DialectForm("مخدة"),
+            ArabicDialect.EGYPTIAN to DialectForm("مخدة"),
+            ArabicDialect.SYRIAN to DialectForm("مخدة"),
+            ArabicDialect.IRAQI to DialectForm("مخدة"),
+            ArabicDialect.TUNISIAN to DialectForm("مخدة"),
+            ArabicDialect.MOROCCAN to DialectForm("مخدة"),
+            ArabicDialect.ALGERIAN to DialectForm("مخدة"),
+        ),
+        "home.blanket" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("ورغان / بطانية", "وِرْغَانْ", "وِرْ..."),
+            ArabicDialect.SAUDI to DialectForm("بطانية"),
+            ArabicDialect.EGYPTIAN to DialectForm("بطانية"),
+            ArabicDialect.SYRIAN to DialectForm("حرام"),
+            ArabicDialect.IRAQI to DialectForm("بطانية"),
+            ArabicDialect.TUNISIAN to DialectForm("غطا"),
+            ArabicDialect.MOROCCAN to DialectForm("مانطة"),
+            ArabicDialect.ALGERIAN to DialectForm("مانطة"),
+        ),
+        "home.table" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("طاولة", "طَاوْلَهْ", "طَاوْ..."),
+        ),
+        "home.chair" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("كرسي", "كُرْسِي", "كُرْ..."),
+        ),
+        "home.sofa" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("صالون", "صَالُونْ", "صَا..."),
+        ),
+        "home.door" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("باب", "بَابْ", "بَا..."),
+        ),
+        "home.window" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("روشن", "رَوْشَنْ", "رَوْ..."),
+            ArabicDialect.SAUDI to DialectForm("شباك"),
+            ArabicDialect.EGYPTIAN to DialectForm("شباك"),
+            ArabicDialect.SYRIAN to DialectForm("شباك"),
+            ArabicDialect.IRAQI to DialectForm("شباك"),
+            ArabicDialect.TUNISIAN to DialectForm("شباك"),
+            ArabicDialect.MOROCCAN to DialectForm("شرجم"),
+            ArabicDialect.ALGERIAN to DialectForm("شباك"),
+        ),
+        "home.television" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("تلفزيون", "تِلِفِزْيُونْ", "تِلِـ..."),
+        ),
+        "home.fridge" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("ثلاجة", "ثَلَّاجَهْ", "ثَلَّا..."),
+        ),
+        "home.washing_machine" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("غسالة", "غَسَّالَهْ", "غَسَّا..."),
+        ),
+        "home.stove" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("غاز", "غَازْ", "غَا..."),
+        ),
+        "home.oven" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("كوشة", "كُوشَهْ", "كُو..."),
+            ArabicDialect.SAUDI to DialectForm("فرن"),
+            ArabicDialect.EGYPTIAN to DialectForm("فرن"),
+            ArabicDialect.SYRIAN to DialectForm("فرن"),
+            ArabicDialect.IRAQI to DialectForm("فرن"),
+            ArabicDialect.TUNISIAN to DialectForm("فرن"),
+            ArabicDialect.MOROCCAN to DialectForm("فران"),
+            ArabicDialect.ALGERIAN to DialectForm("فرن"),
+        ),
+        "home.air_conditioner" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("مكيف", "مُكَيِّفْ", "مُكَيْـ..."),
+        ),
+        "home.fan" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("مروحة", "مِرْوَحَهْ", "مِرْ..."),
+        ),
+        "home.wardrobe" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("دولاب", "دُولَابْ", "دُو..."),
+        ),
+        "home.key" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("مفتاح", "مَفْتَاحْ", "مَفْـ..."),
+        ),
+        "home.clock" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("ساعة", "سَاعَهْ", "سَا..."),
+        ),
+        "home.carpet" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("بساط / حواشي", "إِبْسَاطْ", "إِبْـ..."),
+        ),
+        "home.kitchen" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("كوجينة", "كُوجِينَهْ", "كُو..."),
+            ArabicDialect.SAUDI to DialectForm("مطبخ"),
+            ArabicDialect.EGYPTIAN to DialectForm("مطبخ"),
+            ArabicDialect.SYRIAN to DialectForm("مطبخ"),
+            ArabicDialect.IRAQI to DialectForm("مطبخ"),
+            ArabicDialect.TUNISIAN to DialectForm("كوجينة"),
+            ArabicDialect.MOROCCAN to DialectForm("كوزينة"),
+            ArabicDialect.ALGERIAN to DialectForm("كوزينة"),
+        ),
+        "home.cup" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("طاسة", "طَاسَهْ", "طَا..."),
+            ArabicDialect.SAUDI to DialectForm("كوب"),
+            ArabicDialect.EGYPTIAN to DialectForm("كوباية"),
+            ArabicDialect.SYRIAN to DialectForm("كاسة"),
+            ArabicDialect.IRAQI to DialectForm("كلاص"),
+            ArabicDialect.TUNISIAN to DialectForm("كاس"),
+            ArabicDialect.MOROCCAN to DialectForm("كاس"),
+            ArabicDialect.ALGERIAN to DialectForm("كاس"),
         ),
         "home.tray" to mapOf(
             ArabicDialect.LIBYAN to DialectForm("صونية", "صُونِيَّهْ", "صُو..."),
@@ -1038,5 +1217,4 @@ object DialectCatalog {
         return if (revised.copy(sourceDetails = null) == item) item else revised
     }
 }
-
 

@@ -19,6 +19,7 @@ import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.resetMain
@@ -44,6 +45,7 @@ class PracticeLifecycleTest {
     private val scheduler = TestCoroutineScheduler()
     private lateinit var model: PracticeViewModel
     private lateinit var engine: ManualTtsShadow
+    private lateinit var voice: AudioDispatcher
     private var logged = 0
 
     @Before fun setup() {
@@ -82,7 +84,8 @@ class PracticeLifecycleTest {
             logged++
             Unit
         } as ProgressRepository
-        model = PracticeViewModel(words, progress, AudioDispatcher(speech, AudioPlayer(focus)), SoftChime())
+        voice = AudioDispatcher(speech, AudioPlayer(focus))
+        model = PracticeViewModel(words, progress, voice, SoftChime())
         scheduler.runCurrent()
         model.onEnterPractice()
         model.setExercise(Exercise.CHOICE)
@@ -90,8 +93,8 @@ class PracticeLifecycleTest {
 
     @Test fun differentDishPhotosSurviveTheirSharedEmoji() {
         val dishes = listOf(
-            WordItem(20, "cuisine", "طاجين تونسي", "طاجين", "🍳", semanticKey = "dish.tunisian.tajine"),
-            WordItem(21, "cuisine", "عجة بالمرقاز", "عجة", "🍳", semanticKey = "dish.tunisian.merguez_omelette"),
+            WordItem(20, "cuisine", "طاجين تونسي", "طاجين", "🍳").copy(semanticKey = "dish.tunisian.tajine"),
+            WordItem(21, "cuisine", "عجة بالمرقاز", "عجة", "🍳").copy(semanticKey = "dish.tunisian.merguez_omelette"),
         )
         val method = PracticeViewModel::class.java.getDeclaredMethod("buildPool", List::class.java, Exercise::class.java)
         method.isAccessible = true
@@ -102,6 +105,51 @@ class PracticeLifecycleTest {
     @After fun close() {
         model.onLeavePractice()
         Dispatchers.resetMain()
+    }
+
+    @Test fun retryAfterAnObservationFailureReplacesStaleCardsAndCancelsOldSpeech() {
+        recoverAfterObservationFailure { model.restart() }
+    }
+
+    @Test fun switchingExerciseAfterAnObservationFailureResubscribesToFreshCards() {
+        recoverAfterObservationFailure { model.setExercise(Exercise.CHOICE) }
+        assertEquals(Exercise.CHOICE, model.uiState.value.exercise)
+        assertTrue(model.uiState.value.choices.all { it.item.id >= 200L })
+    }
+
+    private fun recoverAfterObservationFailure(retry: () -> Unit) {
+        model.onLeavePractice()
+        var subscriptions = 0
+        val words = Proxy.newProxyInstance(WordRepository::class.java.classLoader,
+            arrayOf(WordRepository::class.java)) { _, method, _ ->
+            check(method.name == "observeCategories")
+            flow {
+                subscriptions++
+                val id = if (subscriptions == 1) 100L else 200L
+                emit(listOf(Category("transport", "المواصلات", 0, false, listOf(
+                    WordItem(id, "transport", "سيارة", "سيارة", "🚗"),
+                    WordItem(id + 1, "transport", "قطار", "قطار", "🚆"),
+                ))))
+                if (subscriptions == 1) throw java.io.IOException("interrupted observation")
+            }
+        } as WordRepository
+        val progress = Proxy.newProxyInstance(ProgressRepository::class.java.classLoader,
+            arrayOf(ProgressRepository::class.java)) { _, _, _ -> Unit } as ProgressRepository
+        model = PracticeViewModel(words, progress, voice, SoftChime())
+        scheduler.runCurrent()
+        assertTrue(model.uiState.value.loadError)
+        retry()
+        assertFalse(model.uiState.value.ready)
+        scheduler.runCurrent()
+        val recovered = model.uiState.value
+        assertEquals(2, subscriptions)
+        assertFalse(recovered.loadError)
+        assertTrue(recovered.ready)
+        assertEquals(2, recovered.total)
+        assertTrue(recovered.card!!.item.id >= 200L)
+        scheduler.advanceTimeBy(1000)
+        scheduler.runCurrent()
+        assertTrue(engine.requests.isEmpty())
     }
 
     @Test fun greetingCategoryIsNotAWhereQuestionOrDistractor() {
