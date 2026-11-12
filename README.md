@@ -11,7 +11,7 @@
 | Android المستهدف | API 35 |
 | قاعدة البيانات | Room، المخطط 1 |
 
-**حالة التوزيع:** ملف Release موقّع ومتحقق منه جاهز؛ إرفاقه بإصدار GitHub v1.5 قيد الإكمال. يظل الإصدار المنشور السابق v1.4 متاحًا في [الإصدارات](https://github.com/seanseemo92-commits/Sawti/releases).
+**الإصدار الرسمي الحالي:** [v1.5](https://github.com/seanseemo92-commits/Sawti/releases/tag/v1.5) — [تحميل APK الموقّع](https://github.com/seanseemo92-commits/Sawti/releases/download/v1.5/Sawti-v1.5-Release.apk) · [تقارير التحقق](https://github.com/seanseemo92-commits/Sawti/releases/download/v1.5/Sawti-v1.5-Validation.zip). نُشر في 12 نوفمبر 2026؛ بصمة الملف المرفوع وحجمه متطابقان مع النسخة التي اجتازت الفحص.
 
 [ملاحظات 1.5](docs/release-1.5.md) · [نتائج الفحص وحدوده](docs/final-apk-verification-1.5.md) · [سجل التغييرات](CHANGELOG.md)
 

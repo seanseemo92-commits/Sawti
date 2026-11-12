@@ -1,0 +1,52 @@
+{
+  "release_id": 442593679,
+  "tag": "v1.5",
+  "html_url": "https://github.com/seanseemo92-commits/Sawti/releases/tag/v1.5",
+  "published_at": "2026-11-12T07:01:16Z",
+  "tag_commit": "e9f4080c014b9169b577dd93d83e9b53c2a650e7",
+  "tested_application_commit": "c70dfb142be564c071a3e7e10c82b47e54bfe857",
+  "draft": false,
+  "prerelease": false,
+  "assets": [
+    {
+      "id": 738429832,
+      "name": "APK-SIGNATURE.txt",
+      "size": 969,
+      "digest": "sha256:1fd1bd97d8d5a00025451f2d690a1467c70b47cacaad2df41bb6f59ad6dd45c0",
+      "state": "uploaded",
+      "browser_download_url": "https://github.com/seanseemo92-commits/Sawti/releases/download/v1.5/APK-SIGNATURE.txt"
+    },
+    {
+      "id": 738429872,
+      "name": "BUILD-INFO.json",
+      "size": 1301,
+      "digest": "sha256:eddb85e36ed2e8a18c61ba94fc1a90bd04bd5fa6ffa8d271c4084e78245d3d6d",
+      "state": "uploaded",
+      "browser_download_url": "https://github.com/seanseemo92-commits/Sawti/releases/download/v1.5/BUILD-INFO.json"
+    },
+    {
+      "id": 738429582,
+      "name": "Sawti-v1.5-Release.apk",
+      "size": 54564414,
+      "digest": "sha256:7906d08aa9b4b80da1bbc01a26b8ce3a346afbd8dc7dd97015ebd234949493ca",
+      "state": "uploaded",
+      "browser_download_url": "https://github.com/seanseemo92-commits/Sawti/releases/download/v1.5/Sawti-v1.5-Release.apk"
+    },
+    {
+      "id": 738429760,
+      "name": "Sawti-v1.5-Validation.zip",
+      "size": 3496401,
+      "digest": "sha256:da147856563c11d8aa3b045b99f6f113b26fa1fbc2c40f83d7c3fcd4e0bbedf6",
+      "state": "uploaded",
+      "browser_download_url": "https://github.com/seanseemo92-commits/Sawti/releases/download/v1.5/Sawti-v1.5-Validation.zip"
+    },
+    {
+      "id": 738429791,
+      "name": "SHA256SUMS.txt",
+      "size": 89,
+      "digest": "sha256:543a638a87640d757fd350f5ad9e9583dcdb4afb59e54b6e2b402b419d8127ae",
+      "state": "uploaded",
+      "browser_download_url": "https://github.com/seanseemo92-commits/Sawti/releases/download/v1.5/SHA256SUMS.txt"
+    }
+  ]
+}
