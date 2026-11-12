@@ -49,7 +49,14 @@ The initial environment attempts failed before UI assertions because of missing
 build tooling or an uncached Robolectric runtime. After restoring the tools and
 runtime, the final full targeted run above passed.
 
-This is a source correction based on main `0337df2aea0c48e288318cd8e7dba4adbecb2a18`.
-It has not been tested on the physical Honor phone. The published v1.5 APK and
-its checksum have not been replaced; installing a newly built update is needed
-to apply this correction on a phone. No new APK was built in this validation.
+The initial source correction was based on main `0337df2aea0c48e288318cd8e7dba4adbecb2a18`.
+
+## Signed follow-up delivery
+
+Sawti 1.5.1 (versionCode 7) was subsequently built locally from application source
+`60d666db848e2a1da6c1e407b22d11f1668aff9c`, with the original publisher signature.
+The full suite of 340 tests and Release/R8/Lint passed. The previous v1.5 APK
+is retained as a historical release; a newly built APK is required to apply
+the grid correction. Physical Honor update validation remains pending.
+
+See [release notes](release-1.5.1.md) and [final verification](final-apk-verification-1.5.1.md).

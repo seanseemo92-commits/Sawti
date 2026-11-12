@@ -1,0 +1,40 @@
+{
+  "versionName": "1.5.1",
+  "versionCode": 7,
+  "package": "com.sawti",
+  "source_commit": "60d666db848e2a1da6c1e407b22d11f1668aff9c",
+  "compact_grid_fix_commit": "46886f4215037d7c6d779c7b384c32444b2817f9",
+  "apk_bytes": 54564418,
+  "apk_sha256": "898a508bd6929ee440d3f27c18aaf853a4dd806d6d5875aa396f236545682285",
+  "publisher_certificate_sha256": "754b679c29b0c8acf7c61ca265813d9528c0d0c3afe912b9319a6354cbd31b21",
+  "tests": {
+    "tests": 340,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "test_suites": 61,
+  "lint_severities": {
+    "Warning": 738,
+    "Information": 1
+  },
+  "additional_release_metadata_cases": 7,
+  "minSdk": 24,
+  "targetSdk": 35,
+  "room_schema": 1,
+  "native_abis": [
+    "arm64-v8a",
+    "armeabi-v7a",
+    "x86",
+    "x86_64"
+  ],
+  "elf_and_zip_16kb_alignment": "PASS",
+  "native_elf_load_segments_checked": 12,
+  "packaged_backup_exclusions": 18,
+  "bundled_quran_recordings": 267,
+  "bundled_surah_texts": 13,
+  "github_actions_compute_used_by_this_task": 0,
+  "physical_honor_update_validation": "PENDING",
+  "completed_at": "2026-11-13T00:02:51.691189+02:00",
+  "temporary_signing_material_removed": true
+}

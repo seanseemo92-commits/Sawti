@@ -12,7 +12,7 @@ require('rootProject.name = "Sawti"' in Path('settings.gradle.kts').read_text(),
 gradle = Path('app/build.gradle.kts').read_text()
 version = re.search(r'versionName\s*=\s*"([^"]+)"', gradle).group(1)
 code = int(re.search(r'versionCode\s*=\s*(\d+)', gradle).group(1))
-require(re.fullmatch(r'\d+\.\d+', version) is not None and code > 0, 'Invalid version')
+require(re.fullmatch(r'\d+\.\d+(?:\.\d+)?', version) is not None and code > 0, 'Invalid version')
 require('applicationId = "com.sawti"' in gradle, 'Wrong package')
 android = '{http://schemas.android.com/apk/res/android}'
 manifest = ET.parse('app/src/main/AndroidManifest.xml').getroot()
