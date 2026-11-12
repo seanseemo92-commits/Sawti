@@ -144,6 +144,39 @@ class GreetingsLayoutTest {
         save("greetings-grid-dark")
     }
 
+    private fun assertFirstTwoCardsShareARow(category: Category) {
+        val first = compose.onNodeWithTag("word-card-${category.items[0].id}")
+            .assertIsDisplayed().fetchSemanticsNode().boundsInRoot
+        val second = compose.onNodeWithTag("word-card-${category.items[1].id}")
+            .assertIsDisplayed().fetchSemanticsNode().boundsInRoot
+        assertEquals("The first two cards must share a row", first.top, second.top, 1f)
+        assertEquals(first.width, second.width, 1f)
+        assertTrue("Cards must not overlap", first.right <= second.left || second.right <= first.left)
+    }
+
+    @Test fun compactPhoneGridShowsTwoCardsPerRow() {
+        val category = category(ArabicDialect.LIBYAN)
+        show(ThemeMode.LIGHT) {
+            CategoryScreen(category, LibraryUiState(categories = listOf(category), isLoadingCategories = false), actions)
+        }
+        assertFirstTwoCardsShareARow(category)
+        save("greetings-grid-compact-two-columns")
+    }
+
+    @Test
+    @Config(qualifiers = "w320dp-h720dp")
+    fun narrowerPhoneKeepsTwoColumnsWithTwiceSizedArabicLabels() {
+        val category = category()
+        show(ThemeMode.DARK, fontScale = 2f) {
+            CategoryScreen(category, LibraryUiState(categories = listOf(category), isLoadingCategories = false), actions)
+        }
+        assertFirstTwoCardsShareARow(category)
+        compose.onNodeWithTag("word-grid").performScrollToIndex(category.items.lastIndex)
+        compose.onNodeWithTag("word-card-${category.items.last().id}").assertIsDisplayed().performClick()
+        assertEquals(listOf(category.items.last().id), tapped)
+        save("greetings-grid-narrow-large-font")
+    }
+
     @Test fun twiceSizedArabicLabelsAndLastCardRemainReachable() {
         val category = category()
         show(ThemeMode.LIGHT, fontScale = 2f) {

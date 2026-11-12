@@ -228,7 +228,7 @@ private fun WordGrid(items: List<WordItem>, category: Category, palette: Categor
     val measurer = rememberTextMeasurer()
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val available = (maxWidth - 32.dp).coerceAtLeast(1.dp)
-        val columns = ((available.value + 14f) / 174f).toInt().coerceAtLeast(1)
+        val columns = wordGridColumnCount(available.value)
         val cellWidth = ((available - 14.dp * (columns - 1)) / columns).coerceAtLeast(1.dp)
         val captionWidthPx = with(density) { (cellWidth - 16.dp).roundToPx().coerceAtLeast(1) }
         val captionHeightPx = remember(items, captionWidthPx, density.density, density.fontScale, measurer) {
@@ -240,7 +240,7 @@ private fun WordGrid(items: List<WordItem>, category: Category, palette: Categor
             } ?: 0
         }
         val cardHeight = wordCardHeightDp(cellWidth.value, captionHeightPx / density.density).dp
-        LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 160.dp), modifier = Modifier.fillMaxSize().testTag("word-grid"),
+        LazyVerticalGrid(columns = GridCells.Fixed(columns), modifier = Modifier.fillMaxSize().testTag("word-grid"),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 28.dp),
             horizontalArrangement = Arrangement.spacedBy(14.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
             itemsIndexed(items, key = { _, item -> item.id }) { index, item ->

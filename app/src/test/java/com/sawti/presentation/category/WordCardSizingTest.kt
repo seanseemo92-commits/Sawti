@@ -5,6 +5,20 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class WordCardSizingTest {
+    @Test fun phoneWidthsKeepTwoColumnsIncludingBelowTheOld366DpThreshold() {
+        for (screenWidth in listOf(280f, 320f, 360f, 365f, 366f, 400f)) {
+            assertEquals("screen width $screenWidth", 2, wordGridColumnCount(screenWidth - 32f))
+        }
+    }
+    @Test fun widerScreensAddColumnsOnlyWhenCardsAndSpacingFit() {
+        assertEquals(2, wordGridColumnCount(507f))
+        assertEquals(3, wordGridColumnCount(508f))
+        assertEquals(3, wordGridColumnCount(681f))
+        assertEquals(4, wordGridColumnCount(682f))
+    }
+    @Test(expected = IllegalArgumentException::class)
+    fun invalidGridWidthIsRejected() { wordGridColumnCount(0f) }
+
     @Test fun ordinaryTwoLineLabelKeepsBaselineRatio() {
         assertEquals(160f / 0.85f, wordCardHeightDp(160f, 48f), 0.01f)
     }
