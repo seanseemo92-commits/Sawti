@@ -11,6 +11,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
@@ -50,7 +51,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -96,7 +96,6 @@ fun HomeScreen(categories: List<Category>, speakingItemId: Long?, onOpen: (Strin
         }
         return
     }
-    val columns = if (LocalConfiguration.current.screenWidthDp >= 600) 3 else 2
     val gridState = rememberLazyGridState()
     LaunchedEffect(tourTarget, categories) {
         val scrollIndex = when (tourTarget) {
@@ -109,7 +108,9 @@ fun HomeScreen(categories: List<Category>, speakingItemId: Long?, onOpen: (Strin
         }
         if (scrollIndex != null) gridState.animateScrollToItem(scrollIndex)
     }
-    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+        // Measure the actual window, not the physical display (split-screen / foldables).
+        val columns = homeGridColumnCount(maxWidth.value)
         LazyVerticalGrid(columns = GridCells.Fixed(columns), state = gridState, modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 32.dp),
             horizontalArrangement = Arrangement.spacedBy(18.dp), verticalArrangement = Arrangement.spacedBy(18.dp)) {
