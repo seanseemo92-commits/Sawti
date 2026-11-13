@@ -137,6 +137,18 @@ class BackupSnapshotTest {
         assertTrue(failed); assertTrue(outside.exists()); assertEquals(outside.path, dao.audioPath(id))
     }
 
+    @Test fun missingPhotoKeepsValidAudioInSnapshotAndLivePathsUnchanged() = runBlocking {
+        val missingPhoto = File(context.filesDir, "photos/missing.jpg").path
+        val goodAudio = media("custom_audio", "kept.m4a", "recorded audio")
+        val id = card(photo = missingPhoto, audio = goodAudio.path)
+        val snapshot = entries(export("missing-photo.zip"))
+        val (savedPhoto, savedAudio) = paths(snapshot).single()
+        assertNull(savedPhoto)
+        assertEquals("recorded audio", String(snapshot.getValue("files/${requireNotNull(savedAudio)}")))
+        assertEquals(missingPhoto, dao.wordById(id)?.photoPath)
+        assertEquals(goodAudio.path, dao.wordById(id)?.audioPath)
+    }
+
     @Test fun archivedBytesStayValidAfterLiveAttachmentIsReplaced() = runBlocking {
         val old = media("custom_audio", "old.m4a", "before")
         val id = card(audio = old.path)
