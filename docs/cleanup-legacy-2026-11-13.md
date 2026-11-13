@@ -9,7 +9,7 @@
 - شاشة ترحيب Compose قديمة (3 ملفات Kotlin) واختبار تخطيط قديم وصورتا WebP قديمتان، والوثيقة القديمة؛ احتُفظ بموارد Android native splash وبالعلامة والهوية.
 - دالة `LibraryViewModel.onQuickTap` غير المستعملة (لم تمسّ `onItemTapped` أو تشغيل الصوت الحالي).
 - حذف فحص حركة الترحيب المتقادم من `StartupBrandingDefaultsTest` والاحتفاظ باختبار الإعدادات الافتراضية.
-- 12 مسار GitHub Actions تجريبياً أو تاريخياً، بما فيها مسار التوقيع القديم؛ تظل `build.yml` و`android-ci.yml` و`release-signed.yml` و`release-candidate.yml` ومسارات التحقق الأساسية محفوظة.
+- 13 مسار GitHub Actions تجريبياً أو تاريخياً، بما فيها مسار التوقيع القديم؛ تظل `build.yml` و`android-ci.yml` و`release-signed.yml` و`release-candidate.yml` ومسارات التحقق الأساسية محفوظة.
 - بيانات التوقيت التاريخية `SOURCE-TIMING-AUDIT.json` انتقلت إلى `docs/archive/quran-full-source-timing-20261111.json` بدلاً من حذفها.
 
 ## غير محذوف
@@ -31,3 +31,9 @@
 
 - تم تحديث مساري `diagnose-build.yml` و`retry-validation.yml` اليدويين إلى JDK 21؛ تشخيص البناء يستخدم Gradle Wrapper بدلاً من Gradle 8.9 القديم.
 - تم سحب مسار `repository-audit.yml` القديم المقيد بفرع مهجور؛ فحص أساس المستودع يستمر في `build.yml` ضمن الاختبارات الحديثة.
+
+## منع التكرار
+
+أضيفت إلى `.gitignore` ملفات توزيعات Android (`*.apk`, `*.aab`, `*.apks`) حتى لا تُضاف حزم اختبار جديدة إلى تاريخ المستودع سهواً. لا يؤثر التجاهل على GitHub Releases ولا الملفات المتتبعة في الفروع الأخرى.
+
+**الأرقام:** 28 ملفاً أُزيل من رأس فرع التنظيف، وبقيمة 71.5 MB تقريباً قبل ضغط Git؛ لا يشمل ذلك Git history القديم.
