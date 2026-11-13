@@ -5,6 +5,13 @@ package com.sawti.presentation.home
  * tablet resizing and foldables. Preserve two columns on normal compact phones.
  * A single column is allowed only for exceptionally narrow multi-window panes.
  */
+/** Allow complete Arabic captions without sacrificing the photograph. */
+internal fun homeCardHeightDp(cellWidthDp: Float, captionHeightDp: Float): Float {
+    require(cellWidthDp.isFinite() && cellWidthDp > 0f)
+    require(captionHeightDp.isFinite() && captionHeightDp >= 0f)
+    return maxOf(cellWidthDp / 0.85f, 86f + captionHeightDp + 10f)
+}
+
 internal fun homeGridColumnCount(windowWidthDp: Float): Int {
     require(windowWidthDp.isFinite() && windowWidthDp > 0f)
     if (windowWidthDp < 270f) return 1

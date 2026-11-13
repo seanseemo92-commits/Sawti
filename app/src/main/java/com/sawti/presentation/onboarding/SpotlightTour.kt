@@ -110,6 +110,18 @@ class SpotlightRegistry {
     fun remove(key: String) { positions.remove(key) }
     fun rect(key: String): Rect? = positions[key]
 }
+/** Constrain a measured anchor to the current overlay after orientation/size changes. */
+internal fun spotlightVisibleBounds(bounds: Rect?, viewportWidth: Float, viewportHeight: Float): Rect? {
+    if (bounds == null || viewportWidth <= 0f || viewportHeight <= 0f) return null
+    if (bounds.right <= 0f || bounds.bottom <= 0f ||
+        bounds.left >= viewportWidth || bounds.top >= viewportHeight) return null
+    val left = bounds.left.coerceIn(0f, viewportWidth)
+    val top = bounds.top.coerceIn(0f, viewportHeight)
+    val right = bounds.right.coerceIn(0f, viewportWidth)
+    val bottom = bounds.bottom.coerceIn(0f, viewportHeight)
+    return if (right > left && bottom > top) Rect(left, top, right, bottom) else null
+}
+
 val LocalSpotlightRegistry = staticCompositionLocalOf<SpotlightRegistry?> { null }
 
 @Composable
@@ -166,10 +178,14 @@ fun SpotlightOverlay(
         )
         opacity
     }
-    val focus = if (target != null) Rect(left, top, right, bottom) else null
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize().pointerInput(Unit) { detectTapGestures(onTap = {}) },
     ) {
+        // Recomputed on each measured viewport change (rotation or split-screen).
+        val focus = spotlightVisibleBounds(
+            if (target != null) Rect(left, top, right, bottom) else null,
+            constraints.maxWidth.toFloat(), constraints.maxHeight.toFloat(),
+        )
         Canvas(Modifier.fillMaxSize().graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)) {
             drawRect(Color(0xFF0A1020).copy(alpha = scrim.value))
             if (focus != null) {

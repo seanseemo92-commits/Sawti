@@ -30,6 +30,9 @@ class WordCardSizingTest {
     @Test fun largeFontCaptionGetsEnoughRoom() {
         assertTrue(wordCardHeightDp(160f, 192f) >= 56f + 72f + 10f + 192f)
     }
+    @Test fun sixLineArabicLabelAtLargeFontScaleExpandsCard() {
+        assertTrue(wordCardHeightDp(137f, 270f) >= 408f)
+    }
     @Test fun widerCellsKeepBaselineWhenItIsLarger() {
         assertEquals(320f / 0.85f, wordCardHeightDp(320f, 48f), 0.01f)
     }

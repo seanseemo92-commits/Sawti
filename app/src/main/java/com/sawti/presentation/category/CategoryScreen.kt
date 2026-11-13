@@ -67,6 +67,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.font.FontWeight
@@ -229,6 +230,12 @@ private fun ViewModeToggle(mode: ViewMode, palette: CategoryPalette, onChange: (
     }
 }
 
+private val WordCaptionStyle = TextStyle(
+    fontSize = 18.sp, lineHeight = 30.sp,
+    fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center,
+    platformStyle = PlatformTextStyle(includeFontPadding = true),
+)
+
 @Composable
 private fun WordGrid(items: List<WordItem>, category: Category, palette: CategoryPalette,
     state: LibraryUiState, actions: LibraryActions) {
@@ -239,15 +246,19 @@ private fun WordGrid(items: List<WordItem>, category: Category, palette: Categor
         val columns = wordGridColumnCount(available.value)
         val cellWidth = ((available - 14.dp * (columns - 1)) / columns).coerceAtLeast(1.dp)
         val captionWidthPx = with(density) { (cellWidth - 16.dp).roundToPx().coerceAtLeast(1) }
-        val captionHeightPx = remember(items, captionWidthPx, density.density, density.fontScale, measurer) {
-            items.maxOfOrNull { item ->
-                measurer.measure(text = item.displayText,
-                    style = TextStyle(fontSize = 18.sp, lineHeight = 24.sp, fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center),
-                    maxLines = 4, overflow = TextOverflow.Ellipsis,
-                    constraints = Constraints(maxWidth = captionWidthPx)).size.height
-            } ?: 0
+        // Measure full captions per row so long custom titles never inflate every card.
+        val cardHeights = remember(items, columns, captionWidthPx, cellWidth, density.density, density.fontScale, measurer) {
+            items.map { item ->
+                val heightPx = measurer.measure(
+                    text = item.displayText, style = WordCaptionStyle,
+                    constraints = Constraints(maxWidth = captionWidthPx),
+                ).size.height
+                wordCardHeightDp(cellWidth.value, heightPx / density.density).dp
+            }.chunked(columns).flatMap { row ->
+                val tallest = row.maxOrNull() ?: 0.dp
+                List(row.size) { tallest }
+            }
         }
-        val cardHeight = wordCardHeightDp(cellWidth.value, captionHeightPx / density.density).dp
         LazyVerticalGrid(columns = GridCells.Fixed(columns), modifier = Modifier.fillMaxSize().testTag("word-grid"),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 28.dp),
             horizontalArrangement = Arrangement.spacedBy(14.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
@@ -258,7 +269,8 @@ private fun WordGrid(items: List<WordItem>, category: Category, palette: Categor
                         isSpeaking = state.playbackVisual.isSpeaking && state.playbackVisual.activeWordId == item.id,
                         caregiverMode = state.caregiverMode,
                         onClick = { actions.onItemTapped(item, flashcard = false) },
-                        onLongClick = { actions.onItemLongPressed(item) }, onHint = { actions.onHint(item) }, cardHeight = cardHeight)
+                        onLongClick = { actions.onItemLongPressed(item) }, onHint = { actions.onHint(item) },
+                        cardHeight = cardHeights[index])
                 }
             }
         }
@@ -281,8 +293,7 @@ internal fun WordCard(item: WordItem, palette: CategoryPalette, crop: Boolean, i
                 Box(modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth()
                     .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 20.dp, bottomEnd = 20.dp))
                     .background(bannerColor).padding(horizontal = 8.dp, vertical = 5.dp), contentAlignment = Alignment.Center) {
-                    Text(text = item.displayText, color = Color.White, fontSize = 18.sp, lineHeight = 24.sp,
-                        fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center, maxLines = 4, overflow = TextOverflow.Ellipsis)
+                    Text(text = item.displayText, color = Color.White, style = WordCaptionStyle)
                 }
                 // In the app's RTL layout TopEnd is the former speech-bubble slot.
                 HintButton(onClick = onHint, modifier = Modifier.align(Alignment.TopEnd).padding(6.dp))

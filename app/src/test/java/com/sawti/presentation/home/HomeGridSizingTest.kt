@@ -21,6 +21,10 @@ class HomeGridSizingTest {
         assertEquals(5, homeGridColumnCount(1024f))
     }
 
+    @Test fun fullArabicCaptionCanExpandCardHeightOn320DpPhones() {
+        assertEquals(131f / 0.85f, homeCardHeightDp(131f, 48f), 0.01f)
+        assertEquals(336f, homeCardHeightDp(131f, 240f), 0.01f)
+    }
     @Test(expected = IllegalArgumentException::class)
     fun invalidWindowSizeIsRejected() { homeGridColumnCount(0f) }
 }

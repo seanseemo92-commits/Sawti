@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -85,7 +86,7 @@ fun WordPreviewDialog(item: WordItem, palette: CategoryPalette, actions: Library
             }
             Surface(shape = RoundedCornerShape(32.dp), color = MaterialTheme.colorScheme.surface,
                 shadowElevation = cardElevation(16.dp),
-                modifier = Modifier.fillMaxWidth(0.92f).heightIn(max = maxHeight * 0.92f)) {
+                modifier = Modifier.widthIn(max = 560.dp).fillMaxWidth(0.92f).heightIn(max = maxHeight * 0.92f)) {
                 Column(Modifier.verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally) {
                     ItemImage(item = item, accent = palette.banner,
@@ -144,7 +145,8 @@ fun WordFocusDialog(item: WordItem, palette: CategoryPalette, actions: LibraryAc
 fun AddFamilyMemberDialog(group: String, actions: LibraryActions) {
     var name by remember(group) { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
-    AlertDialog(onDismissRequest = actions::closeAddFamilyMember, title = { Text(stringResource(R.string.family_add)) },
+    AlertDialog(modifier = Modifier.widthIn(max = 560.dp),
+        onDismissRequest = actions::closeAddFamilyMember, title = { Text(stringResource(R.string.family_add)) },
         text = {
             Column(Modifier.verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -180,7 +182,7 @@ fun WordEditorDialog(item: WordItem, isRecording: Boolean, actions: LibraryActio
     val photoPicker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) actions.onPhotoPicked(item.id, uri)
     }
-    AlertDialog(onDismissRequest = actions::closeEditor,
+    AlertDialog(modifier = Modifier.widthIn(max = 560.dp), onDismissRequest = actions::closeEditor,
         title = { Text(item.displayText, fontSize = 24.sp, fontWeight = FontWeight.ExtraBold) },
         text = {
             Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -252,17 +254,20 @@ fun WordEditorDialog(item: WordItem, isRecording: Boolean, actions: LibraryActio
                 Text(stringResource(R.string.cancel), fontSize = 18.sp)
             }
         })
-    if (showCustomDeleteConfirm) AlertDialog(onDismissRequest = { showCustomDeleteConfirm = false },
+    if (showCustomDeleteConfirm) AlertDialog(modifier = Modifier.widthIn(max = 560.dp),
+        onDismissRequest = { showCustomDeleteConfirm = false },
         title = { Text("حذف البطاقة نهائيًا؟") },
         text = { Text("سيتم حذف «${item.displayText}» وصورتها وتسجيلها المخصصين. هذا الإجراء لا يمكن التراجع عنه. احفظ نسخة احتياطية قبل الحذف.") },
         confirmButton = { Button(onClick = { showCustomDeleteConfirm = false; actions.deleteCustomCard(item.id) }) { Text("حذف نهائي") } },
         dismissButton = { TextButton(onClick = { showCustomDeleteConfirm = false }) { Text("إلغاء") } })
     val target = availableCategories.firstOrNull { it.id == pendingMove }
-    if (target != null) AlertDialog(onDismissRequest = { pendingMove = null }, title = { Text("تأكيد نقل البطاقة") },
+    if (target != null) AlertDialog(modifier = Modifier.widthIn(max = 560.dp),
+        onDismissRequest = { pendingMove = null }, title = { Text("تأكيد نقل البطاقة") },
         text = { Text("نقل «${item.displayText}» إلى «${target.title}»؟ تبقى الصور والتسجيلات والمفضلة محفوظة. احفظ تعديل النص أولًا إن لزم.") },
         confirmButton = { Button(onClick = { actions.moveCardToCustomCategory(item.id, target.id); pendingMove = null }) { Text("نقل") } },
         dismissButton = { TextButton(onClick = { pendingMove = null }) { Text("إلغاء") } })
-    if (showDeleteConfirm) AlertDialog(onDismissRequest = { showDeleteConfirm = false },
+    if (showDeleteConfirm) AlertDialog(modifier = Modifier.widthIn(max = 560.dp),
+        onDismissRequest = { showDeleteConfirm = false },
         title = { Text(stringResource(R.string.family_delete)) },
         text = { Text(stringResource(R.string.family_delete_confirm, item.displayText)) },
         confirmButton = { Button(onClick = { showDeleteConfirm = false; actions.deleteFamilyMember(item.id) }) { Text(stringResource(R.string.family_delete)) } },
