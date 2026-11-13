@@ -22,3 +22,9 @@
 - تدقيق هيكلي للمراجع في مصادر Kotlin الحالية.
 - مراجعة كل الملفات المرشحة قبل الحذف، وحماية الموارد الحالية.
 - **التحقق عبر Gradle والاختبارات الشاملة ما زال غير متاح بسبب نفاد حد GitHub Actions، لذلك لا دمج في main أو نشر Release.**
+
+## توجيه السكربتات بعد التنظيف
+
+- `scripts/check_quran_continuous_sources.py` يُخرج نتيجة حديثة إلى `docs/audits/quran-continuous-source-timing.json` بدلاً من مجلد APK التجريبي المحذوف.
+- `scripts/probe_husary_muallim_alignment.py` يُخرج نتيجة حديثة إلى `docs/audits/husary-muallim-alignment.json`.
+- التقرير الأصلي بتاريخ 11 نوفمبر محفوظ في `docs/archive/quran-full-source-timing-20261111.json` ولم يُستبدل ببيانات جديدة.

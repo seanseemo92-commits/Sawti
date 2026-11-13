@@ -10,8 +10,8 @@ from pathlib import Path
 import numpy as np
 import imageio_ffmpeg
 from scipy.signal import correlate
-OUT=Path("previews/quran-full-playback-test/HUSARY-ALIGNMENT-AUDIT.json")
-UA={"User-Agent":"Sawti-Research/1.4"}
+OUT=Path(__file__).resolve().parent.parent / "docs" / "audits" / "husary-muallim-alignment.json"
+UA={"User-Agent":"Sawti-Research/1.5.2"}
 SOURCE="https://archive.org/download/Mushaf_Moalim_3/002.mp3"
 def download(url,path,rangeHeader=None):
     headers=UA.copy()

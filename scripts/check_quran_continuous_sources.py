@@ -13,7 +13,7 @@ import urllib.error
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-REPORT = ROOT / "previews" / "quran-full-playback-test" / "SOURCE-TIMING-AUDIT.json"
+REPORT = ROOT / "docs" / "audits" / "quran-continuous-source-timing.json"
 HOSTS = ("https://www.mp3quran.net", "https://mp3quran.net", "https://apiquran.mp3quran.net")
 READERS = {
     "ar.alafasy": ("alafasy", "afs", "mish"),
@@ -21,7 +21,7 @@ READERS = {
     "husary.muallim": ("husary", "husari", "husr", "hsry"),
 }
 SURAS = (1, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114)
-UA = "Sawti/1.4 (research source alignment, no audio redistribution)"
+UA = "Sawti/1.5.2 (research source alignment, no audio redistribution)"
 
 def fetch(url: str, limit: int = 6_000_000) -> bytes:
     request = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "application/json,*/*"})
