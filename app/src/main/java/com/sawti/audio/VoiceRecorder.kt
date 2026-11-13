@@ -11,7 +11,7 @@ class VoiceRecorder(private val context: Context) {
     private var file: File? = null
     @Volatile private var limitReached = false
 
-    fun start(key: String): Boolean {
+    fun start(key: String, onLimitReached: (() -> Unit)? = null): Boolean {
         cancel()
         val safeKey = key.replace(Regex("[^A-Za-z0-9_-]"), "_").take(50)
         if (safeKey.isBlank()) return false
@@ -37,7 +37,10 @@ class VoiceRecorder(private val context: Context) {
                 setOnInfoListener { _, what, _ ->
                     if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED ||
                         what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_FILESIZE_REACHED
-                    ) limitReached = true
+                    ) {
+                        limitReached = true
+                        onLimitReached?.invoke()
+                    }
                 }
                 setOutputFile(out.absolutePath)
                 prepare()
