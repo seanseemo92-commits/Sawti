@@ -303,8 +303,14 @@ class LibraryViewModel(
         val finalTts = enteredTts
         val finalCue = if (cue == baseline.cue) baseline.cue else cue.ifBlank { PhonemicCue.derive(finalTts) }
         val finalSentence = if (sentence == baseline.sentence.orEmpty()) baseline.sentence else sentence.ifBlank { null }
+        // Finish the active recording before the Save action closes its editor.
+        // Store the audio first so a failure to save the text cannot silently discard it.
+        val pendingRecording = if (_uiState.value.recordingItemId == id) {
+            recorder.stop().also { _uiState.update { state -> state.copy(recordingItemId = null) } }
+        } else null
         launchSafe {
             if (!canEdit()) return@launchSafe
+            if (pendingRecording != null) repository.setAudio(id, pendingRecording)
             repository.updateDetails(id, finalDisplay, finalTts, finalCue, finalSentence, phone,
                 baseline = baseline, group = if (current.categoryId == CategoryIds.FAMILY) group else baseline.group)
             closeEditor()
@@ -351,14 +357,18 @@ class LibraryViewModel(
     override fun startRecording(itemId: Long) {
         if (!canEdit()) return
         voice.stop()
-        if (recorder.start("word_$itemId")) _uiState.update { it.copy(recordingItemId = itemId) }
+        if (recorder.start("word_$itemId") {
+                if (_uiState.value.recordingItemId == itemId) stopRecording(itemId)
+            }) _uiState.update { it.copy(recordingItemId = itemId) }
+        else report(IllegalStateException("تعذّر بدء تسجيل الصوت"))
     }
     override fun stopRecording(itemId: Long) {
-        if (!canEdit() || _uiState.value.recordingItemId != itemId) {
+        if (!canEdit()) {
             recorder.cancel()
             _uiState.update { it.copy(recordingItemId = null) }
             return
         }
+        if (_uiState.value.recordingItemId != itemId) return
         val file = recorder.stop()
         _uiState.update { it.copy(recordingItemId = null) }
         if (file != null) launchSafe { if (canEdit()) repository.setAudio(itemId, file) else file.delete() }
