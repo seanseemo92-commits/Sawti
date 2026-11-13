@@ -52,6 +52,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sawti.R
+import com.sawti.presentation.common.performCompatTap
 import com.sawti.presentation.onboarding.spotlightAnchor
 import com.sawti.presentation.theme.LocalIsDark
 import com.sawti.presentation.theme.LocalPerformanceMode
@@ -148,6 +149,7 @@ fun AppTopBar(
 private fun SettingsGear(caregiverMode: Boolean, onToggle: () -> Unit, ink: Color) {
     val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
+    val currentHaptic by rememberUpdatedState(haptic)
     val scope = rememberCoroutineScope()
     val progress = remember { Animatable(0f) }
     val currentToggle by rememberUpdatedState(onToggle)
@@ -169,7 +171,7 @@ private fun SettingsGear(caregiverMode: Boolean, onToggle: () -> Unit, ink: Colo
                     onPress = {
                         // A short tactile confirmation is immediate; the ring still requires
                         // a full three-second hold before caregiver mode is switched.
-                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        currentHaptic.performCompatTap()
                         var completed = false
                         val hold = scope.launch {
                             // Animation duration changes with system motion settings; a
@@ -179,7 +181,7 @@ private fun SettingsGear(caregiverMode: Boolean, onToggle: () -> Unit, ink: Colo
                             }
                             delay(HOLD_MS.toLong())
                             completed = true
-                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            currentHaptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             currentToggle()
                         }
                         val released = tryAwaitRelease()
