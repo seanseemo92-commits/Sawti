@@ -10,8 +10,9 @@ class AudioPlayer(private val focus: AudioFocusController) {
     private var onCanceled: (() -> Unit)? = null
     private var pausedForFocus = false
 
-    /** Returns false when the file could not be played, so the caller can fall back to TTS. */
-    fun play(path: String, onDone: () -> Unit = {}, onCanceled: () -> Unit = onDone): Boolean {
+    /** Returns false for immediate setup failures; asynchronous failures call onFailed. */
+    fun play(path: String, onDone: () -> Unit = {}, onCanceled: () -> Unit = onDone,
+        onFailed: () -> Unit = {}): Boolean {
         stop()
         val mp = try {
             MediaPlayer()
@@ -64,13 +65,23 @@ class AudioPlayer(private val focus: AudioFocusController) {
                 }
             }
             mp.setOnErrorListener { _, _, _ ->
-                if (player === mp) stop()
+                if (player === mp) {
+                    stop()
+                    onFailed()
+                }
                 true
             }
-            mp.prepare()
+            mp.setOnPreparedListener {
+                if (player === mp) {
+                    runCatching { mp.start() }.onFailure {
+                        stop()
+                        onFailed()
+                    }
+                }
+            }
             player = mp
             this.onCanceled = onCanceled
-            mp.start()
+            mp.prepareAsync()
             true
         } catch (_: Exception) {
             if (player === mp) player = null
