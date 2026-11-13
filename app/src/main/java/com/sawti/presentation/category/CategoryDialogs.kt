@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -45,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -69,25 +71,39 @@ import com.sawti.presentation.theme.categoryPaletteFor
 @Composable
 fun WordPreviewDialog(item: WordItem, palette: CategoryPalette, actions: LibraryActions, onCall: (String) -> Unit) {
     Dialog(onDismissRequest = actions::closePreview, properties = DialogProperties(usePlatformDefaultWidth = false)) {
-        Surface(shape = RoundedCornerShape(32.dp), color = MaterialTheme.colorScheme.surface,
-            shadowElevation = cardElevation(16.dp), modifier = Modifier.fillMaxWidth(0.92f)) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                ItemImage(item = item, accent = palette.banner, modifier = Modifier.fillMaxWidth().aspectRatio(1f)
-                    .background(palette.pastel).padding(14.dp), crop = true, glyphScale = 0.5f)
-                Text(item.displayText, color = palette.accent, fontSize = 34.sp, fontWeight = FontWeight.ExtraBold,
-                    textAlign = TextAlign.Center, modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp))
-                Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    HintButton(onClick = { actions.onHint(item) }, size = 60)
-                    ActionPill(label = stringResource(R.string.listen), icon = Icons.AutoMirrored.Filled.VolumeUp,
-                        color = palette.banner, onClick = { actions.onSpeakAgain(item) })
-                    if (item.phone.isNotBlank()) {
-                        ActionPill(label = stringResource(R.string.call), icon = Icons.Filled.Call,
-                            color = palette.banner, onClick = { onCall(item.phone) })
-                    }
+        BoxWithConstraints(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            val imageSide = minOf(maxWidth * 0.8f, maxHeight * 0.38f, 320.dp)
+            val compactActions = maxWidth < 480.dp || LocalDensity.current.fontScale > 1.3f
+            val actionContent: @Composable () -> Unit = {
+                HintButton(onClick = { actions.onHint(item) }, size = 60)
+                ActionPill(label = stringResource(R.string.listen), icon = Icons.AutoMirrored.Filled.VolumeUp,
+                    color = palette.banner, onClick = { actions.onSpeakAgain(item) })
+                if (item.phone.isNotBlank()) {
+                    ActionPill(label = stringResource(R.string.call), icon = Icons.Filled.Call,
+                        color = palette.banner, onClick = { onCall(item.phone) })
                 }
-                TextButton(onClick = actions::closePreview, modifier = Modifier.heightIn(min = 52.dp)) {
-                    Text(stringResource(R.string.close), fontSize = 18.sp)
+            }
+            Surface(shape = RoundedCornerShape(32.dp), color = MaterialTheme.colorScheme.surface,
+                shadowElevation = cardElevation(16.dp),
+                modifier = Modifier.fillMaxWidth(0.92f).heightIn(max = maxHeight * 0.92f)) {
+                Column(Modifier.verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally) {
+                    ItemImage(item = item, accent = palette.banner,
+                        modifier = Modifier.size(imageSide).background(palette.pastel).padding(14.dp),
+                        crop = true, glyphScale = 0.5f)
+                    Text(item.displayText, color = palette.accent, fontSize = 34.sp,
+                        fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp))
+                    if (compactActions) {
+                        Column(Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(12.dp)) { actionContent() }
+                    } else {
+                        Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)) { actionContent() }
+                    }
+                    TextButton(onClick = actions::closePreview, modifier = Modifier.heightIn(min = 52.dp)) {
+                        Text(stringResource(R.string.close), fontSize = 18.sp)
+                    }
                 }
             }
         }
@@ -99,19 +115,25 @@ fun WordFocusDialog(item: WordItem, palette: CategoryPalette, actions: LibraryAc
     Dialog(onDismissRequest = actions::closeFocus,
         properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false)) {
         Surface(color = MaterialTheme.colorScheme.surface, modifier = Modifier.fillMaxSize()) {
-            Box(Modifier.fillMaxSize()) {
-                Column(Modifier.fillMaxSize().systemBarsPadding().padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                    ItemImage(item = item, accent = palette.banner, modifier = Modifier.fillMaxWidth().aspectRatio(1f)
-                        .clip(RoundedCornerShape(32.dp)).background(palette.pastel).padding(20.dp), crop = false, glyphScale = 0.62f)
-                    Text(item.displayText, color = palette.accent, fontSize = 46.sp, fontWeight = FontWeight.ExtraBold,
-                        textAlign = TextAlign.Center, modifier = Modifier.padding(vertical = 24.dp))
+            BoxWithConstraints(Modifier.fillMaxSize()) {
+                val imageSide = minOf((maxWidth - 48.dp).coerceAtLeast(80.dp), maxHeight * 0.45f, 420.dp)
+                Column(Modifier.fillMaxSize().systemBarsPadding().padding(24.dp)
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center) {
+                    ItemImage(item = item, accent = palette.banner, modifier = Modifier.size(imageSide)
+                        .clip(RoundedCornerShape(32.dp)).background(palette.pastel).padding(20.dp),
+                        crop = false, glyphScale = 0.62f)
+                    Text(item.displayText, color = palette.accent, fontSize = 46.sp,
+                        fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(vertical = 24.dp))
                     ActionPill(label = stringResource(R.string.listen), icon = Icons.AutoMirrored.Filled.VolumeUp,
                         color = palette.banner, onClick = { actions.onSpeakAgain(item) })
                 }
                 IconButton(onClick = actions::closeFocus,
                     modifier = Modifier.align(Alignment.TopEnd).systemBarsPadding().padding(8.dp).size(52.dp)) {
-                    Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.focus_close), modifier = Modifier.size(32.dp))
+                    Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.focus_close),
+                        modifier = Modifier.size(32.dp))
                 }
             }
         }
@@ -124,7 +146,8 @@ fun AddFamilyMemberDialog(group: String, actions: LibraryActions) {
     var phone by remember { mutableStateOf("") }
     AlertDialog(onDismissRequest = actions::closeAddFamilyMember, title = { Text(stringResource(R.string.family_add)) },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Column(Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedTextField(value = name, onValueChange = { name = it.take(100) },
                     label = { Text(stringResource(R.string.family_name)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
                 Text(group, style = MaterialTheme.typography.titleMedium)
