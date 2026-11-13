@@ -3,6 +3,8 @@ package com.sawti.audio
 import android.media.AudioAttributes
 import android.media.AudioFormat
 import android.media.AudioTrack
+import android.os.Handler
+import android.os.Looper
 import kotlin.math.PI
 import kotlin.math.exp
 import kotlin.math.min
@@ -14,6 +16,14 @@ import kotlin.math.sin
  */
 class SoftChime {
     private val sampleRate = 22_050
+    private val main = Handler(Looper.getMainLooper())
+    private var active: AudioTrack? = null
+
+    @Synchronized private fun release(track: AudioTrack) {
+        if (active === track) active = null
+        runCatching { track.stop() }
+        runCatching { track.release() }
+    }
 
     private val pcm: ShortArray by lazy {
         val total = (sampleRate * 0.9).toInt()
@@ -38,8 +48,12 @@ class SoftChime {
         }
     }
 
+    @Synchronized
     fun play() {
-        runCatching {
+        // Prevent rapid correct taps from occupying multiple old-device audio tracks.
+        active?.let(::release)
+        var opened: AudioTrack? = null
+        try {
             val data = pcm
             val track = AudioTrack.Builder()
                 .setAudioAttributes(
@@ -58,13 +72,23 @@ class SoftChime {
                 .setBufferSizeInBytes(data.size * 2)
                 .setTransferMode(AudioTrack.MODE_STATIC)
                 .build()
-            track.write(data, 0, data.size)
+            opened = track
+            if (track.state != AudioTrack.STATE_INITIALIZED ||
+                track.write(data, 0, data.size) != data.size) {
+                release(track)
+                return
+            }
+            active = track
             track.setNotificationMarkerPosition(data.size - 1)
             track.setPlaybackPositionUpdateListener(object : AudioTrack.OnPlaybackPositionUpdateListener {
-                override fun onMarkerReached(t: AudioTrack) { t.release() }
-                override fun onPeriodicNotification(t: AudioTrack) {}
-            })
+                override fun onMarkerReached(t: AudioTrack) { release(t) }
+                override fun onPeriodicNotification(t: AudioTrack) = Unit
+            }, main)
             track.play()
+            // Some OEMs never deliver the marker callback; still release promptly.
+            main.postDelayed({ release(track) }, 1_300L)
+        } catch (_: Exception) {
+            opened?.let(::release)
         }
     }
 }

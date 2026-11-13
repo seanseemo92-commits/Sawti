@@ -22,25 +22,36 @@ internal object BackupMediaSnapshot {
                 for (column in listOf("photoPath", "audioPath")) {
                     sqlite.rawQuery("SELECT id, $column FROM word_items WHERE $column IS NOT NULL", null).use { cursor ->
                         while (cursor.moveToNext()) {
-                            val source = File(cursor.getString(1)).canonicalFile
-                            require(source.parentFile?.parentFile == root &&
-                                source.parentFile?.name in setOf("photos", "custom_audio") &&
-                                source.isFile && source.length() > 0L) {
-                                "صورة أو تسجيل مرتبط ببطاقة غير متاح في مساحة التطبيق؛ لم تُنشأ نسخة ناقصة"
+                            // A missing/private media reference is removed ONLY from the
+                            // snapshot database. Live Room records remain untouched.
+                            val rawPath = cursor.getString(1)
+                            val source = runCatching { File(rawPath).canonicalFile }.getOrNull()
+                            val safe = source != null &&
+                                source.parentFile?.parentFile == root &&
+                                source.parentFile?.name == (if (column == "photoPath") "photos" else "custom_audio")
+                            if (!safe) {
+                                // Never read or copy paths outside application-private storage.
+                                sqlite.execSQL("UPDATE word_items SET $column=NULL WHERE id=?", arrayOf(cursor.getLong(0)))
+                                continue
                             }
-                            val relative = copied[source.path] ?: run {
-                                val folder = if (source.parentFile?.name == "photos") "photos" else "custom_audio"
-                                val extension = source.extension.takeIf { it.matches(Regex("[A-Za-z0-9]{1,10}")) } ?: "bin"
+                            val existing = requireNotNull(source)
+                            if (!existing.isFile || existing.length() <= 0L) {
+                                sqlite.execSQL("UPDATE word_items SET $column=NULL WHERE id=?", arrayOf(cursor.getLong(0)))
+                                continue
+                            }
+                            val relative = copied[existing.path] ?: run {
+                                val folder = if (existing.parentFile?.name == "photos") "photos" else "custom_audio"
+                                val extension = existing.extension.takeIf { it.matches(Regex("[A-Za-z0-9]{1,10}")) } ?: "bin"
                                 val path = "$folder/media_${UUID.randomUUID()}.$extension"
                                 require(entries.size + 2 <= maxEntries) { "عدد ملفات النسخة كبير جداً" }
                                 val remaining = maxBytes - bytes
-                                require(remaining > 0 && source.length() <= remaining) { "النسخة أكبر من الحد المسموح" }
+                                require(remaining > 0 && existing.length() <= remaining) { "النسخة أكبر من الحد المسموح" }
                                 val target = File(directory, "files/$path")
                                 require(target.parentFile!!.isDirectory || target.parentFile!!.mkdirs())
-                                source.inputStream().use { SafeMediaImport.copy(it, target, remaining) }
+                                existing.inputStream().use { SafeMediaImport.copy(it, target, remaining) }
                                 bytes += target.length()
                                 entries["files/$path"] = target
-                                copied[source.path] = path
+                                copied[existing.path] = path
                                 path
                             }
                             // Only the copied database is rewritten. Live paths and files stay intact.
