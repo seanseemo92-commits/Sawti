@@ -359,6 +359,8 @@ class BackupManager(private val context: Context, private val database: AppDatab
     }
 
     private fun isAllowed(name: String): Boolean {
+        // Explicitly reject dot-dot and platform-dependent separators in ZIP names.
+        if (".." in name || '\\' in name || name.startsWith('/')) return false
         if (name == "manifest.json" || name == BackupFormat.DATABASE_ENTRY || name == "preferences/settings.xml") return true
         val parts = name.split('/')
         return parts.size == 3 && parts[0] == "files" && parts[1] in folders && validMediaName(parts[2])

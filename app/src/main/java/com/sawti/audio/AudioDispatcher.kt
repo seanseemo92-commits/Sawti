@@ -25,6 +25,16 @@ class AudioDispatcher(
     private val _playback = MutableStateFlow(PlaybackVisual())
     val playback: StateFlow<PlaybackVisual> = _playback.asStateFlow()
     private var generation = 0L
+    // Cancel Quran downloads that have not yet acquired audio focus when AAC starts.
+    private var quranStopper: (() -> Unit)? = null
+
+    fun registerQuranStopper(stopper: () -> Unit) {
+        quranStopper = stopper
+    }
+
+    fun unregisterQuranStopper(stopper: () -> Unit) {
+        if (quranStopper === stopper) quranStopper = null
+    }
 
     /** Main tap: caregiver recording when available, TTS otherwise. */
     fun play(item: WordItem) {
@@ -89,10 +99,17 @@ class AudioDispatcher(
         return player.play(path)
     }
     fun stop() = stopAll()
-    private fun stopAll() {
+
+    /** Stop AAC before Quran starts without canceling the Quran request itself. */
+    fun stopAac() {
         ++generation
         _playback.value = PlaybackVisual()
         speech.stop()
         player.stop()
+    }
+
+    private fun stopAll() {
+        quranStopper?.invoke()
+        stopAac()
     }
 }
