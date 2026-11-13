@@ -28,3 +28,6 @@
 - `scripts/check_quran_continuous_sources.py` يُخرج نتيجة حديثة إلى `docs/audits/quran-continuous-source-timing.json` بدلاً من مجلد APK التجريبي المحذوف.
 - `scripts/probe_husary_muallim_alignment.py` يُخرج نتيجة حديثة إلى `docs/audits/husary-muallim-alignment.json`.
 - التقرير الأصلي بتاريخ 11 نوفمبر محفوظ في `docs/archive/quran-full-source-timing-20261111.json` ولم يُستبدل ببيانات جديدة.
+
+- تم تحديث مساري `diagnose-build.yml` و`retry-validation.yml` اليدويين إلى JDK 21؛ تشخيص البناء يستخدم Gradle Wrapper بدلاً من Gradle 8.9 القديم.
+- تم سحب مسار `repository-audit.yml` القديم المقيد بفرع مهجور؛ فحص أساس المستودع يستمر في `build.yml` ضمن الاختبارات الحديثة.
