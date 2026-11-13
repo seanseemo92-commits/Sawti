@@ -53,6 +53,19 @@ class SpeechManagerArabicTest {
         assertTrue(manager.voiceStatus.value.arabicVoiceAvailable)
     }
 
+    @Test fun newestPendingUtteranceReplacesOlderOneBeforeTtsInitialization() {
+        ShadowTextToSpeech.addLanguageAvailability(Locale.forLanguageTag("ar"))
+        val manager = manager()
+        val shadow = shadowOf(ShadowTextToSpeech.getLastTextToSpeechInstance())
+        var oldCanceled = 0
+        manager.speak("الطلب الأول", onCanceled = { oldCanceled++ })
+        manager.speak("الطلب الثاني")
+        assertEquals(1, oldCanceled)
+        shadow.onInitListener.onInit(TextToSpeech.SUCCESS)
+        shadowOf(Looper.getMainLooper()).idle()
+        assertEquals("الطلب الثاني", shadow.lastSpokenText)
+    }
+
     @Test fun dialectChangesPreserveWrittenSpeechAndGeneralArabicEngine() {
         ShadowTextToSpeech.addLanguageAvailability(Locale.forLanguageTag("ar"))
         val manager = manager()
