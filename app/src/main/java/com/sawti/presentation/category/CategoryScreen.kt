@@ -8,6 +8,9 @@ import androidx.compose.material3.ripple
 import androidx.compose.foundation.background
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
@@ -61,6 +64,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
@@ -183,7 +187,8 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
 @Composable
 private fun SubgroupTabs(subgroups: List<String>, selected: String, palette: CategoryPalette,
     onSelect: (String) -> Unit, modifier: Modifier = Modifier) {
-    Row(modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(modifier.selectableGroup().horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         subgroups.forEach { label ->
             val on = label == selected
             val tourModifier = when (label) {
@@ -194,9 +199,11 @@ private fun SubgroupTabs(subgroups: List<String>, selected: String, palette: Cat
             Surface(shape = RoundedCornerShape(22.dp), color = if (on) palette.banner else MaterialTheme.colorScheme.surface,
                 contentColor = if (on) Color.White else palette.accent,
                 shadowElevation = cardElevation(if (on) 4.dp else 1.dp),
-                modifier = Modifier.height(46.dp).then(tourModifier).clip(RoundedCornerShape(22.dp)).clickable { onSelect(label) }) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(horizontal = 18.dp)) {
-                    Text(label, fontSize = 15.sp, fontWeight = FontWeight.ExtraBold, maxLines = 1)
+                modifier = Modifier.heightIn(min = 46.dp).then(tourModifier).clip(RoundedCornerShape(22.dp))
+                    .selectable(selected = on, role = Role.Tab, onClick = { onSelect(label) })) {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(horizontal = 18.dp, vertical = 10.dp)) {
+                    Text(label, fontSize = 15.sp, lineHeight = 20.sp,
+                        fontWeight = FontWeight.ExtraBold, maxLines = 2, textAlign = TextAlign.Center)
                 }
             }
         }
@@ -207,12 +214,13 @@ private fun SubgroupTabs(subgroups: List<String>, selected: String, palette: Cat
 private fun ViewModeToggle(mode: ViewMode, palette: CategoryPalette, onChange: (ViewMode) -> Unit, modifier: Modifier = Modifier) {
     Surface(shape = RoundedCornerShape(24.dp), color = MaterialTheme.colorScheme.surface,
         shadowElevation = cardElevation(2.dp), modifier = modifier) {
-        Row(Modifier.padding(4.dp)) {
+        Row(Modifier.padding(4.dp).selectableGroup()) {
             listOf(ViewMode.GRID to (Icons.Filled.GridView to R.string.view_grid),
                 ViewMode.FLASHCARD to (Icons.Filled.ViewCarousel to R.string.view_flashcards)).forEach { (m, iconAndLabel) ->
                 val on = m == mode
                 Box(Modifier.size(44.dp).clip(CircleShape).background(if (on) palette.banner else Color.Transparent)
-                    .clickable { onChange(m) }, contentAlignment = Alignment.Center) {
+                    .selectable(selected = on, role = Role.RadioButton, onClick = { onChange(m) }),
+                    contentAlignment = Alignment.Center) {
                     Icon(iconAndLabel.first, contentDescription = stringResource(iconAndLabel.second),
                         tint = if (on) Color.White else palette.accent)
                 }
@@ -324,27 +332,46 @@ private fun FlashcardPage(item: WordItem, category: Category, palette: CategoryP
     state: LibraryUiState, actions: LibraryActions, onCall: (String) -> Unit) {
     CeramicCard(isSpeaking = state.playbackVisual.activeWordId == item.id && state.playbackVisual.isSpeaking,
         accent = palette.banner, modifier = Modifier.fillMaxSize().padding(vertical = 8.dp)) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Box(Modifier.weight(1f).fillMaxWidth().bounceClick(
-                onLongClick = { actions.onItemLongPressed(item) }, onClick = { actions.onItemTapped(item, flashcard = true) },
-                accent = categoryBannerColor(category.id, palette.banner)), contentAlignment = Alignment.Center) {
-                CardImageContent(item = item, accent = palette.banner,
-                    isCurrentlyPlaying = state.playbackVisual.isSpeaking && state.playbackVisual.activeWordId == item.id,
-                    modifier = Modifier.fillMaxSize().padding(22.dp), crop = category.previewOnTap)
-                HintButton(onClick = { actions.onHint(item) }, modifier = Modifier.align(Alignment.TopEnd).padding(6.dp))
-            }
-            Text(item.displayText, color = MaterialTheme.colorScheme.onSurface, fontSize = 34.sp, lineHeight = 44.sp,
-                fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp))
-            Row(Modifier.padding(start = 16.dp, end = 16.dp, bottom = 18.dp), verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                ActionPill(label = stringResource(R.string.listen), icon = Icons.AutoMirrored.Filled.VolumeUp,
-                    color = palette.banner, onClick = { actions.onSpeakAgain(item) },
-                    modifier = Modifier.testTag("flashcard-listen-${item.id}"))
-                if (item.phone.isNotBlank() && !state.caregiverMode) {
-                    ActionPill(label = stringResource(R.string.call), icon = Icons.Filled.Call, color = palette.banner, onClick = { onCall(item.phone) })
+        BoxWithConstraints(Modifier.fillMaxSize()) {
+            val imageHeight = minOf(maxHeight * 0.58f, maxWidth, 360.dp)
+            Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally) {
+                Box(Modifier.fillMaxWidth().height(imageHeight).bounceClick(
+                    onLongClick = { actions.onItemLongPressed(item) },
+                    onClick = { actions.onItemTapped(item, flashcard = true) },
+                    accent = categoryBannerColor(category.id, palette.banner)), contentAlignment = Alignment.Center) {
+                    CardImageContent(item = item, accent = palette.banner,
+                        isCurrentlyPlaying = state.playbackVisual.isSpeaking && state.playbackVisual.activeWordId == item.id,
+                        modifier = Modifier.fillMaxSize().padding(22.dp), crop = category.previewOnTap)
+                    HintButton(onClick = { actions.onHint(item) },
+                        modifier = Modifier.align(Alignment.TopEnd).padding(6.dp))
+                }
+                Text(item.displayText, color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 34.sp, lineHeight = 44.sp,
+                    fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp))
+                BoxWithConstraints(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 18.dp)) {
+                    val compact = maxWidth < 380.dp || LocalDensity.current.fontScale > 1.3f
+                    val buttons: @Composable () -> Unit = {
+                        ActionPill(label = stringResource(R.string.listen),
+                            icon = Icons.AutoMirrored.Filled.VolumeUp, color = palette.banner,
+                            onClick = { actions.onSpeakAgain(item) },
+                            modifier = Modifier.testTag("flashcard-listen-${item.id}"))
+                        if (item.phone.isNotBlank() && !state.caregiverMode) {
+                            ActionPill(label = stringResource(R.string.call),
+                                icon = Icons.Filled.Call, color = palette.banner,
+                                onClick = { onCall(item.phone) })
+                        }
+                    }
+                    if (compact) {
+                        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(12.dp)) { buttons() }
+                    } else {
+                        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)) { buttons() }
+                    }
                 }
             }
         }
     }
 }
-
