@@ -88,7 +88,7 @@ class QuranAudioCache(
             if (!audioDir.isDirectory && !audioDir.mkdirs()) {
                 throw IOException("Unable to create Quran recordings directory")
             }
-            val temporary = File.createTempFile("ayah_" + globalVerseNumber + "_", ".part", audioDir)
+            val temporary = File.createTempFile("ayah_" + globalVerseNumber + "_", ".tmp", audioDir)
             try {
                 var lastFailure: Exception? = null
                 for (sourceUrl in urls) {
@@ -134,9 +134,8 @@ class QuranAudioCache(
                         if (!QuranMp3.isPlayable(temporary)) {
                             throw IOException("Invalid or incomplete MP3")
                         }
-                        if (target.exists() && !target.delete()) {
-                            throw IOException("Cannot replace incomplete recording")
-                        }
+                        // The new MP3 is complete; replace any stale target in one
+                        // same-directory rename, without deleting it prematurely.
                         if (!temporary.renameTo(target)) {
                             throw IOException("Cannot save Quran recording")
                         }

@@ -77,7 +77,7 @@ internal object QuranPassages {
                 throw IOException("Invalid packaged Quran segment")
             }
             currentCoroutineContext().ensureActive()
-            if (destination.exists() && !destination.delete()) throw IOException("Cannot replace Quran segment")
+            // Keep the previous recording intact if publishing fails.
             if (!temporary.renameTo(destination)) throw IOException("Cannot save Quran segment")
             return destination
         } finally {
