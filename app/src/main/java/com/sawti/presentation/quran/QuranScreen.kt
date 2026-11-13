@@ -57,6 +57,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -88,6 +89,13 @@ fun QuranScreen(chosenSurahId: Int?, onChooseSurah: (Int?) -> Unit, focusFirstVe
     val vm: QuranViewModel = viewModel()
     val state by vm.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val view = LocalView.current
+    val playing = state.audio.phase == RecitationPhase.PLAYING
+    DisposableEffect(view, playing) {
+        val originallyAwake = view.keepScreenOn
+        if (playing) view.keepScreenOn = true
+        onDispose { view.keepScreenOn = originallyAwake }
+    }
     LaunchedEffect(chosenSurahId) { vm.openSurah(chosenSurahId) }
     DisposableEffect(vm, lifecycle) {
         val observer = LifecycleEventObserver { _, event ->

@@ -70,6 +70,12 @@ fun SentenceStrip(
 ) {
     val dark = LocalIsDark.current
     val performance = LocalPerformanceMode.current
+    val stripScroll = rememberScrollState()
+    LaunchedEffect(pieces.size) {
+        // Horizontal scrolling follows the newest word, without fighting
+        // the user when the active/speaking word changes.
+        if (pieces.isNotEmpty()) stripScroll.animateScrollTo(stripScroll.maxValue)
+    }
     val foreground = MaterialTheme.colorScheme.onSurface
     val surface = if (dark) Color(0xFF131924) else Color.White
     val hairline = if (dark) Color.White.copy(alpha = 0.08f)
@@ -115,7 +121,7 @@ fun SentenceStrip(
                 }
             }
             Row(
-                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                modifier = Modifier.fillMaxWidth().horizontalScroll(stripScroll),
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
