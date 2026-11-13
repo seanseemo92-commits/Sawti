@@ -31,18 +31,20 @@ class AudioDispatcher(
         stopAll()
         val current = generation
         val recording = item.audioPath?.takeIf { File(it).exists() }
-        if (recording != null && player.play(recording, onDone = {
-                if (current == generation) _playback.value = PlaybackVisual()
-            })) {
+        fun speakFallback() {
+            if (current != generation) return
+            _playback.value = PlaybackVisual(activeWordId = item.id, isSpeaking = true)
+            speech.speak(item.speechText,
+                onDone = { if (current == generation) _playback.value = PlaybackVisual() })
+        }
+        if (recording != null && player.play(recording,
+                onDone = { if (current == generation) _playback.value = PlaybackVisual() },
+                onFailed = { speakFallback() })) {
             if (current == generation) _playback.value =
                 PlaybackVisual(activeWordId = item.id, isSpeaking = true)
             return
         }
-        _playback.value = PlaybackVisual(activeWordId = item.id, isSpeaking = true)
-        speech.speak(
-            item.speechText,
-            onDone = { if (current == generation) _playback.value = PlaybackVisual() },
-        )
+        speakFallback()
     }
 
     /** Sentence-strip playback is independent of the retired card hint feature. */
