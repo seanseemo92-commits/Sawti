@@ -3,6 +3,11 @@ package com.sawti.presentation.home
 import android.app.Application
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.text.TextLayoutResult
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import androidx.compose.ui.test.assertExists
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -48,6 +53,27 @@ class AdaptiveHomeLayoutTest {
 
     @Test @Config(qualifiers = "w320dp-h640dp")
     fun compactPhoneAt320Dp() = render(fontScale = 2f)
+
+    @Test @Config(qualifiers = "w320dp-h640dp")
+    fun longMarkedArabicCategoryIsNotEllipsizedAtLargeTextScale() {
+        val phrase = "أُرِيدُ الْمُسَاعَدَةَ لِلْوُصُولِ إِلَى الْمُسْتَشْفَى وَالْمُرَافَقَةِ فِي الْمَوَاعِيدِ"
+        compose.setContent {
+            SawtiTheme(performanceMode = true) {
+                val density = LocalDensity.current
+                CompositionLocalProvider(LocalDensity provides Density(density.density, 1.5f)) {
+                    HomeScreen(
+                        categories = listOf(Category("custom_adaptive", phrase, 2, false, emptyList())),
+                        speakingItemId = null, onOpen = {}, onOpenQuran = {}, isLoading = false,
+                    )
+                }
+            }
+        }
+        val results = mutableListOf<TextLayoutResult>()
+        compose.onNodeWithText(phrase, useUnmergedTree = true)
+            .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { results.addAll(it) }
+        assertTrue(results.single().lineCount > 2)
+        assertFalse((0 until results.single().lineCount).any { results.single().isLineEllipsized(it) })
+    }
 
     @Test @Config(qualifiers = "w360dp-h800dp")
     fun compactPhoneAt360Dp() = render(fontScale = 2f)

@@ -135,6 +135,24 @@ class GreetingsLayoutTest {
         assertEquals(category.items.map { it.id } + category.items.last().id, tapped)
     }
 
+    @Test @Config(qualifiers = "w320dp-h800dp")
+    fun expandedArabicWordCaptionIsNeverLimitedToFourLines() {
+        val original = category()
+        val phrase = "أُرِيدُ الذَّهَابَ إِلَى الْمُسْتَشْفَى وَأَحْتَاجُ إِلَى الْمُسَاعَدَةِ وَالْمُرَافَقَةِ فِي الطَّرِيقِ"
+        val changed = original.copy(items = original.items.mapIndexed { index, word ->
+            if (index == 0) word.copy(displayText = phrase) else word
+        })
+        show(ThemeMode.LIGHT, fontScale = 1.5f) {
+            CategoryScreen(changed, LibraryUiState(categories = listOf(changed), isLoadingCategories = false), actions)
+        }
+        val results = mutableListOf<TextLayoutResult>()
+        compose.onNodeWithText(phrase, useUnmergedTree = true)
+            .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { results.addAll(it) }
+        val layout = results.single()
+        assertTrue("Caption should naturally wrap on 320dp", layout.lineCount > 4)
+        assertFalse((0 until layout.lineCount).any(layout::isLineEllipsized))
+    }
+
     @Test fun darkLibyanGridPreservesItsLabelsAndSharedStyle() {
         val category = category(ArabicDialect.LIBYAN)
         show(ThemeMode.DARK) {
