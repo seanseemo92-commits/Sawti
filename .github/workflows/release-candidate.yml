@@ -2,7 +2,7 @@ name: Sawti final APK validation and signing
 
 on:
   push:
-    branches: [feature/quran-full-recitation-cache-20261111]
+    branches: [feature/quran-full-recitation-cache-20261111, fix/adaptive-prepublish-20261113]
   workflow_dispatch:
 
 permissions:
@@ -15,7 +15,8 @@ concurrency:
 jobs:
   verified-apk:
     if: >-
-      github.ref == 'refs/heads/feature/quran-full-recitation-cache-20261111' &&
+      (github.ref == 'refs/heads/feature/quran-full-recitation-cache-20261111' ||
+       github.ref == 'refs/heads/fix/adaptive-prepublish-20261113') &&
       (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deliver-rc]'))
     runs-on: ubuntu-latest
     environment: production-release
@@ -100,7 +101,7 @@ jobs:
           TAG="sawti-v${RELEASE_VERSION}-candidate-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           gh release create "$TAG" dist/* --target "$GITHUB_SHA" --prerelease --latest=false \
             --title "صوتي ${RELEASE_VERSION} — مرشح الإصدار النهائي" \
-            --notes-file docs/final-apk-verification-1.5.md
+            --notes-file docs/release-1.5.2.md
           gh release view "$TAG" --json url --jq .url >> "$GITHUB_STEP_SUMMARY"
       - name: Upload diagnostic reports
         if: always()
