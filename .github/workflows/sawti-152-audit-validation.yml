@@ -1,0 +1,38 @@
+name: Sawti 1.5.2 targeted audit validation
+
+on:
+  push:
+    branches:
+      - fix/sawti-152-p0-p1-audit-20261113
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sawti-152-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Enable Gradle wrapper
+        run: chmod +x gradlew
+      - name: Verify release metadata and protected baseline
+        run: |
+          python3 scripts/verify_release.py
+          python3 scripts/verify_repository_baseline.py
+      - name: Validate Quran source assets
+        run: |
+          python3 scripts/verify_quran_surahs.py
+          python3 scripts/verify_quran_passages.py
+      - name: Run unit tests, lint, instrumentation compile and R8 release validation
+        run: ./gradlew --no-daemon testDebugUnitTest lintDebug :app:compileDebugAndroidTestKotlin :app:assembleRelease --continue
