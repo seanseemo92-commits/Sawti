@@ -1,12 +1,12 @@
 package com.sawti.domain.model
 
 /**
- * Experimental visual and TTS text corrections transcribed from the supplied
+ * Runtime-preserved visual and TTS text revisions originally reviewed against the supplied
  * Argon audit of 2026-11-02. Not verified by native speakers or device listening.
  * Review-only alternatives and explanatory parentheses are intentionally excluded.
  * This is a non-destructive projection: the Room seed and user edits stay unchanged.
  */
-internal object ArgonAuditOverrides {
+internal object DialectSpeechRevisions {
     private data class Field(val expected: String, val proposed: String)
     private data class Patch(
         val display: Field? = null,

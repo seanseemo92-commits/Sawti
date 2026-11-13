@@ -220,7 +220,7 @@ internal object PronunciationCorrections {
         if (form.source == SpeechSource.USER || item.categoryId.startsWith("custom_")) return form
         if (item.customTextFields and (CardDetails.SPEECH or CardDetails.LABEL) != 0) return form
         val key = item.semanticKey ?: return form
-        if (key !in DialectCatalog.words && !ArgonAuditOverrides.hasPatch(dialect, key)
+        if (key !in DialectCatalog.words && !DialectSpeechRevisions.hasPatch(dialect, key)
             && RegionalDishesCatalog.variant(key, dialect) == null) return form
         val revision = revisions[dialect to key]
         val candidate = if (revision != null && revision.expected == form.speechText)
