@@ -15,6 +15,7 @@ android {
         targetSdk = 36
         versionCode = 8
         versionName = "1.5.2"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["appLabel"] = "@string/app_name"
     }
 
@@ -41,6 +42,9 @@ android {
         }
         release {
             isMinifyEnabled = true
+            // DrawableAssetResolver resolves optional image resources by name.
+            // Keep resource shrinking off until all dynamic names are direct R references.
+            isShrinkResources = false
             signingConfigs.findByName("production")?.let { signingConfig = it }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
@@ -91,6 +95,9 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.16")
     testImplementation("androidx.compose.ui:ui-test-junit4")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
+    androidTestImplementation("androidx.test:runner:1.6.2")
+    androidTestImplementation("androidx.test:core:1.6.1")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
 }
 
 
