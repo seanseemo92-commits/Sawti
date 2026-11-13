@@ -25,16 +25,13 @@ internal object BackupMediaSnapshot {
                             // A missing/private media reference is removed ONLY from the
                             // snapshot database. Live Room records remain untouched.
                             val rawPath = cursor.getString(1)
-                            val source = runCatching { File(rawPath).canonicalFile }.getOrNull()
-                            val safe = source != null &&
-                                source.parentFile?.parentFile == root &&
-                                source.parentFile?.name == (if (column == "photoPath") "photos" else "custom_audio")
-                            if (!safe) {
-                                // Never read or copy paths outside application-private storage.
-                                sqlite.execSQL("UPDATE word_items SET $column=NULL WHERE id=?", arrayOf(cursor.getLong(0)))
-                                continue
+                            val existing = File(rawPath).canonicalFile
+                            // An external or malformed path is still rejected: never
+                            // silently make a valid but unsafe reference disappear.
+                            require(existing.parentFile?.parentFile == root &&
+                                existing.parentFile?.name in setOf("photos", "custom_audio")) {
+                                "ملف مرتبط خارج مساحة التطبيق الخاصة"
                             }
-                            val existing = requireNotNull(source)
                             if (!existing.isFile || existing.length() <= 0L) {
                                 sqlite.execSQL("UPDATE word_items SET $column=NULL WHERE id=?", arrayOf(cursor.getLong(0)))
                                 continue

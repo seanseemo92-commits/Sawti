@@ -40,6 +40,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -74,7 +75,11 @@ fun SentenceStrip(
     LaunchedEffect(pieces.size) {
         // Horizontal scrolling follows the newest word, without fighting
         // the user when the active/speaking word changes.
-        if (pieces.isNotEmpty()) stripScroll.animateScrollTo(stripScroll.maxValue)
+        if (pieces.isNotEmpty()) {
+            // Wait until the new chip has participated in layout.
+            withFrameNanos { }
+            stripScroll.animateScrollTo(stripScroll.maxValue)
+        }
     }
     val foreground = MaterialTheme.colorScheme.onSurface
     val surface = if (dark) Color(0xFF131924) else Color.White

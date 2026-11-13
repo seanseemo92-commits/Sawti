@@ -122,16 +122,18 @@ class BackupSnapshotTest {
         assertEquals("saved", String(payload.getValue("files/${paths(payload).single().second}")))
     }
 
-    @Test fun missingOrExternalReferencedMediaRejectsExportWithoutChangingLiveData() = runBlocking {
+    @Test fun missingPrivateMediaIsSkippedButOutsidePathsStillRejectExport() = runBlocking {
         val missing = File(context.filesDir, "custom_audio/missing.m4a").path
         val id = card(audio = missing)
-        var failed = false
-        try { export() } catch (_: Exception) { failed = true }
-        assertTrue(failed); assertEquals(missing, dao.audioPath(id))
+        val payload = entries(export())
+        assertNull(paths(payload).single().second)
+        assertEquals(0, payload.keys.count { it.startsWith("files/") })
+        // Live database has not been rewritten by taking the snapshot.
+        assertEquals(missing, dao.audioPath(id))
         val outside = File(context.cacheDir, "outside.m4a").apply { writeText("private elsewhere") }
         dao.updateAudio(id, outside.path)
-        failed = false
-        try { export() } catch (_: Exception) { failed = true }
+        var failed = false
+        try { export("outside.zip") } catch (_: Exception) { failed = true }
         assertTrue(failed); assertTrue(outside.exists()); assertEquals(outside.path, dao.audioPath(id))
     }
 

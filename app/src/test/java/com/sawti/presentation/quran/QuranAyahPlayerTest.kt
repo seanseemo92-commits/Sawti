@@ -101,10 +101,17 @@ class QuranAyahPlayerTest {
         val current = preparedPlayer(0)
         current.invokePreparedListener()
         assertEquals(3, states.last().remaining)
+        // A repeat must resume only AFTER Android completes the seek.
+        current.setSeekDelay(-1)
         current.invokeCompletionListener()
+        assertEquals(RecitationPhase.BUFFERING, states.last().phase)
         assertEquals(2, states.last().remaining)
+        current.invokeSeekCompleteListener()
+        assertEquals(RecitationPhase.PLAYING, states.last().phase)
         current.invokeCompletionListener()
+        assertEquals(RecitationPhase.BUFFERING, states.last().phase)
         assertEquals(1, states.last().remaining)
+        current.invokeSeekCompleteListener()
         current.invokeCompletionListener()
         assertEquals(RecitationPhase.IDLE, states.last().phase)
     }
