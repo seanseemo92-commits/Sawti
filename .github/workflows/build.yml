@@ -36,23 +36,23 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-      - name: Install Gradle 8.9
+      - name: Set up Gradle cache
         uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.9'
+      - name: Grant execute permission for Gradle wrapper
+        run: chmod +x gradlew
       - name: Validate release metadata
         run: python3 scripts/verify_release.py
       - name: Validate current repository baseline
         run: python3 scripts/verify_repository_baseline.py
       - name: Compile and run unit tests (fast path)
-        run: gradle --no-daemon :app:testDebugUnitTest
+        run: ./gradlew --no-daemon :app:testDebugUnitTest
       - name: Check exported foundation schema
         run: |
           test -s app/schemas/com.sawti.data.db.AppDatabase/1.json
           git diff --exit-code -- app/schemas
       - name: Build debug and R8 release APKs and run Android lint (full path only)
         if: ${{ env.FULL_BUILD == 'true' }}
-        run: gradle --no-daemon :app:assembleDebug :app:assembleRelease :app:lintRelease
+        run: ./gradlew --no-daemon :app:assembleDebug :app:assembleRelease :app:lintRelease
       - name: Summarize pending speech reviews
         run: |
           python3 - <<'PYREPORT'
