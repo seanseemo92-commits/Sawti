@@ -124,4 +124,17 @@ class AboutScreenTest {
         compose.onNodeWithText("كبير جدًا").assertIsDisplayed().performClick()
         assertEquals(2, selected)
     }
+
+    @Test @Config(sdk = [36], qualifiers = "w320dp-h640dp")
+    fun android16CompactAboutPageWithDoubleFont() {
+        show(ThemeMode.LIGHT, fontScale = 2f)
+        compose.onNodeWithText(DEVELOPER_EMAIL).performScrollTo().assertIsDisplayed()
+    }
+
+    @Test @Config(sdk = [36], qualifiers = "w840dp-h1100dp")
+    fun android16TabletAboutPageWithDoubleFont() {
+        show(ThemeMode.DARK, fontScale = 2f)
+        compose.onNodeWithText("إسماعيل بن سالم").assertIsDisplayed()
+    }
+
 }

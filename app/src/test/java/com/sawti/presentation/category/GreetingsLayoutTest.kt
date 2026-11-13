@@ -214,4 +214,25 @@ class GreetingsLayoutTest {
             .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layout) }
         assertEquals(GreetingsCoral, layout.single().layoutInput.style.color)
     }
+
+    @Test @Config(sdk = [36], qualifiers = "w320dp-h720dp")
+    fun android16CompactCategoryAtDoubleFont() {
+        val c = category()
+        show(ThemeMode.DARK, fontScale = 2f) {
+            CategoryScreen(c, LibraryUiState(categories = listOf(c), isLoadingCategories = false), actions)
+        }
+        assertFirstTwoCardsShareARow(c)
+        compose.onNodeWithTag("word-grid").performScrollToIndex(c.items.lastIndex)
+        compose.onNodeWithTag("word-card-${c.items.last().id}").assertIsDisplayed()
+    }
+
+    @Test @Config(sdk = [36], qualifiers = "w600dp-h840dp")
+    fun android16TabletCategoryShowsMultipleColumns() {
+        val c = category()
+        show(ThemeMode.LIGHT, fontScale = 2f) {
+            CategoryScreen(c, LibraryUiState(categories = listOf(c), isLoadingCategories = false), actions)
+        }
+        assertFirstTwoCardsShareARow(c)
+    }
+
 }

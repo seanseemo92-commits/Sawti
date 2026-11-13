@@ -161,4 +161,17 @@ class QuranLayoutTest {
         card.performTouchInput { down(center); advanceEventTime(600); up() }
         compose.runOnIdle { assertEquals(1, taps) }
     }
+
+    @Test @Config(sdk = [36], qualifiers = "w320dp-h640dp")
+    fun android16CompactQuranRetainsReadableVerse() {
+        show(ThemeMode.LIGHT, large = true)
+        compose.onNodeWithTag("ayah-6200").performScrollTo().assertIsDisplayed()
+    }
+
+    @Test @Config(sdk = [36], qualifiers = "w840dp-h1100dp")
+    fun android16TabletQuranRetainsFullPlaybackControl() {
+        show(ThemeMode.DARK, large = true)
+        compose.onNodeWithTag("quran-full-play").performScrollTo().assertIsDisplayed()
+    }
+
 }
