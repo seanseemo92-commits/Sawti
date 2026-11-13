@@ -162,14 +162,6 @@ class LibraryViewModel(
             _uiState.update { it.copy(previewItemId = item.id) }
         }
     }
-    fun onQuickTap(item: WordItem) {
-        val state = _uiState.value
-        if ((state.caregiverMode || !state.sentenceStripEnabled) && cardLatched()) return
-        if (state.sentenceStripEnabled && !state.caregiverMode) {
-            _uiState.update { it.copy(sentencePieces = SentenceComposer.add(it.sentencePieces, item)) }
-        } else voice.play(item)
-        highlight(item.id)
-    }
     fun playSentenceStrip() {
         val state = _uiState.value
         if (!state.sentenceStripEnabled) return

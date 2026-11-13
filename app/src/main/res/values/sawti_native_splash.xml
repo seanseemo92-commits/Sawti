@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Android 12+ native splash matches the opening area of welcome art. -->
+    <!-- Android 12+ native system launch background; no legacy Compose welcome screen. -->
     <color name="sawti_native_splash_background">#2953B8</color>
 </resources>
