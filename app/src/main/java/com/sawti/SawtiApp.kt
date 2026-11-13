@@ -28,7 +28,7 @@ class AppContainer(private val app: Application) {
     val audioFocus by lazy { AudioFocusController(app) }
     val speech by lazy { SpeechManager(app, audioFocus) }
     val player by lazy { AudioPlayer(audioFocus) }
-    val recorder by lazy { VoiceRecorder(app) }
+    val recorder by lazy { VoiceRecorder(app, audioFocus) }
     val audioDispatcher by lazy { AudioDispatcher(speech, player) }
     val caregiver = CaregiverMode()
     val wordRepository: WordRepository by lazy { RoomWordRepository(database, app, settingsRepository) }

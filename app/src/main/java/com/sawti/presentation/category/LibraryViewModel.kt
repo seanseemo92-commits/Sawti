@@ -80,6 +80,7 @@ interface LibraryActions {
     fun removePhoto(itemId: Long)
     fun startRecording(itemId: Long)
     fun stopRecording(itemId: Long)
+    fun cancelRecording(itemId: Long)
     fun previewRecording(itemId: Long)
     fun deleteRecording(itemId: Long)
 }
@@ -349,9 +350,13 @@ class LibraryViewModel(
     override fun startRecording(itemId: Long) {
         if (!canEdit()) return
         voice.stop()
-        if (recorder.start("word_$itemId") {
-                if (_uiState.value.recordingItemId == itemId) stopRecording(itemId)
-            }) _uiState.update { it.copy(recordingItemId = itemId) }
+        if (recorder.start(
+                "word_$itemId",
+                onLimitReached = {
+                    if (_uiState.value.recordingItemId == itemId) stopRecording(itemId)
+                },
+                onInterrupted = { cancelRecording(itemId) },
+            )) _uiState.update { it.copy(recordingItemId = itemId) }
         else report(IllegalStateException("تعذّر بدء تسجيل الصوت"))
     }
     override fun stopRecording(itemId: Long) {
@@ -364,6 +369,11 @@ class LibraryViewModel(
         val file = recorder.stop()
         _uiState.update { it.copy(recordingItemId = null) }
         if (file != null) launchSafe { if (canEdit()) repository.setAudio(itemId, file) else file.delete() }
+    }
+    override fun cancelRecording(itemId: Long) {
+        if (_uiState.value.recordingItemId != itemId) return
+        recorder.cancel()
+        _uiState.update { it.copy(recordingItemId = null) }
     }
     override fun previewRecording(itemId: Long) { find(itemId)?.audioPath?.let { voice.playFile(it) } }
     override fun deleteRecording(itemId: Long) {

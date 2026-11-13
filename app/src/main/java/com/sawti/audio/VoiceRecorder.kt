@@ -3,21 +3,45 @@ package com.sawti.audio
 import android.content.Context
 import android.media.MediaRecorder
 import android.os.Build
+import android.os.SystemClock
 import java.io.File
 
 /** Caregiver recordings use only app-private storage; never write outside its audio folder. */
-class VoiceRecorder(private val context: Context) {
+internal fun recordingDurationValid(durationMs: Long): Boolean = durationMs >= 400L
+
+class VoiceRecorder(private val context: Context, private val focus: AudioFocusController? = null) {
     private var recorder: MediaRecorder? = null
     private var file: File? = null
     @Volatile private var limitReached = false
+    private var startedAtMs = 0L
+    private var focusToken: Long? = null
 
-    fun start(key: String, onLimitReached: (() -> Unit)? = null): Boolean {
+    private fun releaseFocus() {
+        val token = focusToken
+        focusToken = null
+        if (token != null) focus?.release(token)
+    }
+
+    fun start(
+        key: String,
+        onLimitReached: (() -> Unit)? = null,
+        onInterrupted: (() -> Unit)? = null,
+    ): Boolean {
         cancel()
         val safeKey = key.replace(Regex("[^A-Za-z0-9_-]"), "_").take(50)
         if (safeKey.isBlank()) return false
         val dir = File(context.filesDir, "custom_audio")
         if (!dir.isDirectory && !dir.mkdirs()) return false
         val out = File(dir, "${safeKey}_${System.nanoTime()}.m4a")
+        // Release the speaker before opening the microphone, and relinquish
+        // recording on a phone call or another exclusive audio-focus owner.
+        val token = focus?.acquire(
+            onLost = { cancel(); onInterrupted?.invoke() },
+            onTransientLoss = { cancel(); onInterrupted?.invoke() },
+            onDuck = {},
+        )
+        if (focus != null && token == null) return false
+        focusToken = token
         var created: MediaRecorder? = null
         limitReached = false
         return try {
@@ -48,12 +72,15 @@ class VoiceRecorder(private val context: Context) {
             }
             recorder = r
             file = out
+            startedAtMs = SystemClock.elapsedRealtime()
             true
         } catch (_: Exception) {
             runCatching { created?.release() }
             out.delete()
             recorder = null
             file = null
+            startedAtMs = 0L
+            releaseFocus()
             false
         }
     }
@@ -63,13 +90,22 @@ class VoiceRecorder(private val context: Context) {
      * A recording that the recorder itself ended at the duration/size cap is kept.
      */
     fun stop(): File? {
-        val r = recorder ?: return null
+        val r = recorder ?: run { releaseFocus(); return null }
         val f = file
+        val durationMs = SystemClock.elapsedRealtime() - startedAtMs
         recorder = null
         file = null
+        startedAtMs = 0L
         return try {
-            r.stop()
-            keepIfValid(f)
+            if (!limitReached && !recordingDurationValid(durationMs)) {
+                // stop() can throw RuntimeException when Android has not encoded
+                // its first complete audio frames. Do not publish this file.
+                f?.delete()
+                null
+            } else {
+                r.stop()
+                keepIfValid(f)
+            }
         } catch (_: RuntimeException) {
             if (limitReached) keepIfValid(f) else {
                 f?.delete()
@@ -77,6 +113,7 @@ class VoiceRecorder(private val context: Context) {
             }
         } finally {
             runCatching { r.release() }
+            releaseFocus()
         }
     }
 

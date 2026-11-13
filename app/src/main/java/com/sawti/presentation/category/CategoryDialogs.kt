@@ -218,7 +218,8 @@ fun WordEditorDialog(item: WordItem, isRecording: Boolean, actions: LibraryActio
                 VoiceRecordingSection(hasRecording = item.audioPath != null, isRecording = isRecording,
                     onStart = { actions.startRecording(item.id) }, onStop = { actions.stopRecording(item.id) },
                     onPlay = { actions.previewRecording(item.id) }, onDelete = { actions.deleteRecording(item.id) },
-                    onPickFile = { uri -> actions.onAudioPicked(item.id, uri) })
+                    onPickFile = { uri -> actions.onAudioPicked(item.id, uri) },
+                    onInterrupted = { actions.cancelRecording(item.id) })
                 if (item.categoryId.startsWith("custom_")) {
                     TextButton(onClick = { showCustomDeleteConfirm = true }, modifier = Modifier.fillMaxWidth()) {
                         Icon(Icons.Filled.Delete, contentDescription = null)
