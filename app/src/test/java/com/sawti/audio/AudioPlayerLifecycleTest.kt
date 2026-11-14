@@ -61,6 +61,8 @@ class AudioPlayerLifecycleTest {
     @Test fun notificationsKeepPersonalRecordingsPlayingAndPhoneCallsStillPause() {
         assertTrue(audio.play(file.path))
         val current = created.single()
+        // The test MediaInfo intentionally holds prepareAsync until invoked.
+        current.invokePreparedListener()
         val manager = app.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val request = shadowOf(manager).lastAudioFocusRequest
         val listener = request.listener
