@@ -186,6 +186,8 @@ class DisplaySpeechConsistencyTest {
                         add(word.first())
                         if (word.startsWith("ال") && word.length > 2) add(word[2])
                         if (word.startsWith("لل") && word.length > 2) add(word[2])
+                        // Syrian colloquial "عالحمام" retains the target word after "عال".
+                        if (word.startsWith("عال") && word.length > 3) add(word[3])
                     }
                 }.toSet()
             if (cue.isNotBlank() && cue[0] !in available &&
