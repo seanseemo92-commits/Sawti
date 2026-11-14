@@ -10,13 +10,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -53,6 +53,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -164,17 +165,26 @@ private fun FinishedContent(state: PracticeUiState, onRestart: () -> Unit) {
 private fun RecallContent(state: PracticeUiState, actions: PracticeActions) {
     val card = state.card ?: return
     val palette = categoryPaletteFor(card.item.categoryId, card.palette)
-    Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(14.dp)) {
+    // The parent is vertically scrollable (unbounded height). A weighted image
+    // receives zero height there. Keep the image explicitly sized and visible.
+    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(14.dp)) {
         ProgressHeader(state, palette.banner, palette.pastel)
         Surface(shape = RoundedCornerShape(32.dp), color = MaterialTheme.colorScheme.surface,
-            shadowElevation = cardElevation(8.dp), modifier = Modifier.weight(1f).fillMaxWidth()) {
+            shadowElevation = cardElevation(8.dp),
+            modifier = Modifier.widthIn(max = 480.dp).fillMaxWidth().testTag("practice-recall-card")) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                ItemImage(item = card.item, accent = palette.banner,
-                    modifier = Modifier.weight(1f).fillMaxWidth().background(palette.pastel).padding(20.dp),
-                    crop = card.item.photoPath != null, glyphScale = 0.6f)
+                Box(Modifier.fillMaxWidth().aspectRatio(1.25f)
+                    .background(palette.pastel).testTag("practice-recall-image"),
+                    contentAlignment = Alignment.Center) {
+                    ItemImage(item = card.item, accent = palette.banner,
+                        modifier = Modifier.fillMaxSize().padding(16.dp),
+                        crop = card.item.photoPath != null, glyphScale = 0.6f)
+                }
                 Text(text = if (state.revealed) card.item.displayText else stringResource(R.string.practice_prompt),
                     color = palette.accent, fontSize = if (state.revealed) 38.sp else 22.sp,
-                    fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center, modifier = Modifier.padding(16.dp))
+                    fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(16.dp))
             }
         }
         if (!state.revealed) {
@@ -197,42 +207,37 @@ private fun RecallContent(state: PracticeUiState, actions: PracticeActions) {
 }
 
 @Composable
-@OptIn(ExperimentalLayoutApi::class)
 private fun ChoiceContent(state: PracticeUiState, actions: PracticeActions) {
     val card = state.card ?: return
     val palette = categoryPaletteFor(card.item.categoryId, card.palette)
-    // The scrollable parent can grow beyond a short landscape viewport instead
-    // of shrinking the weighted choice area and its 140.dp touch/image cards.
-    Column(Modifier.fillMaxSize().heightIn(min = 350.dp), horizontalAlignment = Alignment.CenterHorizontally,
+    // Choice cards must not be weighted vertically inside the scrollable
+    // parent. Give each image a finite, touch-friendly height instead.
+    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(14.dp)) {
         ProgressHeader(state, palette.banner, palette.pastel)
         ActionPill(label = stringResource(R.string.choice_replay), icon = Icons.AutoMirrored.Filled.VolumeUp,
             color = AppBarBlue, onClick = actions::replayQuestion)
-        Text(stringResource(R.string.choice_instruction), fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-        BoxWithConstraints(Modifier.weight(1f).fillMaxWidth().heightIn(min = 148.dp).padding(bottom = 8.dp),
+        Text(stringResource(R.string.choice_instruction), fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+        BoxWithConstraints(Modifier.widthIn(max = 760.dp).fillMaxWidth().padding(bottom = 8.dp),
             contentAlignment = Alignment.TopCenter) {
-            val narrow = maxWidth < 380.dp || LocalDensity.current.fontScale >= 1.5f
-            if (narrow) {
-                val cardWidth = ((maxWidth - 12.dp) / 2).coerceAtMost(220.dp)
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    maxItemsInEachRow = 2,
-                ) {
+            if (maxWidth < 280.dp) {
+                // Exceptionally narrow split screen: both choices remain reachable.
+                Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     state.choices.forEach { choice ->
                         ChoiceCard(choice = choice, isTarget = choice.item.id == card.item.id,
                             state = state, onChoose = actions::choose,
-                            modifier = Modifier.width(cardWidth).heightIn(min = 160.dp).height(185.dp))
+                            modifier = Modifier.fillMaxWidth().height(168.dp))
                     }
                 }
             } else {
-                Row(Modifier.heightIn(min = 140.dp).fillMaxHeight().widthIn(max = 960.dp).fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                // Compact phones always have two choices side by side.
+                val cardHeight = ((maxWidth - 12.dp) / 2).coerceIn(148.dp, 260.dp)
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     state.choices.forEach { choice ->
                         ChoiceCard(choice = choice, isTarget = choice.item.id == card.item.id,
                             state = state, onChoose = actions::choose,
-                            modifier = Modifier.weight(1f).fillMaxHeight().heightIn(min = 140.dp))
+                            modifier = Modifier.weight(1f).height(cardHeight))
                     }
                 }
             }
@@ -252,7 +257,8 @@ private fun ChoiceCard(choice: PracticeCard, isTarget: Boolean, state: PracticeU
             dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow), label = "choice-scale")
     Surface(shape = RoundedCornerShape(28.dp), color = MaterialTheme.colorScheme.surface, shadowElevation = cardElevation(8.dp),
         border = BorderStroke(if (solvedHere) 7.dp else 4.dp, if (solvedHere) Correct else MaterialTheme.colorScheme.onSurface),
-        modifier = modifier.graphicsLayer { scaleX = scale; scaleY = scale }.alpha(if (wrong) 0.35f else 1f)
+        modifier = modifier.testTag("practice-choice-${choice.item.id}")
+            .graphicsLayer { scaleX = scale; scaleY = scale }.alpha(if (wrong) 0.35f else 1f)
             .clip(RoundedCornerShape(28.dp)).clickable(enabled = !state.solved && !wrong) {
                 if (!isTarget) haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                 onChoose(choice.item.id)
