@@ -28,14 +28,8 @@ class AudioPlayer(private val focus: AudioFocusController) {
                         .onFailure { stop() }
                 }
             },
-            // Spoken words must not be missed underneath a notification.
-            onDuck = {
-                if (player === mp && !pausedForFocus) {
-                    runCatching { mp.pause() }
-                        .onSuccess { pausedForFocus = true }
-                        .onFailure { stop() }
-                }
-            },
+            // Short notifications must not pause recordings.
+            onDuck = {},
             onGain = {
                 if (player === mp) {
                     if (pausedForFocus) {

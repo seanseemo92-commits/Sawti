@@ -19,6 +19,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -54,6 +60,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -103,12 +110,12 @@ fun HomeScreen(categories: List<Category>, speakingItemId: Long?, onOpen: (Strin
                 verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 if (isLoading && loadError == null) {
                     CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-                    Text(text = "جارٍ تحميل الأقسام...", style = MaterialTheme.typography.bodyMedium,
+                    Text(text = stringResource(R.string.home_loading_categories), style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
                 } else {
-                    Text(text = loadError ?: "لا توجد أقسام متاحة حالياً.", style = MaterialTheme.typography.bodyLarge,
+                    Text(text = loadError ?: stringResource(R.string.home_no_categories), style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onBackground, textAlign = TextAlign.Center)
-                    Button(onClick = onRetry, enabled = retryEnabled && !isLoading) { Text("إعادة المحاولة") }
+                    Button(onClick = onRetry, enabled = retryEnabled && !isLoading) { Text(stringResource(R.string.retry)) }
                 }
             }
         }
@@ -131,7 +138,9 @@ fun HomeScreen(categories: List<Category>, speakingItemId: Long?, onOpen: (Strin
         // Measure the actual window, not the physical display (split-screen / foldables).
         val columns = homeGridColumnCount(maxWidth.coerceAtMost(1040.dp).value)
         LazyVerticalGrid(columns = GridCells.Fixed(columns), state = gridState,
-            modifier = Modifier.fillMaxHeight().widthIn(max = 1040.dp).fillMaxWidth(),
+            modifier = Modifier.fillMaxHeight().widthIn(max = 1040.dp).fillMaxWidth()
+                .navigationBarsPadding()
+                .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)),
             contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 32.dp),
             horizontalArrangement = Arrangement.spacedBy(18.dp), verticalArrangement = Arrangement.spacedBy(18.dp)) {
             item(key = "quran-feature", span = { GridItemSpan(columns) }) {
@@ -151,12 +160,12 @@ fun HomeScreen(categories: List<Category>, speakingItemId: Long?, onOpen: (Strin
                                 IconButton(onClick = { onMoveCategory(category.id, -1) },
                                     enabled = index > 0, modifier = Modifier.size(48.dp)) {
                                     Icon(Icons.Filled.KeyboardArrowUp,
-                                        contentDescription = "نقل قسم ${category.title} للأعلى", tint = Color.White)
+                                        contentDescription = stringResource(R.string.move_category_up, category.title), tint = Color.White)
                                 }
                                 IconButton(onClick = { onMoveCategory(category.id, 1) },
                                     enabled = index < categories.lastIndex, modifier = Modifier.size(48.dp)) {
                                     Icon(Icons.Filled.KeyboardArrowDown,
-                                        contentDescription = "نقل قسم ${category.title} للأسفل", tint = Color.White)
+                                        contentDescription = stringResource(R.string.move_category_down, category.title), tint = Color.White)
                                 }
                             }
                         }
@@ -175,12 +184,13 @@ private fun QuranHeroCard(onClick: () -> Unit) {
     val green = if (dark) Color(0xFF103A31) else Color(0xFF124E40)
     val gold = Color(0xFFE8CE91)
     val largeText = LocalDensity.current.fontScale >= 1.2f
+    val quranTitle = stringResource(R.string.quran_title)
 
     // One image-backed card, like the other Sawti categories. The Quran artwork
     // is only a photo; all Arabic copy stays native, legible and accessible.
     Surface(
         modifier = Modifier.fillMaxWidth().semantics(mergeDescendants = true) {
-                contentDescription = "القرآن الكريم"
+                contentDescription = quranTitle
             }.spotlightAnchor("home_quran").clip(CardRadius)
             .bounceClick(onClick = onClick, accent = gold),
         shape = CardRadius,
@@ -230,7 +240,7 @@ private fun QuranHeroCard(onClick: () -> Unit) {
                     modifier = Modifier.size(26.dp),
                 )
                 Text(
-                    text = "القرآن الكريم",
+                    text = quranTitle,
                     color = Color.White,
                     fontSize = 21.sp,
                     lineHeight = 28.sp,
@@ -238,7 +248,7 @@ private fun QuranHeroCard(onClick: () -> Unit) {
                     // Natural wrapping at large font scales.
                 )
                 Text(
-                    text = "سور قصيرة للتلاوة والتكرار",
+                    text = stringResource(R.string.quran_home_subtitle),
                     color = Color(0xFFF1E4C7),
                     fontSize = 12.sp,
                     lineHeight = 18.sp,
@@ -266,6 +276,7 @@ private fun QuranHeroCard(onClick: () -> Unit) {
 private fun LuxuryCategoryCard(category: Category, isSpeaking: Boolean, onClick: () -> Unit) {
     val dark = LocalIsDark.current
     val performance = LocalPerformanceMode.current
+    val speakingDescription = stringResource(R.string.speaking_state_desc)
     val palette = categoryPaletteFor(category.id, category.palette)
     val bannerColor = categoryBannerColor(category.id, palette.banner)
     val resId = drawableResourceId(categoryDrawableName(category.id))
@@ -293,7 +304,7 @@ private fun LuxuryCategoryCard(category: Category, isSpeaking: Boolean, onClick:
     Box(modifier = Modifier.fillMaxWidth().height(cardHeight)
         .semantics(mergeDescendants = true) {
             contentDescription = category.title
-            if (isSpeaking) stateDescription = "جاري النطق"
+            if (isSpeaking) stateDescription = speakingDescription
         }.spotlightAnchor("home_${category.id}").then(
         if (isSpeaking && !performance) Modifier.drawBehind {
             drawCircle(brush = Brush.radialGradient(

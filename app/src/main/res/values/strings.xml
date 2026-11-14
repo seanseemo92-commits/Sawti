@@ -3,6 +3,24 @@
     <string name="app_title">صوتي - Sawti</string>
     <string name="loading">جارٍ التحميل…</string>
 
+    <!-- startup, navigation and accessibility -->
+    <string name="retry">إعادة المحاولة</string>
+    <string name="recovery_checking">جارٍ التحقق من البيانات المسترجعة…</string>
+    <string name="recovery_failed">تعذّر إكمال استرداد البيانات</string>
+    <string name="select_dialect_and_voice">اختيار اللهجة والصوت</string>
+    <string name="caregiver_enabled_desc">وضع المرافق مفعّل</string>
+    <string name="caregiver_disabled_desc">وضع المرافق متوقف</string>
+    <string name="home_loading_categories">جارٍ تحميل الأقسام…</string>
+    <string name="home_no_categories">لا توجد أقسام متاحة حالياً.</string>
+    <string name="quran_title">القرآن الكريم</string>
+    <string name="quran_home_subtitle">سور قصيرة للتلاوة والتكرار</string>
+    <string name="speaking_state_desc">جاري النطق</string>
+    <string name="add_card">إضافة بطاقة</string>
+    <string name="move_category_up">نقل قسم %1$s للأعلى</string>
+    <string name="move_category_down">نقل قسم %1$s للأسفل</string>
+    <string name="move_card_up">نقل بطاقة %1$s للأعلى</string>
+    <string name="move_card_down">نقل بطاقة %1$s للأسفل</string>
+
     <!-- top bar -->
     <string name="practice_title">تمرين الكلمات</string>
     <string name="practice_icon_desc">تمرين استرجاع الكلمات</string>

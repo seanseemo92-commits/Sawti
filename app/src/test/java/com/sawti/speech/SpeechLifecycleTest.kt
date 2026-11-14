@@ -7,6 +7,9 @@ import android.content.Context
 import android.media.AudioManager
 import android.speech.tts.TextToSpeech
 import com.sawti.audio.AudioFocusController
+import com.sawti.audio.AudioDispatcher
+import com.sawti.audio.AudioPlayer
+import com.sawti.domain.model.WordItem
 import java.util.Locale
 import org.junit.Assert.*
 import org.junit.Before
@@ -61,6 +64,29 @@ class SpeechLifecycleTest {
         manager.stop()
         assertEquals(1, done)
         assertEquals(1, canceled)
+    }
+
+    @Test fun dispatcherResetsCardSpeakingStateOnExternalTtsCancellation() {
+        val app = RuntimeEnvironment.getApplication() as Application
+        val focus = AudioFocusController(app)
+        val dispatcher = AudioDispatcher(manager, AudioPlayer(focus))
+        val card = WordItem(1, "transport", "", "سيارة", "سَيَّارَة", "سَـ...", null,
+            null, null, "", "", semanticKey = "transport.car")
+        dispatcher.play(card)
+        assertTrue(dispatcher.playback.value.isSpeaking)
+        val first = engine.requests.last()
+        // A late callback from the old utterance must not clear the new card.
+        dispatcher.play(card.copy(id = 2, displayText = "قطار", ttsPrompt = "قِطَار"))
+        assertEquals(2L, dispatcher.playback.value.activeWordId)
+        engine.utteranceProgressListener.onStop(first, true)
+        shadowOf(Looper.getMainLooper()).idle()
+        assertTrue(dispatcher.playback.value.isSpeaking)
+        val second = engine.requests.last()
+        engine.utteranceProgressListener.onStop(second, true)
+        shadowOf(Looper.getMainLooper()).idle()
+        assertFalse(dispatcher.playback.value.isSpeaking)
+        assertNull(dispatcher.playback.value.activeWordId)
+        manager.stop()
     }
 
     @Test fun notificationDoesNotCancelTtsButTransientPhoneCallDoes() {

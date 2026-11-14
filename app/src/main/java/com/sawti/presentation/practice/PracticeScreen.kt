@@ -211,7 +211,7 @@ private fun ChoiceContent(state: PracticeUiState, actions: PracticeActions) {
     val card = state.card ?: return
     val palette = categoryPaletteFor(card.item.categoryId, card.palette)
     // Choice cards must not be weighted vertically inside the scrollable
-    // parent. Give each image a finite, touch-friendly height instead.
+    // parent. Apply only a minimum height so large text can expand the card.
     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(14.dp)) {
         ProgressHeader(state, palette.banner, palette.pastel)
@@ -227,7 +227,7 @@ private fun ChoiceContent(state: PracticeUiState, actions: PracticeActions) {
                     state.choices.forEach { choice ->
                         ChoiceCard(choice = choice, isTarget = choice.item.id == card.item.id,
                             state = state, onChoose = actions::choose,
-                            modifier = Modifier.fillMaxWidth().height(168.dp))
+                            modifier = Modifier.fillMaxWidth().heightIn(min = 168.dp))
                     }
                 }
             } else {
@@ -237,7 +237,7 @@ private fun ChoiceContent(state: PracticeUiState, actions: PracticeActions) {
                     state.choices.forEach { choice ->
                         ChoiceCard(choice = choice, isTarget = choice.item.id == card.item.id,
                             state = state, onChoose = actions::choose,
-                            modifier = Modifier.weight(1f).height(cardHeight))
+                            modifier = Modifier.weight(1f).heightIn(min = cardHeight))
                     }
                 }
             }

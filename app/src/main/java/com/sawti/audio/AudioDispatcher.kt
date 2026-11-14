@@ -40,12 +40,13 @@ class AudioDispatcher(
     fun play(item: WordItem) {
         stopAll()
         val current = generation
-        val recording = item.audioPath?.takeIf { File(it).exists() }
+        val recording = item.audioPath?.takeIf { File(it).isFile }
         fun speakFallback() {
             if (current != generation) return
             _playback.value = PlaybackVisual(activeWordId = item.id, isSpeaking = true)
             speech.speak(item.speechText,
-                onDone = { if (current == generation) _playback.value = PlaybackVisual() })
+                onDone = { if (current == generation) _playback.value = PlaybackVisual() },
+                onCanceled = { if (current == generation) _playback.value = PlaybackVisual() })
         }
         if (recording != null && player.play(recording,
                 onDone = { if (current == generation) _playback.value = PlaybackVisual() },

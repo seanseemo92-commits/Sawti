@@ -18,7 +18,7 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -99,7 +99,6 @@ fun AppTopBar(
     val headerGradient = Brush.horizontalGradient(listOf(start, middle, end))
     Surface(
         color = Color.Transparent,
-        shadowElevation = 2.dp,
         shape = RoundedCornerShape(bottomStart = 18.dp, bottomEnd = 18.dp),
     ) {
         Box(Modifier.background(headerGradient)) {
@@ -107,7 +106,7 @@ fun AppTopBar(
             Modifier
                 .statusBarsPadding()
                 .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
-                .height(64.dp)
+                .heightIn(min = 64.dp)
                 .padding(horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -140,7 +139,7 @@ fun AppTopBar(
                 )
             }
             IconButton(onClick = onDialects, modifier = Modifier.spotlightAnchor("top_language")) {
-                Icon(Icons.Filled.Language, contentDescription = "اختيار اللهجة والصوت", tint = ink)
+                Icon(Icons.Filled.Language, contentDescription = stringResource(R.string.select_dialect_and_voice), tint = ink)
             }
             SettingsGear(caregiverMode, onToggleCaregiver, ink)
         }
@@ -161,6 +160,8 @@ private fun SettingsGear(caregiverMode: Boolean, onToggle: () -> Unit, ink: Colo
     val progress = remember { Animatable(0f) }
     val currentToggle by rememberUpdatedState(onToggle)
     val description = stringResource(R.string.settings_gear_desc)
+    val activeStateDescription = stringResource(R.string.caregiver_enabled_desc)
+    val inactiveStateDescription = stringResource(R.string.caregiver_disabled_desc)
 
     Box(
         Modifier
@@ -168,7 +169,7 @@ private fun SettingsGear(caregiverMode: Boolean, onToggle: () -> Unit, ink: Colo
             .spotlightAnchor("top_caregiver")
             .semantics {
                 contentDescription = description
-                stateDescription = if (caregiverMode) "وضع المرافق مفعّل" else "وضع المرافق متوقف"
+                stateDescription = if (caregiverMode) activeStateDescription else inactiveStateDescription
                 onLongClick(label = description) {
                     currentToggle()
                     true
