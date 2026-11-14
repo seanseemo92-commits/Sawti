@@ -43,3 +43,12 @@ jobs:
           test "$(git rev-parse HEAD:app/schemas/com.sawti.data.db.AppDatabase/1.json)" = "8be852d8f8ac2f71b66a378791ea9fe9e1677e5f"
           git diff --exit-code HEAD -- app/schemas/
           test -z "$(git ls-files --others --exclude-standard -- app/schemas/)"
+      - name: Build installable debug APK for device testing
+        run: ./gradlew --no-daemon :app:assembleDebug
+      - name: Upload Sawti v1.5.2 test APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sawti-v1.5.2-tested-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
