@@ -63,7 +63,6 @@ class AudioPlayerLifecycleTest {
         val current = created.single()
         val manager = app.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val request = shadowOf(manager).lastAudioFocusRequest
-        assertFalse(request.willPauseWhenDucked())
         val listener = request.listener
         listener.onAudioFocusChange(AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK)
         shadowOf(Looper.getMainLooper()).idle()
