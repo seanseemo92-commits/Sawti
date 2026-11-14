@@ -147,7 +147,7 @@ class GreetingsLayoutTest {
         }
         val results = mutableListOf<TextLayoutResult>()
         compose.onNodeWithText(phrase, useUnmergedTree = true)
-            .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { results.addAll(it) }
+            .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(results) }
         val layout = results.single()
         assertTrue("Caption should naturally wrap on 320dp", layout.lineCount > 4)
         assertFalse((0 until layout.lineCount).any(layout::isLineEllipsized))

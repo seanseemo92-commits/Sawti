@@ -8,7 +8,6 @@ import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.text.TextLayoutResult
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import androidx.compose.ui.test.assertExists
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.unit.Density
@@ -70,7 +69,7 @@ class AdaptiveHomeLayoutTest {
         }
         val results = mutableListOf<TextLayoutResult>()
         compose.onNodeWithText(phrase, useUnmergedTree = true)
-            .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { results.addAll(it) }
+            .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(results) }
         assertTrue(results.single().lineCount > 2)
         assertFalse((0 until results.single().lineCount).any { results.single().isLineEllipsized(it) })
     }
