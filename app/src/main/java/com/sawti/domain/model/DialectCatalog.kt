@@ -253,7 +253,7 @@ object DialectCatalog {
             ArabicDialect.SAUDI to DialectForm("بازيلا"),
             ArabicDialect.EGYPTIAN to DialectForm("بسلة", "بَسِلَّهْ"),
             ArabicDialect.SYRIAN to DialectForm("بازيلا", "بَازِيلَّا"),
-            ArabicDialect.IRAQI to DialectForm("بازلاء", "بْزَالْيَا"),
+            ArabicDialect.IRAQI to DialectForm("بزاليا", "بْزَالْيَا"),
             ArabicDialect.TUNISIAN to DialectForm("جلبانة", "جِلْبَانَهْ"),
             ArabicDialect.MOROCCAN to DialectForm("جلبانة"),
             ArabicDialect.ALGERIAN to DialectForm("جلبانة", "جِلْبَانَهْ"),
@@ -694,7 +694,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("فرشيطة"),
         ),
         "home.knife" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("موس (سكين)", "مُوسْ", "مُو..."),
+            ArabicDialect.LIBYAN to DialectForm("موس", "مُوسْ", "مُو..."),
             ArabicDialect.SAUDI to DialectForm("سكين"),
             ArabicDialect.EGYPTIAN to DialectForm("سكينة"),
             ArabicDialect.SYRIAN to DialectForm("سكين"),
@@ -769,7 +769,7 @@ object DialectCatalog {
             ArabicDialect.LIBYAN to DialectForm("فستان", "فُسْتَانْ", "فُسْـ..."),
         ),
         "clothing.robe" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("روب / قفطان", "رُوبْ", "رُو..."),
+            ArabicDialect.LIBYAN to DialectForm("روب", "رُوبْ", "رُو..."),
         ),
         "clothing.abaya" to mapOf(
             ArabicDialect.LIBYAN to DialectForm("عباية", "عَبَايَهْ", "عَبَا..."),
@@ -793,7 +793,7 @@ object DialectCatalog {
         "clothing.socks" to mapOf(
             ArabicDialect.LIBYAN to DialectForm("شخاشير", "إِشْخَاشِيرْ", "إِشْـ..."),
             ArabicDialect.SAUDI to DialectForm("دلاغات", "دِلَاغَاتْ"),
-            ArabicDialect.EGYPTIAN to DialectForm("شرابات", "شَرَبَاتْ"),
+            ArabicDialect.EGYPTIAN to DialectForm("شرابات", "شَرَابَاتْ"),
             ArabicDialect.SYRIAN to DialectForm("جرابات", "جْرَابَاتْ"),
             ArabicDialect.IRAQI to DialectForm("جواريب", "جْوَارِيبْ"),
             ArabicDialect.TUNISIAN to DialectForm("كلسيطة", "كَلْسِيطَهْ"),
