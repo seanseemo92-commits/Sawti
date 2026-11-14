@@ -37,4 +37,9 @@ jobs:
         run: |
           test -s app/schemas/com.sawti.data.db.AppDatabase/1.json
           test "$(grep -c 'const val VERSION = 1' app/src/main/java/com/sawti/data/db/AppDatabase.kt)" -eq 1
-          git diff --exit-code ${{ github.event.before }} HEAD -- app/schemas/
+          # Checkout fetches a shallow history; github.event.before may not
+          # exist locally. Compare the tracked v1 schema to the verified
+          # Git blob in main, then ensure Room/KSP generated no new changes.
+          test "$(git rev-parse HEAD:app/schemas/com.sawti.data.db.AppDatabase/1.json)" = "8be852d8f8ac2f71b66a378791ea9fe9e1677e5f"
+          git diff --exit-code HEAD -- app/schemas/
+          test -z "$(git ls-files --others --exclude-standard -- app/schemas/)"
