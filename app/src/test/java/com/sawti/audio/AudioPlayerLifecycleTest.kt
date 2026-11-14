@@ -91,6 +91,9 @@ class AudioPlayerLifecycleTest {
         assertEquals(1, canceled)
         assertEquals(0, completed)
         assertTrue(audio.play(file.path, onDone = { completed++ }, onCanceled = { canceled++ }))
+        // prepareAsync completes on the main looper; validate the started clip
+        // only after Robolectric has delivered its prepared callback.
+        shadowOf(Looper.getMainLooper()).idle()
         old.invokeCompletionListener()
         assertEquals(0, completed)
         assertEquals(ShadowMediaPlayer.State.STARTED, created.last().state)

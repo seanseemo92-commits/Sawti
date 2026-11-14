@@ -165,7 +165,10 @@ class QuranLayoutTest {
     @Test @Config(sdk = [36], qualifiers = "w320dp-h640dp")
     fun android16CompactQuranRetainsReadableVerse() {
         show(ThemeMode.LIGHT, large = true)
-        compose.onNodeWithTag("ayah-6200").performScrollTo().assertIsDisplayed()
+        // On 320dp / 2x fonts, reciter settings extend past the viewport.
+        // Scroll the LazyColumn itself so the verse is composed before querying it.
+        compose.onNodeWithTag("quran-content").performScrollToIndex(2)
+        compose.onNodeWithTag("ayah-6200").assertIsDisplayed()
     }
 
     @Test @Config(sdk = [36], qualifiers = "w840dp-h1100dp")
