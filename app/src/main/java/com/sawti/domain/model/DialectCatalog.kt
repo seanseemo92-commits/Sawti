@@ -393,7 +393,7 @@ object DialectCatalog {
             ArabicDialect.IRAQI to DialectForm("لالنكي", "لَالَنْكِيْ"),
             ArabicDialect.TUNISIAN to DialectForm("مندرين"),
             ArabicDialect.MOROCCAN to DialectForm("مندرين"),
-            ArabicDialect.ALGERIAN to DialectForm("مندرين", "مَنْدَارِينْ"),
+            ArabicDialect.ALGERIAN to DialectForm("مندارين", "مَنْدَارِينْ"),
         ),
         "fruit.avocado" to mapOf(
             ArabicDialect.LIBYAN to DialectForm("أفوكادو", "أَفُوكَادُو", "أَفُو..."),
@@ -475,7 +475,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("مقرونة"),
         ),
         "food.soup" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("شوربة", "شُرْبَهْ", "شُرْ..."),
+            ArabicDialect.LIBYAN to DialectForm("شوربة", "شُورْبَهْ", "شُو..."),
             ArabicDialect.SAUDI to DialectForm("شوربة"),
             ArabicDialect.EGYPTIAN to DialectForm("شوربة"),
             ArabicDialect.SYRIAN to DialectForm("شوربة"),
@@ -641,7 +641,7 @@ object DialectCatalog {
             ArabicDialect.LIBYAN to DialectForm("ساعة", "سَاعَهْ", "سَا..."),
         ),
         "home.carpet" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("بساط / حواشي", "إِبْسَاطْ", "إِبْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("بساط / حواشي", "بِسَاطْ", "بِسَـ..."),
         ),
         "home.kitchen" to mapOf(
             ArabicDialect.LIBYAN to DialectForm("كوجينة", "كُوجِينَهْ", "كُو..."),
@@ -1018,7 +1018,7 @@ object DialectCatalog {
             ArabicDialect.LIBYAN to DialectForm("نوقف", "نُوقَفْ", "نُو..."),
             ArabicDialect.SAUDI to DialectForm("أوقف"),
             ArabicDialect.EGYPTIAN to DialectForm("أقف"),
-            ArabicDialect.SYRIAN to DialectForm("أوقف"),
+            ArabicDialect.SYRIAN to DialectForm("وقف", "وْقَفْ", "وْ..."),
             ArabicDialect.IRAQI to DialectForm("أوقف"),
             ArabicDialect.TUNISIAN to DialectForm("نوقف"),
             ArabicDialect.MOROCCAN to DialectForm("نوقف"),

@@ -145,34 +145,54 @@ class DisplaySpeechConsistencyTest {
         assertTrue(problems.joinToString("\n"), problems.isEmpty())
     }
 
+    // Pausal speech may pronounce written ta marbuta as a linked 't',
+    // and tanween may be spoken as a final 'n'. These are spelling/inflection,
+    // not different lexical content; neither needs an exception by word ID.
+    private fun sameWrittenToken(label: String, spoken: String): Boolean =
+        label == spoken ||
+            (label.endsWith("ه") && spoken == label.dropLast(1) + "ت") ||
+            (label.endsWith("ا") && spoken == label.dropLast(1) + "ن") ||
+            (label.endsWith("ء") && spoken == label + "ا")
+
+    private fun sameWrittenPhrase(display: String, speech: String): Boolean {
+        val labels = plain(display).replace("چ", "تش").split(" ")
+        val spoken = plain(speech).split(" ")
+        return labels.size == spoken.size && labels.zip(spoken)
+            .all { (label, actual) -> sameWrittenToken(label, actual) }
+    }
+
     @Test fun allBuiltInCardLabelsMatchSpeechExceptDocumentedPhoneticSpellings() {
         val problems = mutableListOf<String>()
         for (dialect in ArabicDialect.entries) for ((key, seed) in seeds) {
             val form = DialectSpeechCatalog.resolve(seed, dialect)
-            val visible = plain(form.displayText).replace("چ", "تش")
-            val spoken = plain(form.speechText)
             val allow = "${dialect.name}|$key" in phoneticAllowlist
-            if (visible != spoken && !allow)
+            if (!sameWrittenPhrase(form.displayText, form.speechText) && !allow)
                 problems += "$dialect|$key: '${form.displayText}' vs '${form.speechText}'"
         }
-        assertTrue("Unapproved display/audio differences (count=${problems.size}):\n" +
-            problems.joinToString("\n"), problems.isEmpty())
+        assertTrue("Unapproved display/audio differences (count=${problems.size}):\\n" +
+            problems.joinToString("\\n"), problems.isEmpty())
     }
 
-    @Test fun phonemicCueStartsWithTheSameSpokenSound() {
+    @Test fun phonemicCueMatchesItsSpokenTargetWord() {
         val problems = mutableListOf<String>()
         for (dialect in ArabicDialect.entries) for ((key, seed) in seeds) {
             val form = DialectSpeechCatalog.resolve(seed, dialect)
             val cue = plain(PhonemicCue.forSpeech(form.phonemicCue))
-            val spoken = plain(form.speechText)
-            // The definite article is silent in prompts such as "الخضار"; cue derivation
-            // deliberately starts at the following consonant.
-            val firstSpeech = if (spoken.startsWith("ال") && spoken.length > 2) spoken[2] else spoken.firstOrNull()
-            if (cue.isNotBlank() && firstSpeech != null && cue[0] != firstSpeech &&
+            // Multiword communication requests cue the requested object ("water"),
+            // not the opening verb ("I want"); both are valid if spoken.
+            val available = plain(form.speechText).split(" ").filter { it.isNotEmpty() }
+                .flatMap { word ->
+                    buildList {
+                        add(word.first())
+                        if (word.startsWith("ال") && word.length > 2) add(word[2])
+                        if (word.startsWith("لل") && word.length > 2) add(word[2])
+                    }
+                }.toSet()
+            if (cue.isNotBlank() && cue[0] !in available &&
                 "${dialect.name}|$key" !in phoneticAllowlist)
                 problems += "$dialect|$key: cue '${form.phonemicCue}', speech '${form.speechText}'"
         }
-        assertTrue("Misleading first-syllable hints:\n" + problems.joinToString("\n"),
+        assertTrue("Misleading first-syllable hints:\\n" + problems.joinToString("\\n"),
             problems.isEmpty())
     }
 
