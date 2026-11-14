@@ -92,12 +92,13 @@ fun PracticeScreen(state: PracticeUiState, actions: PracticeActions) {
         onDispose { view.keepScreenOn = false }
     }
     BoxWithConstraints(Modifier.fillMaxSize()) {
+    val viewportMinHeight = maxHeight
     val scrollState = rememberScrollState()
     LaunchedEffect(state.card?.item?.id, state.index, state.exercise, state.finished) {
         scrollState.scrollTo(0)
     }
     Column(Modifier.fillMaxSize().verticalScroll(scrollState)) {
-    Column(Modifier.fillMaxWidth().heightIn(min = maxHeight).padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally,
+    Column(Modifier.fillMaxWidth().heightIn(min = viewportMinHeight).padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(14.dp)) {
         ExerciseSwitch(state.exercise, actions::setExercise)
         when {
