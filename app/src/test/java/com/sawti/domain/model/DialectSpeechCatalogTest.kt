@@ -149,7 +149,15 @@ class DialectSpeechCatalogTest {
             val constructRevisions = setOf("dish.reshda_kaskas", "dish.reshda_borma", "dish.potato_stew",
                 "dish.khobz_tajin", "routine.evening_coffee", "clothing.watch", "clothing.high_heels",
                 "animal.rooster", "animal.rabbit", "home.fork", "body.leg")
-            if (!DialectSpeechRevisions.hasPatch(ArabicDialect.LIBYAN, fields[0]) && fields[0] !in constructRevisions) {
+            // These two former Libyan TTS approximations were intentionally
+            // aligned with the card's visible lexical spelling in the dialect audit.
+            val alignedCorrections = mapOf(
+                "food.soup" to "شُورْبَهْ",
+                "home.carpet" to "بِسَاطْ",
+            )
+            alignedCorrections[fields[0]]?.let { assertEquals(fields[0], it, form.speechText) }
+            if (!DialectSpeechRevisions.hasPatch(ArabicDialect.LIBYAN, fields[0]) &&
+                fields[0] !in constructRevisions && fields[0] !in alignedCorrections) {
                 assertEquals(fields[0], TtsEndings.normalize(fields[1]), form.speechText)
             }
         }

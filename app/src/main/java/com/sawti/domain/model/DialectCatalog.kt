@@ -253,7 +253,7 @@ object DialectCatalog {
             ArabicDialect.SAUDI to DialectForm("بازيلا"),
             ArabicDialect.EGYPTIAN to DialectForm("بسلة", "بَسِلَّهْ"),
             ArabicDialect.SYRIAN to DialectForm("بازيلا", "بَازِيلَّا"),
-            ArabicDialect.IRAQI to DialectForm("بازلاء", "بْزَالْيَا"),
+            ArabicDialect.IRAQI to DialectForm("بزاليا", "بْزَالْيَا"),
             ArabicDialect.TUNISIAN to DialectForm("جلبانة", "جِلْبَانَهْ"),
             ArabicDialect.MOROCCAN to DialectForm("جلبانة"),
             ArabicDialect.ALGERIAN to DialectForm("جلبانة", "جِلْبَانَهْ"),
@@ -393,7 +393,7 @@ object DialectCatalog {
             ArabicDialect.IRAQI to DialectForm("لالنكي", "لَالَنْكِيْ"),
             ArabicDialect.TUNISIAN to DialectForm("مندرين"),
             ArabicDialect.MOROCCAN to DialectForm("مندرين"),
-            ArabicDialect.ALGERIAN to DialectForm("مندرين", "مَنْدَارِينْ"),
+            ArabicDialect.ALGERIAN to DialectForm("مندارين", "مَنْدَارِينْ"),
         ),
         "fruit.avocado" to mapOf(
             ArabicDialect.LIBYAN to DialectForm("أفوكادو", "أَفُوكَادُو", "أَفُو..."),
@@ -475,7 +475,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("مقرونة"),
         ),
         "food.soup" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("شوربة", "شُرْبَهْ", "شُرْ..."),
+            ArabicDialect.LIBYAN to DialectForm("شوربة", "شُورْبَهْ", "شُو..."),
             ArabicDialect.SAUDI to DialectForm("شوربة"),
             ArabicDialect.EGYPTIAN to DialectForm("شوربة"),
             ArabicDialect.SYRIAN to DialectForm("شوربة"),
@@ -641,7 +641,7 @@ object DialectCatalog {
             ArabicDialect.LIBYAN to DialectForm("ساعة", "سَاعَهْ", "سَا..."),
         ),
         "home.carpet" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("بساط / حواشي", "إِبْسَاطْ", "إِبْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("بساط / حواشي", "بِسَاطْ", "بِسَـ..."),
         ),
         "home.kitchen" to mapOf(
             ArabicDialect.LIBYAN to DialectForm("كوجينة", "كُوجِينَهْ", "كُو..."),
@@ -694,7 +694,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("فرشيطة"),
         ),
         "home.knife" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("موس (سكين)", "مُوسْ", "مُو..."),
+            ArabicDialect.LIBYAN to DialectForm("موس", "مُوسْ", "مُو..."),
             ArabicDialect.SAUDI to DialectForm("سكين"),
             ArabicDialect.EGYPTIAN to DialectForm("سكينة"),
             ArabicDialect.SYRIAN to DialectForm("سكين"),
@@ -769,7 +769,7 @@ object DialectCatalog {
             ArabicDialect.LIBYAN to DialectForm("فستان", "فُسْتَانْ", "فُسْـ..."),
         ),
         "clothing.robe" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("روب / قفطان", "رُوبْ", "رُو..."),
+            ArabicDialect.LIBYAN to DialectForm("روب", "رُوبْ", "رُو..."),
         ),
         "clothing.abaya" to mapOf(
             ArabicDialect.LIBYAN to DialectForm("عباية", "عَبَايَهْ", "عَبَا..."),
@@ -793,7 +793,7 @@ object DialectCatalog {
         "clothing.socks" to mapOf(
             ArabicDialect.LIBYAN to DialectForm("شخاشير", "إِشْخَاشِيرْ", "إِشْـ..."),
             ArabicDialect.SAUDI to DialectForm("دلاغات", "دِلَاغَاتْ"),
-            ArabicDialect.EGYPTIAN to DialectForm("شرابات", "شَرَبَاتْ"),
+            ArabicDialect.EGYPTIAN to DialectForm("شرابات", "شَرَابَاتْ"),
             ArabicDialect.SYRIAN to DialectForm("جرابات", "جْرَابَاتْ"),
             ArabicDialect.IRAQI to DialectForm("جواريب", "جْوَارِيبْ"),
             ArabicDialect.TUNISIAN to DialectForm("كلسيطة", "كَلْسِيطَهْ"),
@@ -1018,7 +1018,7 @@ object DialectCatalog {
             ArabicDialect.LIBYAN to DialectForm("نوقف", "نُوقَفْ", "نُو..."),
             ArabicDialect.SAUDI to DialectForm("أوقف"),
             ArabicDialect.EGYPTIAN to DialectForm("أقف"),
-            ArabicDialect.SYRIAN to DialectForm("أوقف"),
+            ArabicDialect.SYRIAN to DialectForm("وقف", "وْقَفْ", "وْ..."),
             ArabicDialect.IRAQI to DialectForm("أوقف"),
             ArabicDialect.TUNISIAN to DialectForm("نوقف"),
             ArabicDialect.MOROCCAN to DialectForm("نوقف"),
