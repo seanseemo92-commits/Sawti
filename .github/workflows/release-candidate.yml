@@ -2,7 +2,7 @@ name: Sawti final APK validation and signing
 
 on:
   push:
-    branches: [feature/quran-full-recitation-cache-20261111, fix/adaptive-prepublish-20261113]
+    branches: [feature/quran-full-recitation-cache-20261111]
   workflow_dispatch:
 
 permissions:
@@ -17,8 +17,7 @@ jobs:
     permissions:
       contents: write
     if: >-
-      (github.ref == 'refs/heads/feature/quran-full-recitation-cache-20261111' ||
-       github.ref == 'refs/heads/fix/adaptive-prepublish-20261113') &&
+      github.ref == 'refs/heads/feature/quran-full-recitation-cache-20261111' &&
       (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deliver-rc]'))
     runs-on: ubuntu-latest
     environment: production-release
