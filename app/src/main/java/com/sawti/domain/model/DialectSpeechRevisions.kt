@@ -2,7 +2,8 @@ package com.sawti.domain.model
 
 /**
  * Runtime-preserved visual and TTS text revisions originally reviewed against the supplied
- * Argon audit of 2026-11-02. Not verified by native speakers or device listening.
+ * Argon audit of 2026-11-02 and the 245-entry written update of 2026-11-15.
+ * Native-speaker review and device TTS listening remain separate pending review gates.
  * Review-only alternatives and explanatory parentheses are intentionally excluded.
  * This is a non-destructive projection: the Room seed and user edits stay unchanged.
  */
@@ -814,6 +815,275 @@ internal object DialectSpeechRevisions {
         "animal.rabbit" to Patch(cue = Field("", "قْنِـ..."))
     )
 
+
+    /** Exact written display and TTS candidates supplied for the 245 outstanding entries.
+     * These are runtime projections, not Room migrations or native/TTS listening approvals.
+     */
+    private data class Completed(val display: String, val speech: String)
+    private val completed: Map<ArabicDialect, Map<String, Completed>> by lazy {
+        mapOf(
+            ArabicDialect.SAUDI to mapOf(
+                "action.stand" to Completed("أقوم", "أَقُومْ"),
+                "body.head" to Completed("راس", "رَاسْ"),
+                "body.leg" to Completed("رجل", "رِجْلْ"),
+                "body.nose" to Completed("خشم", "خَشِمْ"),
+                "clothing.bag" to Completed("شنطة", "شَنْطَة"),
+                "clothing.glasses" to Completed("نظارة", "نَظَّارَة"),
+                "clothing.jacket" to Completed("جاكيت", "جَاكِيتْ"),
+                "clothing.trousers" to Completed("بنطلون", "بَنْطَلُونْ"),
+                "food.pasta" to Completed("مكرونة", "مَكَرُونَة"),
+                "food.rice" to Completed("رز", "رُزّْ"),
+                "food.soup" to Completed("شوربة", "شُورْبَة"),
+                "fruit.watermelon" to Completed("حبحب", "حَبْحَبْ"),
+                "home.pillow" to Completed("مخدة", "مَخَدَّة"),
+                "home.water_bottle" to Completed("قارورة موية", "قَارُورَةُ مَوْيَة"),
+                "home.window" to Completed("شباك", "شُبَّاكْ"),
+                "routine.evening_coffee" to Completed("قهوة المسا", "قَهْوَةُ المَسَا"),
+                "vegetable.cauliflower" to Completed("زهرة", "زَهْرَة"),
+                "vegetable.green_beans" to Completed("فاصوليا خضرا", "فَاصُولْيَا خَضْرَا"),
+                "vegetable.peas" to Completed("بازلا", "بَازِلَّا"),
+                "vegetable.pumpkin" to Completed("قرع", "قَرَعْ"),
+            ),
+            ArabicDialect.IRAQI to mapOf(
+                "action.stand" to Completed("أقوم", "أَقُومْ"),
+                "body.finger" to Completed("إصبع", "إِصْبَعْ"),
+                "body.head" to Completed("راس", "رَاسْ"),
+                "body.leg" to Completed("رجل", "رِجْلْ"),
+                "body.nose" to Completed("خشم", "خَشِمْ"),
+                "clothing.bag" to Completed("جنطة", "جَنْطَة"),
+                "clothing.coat" to Completed("قبوط", "قَبُّوطْ"),
+                "clothing.jacket" to Completed("جاكيت", "جَاكِيتْ"),
+                "clothing.trousers" to Completed("بنطرون", "بَنْطَرُونْ"),
+                "food.rice" to Completed("تمن", "تِمَّنْ"),
+                "food.soup" to Completed("شوربة", "شُورْبَة"),
+                "food.yogurt" to Completed("لبن", "لَبَنْ"),
+                "fruit.watermelon" to Completed("رقي", "رَقِّي"),
+                "home.cup" to Completed("كوب", "كُوبْ"),
+                "home.pillow" to Completed("مخدة", "مَخَدَّة"),
+                "home.teapot" to Completed("قوري", "قُورِي"),
+                "home.water_bottle" to Completed("بطل مي", "بُطُلْ مَيّْ"),
+                "home.window" to Completed("شباك", "شُبَّاكْ"),
+                "routine.evening_coffee" to Completed("قهوة المسا", "قَهْوَةُ المَسَا"),
+                "vegetable.cauliflower" to Completed("قرنابيط", "قَرْنَابِيطْ"),
+                "vegetable.green_beans" to Completed("فاصوليا خضرا", "فَاصُولْيَا خَضْرَا"),
+                "vegetable.potato" to Completed("بتيتة", "بُتِيتَة"),
+                "vegetable.pumpkin" to Completed("قرع", "قَرَعْ"),
+            ),
+            ArabicDialect.SYRIAN to mapOf(
+                "action.pray" to Completed("أصلي", "أَصَلِّي"),
+                "action.read" to Completed("أقرا", "أَقْرَا"),
+                "action.sleep" to Completed("أنام", "أَنَامْ"),
+                "action.stand" to Completed("أقوم", "أَقُومْ"),
+                "body.head" to Completed("راس", "رَاسْ"),
+                "body.leg" to Completed("رجل", "رِجْلْ"),
+                "body.nose" to Completed("منخار", "مَنْخَارْ"),
+                "clothing.bag" to Completed("شنطة", "شَنْطَة"),
+                "clothing.cap" to Completed("طاقية", "طَاقِيَّة"),
+                "clothing.glasses" to Completed("نظارة", "نَظَّارَة"),
+                "clothing.jacket" to Completed("جاكيت", "جَاكِيتْ"),
+                "clothing.trousers" to Completed("بنطلون", "بَنْطَلُونْ"),
+                "food.cheese" to Completed("جبنة", "جِبْنَة"),
+                "food.chicken" to Completed("جاج", "جَاجْ"),
+                "food.rice" to Completed("رز", "رِزّْ"),
+                "food.soup" to Completed("شوربة", "شُورْبَة"),
+                "food.yogurt" to Completed("لبن", "لَبَنْ"),
+                "home.blanket" to Completed("بطانية", "بَطَّانِيَّة"),
+                "home.cup" to Completed("كاسة", "كَاسَة"),
+                "home.pillow" to Completed("مخدة", "مَخَدَّة"),
+                "home.water_bottle" to Completed("قنينة مي", "قَنِّينَةُ مَيّْ"),
+                "home.window" to Completed("شباك", "شُبَّاكْ"),
+                "routine.evening_coffee" to Completed("قهوة المسا", "قَهْوَةُ المَسَا"),
+                "vegetable.cauliflower" to Completed("زهرة", "زَهْرَة"),
+                "vegetable.green_beans" to Completed("فاصوليا خضرا", "فَاصُولْيَا خَضْرَا"),
+                "vegetable.potato" to Completed("بطاطا", "بَطَاطَا"),
+                "vegetable.pumpkin" to Completed("قرع", "قَرَعْ"),
+            ),
+            ArabicDialect.EGYPTIAN to mapOf(
+                "action.read" to Completed("أقرا", "أَقْرَا"),
+                "body.ear" to Completed("ودن", "وِدْنْ"),
+                "body.finger" to Completed("صباع", "صُبَاعْ"),
+                "body.head" to Completed("راس", "رَاسْ"),
+                "body.leg" to Completed("رجل", "رِجْلْ"),
+                "body.nose" to Completed("مناخير", "مَنَاخِيرْ"),
+                "body.tooth" to Completed("سنة", "سِنَّة"),
+                "clothing.bag" to Completed("شنطة", "شَنْطَة"),
+                "clothing.coat" to Completed("بالطو", "بَالْطُو"),
+                "clothing.glasses" to Completed("نضارة", "نَضَّارَة"),
+                "clothing.jacket" to Completed("جاكيت", "جَاكِيتْ"),
+                "clothing.trousers" to Completed("بنطلون", "بَنْطَلُونْ"),
+                "food.cheese" to Completed("جبنة", "جِبْنَة"),
+                "food.chicken" to Completed("فراخ", "فِرَاخْ"),
+                "food.milk" to Completed("لبن", "لَبَنْ"),
+                "food.pasta" to Completed("مكرونة", "مَكَرُونَة"),
+                "food.rice" to Completed("رز", "رُزّْ"),
+                "food.soup" to Completed("شوربة", "شُورْبَة"),
+                "home.cup" to Completed("كوباية", "كُوبَّايَة"),
+                "home.knife" to Completed("سكينة", "سِكِّينَة"),
+                "home.pillow" to Completed("مخدة", "مَخَدَّة"),
+                "home.spoon" to Completed("معلقة", "مَعْلَقَة"),
+                "home.teapot" to Completed("براد", "بَرَّادْ"),
+                "home.water_bottle" to Completed("إزازة مية", "إِزَازَةُ مَيَّة"),
+                "home.window" to Completed("شباك", "شُبَّاكْ"),
+                "routine.evening_coffee" to Completed("قهوة المسا", "قَهْوَةُ المَسَا"),
+                "vegetable.eggplant" to Completed("بتنجان", "بِتِنْجَانْ"),
+                "vegetable.green_beans" to Completed("فاصوليا خضرا", "فَاصُولْيَا خَضْرَا"),
+                "vegetable.pumpkin" to Completed("قرع", "قَرَعْ"),
+            ),
+            ArabicDialect.TUNISIAN to mapOf(
+                "action.dress" to Completed("نلبس", "نِلْبِسْ"),
+                "action.drink" to Completed("نشرب", "نِشْرِبْ"),
+                "action.eat" to Completed("ناكل", "نَاكِلْ"),
+                "action.hear" to Completed("نسمع", "نِسْمَعْ"),
+                "action.laugh" to Completed("نضحك", "نِضْحَكْ"),
+                "action.open" to Completed("نحل", "نْحِلّْ"),
+                "action.pray" to Completed("نصلي", "نْصَلِّي"),
+                "action.read" to Completed("نقرا", "نَقْرَا"),
+                "action.sleep" to Completed("نرقد", "نُرْقُدْ"),
+                "action.stand" to Completed("نوقف", "نُوقَفْ"),
+                "action.walk" to Completed("نمشي", "نِمْشِي"),
+                "action.wash" to Completed("نغسل", "نِغْسِلْ"),
+                "animal.sheep" to Completed("علوش", "عَلُّوشْ"),
+                "body.ear" to Completed("وذن", "وِذْنْ"),
+                "body.finger" to Completed("صبع", "صُبُعْ"),
+                "body.head" to Completed("راس", "رَاسْ"),
+                "body.nose" to Completed("خشم", "خَشِمْ"),
+                "body.tooth" to Completed("سنة", "سِنَّة"),
+                "clothing.bag" to Completed("صاك", "صَاكْ"),
+                "clothing.belt" to Completed("سبتة", "سِبْتَة"),
+                "clothing.coat" to Completed("مانتو", "مَانْتُو"),
+                "clothing.jacket" to Completed("فيستة", "فِيسْتَة"),
+                "food.pasta" to Completed("مقرونة", "مَقْرُونَة"),
+                "food.rice" to Completed("روز", "رُوزْ"),
+                "food.soup" to Completed("شربة", "شُرْبَة"),
+                "food.water" to Completed("ماء", "مَاءْ"),
+                "food.yogurt" to Completed("ياغرت", "يَاغُرْتْ"),
+                "fruit.mandarin" to Completed("مندرينة", "مَنْدَرِينَة"),
+                "fruit.melon" to Completed("بطيخ", "بِطِّيخْ"),
+                "fruit.watermelon" to Completed("دلاّع", "دَلَّاعْ"),
+                "home.blanket" to Completed("فراشية", "فَرَاشِيَّة"),
+                "home.cup" to Completed("كاس", "كَاسْ"),
+                "home.fork" to Completed("فرشيطة", "فُرْشِيطَة"),
+                "home.kitchen" to Completed("كوجينة", "كُوجِينَة"),
+                "home.knife" to Completed("سكينة", "سِكِّينَة"),
+                "home.pillow" to Completed("مخدة", "مَخَدَّة"),
+                "home.spoon" to Completed("مغرفة", "مَغْرَفَة"),
+                "home.teapot" to Completed("براد", "بَرَّادْ"),
+                "home.water_bottle" to Completed("دبوزة ماء", "دَبُّوزَةُ مَاءْ"),
+                "home.window" to Completed("شباك", "شُبَّاكْ"),
+                "routine.evening_coffee" to Completed("قهوة العشية", "قَهْوَةُ العَشِيَّة"),
+                "vegetable.green_beans" to Completed("لوبيا خضرا", "لُوبْيَا خَضْرَا"),
+                "vegetable.parsley" to Completed("معدنوس", "مَعْدَنُوسْ"),
+                "vegetable.potato" to Completed("بطاطا", "بَطَاطَا"),
+                "vegetable.pumpkin" to Completed("قرع", "قَرْعْ"),
+            ),
+            ArabicDialect.ALGERIAN to mapOf(
+                "action.dress" to Completed("نلبس", "نِلْبِسْ"),
+                "action.drink" to Completed("نشرب", "نِشْرُبْ"),
+                "action.eat" to Completed("ناكل", "نَاكُلْ"),
+                "action.hear" to Completed("نسمع", "نِسْمَعْ"),
+                "action.laugh" to Completed("نضحك", "نِضْحَكْ"),
+                "action.open" to Completed("نحل", "نْحِلّْ"),
+                "action.pray" to Completed("نصلي", "نْصَلِّي"),
+                "action.read" to Completed("نقرا", "نَقْرَا"),
+                "action.sleep" to Completed("نرقد", "نُرْقُدْ"),
+                "action.stand" to Completed("نوقف", "نُوقَفْ"),
+                "action.walk" to Completed("نمشي", "نِمْشِي"),
+                "action.wash" to Completed("نغسل", "نِغْسِلْ"),
+                "animal.rabbit" to Completed("أرنب", "أَرْنَبْ"),
+                "body.ear" to Completed("وذن", "وِذْنْ"),
+                "body.finger" to Completed("صبع", "صُبُعْ"),
+                "body.head" to Completed("راس", "رَاسْ"),
+                "body.leg" to Completed("رجل", "رِجْلْ"),
+                "body.nose" to Completed("نيف", "نِيفْ"),
+                "body.tooth" to Completed("سنة", "سِنَّة"),
+                "clothing.bag" to Completed("صاك", "صَاكْ"),
+                "clothing.belt" to Completed("سبتة", "سِبْتَة"),
+                "clothing.coat" to Completed("مانتو", "مَانْتُو"),
+                "clothing.glasses" to Completed("نظارة", "نَظَّارَة"),
+                "clothing.jacket" to Completed("فيستة", "فِيسْتَة"),
+                "food.cheese" to Completed("فرماج", "فُرْمَاجْ"),
+                "food.pasta" to Completed("مقرون", "مَقْرُونْ"),
+                "food.rice" to Completed("روز", "رُوزْ"),
+                "food.soup" to Completed("شربة", "شُرْبَة"),
+                "food.water" to Completed("ماء", "مَاءْ"),
+                "food.yogurt" to Completed("ياغرت", "يَاغُرْتْ"),
+                "fruit.figs" to Completed("كرموس", "كَرْمُوسْ"),
+                "fruit.pear" to Completed("بوعويدة", "بُوعْوِيدَة"),
+                "fruit.watermelon" to Completed("دلاّع", "دَلَّاعْ"),
+                "home.blanket" to Completed("كوفيرتة", "كُوفِيرْتَة"),
+                "home.cup" to Completed("كاس", "كَاسْ"),
+                "home.fork" to Completed("فرشيطة", "فُرْشِيطَة"),
+                "home.kitchen" to Completed("كوزينة", "كُوزِينَة"),
+                "home.knife" to Completed("موس", "مُوسْ"),
+                "home.pillow" to Completed("مخدة", "مَخَدَّة"),
+                "home.spoon" to Completed("مغرف", "مُغْرُفْ"),
+                "home.teapot" to Completed("براد", "بَرَّادْ"),
+                "home.water_bottle" to Completed("قرعة ماء", "قَرْعَةُ مَاءْ"),
+                "home.window" to Completed("طاقة", "طَاقَة"),
+                "routine.evening_coffee" to Completed("قهوة العشية", "قَهْوَةُ العَشِيَّة"),
+                "vegetable.cauliflower" to Completed("شيفلور", "شِيفْلُورْ"),
+                "vegetable.coriander" to Completed("قزبر", "قُزْبُرْ"),
+                "vegetable.green_beans" to Completed("لوبيا خضرا", "لُوبْيَا خَضْرَا"),
+                "vegetable.parsley" to Completed("معدنوس", "مَعْدَنُوسْ"),
+                "vegetable.potato" to Completed("بطاطا", "بَطَاطَا"),
+            ),
+            ArabicDialect.MOROCCAN to mapOf(
+                "action.dress" to Completed("نلبس", "نِلْبَسْ"),
+                "action.drink" to Completed("نشرب", "نِشْرَبْ"),
+                "action.eat" to Completed("ناكل", "نَاكُلْ"),
+                "action.hear" to Completed("نسمع", "نِسْمَعْ"),
+                "action.laugh" to Completed("نضحك", "نِضْحَكْ"),
+                "action.open" to Completed("نحل", "نْحِلّْ"),
+                "action.pray" to Completed("نصلي", "نْصَلِّي"),
+                "action.read" to Completed("نقرا", "نَقْرَا"),
+                "action.sleep" to Completed("ننعس", "نِنْعَسْ"),
+                "action.stand" to Completed("نوقف", "نُوقَفْ"),
+                "action.walk" to Completed("نمشي", "نِمْشِي"),
+                "action.wash" to Completed("نغسل", "نِغْسِلْ"),
+                "animal.cat" to Completed("مش", "مُشّْ"),
+                "animal.rabbit" to Completed("قنينية", "قِنِينِيَّة"),
+                "animal.sheep" to Completed("حولي", "حَوْلِي"),
+                "body.ear" to Completed("وذن", "وِذْنْ"),
+                "body.finger" to Completed("صبع", "صُبَعْ"),
+                "body.head" to Completed("راس", "رَاسْ"),
+                "body.leg" to Completed("رجل", "رِجْلْ"),
+                "body.nose" to Completed("نيف", "نِيفْ"),
+                "clothing.bag" to Completed("صاك", "صَاكْ"),
+                "clothing.cap" to Completed("طاقية", "طَاقِيَّة"),
+                "clothing.coat" to Completed("مانتو", "مَانْتُو"),
+                "clothing.jacket" to Completed("جاكيطة", "جَاكِيطَة"),
+                "food.cheese" to Completed("فرماج", "فُرْمَاجْ"),
+                "food.pasta" to Completed("مقرونية", "مَقْرُونِيَّة"),
+                "food.rice" to Completed("روز", "رُوزْ"),
+                "food.soup" to Completed("حريرة", "حَرِيرَة"),
+                "food.water" to Completed("ماء", "مَاءْ"),
+                "fruit.figs" to Completed("كرموس", "كَرْمُوسْ"),
+                "fruit.mandarin" to Completed("مندرين", "مَنْدَرِينْ"),
+                "fruit.watermelon" to Completed("دلاّح", "دَلَّاحْ"),
+                "home.blanket" to Completed("مانطة", "مَانْطَة"),
+                "home.cup" to Completed("كاس", "كَاسْ"),
+                "home.fork" to Completed("فرشيطة", "فُرْشِيطَة"),
+                "home.kitchen" to Completed("كوزينة", "كُوزِينَة"),
+                "home.knife" to Completed("موس", "مُوسْ"),
+                "home.oven" to Completed("فران", "فَرَّانْ"),
+                "home.pillow" to Completed("مخدة", "مَخَدَّة"),
+                "home.spoon" to Completed("معلقة", "مَعْلَقَة"),
+                "home.teapot" to Completed("براد", "بَرَّادْ"),
+                "home.water_bottle" to Completed("قرعة ماء", "قَرْعَةُ مَاءْ"),
+                "home.window" to Completed("شرجم", "شَرْجَمْ"),
+                "routine.evening_coffee" to Completed("قهوة العشية", "قَهْوَةُ العَشِيَّة"),
+                "vegetable.cauliflower" to Completed("شيفلور", "شِيفْلُورْ"),
+                "vegetable.coriander" to Completed("قزبور", "قَزْبُورْ"),
+                "vegetable.eggplant" to Completed("دنجال", "دَنْجَالْ"),
+                "vegetable.green_beans" to Completed("لوبيا خضرا", "لُوبْيَا خَضْرَا"),
+                "vegetable.parsley" to Completed("معدنوس", "مَعْدَنُوسْ"),
+                "vegetable.peas" to Completed("جلبانة", "جِلْبَانَة"),
+                "vegetable.potato" to Completed("بطاطا", "بَطَاطَا"),
+                "vegetable.pumpkin" to Completed("قرعة حمرا", "قَرْعَةُ حَمْرَا"),
+            ),
+        )
+    }
+
     private val all: Map<ArabicDialect, Map<String, Patch>> by lazy {
         mapOf(
             ArabicDialect.STANDARD to standard(),
@@ -828,7 +1098,11 @@ internal object DialectSpeechRevisions {
         )
     }
 
-    fun hasPatch(dialect: ArabicDialect, key: String) = all[dialect]?.containsKey(key) == true
+    fun hasPatch(dialect: ArabicDialect, key: String) =
+        all[dialect]?.containsKey(key) == true || hasCompletedCandidate(dialect, key)
+
+    fun hasCompletedCandidate(dialect: ArabicDialect, key: String): Boolean =
+        completed[dialect]?.containsKey(key) == true
 
     fun overrideLabel(dialect: ArabicDialect, key: String, text: String): String {
         val choice = all[dialect]?.get(key)?.display
@@ -841,15 +1115,31 @@ internal object DialectSpeechRevisions {
     fun applySpeech(item: WordItem, dialect: ArabicDialect, form: SpeechForm): SpeechForm {
         if (item.categoryId.startsWith("custom_")) return form
         val key = item.semanticKey ?: return form
-        val patch = all[dialect]?.get(key) ?: return form
+        val patch = all[dialect]?.get(key)
+        val approved = completed[dialect]?.get(key)
+        if (patch == null && approved == null) return form
+
         fun protected(flag: Int) = item.customTextFields and flag != 0
-        val revisedDisplay = select(form.displayText, patch.display, protected(CardDetails.LABEL))
-        val revisedSpeech = select(form.speechText, patch.speech,
-            protected(CardDetails.SPEECH) || protected(CardDetails.LABEL))
-        val revisedCue = select(form.phonemicCue, patch.cue,
-            protected(CardDetails.CUE) || protected(CardDetails.SPEECH) || protected(CardDetails.LABEL))
-        val source = if (form.source == SpeechSource.UNVOCALIZED_FALLBACK && revisedSpeech != form.speechText)
-            SpeechSource.EXPLICIT_DIALECT else form.source
+        // Keep personal labels, speech and cues untouched; apply built-in candidates
+        // after legacy written patches so the supplied 245 exact values take priority.
+        val revisedDisplay = if (approved != null && !protected(CardDetails.LABEL))
+            approved.display else select(form.displayText, patch?.display, protected(CardDetails.LABEL))
+        val revisedSpeech = if (approved != null &&
+            !protected(CardDetails.SPEECH) && !protected(CardDetails.LABEL))
+            approved.speech else select(form.speechText, patch?.speech,
+                protected(CardDetails.SPEECH) || protected(CardDetails.LABEL))
+        val revisedCue = if (approved != null &&
+            !protected(CardDetails.CUE) && !protected(CardDetails.SPEECH) &&
+            !protected(CardDetails.LABEL))
+            PhonemicCue.derive(approved.speech) else select(form.phonemicCue, patch?.cue,
+                protected(CardDetails.CUE) || protected(CardDetails.SPEECH) ||
+                    protected(CardDetails.LABEL))
+        val source = if (approved != null &&
+            !protected(CardDetails.SPEECH) && !protected(CardDetails.LABEL))
+            SpeechSource.EXPLICIT_DIALECT
+        else if (form.source == SpeechSource.UNVOCALIZED_FALLBACK &&
+            revisedSpeech != form.speechText) SpeechSource.EXPLICIT_DIALECT
+        else form.source
         return form.copy(displayText = revisedDisplay, speechText = revisedSpeech,
             phonemicCue = revisedCue, source = source)
     }

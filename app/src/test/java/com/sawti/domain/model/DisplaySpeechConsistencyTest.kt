@@ -92,7 +92,7 @@ class DisplaySpeechConsistencyTest {
         MOROCCAN|dish.moroccan.kefta_tajine|طاجين كفتة بالبيض
         MOROCCAN|vegetable.carrot|خيزو
         MOROCCAN|fruit.banana|بنان
-        MOROCCAN|home.water_bottle|قرعة ما
+        MOROCCAN|home.water_bottle|قرعة ماء
         ALGERIAN|family.father|بابا
         ALGERIAN|family.mother|يما
         ALGERIAN|dish.algerian.chakhchoukha|شخشوخة بسكرية
@@ -102,7 +102,7 @@ class DisplaySpeechConsistencyTest {
         ALGERIAN|fruit.banana|بنان
         ALGERIAN|fruit.orange|تشينة
         ALGERIAN|home.carpet|زربية
-        ALGERIAN|home.water_bottle|قرعة ما
+        ALGERIAN|home.water_bottle|قرعة ماء
     """.trimIndent().lines().filter { it.isNotBlank() }
 
     private fun plain(text: String): String = text
