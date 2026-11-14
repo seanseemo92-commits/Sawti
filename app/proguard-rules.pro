@@ -7,3 +7,9 @@
 -keep class com.sawti.domain.model.SpeechRate { *; }
 -keep class com.sawti.domain.model.ArabicDialect { *; }
 -keep class com.sawti.domain.model.TouchDwell { *; }
+
+# Strip verbose/debug tracing from minified Release; retain warnings and errors.
+-assumenosideeffects class android.util.Log {
+    public static int d(...);
+    public static int v(...);
+}

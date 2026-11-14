@@ -75,18 +75,30 @@ class AudioDispatcher(
                 sentenceIndex = piece.pieceIndex,
                 isSpeaking = true,
             )
-            speech.speak(
-                piece.speech,
-                onDone = { if (current == generation) playPiece(position + 1) },
-                onCanceled = { if (current == generation) _playback.value = PlaybackVisual() },
-            )
+            val speakFallback = {
+                if (current == generation) {
+                    speech.speak(
+                        piece.speech,
+                        onDone = { if (current == generation) playPiece(position + 1) },
+                        onCanceled = { if (current == generation) _playback.value = PlaybackVisual() },
+                    )
+                }
+            }
+            val recording = piece.audioPath?.takeIf { File(it).isFile }
+            if (recording != null && player.play(
+                    recording,
+                    onDone = { if (current == generation) playPiece(position + 1) },
+                    onCanceled = { if (current == generation) _playback.value = PlaybackVisual() },
+                    onFailed = { speakFallback() },
+                )) return
+            speakFallback()
         }
         playPiece(0)
     }
 
     fun hint(item: WordItem) {
         stopAll()
-        val cue = item.phonemicCue.ifBlank { PhonemicCue.derive(item.ttsPrompt) }
+        val cue = item.phonemicCue.ifBlank { PhonemicCue.derive(item.speechText.ifBlank { item.ttsPrompt }) }
         speech.speak(PhonemicCue.forSpeech(cue))
     }
 

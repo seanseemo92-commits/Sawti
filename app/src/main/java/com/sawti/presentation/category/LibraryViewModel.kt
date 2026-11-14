@@ -382,7 +382,12 @@ class LibraryViewModel(
         launchSafe { if (canEdit()) repository.clearAudio(itemId) }
     }
     private fun find(id: Long): WordItem? = _uiState.value.categories.firstNotNullOfOrNull { c -> c.items.firstOrNull { it.id == id } }
-    override fun onCleared() { recorder.cancel() }
+    override fun onCleared() {
+        recorder.cancel()
+        voice.stop()
+        highlightJob?.cancel()
+        super.onCleared()
+    }
     class Factory(private val app: Application) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {

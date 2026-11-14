@@ -13,6 +13,9 @@ interface WordRepository {
     /** Categories in display order, each with its items. */
     fun observeCategories(): Flow<List<Category>>
 
+    suspend fun reorderCategories(orderedIds: List<String>)
+    suspend fun reorderWords(orderedIds: List<Long>)
+
     /** Existing v4 tables also store custom categories; never drop their cards on delete. */
     suspend fun addCustomCategory(title: String, palette: Int, sortOrder: Int): String
     suspend fun editCustomCategory(id: String, title: String, palette: Int, sortOrder: Int)

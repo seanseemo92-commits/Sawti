@@ -3,6 +3,7 @@ package com.sawti.data.db
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
@@ -10,6 +11,24 @@ import kotlinx.coroutines.flow.Flow
 interface WordDao {
     @Query("SELECT * FROM categories ORDER BY sortOrder, id")
     fun observeCategories(): Flow<List<CategoryEntity>>
+
+    @Query("UPDATE categories SET sortOrder = :sortOrder WHERE id = :id")
+    suspend fun updateCategorySortOrder(id: String, sortOrder: Int)
+
+    @Query("UPDATE word_items SET sortOrder = :sortOrder WHERE id = :id")
+    suspend fun updateWordSortOrder(id: Long, sortOrder: Int)
+
+    @Transaction
+    suspend fun reorderCategories(orderedIds: List<String>) {
+        require(orderedIds.size == orderedIds.distinct().size) { "Duplicate category IDs" }
+        orderedIds.forEachIndexed { index, id -> updateCategorySortOrder(id, index) }
+    }
+
+    @Transaction
+    suspend fun reorderWords(orderedIds: List<Long>) {
+        require(orderedIds.size == orderedIds.distinct().size) { "Duplicate word IDs" }
+        orderedIds.forEachIndexed { index, id -> updateWordSortOrder(id, index) }
+    }
 
     @Query("SELECT * FROM word_items ORDER BY sortOrder, id")
     fun observeItems(): Flow<List<WordItemEntity>>

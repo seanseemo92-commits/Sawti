@@ -54,18 +54,21 @@ class RoomWordRepository(
                         DialectCatalog.localize(item.toDomain(), settings.dialect)
                     },
                 )
-            }.sortedWith(
-                compareBy<Category> {
-                    // Display-only priority: Quran is the separate full-width hero card,
-                    // then Greetings and Family share the first phone grid row.
-                    when (it.id) {
-                        "greetings" -> 0
-                        CategoryIds.FAMILY -> 1
-                        else -> 2
-                    }
-                }.thenBy { it.sortOrder },
-            )
+            }.sortedWith(compareBy<Category> { it.sortOrder }.thenBy { it.id })
         }
+
+    override suspend fun reorderCategories(orderedIds: List<String>) = db.storage.access {
+        val existing = dao.categoryIds().toSet()
+        require(orderedIds.toSet() == existing && orderedIds.size == existing.size) {
+            "Category ordering must include every category exactly once"
+        }
+        dao.reorderCategories(orderedIds)
+    }
+
+    override suspend fun reorderWords(orderedIds: List<Long>) = db.storage.access {
+        require(orderedIds.isNotEmpty() && orderedIds.size == orderedIds.distinct().size)
+        dao.reorderWords(orderedIds)
+    }
 
     override suspend fun seedOrUpdateDefaults() = db.storage.cleanupIfActive {
         seedOrUpdateDefaultsUnlocked()
