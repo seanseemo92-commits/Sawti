@@ -348,6 +348,26 @@ private fun FlashcardCarousel(items: List<WordItem>, category: Category, palette
                 Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, tint = Color.White)
             }
         }
+        if (state.caregiverMode) {
+            val current = items.getOrNull(pager.currentPage)
+            if (current != null) {
+                Row(Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)) {
+                    IconButton(onClick = {
+                        actions.moveWord(category.id, current.subgroup, current.id, -1)
+                    }, enabled = pager.currentPage > 0, modifier = Modifier.size(48.dp)) {
+                        Icon(Icons.Filled.KeyboardArrowUp,
+                            contentDescription = "نقل بطاقة ${current.displayText} للأعلى")
+                    }
+                    IconButton(onClick = {
+                        actions.moveWord(category.id, current.subgroup, current.id, 1)
+                    }, enabled = pager.currentPage < items.lastIndex, modifier = Modifier.size(48.dp)) {
+                        Icon(Icons.Filled.KeyboardArrowDown,
+                            contentDescription = "نقل بطاقة ${current.displayText} للأسفل")
+                    }
+                }
+            }
+        }
     }
 }
 

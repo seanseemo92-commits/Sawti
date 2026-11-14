@@ -128,7 +128,7 @@ fun HomeScreen(categories: List<Category>, speakingItemId: Long?, onOpen: (Strin
     BoxWithConstraints(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.TopCenter) {
         // Measure the actual window, not the physical display (split-screen / foldables).
-        val columns = homeGridColumnCount(maxWidth.value)
+        val columns = homeGridColumnCount(maxWidth.coerceAtMost(1040.dp).value)
         LazyVerticalGrid(columns = GridCells.Fixed(columns), state = gridState,
             modifier = Modifier.fillMaxHeight().widthIn(max = 1040.dp).fillMaxWidth(),
             contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 32.dp),
