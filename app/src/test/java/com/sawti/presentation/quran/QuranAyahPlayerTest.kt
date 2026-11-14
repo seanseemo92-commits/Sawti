@@ -128,7 +128,7 @@ class QuranAyahPlayerTest {
     }
 
     @Test
-    fun notificationPausesAndResumesTheSameVerseWithoutLosingRepeats() {
+    fun notificationKeepsTheSameVersePlayingWithoutLosingRepeats() {
         val app = RuntimeEnvironment.getApplication() as Application
         val manager = app.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         audio.play(verse, 3)
@@ -137,9 +137,9 @@ class QuranAyahPlayerTest {
         val focusListener = shadowOf(manager).lastAudioFocusRequest.listener
         focusListener.onAudioFocusChange(AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK)
         shadowOf(Looper.getMainLooper()).idle()
-        assertEquals(RecitationPhase.PAUSED, states.last().phase)
+        assertEquals(RecitationPhase.PLAYING, states.last().phase)
         assertEquals(3, states.last().remaining)
-        assertEquals(ShadowMediaPlayer.State.PAUSED, current.state)
+        assertEquals(ShadowMediaPlayer.State.STARTED, current.state)
         focusListener.onAudioFocusChange(AudioManager.AUDIOFOCUS_GAIN)
         shadowOf(Looper.getMainLooper()).idle()
         assertEquals(RecitationPhase.PLAYING, states.last().phase)
@@ -187,7 +187,7 @@ class QuranAyahPlayerTest {
         assertEquals(ShadowMediaPlayer.State.END, current.state)
     }
     @Test
-    fun completeRecitationUsesOneFileAndResumesAfterNotificationThenStopsOnAyahTap() {
+    fun completeRecitationUsesOneFileAndContinuesThroughNotificationThenStopsOnAyahTap() {
         val app = RuntimeEnvironment.getApplication() as Application
         val wholeDirectory = File(app.filesDir, "quran_full_recitations/ar.alafasy")
         wholeDirectory.mkdirs()
@@ -212,7 +212,8 @@ class QuranAyahPlayerTest {
             val listener = shadowOf(manager).lastAudioFocusRequest.listener
             listener.onAudioFocusChange(AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK)
             shadowOf(Looper.getMainLooper()).idle()
-            assertEquals(RecitationPhase.PAUSED, states.last().phase)
+            assertEquals(RecitationPhase.PLAYING, states.last().phase)
+            assertEquals(ShadowMediaPlayer.State.STARTED, playing.state)
             listener.onAudioFocusChange(AudioManager.AUDIOFOCUS_GAIN)
             shadowOf(Looper.getMainLooper()).idle()
             assertEquals(RecitationPhase.PLAYING, states.last().phase)

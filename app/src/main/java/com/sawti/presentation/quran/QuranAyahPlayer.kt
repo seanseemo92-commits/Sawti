@@ -133,18 +133,8 @@ class QuranAyahPlayer(
                                 .onFailure { fail(verse, RecitationFailure.FOCUS) }
                         }
                     },
-                    // Quran is speech: pause for notification sounds so the
-                    // listener never misses part of a verse or repeat.
-                    onDuck = {
-                        if (owns(request) && player === mp && !pausedForFocus) {
-                            runCatching { mp.pause() }
-                                .onSuccess {
-                                    pausedForFocus = true
-                                    publish(verse, RecitationPhase.PAUSED)
-                                }
-                                .onFailure { fail(verse, RecitationFailure.FOCUS) }
-                        }
-                    },
+                    // Recitation continues through short notification chimes.
+                    onDuck = {},
                     onGain = {
                         if (owns(request) && player === mp) {
                             if (pausedForFocus) {
