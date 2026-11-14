@@ -1,6 +1,9 @@
 package com.sawti
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -10,7 +13,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.getValue
-import androidx.core.view.WindowCompat
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sawti.presentation.category.LibraryViewModel
 import com.sawti.presentation.navigation.AppRoot
@@ -34,7 +38,6 @@ class MainActivity : ComponentActivity() {
             statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
         )
-        WindowCompat.setDecorFitsSystemWindows(window, false)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             window.isStatusBarContrastEnforced = false
             window.isNavigationBarContrastEnforced = false
@@ -44,18 +47,20 @@ class MainActivity : ComponentActivity() {
             val startup by app.startup.collectAsStateWithLifecycle()
             if (startup != StartupStatus.READY) {
                 SawtiTheme {
-                    androidx.compose.material3.Surface(modifier = androidx.compose.ui.Modifier.fillMaxSize()) {
+                    androidx.compose.material3.Surface(modifier = Modifier.fillMaxSize()) {
                         androidx.compose.foundation.layout.Column(
+                            modifier = Modifier.fillMaxSize().systemBarsPadding()
+                                .verticalScroll(rememberScrollState()),
                             horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
                             verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
                         ) {
                             if (startup == StartupStatus.RECOVERING) {
                                 androidx.compose.material3.CircularProgressIndicator()
-                                androidx.compose.material3.Text("جارٍ التحقق من البيانات المسترجعة…")
+                                androidx.compose.material3.Text(stringResource(R.string.recovery_checking))
                             } else {
-                                androidx.compose.material3.Text("تعذّر إكمال استرداد البيانات")
+                                androidx.compose.material3.Text(stringResource(R.string.recovery_failed))
                                 androidx.compose.material3.Button(onClick = app::retryRecovery) {
-                                    androidx.compose.material3.Text("إعادة المحاولة")
+                                    androidx.compose.material3.Text(stringResource(R.string.retry))
                                 }
                             }
                         }

@@ -156,7 +156,7 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
                     .padding(horizontal = 16.dp, vertical = 8.dp).heightIn(min = 56.dp)) {
                     Icon(Icons.Filled.Add, contentDescription = null)
                     Spacer(Modifier.size(10.dp))
-                    Text("إضافة بطاقة")
+                    Text(stringResource(R.string.add_card))
                 }
             }
             if (isPeopleGroup && items.isNotEmpty() && state.caregiverMode) {
@@ -197,7 +197,7 @@ private fun SubgroupTabs(subgroups: List<String>, selected: String, palette: Cat
             val on = label == selected
             val tourModifier = when (label) {
                 FamilyRelationships.RELATIVES -> Modifier.spotlightAnchor("family_relatives")
-                "الزوج" -> Modifier.spotlightAnchor("family_people")
+                FamilyRelationships.SPOUSE -> Modifier.spotlightAnchor("family_people")
                 else -> Modifier
             }
             Surface(shape = RoundedCornerShape(22.dp), color = if (on) palette.banner else MaterialTheme.colorScheme.surface,
@@ -222,7 +222,7 @@ private fun ViewModeToggle(mode: ViewMode, palette: CategoryPalette, onChange: (
             listOf(ViewMode.GRID to (Icons.Filled.GridView to R.string.view_grid),
                 ViewMode.FLASHCARD to (Icons.Filled.ViewCarousel to R.string.view_flashcards)).forEach { (m, iconAndLabel) ->
                 val on = m == mode
-                Box(Modifier.size(44.dp).clip(CircleShape).background(if (on) palette.banner else Color.Transparent)
+                Box(Modifier.size(48.dp).clip(CircleShape).background(if (on) palette.banner else Color.Transparent)
                     .selectable(selected = on, role = Role.RadioButton, onClick = { onChange(m) }),
                     contentAlignment = Alignment.Center) {
                     Icon(iconAndLabel.first, contentDescription = stringResource(iconAndLabel.second),
@@ -283,14 +283,14 @@ private fun WordGrid(items: List<WordItem>, category: Category, palette: Categor
                                     enabled = index > 0, modifier = Modifier.size(48.dp),
                                 ) {
                                     Icon(Icons.Filled.KeyboardArrowUp,
-                                        contentDescription = "نقل بطاقة ${item.displayText} للأعلى", tint = Color.White)
+                                        contentDescription = stringResource(R.string.move_card_up, item.displayText), tint = Color.White)
                                 }
                                 IconButton(
                                     onClick = { actions.moveWord(category.id, item.subgroup, item.id, 1) },
                                     enabled = index < items.lastIndex, modifier = Modifier.size(48.dp),
                                 ) {
                                     Icon(Icons.Filled.KeyboardArrowDown,
-                                        contentDescription = "نقل بطاقة ${item.displayText} للأسفل", tint = Color.White)
+                                        contentDescription = stringResource(R.string.move_card_down, item.displayText), tint = Color.White)
                                 }
                             }
                         }
@@ -379,7 +379,7 @@ private fun FlashcardCarousel(items: List<WordItem>, category: Category, palette
                         actions.moveWord(category.id, current.subgroup, current.id, -1)
                     }, enabled = pager.currentPage > 0, modifier = Modifier.size(48.dp)) {
                         Icon(Icons.Filled.KeyboardArrowUp,
-                            contentDescription = "نقل بطاقة ${current.displayText} للأعلى")
+                            contentDescription = stringResource(R.string.move_card_up, current.displayText))
                     }
                     IconButton(onClick = {
                         pendingFollowFromIndex = pager.currentPage
@@ -387,7 +387,7 @@ private fun FlashcardCarousel(items: List<WordItem>, category: Category, palette
                         actions.moveWord(category.id, current.subgroup, current.id, 1)
                     }, enabled = pager.currentPage < items.lastIndex, modifier = Modifier.size(48.dp)) {
                         Icon(Icons.Filled.KeyboardArrowDown,
-                            contentDescription = "نقل بطاقة ${current.displayText} للأسفل")
+                            contentDescription = stringResource(R.string.move_card_down, current.displayText))
                     }
                 }
             }

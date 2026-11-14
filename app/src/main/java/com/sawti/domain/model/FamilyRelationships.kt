@@ -3,8 +3,9 @@ package com.sawti.domain.model
 /** Family relationship vocabulary and fixed person groups; these are not sample people's names. */
 object FamilyRelationships {
     const val RELATIVES = "الأقرباء"
+    const val SPOUSE = "الزوج"
     val tabs: List<String> = listOf(
-        RELATIVES, "الزوج", "الزوجة", "الأبناء", "البنات", "الإخوة", "الأخوات",
+        RELATIVES, SPOUSE, "الزوجة", "الأبناء", "البنات", "الإخوة", "الأخوات",
         "الوالد", "الوالدة", "الأعمام", "العمات", "الأخوال", "الخالات",
         "الأجداد", "الجدات", "أبناء العم", "بنات العم", "أبناء العمة",
         "بنات العمة", "أبناء الخال", "بنات الخال", "أبناء الخالة", "بنات الخالة",
