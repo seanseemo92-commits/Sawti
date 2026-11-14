@@ -22,6 +22,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,6 +40,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -49,6 +52,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -81,14 +85,19 @@ fun PracticeRoute(viewModel: PracticeViewModel) {
 
 @Composable
 fun PracticeScreen(state: PracticeUiState, actions: PracticeActions) {
+    val view = LocalView.current
+    val activeSession = state.ready && !state.finished && state.total > 0
+    DisposableEffect(view, activeSession) {
+        view.keepScreenOn = activeSession
+        onDispose { view.keepScreenOn = false }
+    }
     BoxWithConstraints(Modifier.fillMaxSize()) {
-    val contentHeight = maxOf(maxHeight, 560.dp * LocalDensity.current.fontScale.coerceAtLeast(1f))
     val scrollState = rememberScrollState()
     LaunchedEffect(state.card?.item?.id, state.index, state.exercise, state.finished) {
         scrollState.scrollTo(0)
     }
     Column(Modifier.fillMaxSize().verticalScroll(scrollState)) {
-    Column(Modifier.fillMaxWidth().height(contentHeight).padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally,
+    Column(Modifier.fillMaxWidth().heightIn(min = maxHeight).padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(14.dp)) {
         ExerciseSwitch(state.exercise, actions::setExercise)
         when {
@@ -195,10 +204,32 @@ private fun ChoiceContent(state: PracticeUiState, actions: PracticeActions) {
         ActionPill(label = stringResource(R.string.choice_replay), icon = Icons.AutoMirrored.Filled.VolumeUp,
             color = AppBarBlue, onClick = actions::replayQuestion)
         Text(stringResource(R.string.choice_instruction), fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-        Row(Modifier.weight(1f).fillMaxWidth().padding(bottom = 8.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            state.choices.forEach { choice ->
-                ChoiceCard(choice = choice, isTarget = choice.item.id == card.item.id, state = state,
-                    onChoose = actions::choose, modifier = Modifier.weight(1f).fillMaxHeight())
+        BoxWithConstraints(Modifier.weight(1f).fillMaxWidth().padding(bottom = 8.dp),
+            contentAlignment = Alignment.TopCenter) {
+            val narrow = maxWidth < 380.dp || LocalDensity.current.fontScale >= 1.5f
+            if (narrow) {
+                val cardWidth = ((maxWidth - 12.dp) / 2).coerceAtMost(220.dp)
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    maxItemsInEachRow = 2,
+                ) {
+                    state.choices.forEach { choice ->
+                        ChoiceCard(choice = choice, isTarget = choice.item.id == card.item.id,
+                            state = state, onChoose = actions::choose,
+                            modifier = Modifier.width(cardWidth).heightIn(min = 160.dp).height(185.dp))
+                    }
+                }
+            } else {
+                Row(Modifier.fillMaxHeight().widthIn(max = 960.dp).fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    state.choices.forEach { choice ->
+                        ChoiceCard(choice = choice, isTarget = choice.item.id == card.item.id,
+                            state = state, onChoose = actions::choose,
+                            modifier = Modifier.weight(1f).fillMaxHeight())
+                    }
+                }
             }
         }
     }

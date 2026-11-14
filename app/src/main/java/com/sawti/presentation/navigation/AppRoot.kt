@@ -253,6 +253,8 @@ fun AppRoot(library: LibraryViewModel, practice: PracticeViewModel, progress: Pr
                         isLoading = state.isLoadingCategories,
                         loadError = state.categoryLoadError,
                         retryEnabled = !backupLocked,
+                        caregiverMode = state.caregiverMode,
+                        onMoveCategory = { id, delta -> if (!navigationLocked()) library.moveCategory(id, delta) },
                         tourTarget = if (activeTour == TourGuide.HOME) currentTourStep?.target else null,
                     )
                 }

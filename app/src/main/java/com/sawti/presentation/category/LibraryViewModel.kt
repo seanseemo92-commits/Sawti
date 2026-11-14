@@ -66,6 +66,8 @@ interface LibraryActions {
     fun addCustomCard(categoryId: String, title: String, spoken: String)
     fun moveCardToCustomCategory(id: Long, destinationId: String)
     fun deleteCustomCard(id: Long)
+    fun moveCategory(id: String, delta: Int)
+    fun moveWord(categoryId: String, subgroup: String, itemId: Long, delta: Int)
     fun onSpeakAgain(item: WordItem)
     fun closePreview()
     fun closeFocus()
@@ -138,6 +140,27 @@ class LibraryViewModel(
         }
     }
     fun toggleCaregiver() = caregiver.toggle()
+
+    override fun moveCategory(id: String, delta: Int) {
+        if (!canEdit()) return
+        val ids = _uiState.value.categories.map { it.id }.toMutableList()
+        val index = ids.indexOf(id)
+        val target = index + delta
+        if (index < 0 || target !in ids.indices) return
+        java.util.Collections.swap(ids, index, target)
+        launchSafe { if (canEdit()) repository.reorderCategories(ids) }
+    }
+
+    override fun moveWord(categoryId: String, subgroup: String, itemId: Long, delta: Int) {
+        if (!canEdit()) return
+        val category = _uiState.value.categories.firstOrNull { it.id == categoryId } ?: return
+        val ids = category.items.filter { it.subgroup == subgroup }.map { it.id }.toMutableList()
+        val index = ids.indexOf(itemId)
+        val target = index + delta
+        if (index < 0 || target !in ids.indices) return
+        java.util.Collections.swap(ids, index, target)
+        launchSafe { if (canEdit()) repository.reorderWords(ids) }
+    }
     private fun canEdit(): Boolean = caregiver.enabled.value
     fun onAppBackgrounded() {
         recorder.cancel()

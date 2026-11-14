@@ -41,8 +41,11 @@ import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.ViewCarousel
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
@@ -263,13 +266,34 @@ private fun WordGrid(items: List<WordItem>, category: Category, palette: Categor
             horizontalArrangement = Arrangement.spacedBy(14.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
             itemsIndexed(items, key = { _, item -> item.id }) { index, item ->
                 StaggeredCascade(key = "${category.id}:${item.id}", row = index / columns, modifier = Modifier.fillMaxWidth()) {
-                    WordCard(item = item, palette = palette, crop = category.previewOnTap,
-                        isActive = state.activeItemId == item.id,
-                        isSpeaking = state.playbackVisual.isSpeaking && state.playbackVisual.activeWordId == item.id,
-                        caregiverMode = state.caregiverMode,
-                        onClick = { actions.onItemTapped(item, flashcard = false) },
-                        onLongClick = { actions.onItemLongPressed(item) }, onHint = { actions.onHint(item) },
-                        cardHeight = cardHeights[index])
+                    Box(Modifier.fillMaxWidth()) {
+                        WordCard(item = item, palette = palette, crop = category.previewOnTap,
+                            isActive = state.activeItemId == item.id,
+                            isSpeaking = state.playbackVisual.isSpeaking && state.playbackVisual.activeWordId == item.id,
+                            caregiverMode = state.caregiverMode,
+                            onClick = { actions.onItemTapped(item, flashcard = false) },
+                            onLongClick = { actions.onItemLongPressed(item) }, onHint = { actions.onHint(item) },
+                            cardHeight = cardHeights[index])
+                        if (state.caregiverMode) {
+                            Row(Modifier.align(Alignment.TopStart)
+                                .background(Color(0xDD0F172A), RoundedCornerShape(12.dp))) {
+                                IconButton(
+                                    onClick = { actions.moveWord(category.id, item.subgroup, item.id, -1) },
+                                    enabled = index > 0, modifier = Modifier.size(48.dp),
+                                ) {
+                                    Icon(Icons.Filled.KeyboardArrowUp,
+                                        contentDescription = "نقل بطاقة ${item.displayText} للأعلى", tint = Color.White)
+                                }
+                                IconButton(
+                                    onClick = { actions.moveWord(category.id, item.subgroup, item.id, 1) },
+                                    enabled = index < items.lastIndex, modifier = Modifier.size(48.dp),
+                                ) {
+                                    Icon(Icons.Filled.KeyboardArrowDown,
+                                        contentDescription = "نقل بطاقة ${item.displayText} للأسفل", tint = Color.White)
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

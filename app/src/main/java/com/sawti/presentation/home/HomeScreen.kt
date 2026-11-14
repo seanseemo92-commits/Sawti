@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -32,9 +33,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.MenuBook
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -50,6 +54,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -84,7 +91,10 @@ private val HomeCaptionStyle = TextStyle(
 fun HomeScreen(categories: List<Category>, speakingItemId: Long?, onOpen: (String) -> Unit,
     onOpenQuran: () -> Unit,
     onRetry: () -> Unit = {}, isLoading: Boolean = true, loadError: String? = null, retryEnabled: Boolean = true,
-    tourTarget: String? = null) {
+    tourTarget: String? = null,
+    caregiverMode: Boolean = false,
+    onMoveCategory: (String, Int) -> Unit = { _, _ -> },
+) {
     if (categories.isEmpty()) {
         Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(24.dp),
             contentAlignment = Alignment.Center) {
@@ -115,10 +125,12 @@ fun HomeScreen(categories: List<Category>, speakingItemId: Long?, onOpen: (Strin
         }
         if (scrollIndex != null) gridState.animateScrollToItem(scrollIndex)
     }
-    BoxWithConstraints(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.TopCenter) {
         // Measure the actual window, not the physical display (split-screen / foldables).
         val columns = homeGridColumnCount(maxWidth.value)
-        LazyVerticalGrid(columns = GridCells.Fixed(columns), state = gridState, modifier = Modifier.fillMaxSize(),
+        LazyVerticalGrid(columns = GridCells.Fixed(columns), state = gridState,
+            modifier = Modifier.fillMaxHeight().widthIn(max = 1040.dp).fillMaxWidth(),
             contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 32.dp),
             horizontalArrangement = Arrangement.spacedBy(18.dp), verticalArrangement = Arrangement.spacedBy(18.dp)) {
             item(key = "quran-feature", span = { GridItemSpan(columns) }) {
@@ -128,9 +140,26 @@ fun HomeScreen(categories: List<Category>, speakingItemId: Long?, onOpen: (Strin
             }
             itemsIndexed(categories, key = { _, category -> category.id }) { index, category ->
                 StaggeredCascade(row = (index + 2) / columns, modifier = Modifier.fillMaxWidth()) {
-                    LuxuryCategoryCard(category = category,
-                        isSpeaking = speakingItemId != null && category.items.any { it.id == speakingItemId },
-                        onClick = { onOpen(category.id) })
+                    Box(Modifier.fillMaxWidth()) {
+                        LuxuryCategoryCard(category = category,
+                            isSpeaking = speakingItemId != null && category.items.any { it.id == speakingItemId },
+                            onClick = { onOpen(category.id) })
+                        if (caregiverMode) {
+                            Row(Modifier.align(Alignment.TopEnd)
+                                .background(Color(0xDD0F172A), RoundedCornerShape(12.dp))) {
+                                IconButton(onClick = { onMoveCategory(category.id, -1) },
+                                    enabled = index > 0, modifier = Modifier.size(48.dp)) {
+                                    Icon(Icons.Filled.KeyboardArrowUp,
+                                        contentDescription = "نقل قسم ${category.title} للأعلى", tint = Color.White)
+                                }
+                                IconButton(onClick = { onMoveCategory(category.id, 1) },
+                                    enabled = index < categories.lastIndex, modifier = Modifier.size(48.dp)) {
+                                    Icon(Icons.Filled.KeyboardArrowDown,
+                                        contentDescription = "نقل قسم ${category.title} للأسفل", tint = Color.White)
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -149,7 +178,9 @@ private fun QuranHeroCard(onClick: () -> Unit) {
     // One image-backed card, like the other Sawti categories. The Quran artwork
     // is only a photo; all Arabic copy stays native, legible and accessible.
     Surface(
-        modifier = Modifier.fillMaxWidth().spotlightAnchor("home_quran").clip(CardRadius)
+        modifier = Modifier.fillMaxWidth().semantics(mergeDescendants = true) {
+                contentDescription = "القرآن الكريم"
+            }.spotlightAnchor("home_quran").clip(CardRadius)
             .bounceClick(onClick = onClick, accent = gold),
         shape = CardRadius,
         color = green,
@@ -258,7 +289,11 @@ private fun LuxuryCategoryCard(category: Category, isSpeaking: Boolean, onClick:
         ).size.height
     }
     val cardHeight = homeCardHeightDp(maxWidth.value, captionHeightPx / density.density).dp
-    Box(modifier = Modifier.fillMaxWidth().height(cardHeight).spotlightAnchor("home_${category.id}").then(
+    Box(modifier = Modifier.fillMaxWidth().height(cardHeight)
+        .semantics(mergeDescendants = true) {
+            contentDescription = category.title
+            if (isSpeaking) stateDescription = "جاري النطق"
+        }.spotlightAnchor("home_${category.id}").then(
         if (isSpeaking && !performance) Modifier.drawBehind {
             drawCircle(brush = Brush.radialGradient(
                 colors = listOf(bannerColor.copy(alpha = auraGlow * 0.39f), bannerColor.copy(alpha = 0.12f), Color.Transparent),

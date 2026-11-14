@@ -35,6 +35,8 @@ class RoomWordRepository(
     private val dao = db.wordDao()
     private val filesDir = context.applicationContext.filesDir
 
+    private val seedSortOrder = WordSeed.categoryEntities().associate { it.id to it.sortOrder }
+
     override fun observeCategories(): Flow<List<Category>> =
         combine(dao.observeCategories(), dao.observeItems(), settingsRepository.state) { categories, items, settings ->
             val byCategory = items.groupBy { it.categoryId }
@@ -54,7 +56,22 @@ class RoomWordRepository(
                         DialectCatalog.localize(item.toDomain(), settings.dialect)
                     },
                 )
-            }.sortedWith(compareBy<Category> { it.sortOrder }.thenBy { it.id })
+            }.let { mapped ->
+                // Preserve the old Greetings/Family launch order until the caregiver
+                // explicitly saves a new sequential sort order.
+                val legacyOrder = categories.all {
+                    seedSortOrder[it.id] == null || seedSortOrder[it.id] == it.sortOrder
+                }
+                if (legacyOrder) mapped.sortedWith(
+                    compareBy<Category> {
+                        when (it.id) {
+                            "greetings" -> 0
+                            CategoryIds.FAMILY -> 1
+                            else -> 2
+                        }
+                    }.thenBy { it.sortOrder },
+                ) else mapped.sortedWith(compareBy<Category> { it.sortOrder }.thenBy { it.id })
+            }
         }
 
     override suspend fun reorderCategories(orderedIds: List<String>) = db.storage.access {
