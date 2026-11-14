@@ -25,24 +25,36 @@ class AudioDispatcher(
     private val _playback = MutableStateFlow(PlaybackVisual())
     val playback: StateFlow<PlaybackVisual> = _playback.asStateFlow()
     private var generation = 0L
+    // Cancel Quran downloads that have not yet acquired audio focus when AAC starts.
+    private var quranStopper: (() -> Unit)? = null
+
+    fun registerQuranStopper(stopper: () -> Unit) {
+        quranStopper = stopper
+    }
+
+    fun unregisterQuranStopper(stopper: () -> Unit) {
+        if (quranStopper === stopper) quranStopper = null
+    }
 
     /** Main tap: caregiver recording when available, TTS otherwise. */
     fun play(item: WordItem) {
         stopAll()
         val current = generation
         val recording = item.audioPath?.takeIf { File(it).exists() }
-        if (recording != null && player.play(recording, onDone = {
-                if (current == generation) _playback.value = PlaybackVisual()
-            })) {
+        fun speakFallback() {
+            if (current != generation) return
+            _playback.value = PlaybackVisual(activeWordId = item.id, isSpeaking = true)
+            speech.speak(item.speechText,
+                onDone = { if (current == generation) _playback.value = PlaybackVisual() })
+        }
+        if (recording != null && player.play(recording,
+                onDone = { if (current == generation) _playback.value = PlaybackVisual() },
+                onFailed = { speakFallback() })) {
             if (current == generation) _playback.value =
                 PlaybackVisual(activeWordId = item.id, isSpeaking = true)
             return
         }
-        _playback.value = PlaybackVisual(activeWordId = item.id, isSpeaking = true)
-        speech.speak(
-            item.speechText,
-            onDone = { if (current == generation) _playback.value = PlaybackVisual() },
-        )
+        speakFallback()
     }
 
     /** Sentence-strip playback is independent of the retired card hint feature. */
@@ -63,18 +75,30 @@ class AudioDispatcher(
                 sentenceIndex = piece.pieceIndex,
                 isSpeaking = true,
             )
-            speech.speak(
-                piece.speech,
-                onDone = { if (current == generation) playPiece(position + 1) },
-                onCanceled = { if (current == generation) _playback.value = PlaybackVisual() },
-            )
+            val speakFallback = {
+                if (current == generation) {
+                    speech.speak(
+                        piece.speech,
+                        onDone = { if (current == generation) playPiece(position + 1) },
+                        onCanceled = { if (current == generation) _playback.value = PlaybackVisual() },
+                    )
+                }
+            }
+            val recording = piece.audioPath?.takeIf { File(it).isFile }
+            if (recording != null && player.play(
+                    recording,
+                    onDone = { if (current == generation) playPiece(position + 1) },
+                    onCanceled = { if (current == generation) _playback.value = PlaybackVisual() },
+                    onFailed = { speakFallback() },
+                )) return
+            speakFallback()
         }
         playPiece(0)
     }
 
     fun hint(item: WordItem) {
         stopAll()
-        val cue = item.phonemicCue.ifBlank { PhonemicCue.derive(item.ttsPrompt) }
+        val cue = item.phonemicCue.ifBlank { PhonemicCue.derive(item.speechText.ifBlank { item.ttsPrompt }) }
         speech.speak(PhonemicCue.forSpeech(cue))
     }
 
@@ -87,10 +111,17 @@ class AudioDispatcher(
         return player.play(path)
     }
     fun stop() = stopAll()
-    private fun stopAll() {
+
+    /** Stop AAC before Quran starts without canceling the Quran request itself. */
+    fun stopAac() {
         ++generation
         _playback.value = PlaybackVisual()
         speech.stop()
         player.stop()
+    }
+
+    private fun stopAll() {
+        quranStopper?.invoke()
+        stopAac()
     }
 }

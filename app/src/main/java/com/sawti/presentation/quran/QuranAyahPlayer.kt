@@ -112,6 +112,7 @@ class QuranAyahPlayer(
         if (!owns(request)) return
         val candidate = MediaPlayer()
         player = candidate
+        var restartAfterSeek = false
         try {
             candidate.setAudioAttributes(
                 AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
@@ -169,6 +170,14 @@ class QuranAyahPlayer(
                     recoverDecode(verse, request, attempt)
                 }
             }
+            candidate.setOnSeekCompleteListener { mp ->
+                if (mp !== player || !owns(request) || !restartAfterSeek) return@setOnSeekCompleteListener
+                restartAfterSeek = false
+                runCatching {
+                    mp.start()
+                    publish(verse, RecitationPhase.PLAYING)
+                }.onFailure { recoverDecode(verse, request, attempt) }
+            }
             candidate.setOnCompletionListener { mp ->
                 if (mp !== player || !owns(request)) return@setOnCompletionListener
                 playsLeft--
@@ -178,9 +187,9 @@ class QuranAyahPlayer(
                         // position so the verse highlight doesn't remain on the
                         // last ayah while audio starts over from the ta'awwudh.
                         fullPositionMs = 0
+                        restartAfterSeek = true
+                        publish(verse, RecitationPhase.BUFFERING)
                         mp.seekTo(0)
-                        mp.start()
-                        publish(verse, RecitationPhase.PLAYING)
                     } catch (_: Exception) {
                         recoverDecode(verse, request, attempt)
                     }

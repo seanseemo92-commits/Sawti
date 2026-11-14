@@ -23,10 +23,10 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '21'
       - uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.9'
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
       - name: Diagnose ${{ matrix.variant }}
         env:
           BUILD_TASKS: ${{ matrix.tasks }}
@@ -34,7 +34,7 @@ jobs:
         run: |
           set -uo pipefail
           mkdir -p diagnostics
-          gradle --no-daemon --console=plain --stacktrace $BUILD_TASKS 2>&1 | tee diagnostics/build.log
+          ./gradlew --no-daemon --console=plain --stacktrace $BUILD_TASKS 2>&1 | tee diagnostics/build.log
           status=${PIPESTATUS[0]}
           {
             echo '## Build diagnosis: ${{ matrix.variant }}'

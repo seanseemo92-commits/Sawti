@@ -125,7 +125,7 @@ internal class QuranFullAudioCache(
                 // stitched clips or from an unverified alternate edition.
                 return@withLock obtainBaqarahEnding(requireNotNull(QuranFullSources.baqarahSpec(reciter)),file)
             }
-            val part = File.createTempFile("surah_${surah.selectionId}_", ".part", audioDir)
+            val part = File.createTempFile("surah_${surah.selectionId}_", ".tmp", audioDir)
             try {
                 var lastFailure: Exception? = null
                 for (source in sources) {
@@ -163,7 +163,7 @@ internal class QuranFullAudioCache(
                         }
                         currentCoroutineContext().ensureActive()
                         if (!QuranMp3.isPlayable(part)) throw IOException("Invalid full recitation MP3")
-                        if (file.exists() && !file.delete()) throw IOException("Unable to replace recording")
+                        // Do not remove the previous file before publishing this validated MP3.
                         if (!part.renameTo(file)) throw IOException("Unable to persist full recording")
                         return@withLock file
                     } catch (cancelled: CancellationException) {
@@ -251,7 +251,7 @@ internal class QuranFullAudioCache(
             if (clipDuration !in (expected-1500L)..(expected+16_000L))
                 throw IOException("Cropped final verses mismatch timing")
             currentCoroutineContext().ensureActive()
-            if (saved.exists() && !saved.delete()) throw IOException("Cannot overwrite damaged ending")
+            // The verified crop replaces the old clip in one same-directory rename.
             if (!clipped.renameTo(saved)) throw IOException("Unable to cache ending MP3")
             // Now that the corrected MP3 is safely saved, reclaim the obsolete
             // cached clip containing the trailing word of 2:284.

@@ -25,6 +25,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -40,8 +46,25 @@ import com.sawti.presentation.theme.RecordRed
 fun VoiceRecordingSection(
     hasRecording: Boolean, isRecording: Boolean, onStart: () -> Unit, onStop: () -> Unit,
     onPlay: () -> Unit, onDelete: () -> Unit, onPickFile: (Uri) -> Unit = {},
+    onInterrupted: () -> Unit = onStop,
 ) {
     val context = LocalContext.current
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val latestInterrupt by rememberUpdatedState(onInterrupted)
+    DisposableEffect(lifecycle, isRecording) {
+        if (isRecording) {
+            val observer = LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_PAUSE || event == Lifecycle.Event.ON_STOP) {
+                    latestInterrupt()
+                }
+            }
+            lifecycle.addObserver(observer)
+            onDispose {
+                lifecycle.removeObserver(observer)
+                latestInterrupt()
+            }
+        } else onDispose {}
+    }
     val micPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         if (granted) onStart()
         else Toast.makeText(context, R.string.mic_permission_needed, Toast.LENGTH_LONG).show()

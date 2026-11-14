@@ -1194,7 +1194,7 @@ object DialectCatalog {
     fun text(semanticKey: String, dialect: ArabicDialect, fallback: String): String {
         val original = if (dialect == ArabicDialect.STANDARD) fallback
             else words[semanticKey]?.get(dialect)?.displayText ?: fallback
-        return ArgonAuditOverrides.overrideLabel(dialect, semanticKey, original)
+        return DialectSpeechRevisions.overrideLabel(dialect, semanticKey, original)
     }
 
     fun localize(value: WordItem, dialect: ArabicDialect): WordItem {
@@ -1213,7 +1213,7 @@ object DialectCatalog {
                 else regional?.sentencePrompt ?: TransportCatalog.sentencePrompt(key, dialect) ?: item.sentencePrompt,
             sourceDetails = CardDetails.from(item),
         )
-        val revised = ArgonAuditOverrides.applySentence(item, dialect, projected)
+        val revised = DialectSpeechRevisions.applySentence(item, dialect, projected)
         return if (revised.copy(sourceDetails = null) == item) item else revised
     }
 }

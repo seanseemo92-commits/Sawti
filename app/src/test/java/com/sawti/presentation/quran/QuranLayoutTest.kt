@@ -161,4 +161,20 @@ class QuranLayoutTest {
         card.performTouchInput { down(center); advanceEventTime(600); up() }
         compose.runOnIdle { assertEquals(1, taps) }
     }
+
+    @Test @Config(sdk = [36], qualifiers = "w320dp-h640dp")
+    fun android16CompactQuranRetainsReadableVerse() {
+        show(ThemeMode.LIGHT, large = true)
+        // On 320dp / 2x fonts, reciter settings extend past the viewport.
+        // Scroll the LazyColumn itself so the verse is composed before querying it.
+        compose.onNodeWithTag("quran-content").performScrollToIndex(2)
+        compose.onNodeWithTag("ayah-6200").assertIsDisplayed()
+    }
+
+    @Test @Config(sdk = [36], qualifiers = "w840dp-h1100dp")
+    fun android16TabletQuranRetainsFullPlaybackControl() {
+        show(ThemeMode.DARK, large = true)
+        compose.onNodeWithTag("quran-full-play").performScrollTo().assertIsDisplayed()
+    }
+
 }

@@ -25,10 +25,10 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '21'
       - uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.9'
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
       - name: Read canonical release version
         run: python3 scripts/verify_release.py
       - name: Verify bundled Quran assets before signing
@@ -65,7 +65,7 @@ jobs:
           echo "::add-mask::$STORE_PASSWORD"
           echo "::add-mask::$KEY_PASSWORD"
       - name: Build signed Release APK and AAB
-        run: gradle --no-daemon :app:assembleRelease :app:bundleRelease :app:testDebugUnitTest :app:lintRelease
+        run: ./gradlew --no-daemon :app:assembleRelease :app:bundleRelease :app:testDebugUnitTest :app:lintRelease
       - name: Verify identity, version, publisher certificate and release files
         shell: bash
         run: |

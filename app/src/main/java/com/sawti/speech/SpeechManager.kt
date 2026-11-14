@@ -277,6 +277,19 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
         canceled?.invoke()
     }
 
+    /** Release the engine and pending callbacks when the owning application is disposed. */
+    fun shutdown() {
+        stop()
+        pending = null
+        pendingCancel = null
+        onSpeechStart = null
+        onSpeechDone = null
+        onSpeechCanceled = null
+        runCatching { tts?.shutdown() }
+        tts = null
+        ready = false
+    }
+
     private fun finishUtterance(completedId: String?, failed: Boolean = false, canceled: Boolean = false) {
         main.post {
             if (completedId != null && completedId == utteranceId) {

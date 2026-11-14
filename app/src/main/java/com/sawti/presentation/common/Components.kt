@@ -2,6 +2,7 @@
 
 package com.sawti.presentation.common
 
+import android.os.Build
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -67,6 +68,7 @@ import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
@@ -109,6 +111,14 @@ import java.io.File
 import kotlinx.coroutines.delay
 
 val LocalTouchDwell = staticCompositionLocalOf { TouchDwell.OFF }
+/** Respect the app's haptics provider, with a platform-supported pulse on API 24–26. */
+fun HapticFeedback.performCompatTap() {
+    performHapticFeedback(
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) HapticFeedbackType.TextHandleMove
+        else HapticFeedbackType.LongPress
+    )
+}
+
 const val CardImageStageFraction = 0.62f
 private const val CascadeStepMillis = 35L
 private const val CascadeMaxRows = 10
@@ -119,6 +129,7 @@ fun AdultAccentBar(color: Color) { Box(Modifier.fillMaxWidth().height(3.dp).back
 fun Modifier.bounceClick(onLongClick: (() -> Unit)? = null, onClick: () -> Unit, accent: Color? = null,
     interactionSource: MutableInteractionSource? = null): Modifier = composed {
     val haptic = LocalHapticFeedback.current
+    val currentHaptic by rememberUpdatedState(haptic)
     val dwell = LocalTouchDwell.current
     val currentClick by rememberUpdatedState(onClick)
     val currentLongClick by rememberUpdatedState(onLongClick)
@@ -133,8 +144,8 @@ fun Modifier.bounceClick(onLongClick: (() -> Unit)? = null, onClick: () -> Unit,
     if (dwell == TouchDwell.OFF) {
         base.combinedClickable(role = Role.Button, interactionSource = source,
             indication = accent?.let { ripple(color = it) },
-            onLongClick = onLongClick?.let { long -> { haptic.performHapticFeedback(HapticFeedbackType.LongPress); long() } },
-            onClick = { haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove); currentClick() })
+            onLongClick = onLongClick?.let { long -> { currentHaptic.performHapticFeedback(HapticFeedbackType.LongPress); long() } },
+            onClick = { currentHaptic.performCompatTap(); currentClick() })
     } else {
         base.semantics(mergeDescendants = true) {
             role = Role.Button
@@ -159,10 +170,10 @@ fun Modifier.bounceClick(onLongClick: (() -> Unit)? = null, onClick: () -> Unit,
                                 change.consume()
                                 val longAction = currentLongClick
                                 if (longAction != null && elapsed >= maxOf(900L, dwell.millis + 500L)) {
-                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    currentHaptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                     longAction()
                                 } else {
-                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                    currentHaptic.performCompatTap()
                                     currentClick()
                                 }
                             }

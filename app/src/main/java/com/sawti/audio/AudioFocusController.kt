@@ -21,6 +21,7 @@ class AudioFocusController(context: Context) {
     private val leases = FocusLeaseTracker()
     private var activeRequest: AudioFocusRequest? = null
     private var activeListener: AudioManager.OnAudioFocusChangeListener? = null
+    private var activeOwnerStop: (() -> Unit)? = null
 
     fun acquire(
         onLost: () -> Unit,
@@ -28,7 +29,11 @@ class AudioFocusController(context: Context) {
         onDuck: () -> Unit = onTransientLoss,
         onGain: () -> Unit = {},
     ): Long? = synchronized(lock) {
+        // An internal focus transfer does not trigger Android's LOSS callback.
+        // Retire the previous owner before allowing any overlapping player to start.
+        val previousOwnerStop = activeOwnerStop
         clearCurrent()
+        runCatching { previousOwnerStop?.invoke() }
         val token = leases.next()
         val listener = AudioManager.OnAudioFocusChangeListener { state ->
             val callback = when (state) {
@@ -47,6 +52,7 @@ class AudioFocusController(context: Context) {
             }
         }
         activeListener = listener
+        activeOwnerStop = onLost
         // Android may reject focus while a call or another exclusive session is active.
         // Some OEMs throw instead of returning FAILED: never crash or start without focus.
         val result = runCatching {
@@ -84,6 +90,7 @@ class AudioFocusController(context: Context) {
         val listener = activeListener
         val request = activeRequest
         activeListener = null
+        activeOwnerStop = null
         activeRequest = null
         if (listener != null) {
             runCatching {

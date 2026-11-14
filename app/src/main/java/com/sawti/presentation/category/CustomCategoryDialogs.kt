@@ -122,7 +122,8 @@ fun AddCustomWordDialog(
         onDismissRequest = onDismiss,
         title = { Text("إضافة بطاقة إلى ${categoryTitle}") },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 OutlinedTextField(value = text, onValueChange = { text = it.take(100) },
                     label = { Text("نص البطاقة") }, modifier = Modifier.fillMaxWidth())
                 OutlinedTextField(value = spoken, onValueChange = { spoken = it.take(250) },

@@ -35,6 +35,8 @@ class RoomWordRepository(
     private val dao = db.wordDao()
     private val filesDir = context.applicationContext.filesDir
 
+    private val seedSortOrder = WordSeed.categoryEntities().associate { it.id to it.sortOrder }
+
     override fun observeCategories(): Flow<List<Category>> =
         combine(dao.observeCategories(), dao.observeItems(), settingsRepository.state) { categories, items, settings ->
             val byCategory = items.groupBy { it.categoryId }
@@ -54,18 +56,36 @@ class RoomWordRepository(
                         DialectCatalog.localize(item.toDomain(), settings.dialect)
                     },
                 )
-            }.sortedWith(
-                compareBy<Category> {
-                    // Display-only priority: Quran is the separate full-width hero card,
-                    // then Greetings and Family share the first phone grid row.
-                    when (it.id) {
-                        "greetings" -> 0
-                        CategoryIds.FAMILY -> 1
-                        else -> 2
-                    }
-                }.thenBy { it.sortOrder },
-            )
+            }.let { mapped ->
+                // Preserve the old Greetings/Family launch order until the caregiver
+                // explicitly saves a new sequential sort order.
+                val legacyOrder = categories.all {
+                    seedSortOrder[it.id] == null || seedSortOrder[it.id] == it.sortOrder
+                }
+                if (legacyOrder) mapped.sortedWith(
+                    compareBy<Category> {
+                        when (it.id) {
+                            "greetings" -> 0
+                            CategoryIds.FAMILY -> 1
+                            else -> 2
+                        }
+                    }.thenBy { it.sortOrder },
+                ) else mapped.sortedWith(compareBy<Category> { it.sortOrder }.thenBy { it.id })
+            }
         }
+
+    override suspend fun reorderCategories(orderedIds: List<String>) = db.storage.access {
+        val existing = dao.categoryIds().toSet()
+        require(orderedIds.toSet() == existing && orderedIds.size == existing.size) {
+            "Category ordering must include every category exactly once"
+        }
+        dao.reorderCategories(orderedIds)
+    }
+
+    override suspend fun reorderWords(orderedIds: List<Long>) = db.storage.access {
+        require(orderedIds.isNotEmpty() && orderedIds.size == orderedIds.distinct().size)
+        dao.reorderWords(orderedIds)
+    }
 
     override suspend fun seedOrUpdateDefaults() = db.storage.cleanupIfActive {
         seedOrUpdateDefaultsUnlocked()

@@ -91,6 +91,10 @@ class AudioPlayerLifecycleTest {
         assertEquals(1, canceled)
         assertEquals(0, completed)
         assertTrue(audio.play(file.path, onDone = { completed++ }, onCanceled = { canceled++ }))
+        // MediaInfo(10_000, -1) deliberately disables automatic completion of
+        // prepareAsync in Robolectric: explicitly prepare the new recording.
+        // This verifies the new player starts while the old completion is stale.
+        created.last().invokePreparedListener()
         old.invokeCompletionListener()
         assertEquals(0, completed)
         assertEquals(ShadowMediaPlayer.State.STARTED, created.last().state)

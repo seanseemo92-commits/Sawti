@@ -135,6 +135,24 @@ class GreetingsLayoutTest {
         assertEquals(category.items.map { it.id } + category.items.last().id, tapped)
     }
 
+    @Test @Config(qualifiers = "w320dp-h800dp")
+    fun expandedArabicWordCaptionIsNeverLimitedToFourLines() {
+        val original = category()
+        val phrase = "أُرِيدُ الذَّهَابَ إِلَى الْمُسْتَشْفَى وَأَحْتَاجُ إِلَى الْمُسَاعَدَةِ وَالْمُرَافَقَةِ فِي الطَّرِيقِ"
+        val changed = original.copy(items = original.items.mapIndexed { index, word ->
+            if (index == 0) word.copy(displayText = phrase) else word
+        })
+        show(ThemeMode.LIGHT, fontScale = 1.5f) {
+            CategoryScreen(changed, LibraryUiState(categories = listOf(changed), isLoadingCategories = false), actions)
+        }
+        val results = mutableListOf<TextLayoutResult>()
+        compose.onNodeWithText(phrase, useUnmergedTree = true)
+            .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(results) }
+        val layout = results.single()
+        assertTrue("Caption should naturally wrap on 320dp", layout.lineCount > 4)
+        assertFalse((0 until layout.lineCount).any(layout::isLineEllipsized))
+    }
+
     @Test fun darkLibyanGridPreservesItsLabelsAndSharedStyle() {
         val category = category(ArabicDialect.LIBYAN)
         show(ThemeMode.DARK) {
@@ -214,4 +232,25 @@ class GreetingsLayoutTest {
             .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layout) }
         assertEquals(GreetingsCoral, layout.single().layoutInput.style.color)
     }
+
+    @Test @Config(sdk = [36], qualifiers = "w320dp-h720dp")
+    fun android16CompactCategoryAtDoubleFont() {
+        val c = category()
+        show(ThemeMode.DARK, fontScale = 2f) {
+            CategoryScreen(c, LibraryUiState(categories = listOf(c), isLoadingCategories = false), actions)
+        }
+        assertFirstTwoCardsShareARow(c)
+        compose.onNodeWithTag("word-grid").performScrollToIndex(c.items.lastIndex)
+        compose.onNodeWithTag("word-card-${c.items.last().id}").assertIsDisplayed()
+    }
+
+    @Test @Config(sdk = [36], qualifiers = "w600dp-h840dp")
+    fun android16TabletCategoryShowsMultipleColumns() {
+        val c = category()
+        show(ThemeMode.LIGHT, fontScale = 2f) {
+            CategoryScreen(c, LibraryUiState(categories = listOf(c), isLoadingCategories = false), actions)
+        }
+        assertFirstTwoCardsShareARow(c)
+    }
+
 }

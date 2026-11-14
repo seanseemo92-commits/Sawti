@@ -7,6 +7,7 @@ data class SentencePiece(
     val spokenText: String,
     val photoPath: String?,
     val emoji: String,
+    val audioPath: String? = null,
 )
 
 object SentenceComposer {
@@ -16,9 +17,10 @@ object SentenceComposer {
     fun piece(word: WordItem) = SentencePiece(
         sourceId = word.id,
         text = word.displayText,
-        spokenText = word.ttsPrompt.ifBlank { word.displayText }.trim(),
+        spokenText = word.speechText.ifBlank { word.ttsPrompt.ifBlank { word.displayText } }.trim(),
         photoPath = word.photoPath,
         emoji = word.emoji,
+        audioPath = word.audioPath,
     )
 
     fun add(current: List<SentencePiece>, word: WordItem): List<SentencePiece> {
@@ -28,7 +30,7 @@ object SentenceComposer {
     }
 
     /** Plain spoken pieces: stable indexes, no engine-specific word-range or time offsets. */
-    data class SpokenPiece(val pieceIndex: Int, val sourceId: Long, val speech: String)
+    data class SpokenPiece(val pieceIndex: Int, val sourceId: Long, val speech: String, val audioPath: String? = null)
 
     private fun spokenWord(piece: SentencePiece): String =
         piece.spokenText.trim().trimEnd('،', '.', '!', '؟')
@@ -37,7 +39,7 @@ object SentenceComposer {
         parts.mapIndexedNotNull { index, part ->
             val text = spokenWord(part)
             if (text.isBlank()) null
-            else SpokenPiece(pieceIndex = index, sourceId = part.sourceId, speech = text)
+            else SpokenPiece(pieceIndex = index, sourceId = part.sourceId, speech = text, audioPath = part.audioPath)
         }
 
     /** A single TTS request preserves sentence context and natural engine pacing. */

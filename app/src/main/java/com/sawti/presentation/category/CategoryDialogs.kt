@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -45,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -69,25 +72,39 @@ import com.sawti.presentation.theme.categoryPaletteFor
 @Composable
 fun WordPreviewDialog(item: WordItem, palette: CategoryPalette, actions: LibraryActions, onCall: (String) -> Unit) {
     Dialog(onDismissRequest = actions::closePreview, properties = DialogProperties(usePlatformDefaultWidth = false)) {
-        Surface(shape = RoundedCornerShape(32.dp), color = MaterialTheme.colorScheme.surface,
-            shadowElevation = cardElevation(16.dp), modifier = Modifier.fillMaxWidth(0.92f)) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                ItemImage(item = item, accent = palette.banner, modifier = Modifier.fillMaxWidth().aspectRatio(1f)
-                    .background(palette.pastel).padding(14.dp), crop = true, glyphScale = 0.5f)
-                Text(item.displayText, color = palette.accent, fontSize = 34.sp, fontWeight = FontWeight.ExtraBold,
-                    textAlign = TextAlign.Center, modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp))
-                Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    HintButton(onClick = { actions.onHint(item) }, size = 60)
-                    ActionPill(label = stringResource(R.string.listen), icon = Icons.AutoMirrored.Filled.VolumeUp,
-                        color = palette.banner, onClick = { actions.onSpeakAgain(item) })
-                    if (item.phone.isNotBlank()) {
-                        ActionPill(label = stringResource(R.string.call), icon = Icons.Filled.Call,
-                            color = palette.banner, onClick = { onCall(item.phone) })
-                    }
+        BoxWithConstraints(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            val imageSide = minOf(maxWidth * 0.8f, maxHeight * 0.38f, 320.dp)
+            val compactActions = maxWidth < 480.dp || LocalDensity.current.fontScale > 1.3f
+            val actionContent: @Composable () -> Unit = {
+                HintButton(onClick = { actions.onHint(item) }, size = 60)
+                ActionPill(label = stringResource(R.string.listen), icon = Icons.AutoMirrored.Filled.VolumeUp,
+                    color = palette.banner, onClick = { actions.onSpeakAgain(item) })
+                if (item.phone.isNotBlank()) {
+                    ActionPill(label = stringResource(R.string.call), icon = Icons.Filled.Call,
+                        color = palette.banner, onClick = { onCall(item.phone) })
                 }
-                TextButton(onClick = actions::closePreview, modifier = Modifier.heightIn(min = 52.dp)) {
-                    Text(stringResource(R.string.close), fontSize = 18.sp)
+            }
+            Surface(shape = RoundedCornerShape(32.dp), color = MaterialTheme.colorScheme.surface,
+                shadowElevation = cardElevation(16.dp),
+                modifier = Modifier.widthIn(max = 560.dp).fillMaxWidth(0.92f).heightIn(max = maxHeight * 0.92f)) {
+                Column(Modifier.verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally) {
+                    ItemImage(item = item, accent = palette.banner,
+                        modifier = Modifier.size(imageSide).background(palette.pastel).padding(14.dp),
+                        crop = true, glyphScale = 0.5f)
+                    Text(item.displayText, color = palette.accent, fontSize = 34.sp,
+                        fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp))
+                    if (compactActions) {
+                        Column(Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(12.dp)) { actionContent() }
+                    } else {
+                        Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)) { actionContent() }
+                    }
+                    TextButton(onClick = actions::closePreview, modifier = Modifier.heightIn(min = 52.dp)) {
+                        Text(stringResource(R.string.close), fontSize = 18.sp)
+                    }
                 }
             }
         }
@@ -99,19 +116,25 @@ fun WordFocusDialog(item: WordItem, palette: CategoryPalette, actions: LibraryAc
     Dialog(onDismissRequest = actions::closeFocus,
         properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false)) {
         Surface(color = MaterialTheme.colorScheme.surface, modifier = Modifier.fillMaxSize()) {
-            Box(Modifier.fillMaxSize()) {
-                Column(Modifier.fillMaxSize().systemBarsPadding().padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                    ItemImage(item = item, accent = palette.banner, modifier = Modifier.fillMaxWidth().aspectRatio(1f)
-                        .clip(RoundedCornerShape(32.dp)).background(palette.pastel).padding(20.dp), crop = false, glyphScale = 0.62f)
-                    Text(item.displayText, color = palette.accent, fontSize = 46.sp, fontWeight = FontWeight.ExtraBold,
-                        textAlign = TextAlign.Center, modifier = Modifier.padding(vertical = 24.dp))
+            BoxWithConstraints(Modifier.fillMaxSize()) {
+                val imageSide = minOf((maxWidth - 48.dp).coerceAtLeast(80.dp), maxHeight * 0.45f, 420.dp)
+                Column(Modifier.fillMaxSize().systemBarsPadding().padding(24.dp)
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center) {
+                    ItemImage(item = item, accent = palette.banner, modifier = Modifier.size(imageSide)
+                        .clip(RoundedCornerShape(32.dp)).background(palette.pastel).padding(20.dp),
+                        crop = false, glyphScale = 0.62f)
+                    Text(item.displayText, color = palette.accent, fontSize = 46.sp,
+                        fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(vertical = 24.dp))
                     ActionPill(label = stringResource(R.string.listen), icon = Icons.AutoMirrored.Filled.VolumeUp,
                         color = palette.banner, onClick = { actions.onSpeakAgain(item) })
                 }
                 IconButton(onClick = actions::closeFocus,
                     modifier = Modifier.align(Alignment.TopEnd).systemBarsPadding().padding(8.dp).size(52.dp)) {
-                    Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.focus_close), modifier = Modifier.size(32.dp))
+                    Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.focus_close),
+                        modifier = Modifier.size(32.dp))
                 }
             }
         }
@@ -122,9 +145,11 @@ fun WordFocusDialog(item: WordItem, palette: CategoryPalette, actions: LibraryAc
 fun AddFamilyMemberDialog(group: String, actions: LibraryActions) {
     var name by remember(group) { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
-    AlertDialog(onDismissRequest = actions::closeAddFamilyMember, title = { Text(stringResource(R.string.family_add)) },
+    AlertDialog(modifier = Modifier.widthIn(max = 560.dp),
+        onDismissRequest = actions::closeAddFamilyMember, title = { Text(stringResource(R.string.family_add)) },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Column(Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedTextField(value = name, onValueChange = { name = it.take(100) },
                     label = { Text(stringResource(R.string.family_name)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
                 Text(group, style = MaterialTheme.typography.titleMedium)
@@ -157,7 +182,7 @@ fun WordEditorDialog(item: WordItem, isRecording: Boolean, actions: LibraryActio
     val photoPicker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) actions.onPhotoPicked(item.id, uri)
     }
-    AlertDialog(onDismissRequest = actions::closeEditor,
+    AlertDialog(modifier = Modifier.widthIn(max = 560.dp), onDismissRequest = actions::closeEditor,
         title = { Text(item.displayText, fontSize = 24.sp, fontWeight = FontWeight.ExtraBold) },
         text = {
             Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -193,7 +218,8 @@ fun WordEditorDialog(item: WordItem, isRecording: Boolean, actions: LibraryActio
                 VoiceRecordingSection(hasRecording = item.audioPath != null, isRecording = isRecording,
                     onStart = { actions.startRecording(item.id) }, onStop = { actions.stopRecording(item.id) },
                     onPlay = { actions.previewRecording(item.id) }, onDelete = { actions.deleteRecording(item.id) },
-                    onPickFile = { uri -> actions.onAudioPicked(item.id, uri) })
+                    onPickFile = { uri -> actions.onAudioPicked(item.id, uri) },
+                    onInterrupted = { actions.cancelRecording(item.id) })
                 if (item.categoryId.startsWith("custom_")) {
                     TextButton(onClick = { showCustomDeleteConfirm = true }, modifier = Modifier.fillMaxWidth()) {
                         Icon(Icons.Filled.Delete, contentDescription = null)
@@ -229,17 +255,20 @@ fun WordEditorDialog(item: WordItem, isRecording: Boolean, actions: LibraryActio
                 Text(stringResource(R.string.cancel), fontSize = 18.sp)
             }
         })
-    if (showCustomDeleteConfirm) AlertDialog(onDismissRequest = { showCustomDeleteConfirm = false },
+    if (showCustomDeleteConfirm) AlertDialog(modifier = Modifier.widthIn(max = 560.dp),
+        onDismissRequest = { showCustomDeleteConfirm = false },
         title = { Text("حذف البطاقة نهائيًا؟") },
         text = { Text("سيتم حذف «${item.displayText}» وصورتها وتسجيلها المخصصين. هذا الإجراء لا يمكن التراجع عنه. احفظ نسخة احتياطية قبل الحذف.") },
         confirmButton = { Button(onClick = { showCustomDeleteConfirm = false; actions.deleteCustomCard(item.id) }) { Text("حذف نهائي") } },
         dismissButton = { TextButton(onClick = { showCustomDeleteConfirm = false }) { Text("إلغاء") } })
     val target = availableCategories.firstOrNull { it.id == pendingMove }
-    if (target != null) AlertDialog(onDismissRequest = { pendingMove = null }, title = { Text("تأكيد نقل البطاقة") },
+    if (target != null) AlertDialog(modifier = Modifier.widthIn(max = 560.dp),
+        onDismissRequest = { pendingMove = null }, title = { Text("تأكيد نقل البطاقة") },
         text = { Text("نقل «${item.displayText}» إلى «${target.title}»؟ تبقى الصور والتسجيلات والمفضلة محفوظة. احفظ تعديل النص أولًا إن لزم.") },
         confirmButton = { Button(onClick = { actions.moveCardToCustomCategory(item.id, target.id); pendingMove = null }) { Text("نقل") } },
         dismissButton = { TextButton(onClick = { pendingMove = null }) { Text("إلغاء") } })
-    if (showDeleteConfirm) AlertDialog(onDismissRequest = { showDeleteConfirm = false },
+    if (showDeleteConfirm) AlertDialog(modifier = Modifier.widthIn(max = 560.dp),
+        onDismissRequest = { showDeleteConfirm = false },
         title = { Text(stringResource(R.string.family_delete)) },
         text = { Text(stringResource(R.string.family_delete_confirm, item.displayText)) },
         confirmButton = { Button(onClick = { showDeleteConfirm = false; actions.deleteFamilyMember(item.id) }) { Text(stringResource(R.string.family_delete)) } },

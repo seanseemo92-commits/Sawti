@@ -149,7 +149,7 @@ class DialectSpeechCatalogTest {
             val constructRevisions = setOf("dish.reshda_kaskas", "dish.reshda_borma", "dish.potato_stew",
                 "dish.khobz_tajin", "routine.evening_coffee", "clothing.watch", "clothing.high_heels",
                 "animal.rooster", "animal.rabbit", "home.fork", "body.leg")
-            if (!ArgonAuditOverrides.hasPatch(ArabicDialect.LIBYAN, fields[0]) && fields[0] !in constructRevisions) {
+            if (!DialectSpeechRevisions.hasPatch(ArabicDialect.LIBYAN, fields[0]) && fields[0] !in constructRevisions) {
                 assertEquals(fields[0], TtsEndings.normalize(fields[1]), form.speechText)
             }
         }

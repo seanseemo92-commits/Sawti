@@ -45,11 +45,14 @@ internal class QuranViewModel(application: Application) : AndroidViewModel(appli
     private var countJob: Job? = null
     private var timingJob: Job? = null
     private var player = createPlayer()
+    private val stopQuran: () -> Unit = { player.stop() }
+
+    init { app.container.audioDispatcher.registerQuranStopper(stopQuran) }
 
     private fun createPlayer(): QuranAyahPlayer {
         val owner = ++playerGeneration
         return QuranAyahPlayer(app, cache, app.container.audioFocus,
-            beforePlay = { app.container.audioDispatcher.stop() }) { status ->
+            beforePlay = { app.container.audioDispatcher.stopAac() }) { status ->
             if (owner == playerGeneration) {
                 val previous = _state.value.audio
                 _state.update { it.copy(audio = status) }
@@ -201,6 +204,7 @@ internal class QuranViewModel(application: Application) : AndroidViewModel(appli
     override fun onCleared() {
         timingJob?.cancel()
         ++playerGeneration
+        app.container.audioDispatcher.unregisterQuranStopper(stopQuran)
         player.release()
         super.onCleared()
     }

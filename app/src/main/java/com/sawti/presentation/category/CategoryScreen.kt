@@ -8,6 +8,9 @@ import androidx.compose.material3.ripple
 import androidx.compose.foundation.background
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
@@ -38,14 +41,18 @@ import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.ViewCarousel
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -61,13 +68,14 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -183,7 +191,8 @@ fun CategoryScreen(category: Category, state: LibraryUiState, actions: LibraryAc
 @Composable
 private fun SubgroupTabs(subgroups: List<String>, selected: String, palette: CategoryPalette,
     onSelect: (String) -> Unit, modifier: Modifier = Modifier) {
-    Row(modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(modifier.selectableGroup().horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         subgroups.forEach { label ->
             val on = label == selected
             val tourModifier = when (label) {
@@ -194,9 +203,11 @@ private fun SubgroupTabs(subgroups: List<String>, selected: String, palette: Cat
             Surface(shape = RoundedCornerShape(22.dp), color = if (on) palette.banner else MaterialTheme.colorScheme.surface,
                 contentColor = if (on) Color.White else palette.accent,
                 shadowElevation = cardElevation(if (on) 4.dp else 1.dp),
-                modifier = Modifier.height(46.dp).then(tourModifier).clip(RoundedCornerShape(22.dp)).clickable { onSelect(label) }) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(horizontal = 18.dp)) {
-                    Text(label, fontSize = 15.sp, fontWeight = FontWeight.ExtraBold, maxLines = 1)
+                modifier = Modifier.heightIn(min = 46.dp).then(tourModifier).clip(RoundedCornerShape(22.dp))
+                    .selectable(selected = on, role = Role.Tab, onClick = { onSelect(label) })) {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(horizontal = 18.dp, vertical = 10.dp)) {
+                    Text(label, fontSize = 15.sp, lineHeight = 20.sp,
+                        fontWeight = FontWeight.ExtraBold, maxLines = 2, textAlign = TextAlign.Center)
                 }
             }
         }
@@ -207,12 +218,13 @@ private fun SubgroupTabs(subgroups: List<String>, selected: String, palette: Cat
 private fun ViewModeToggle(mode: ViewMode, palette: CategoryPalette, onChange: (ViewMode) -> Unit, modifier: Modifier = Modifier) {
     Surface(shape = RoundedCornerShape(24.dp), color = MaterialTheme.colorScheme.surface,
         shadowElevation = cardElevation(2.dp), modifier = modifier) {
-        Row(Modifier.padding(4.dp)) {
+        Row(Modifier.padding(4.dp).selectableGroup()) {
             listOf(ViewMode.GRID to (Icons.Filled.GridView to R.string.view_grid),
                 ViewMode.FLASHCARD to (Icons.Filled.ViewCarousel to R.string.view_flashcards)).forEach { (m, iconAndLabel) ->
                 val on = m == mode
                 Box(Modifier.size(44.dp).clip(CircleShape).background(if (on) palette.banner else Color.Transparent)
-                    .clickable { onChange(m) }, contentAlignment = Alignment.Center) {
+                    .selectable(selected = on, role = Role.RadioButton, onClick = { onChange(m) }),
+                    contentAlignment = Alignment.Center) {
                     Icon(iconAndLabel.first, contentDescription = stringResource(iconAndLabel.second),
                         tint = if (on) Color.White else palette.accent)
                 }
@@ -220,6 +232,12 @@ private fun ViewModeToggle(mode: ViewMode, palette: CategoryPalette, onChange: (
         }
     }
 }
+
+private val WordCaptionStyle = TextStyle(
+    fontSize = 18.sp, lineHeight = 30.sp,
+    fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center,
+    platformStyle = PlatformTextStyle(includeFontPadding = true),
+)
 
 @Composable
 private fun WordGrid(items: List<WordItem>, category: Category, palette: CategoryPalette,
@@ -231,26 +249,52 @@ private fun WordGrid(items: List<WordItem>, category: Category, palette: Categor
         val columns = wordGridColumnCount(available.value)
         val cellWidth = ((available - 14.dp * (columns - 1)) / columns).coerceAtLeast(1.dp)
         val captionWidthPx = with(density) { (cellWidth - 16.dp).roundToPx().coerceAtLeast(1) }
-        val captionHeightPx = remember(items, captionWidthPx, density.density, density.fontScale, measurer) {
-            items.maxOfOrNull { item ->
-                measurer.measure(text = item.displayText,
-                    style = TextStyle(fontSize = 18.sp, lineHeight = 24.sp, fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center),
-                    maxLines = 4, overflow = TextOverflow.Ellipsis,
-                    constraints = Constraints(maxWidth = captionWidthPx)).size.height
-            } ?: 0
+        // Measure full captions per row so long custom titles never inflate every card.
+        val cardHeights = remember(items, columns, captionWidthPx, cellWidth, density.density, density.fontScale, measurer) {
+            items.map { item ->
+                val heightPx = measurer.measure(
+                    text = item.displayText, style = WordCaptionStyle,
+                    constraints = Constraints(maxWidth = captionWidthPx),
+                ).size.height
+                wordCardHeightDp(cellWidth.value, heightPx / density.density).dp
+            }.chunked(columns).flatMap { row ->
+                val tallest = row.maxOrNull() ?: 0.dp
+                List(row.size) { tallest }
+            }
         }
-        val cardHeight = wordCardHeightDp(cellWidth.value, captionHeightPx / density.density).dp
         LazyVerticalGrid(columns = GridCells.Fixed(columns), modifier = Modifier.fillMaxSize().testTag("word-grid"),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 28.dp),
             horizontalArrangement = Arrangement.spacedBy(14.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
             itemsIndexed(items, key = { _, item -> item.id }) { index, item ->
                 StaggeredCascade(key = "${category.id}:${item.id}", row = index / columns, modifier = Modifier.fillMaxWidth()) {
-                    WordCard(item = item, palette = palette, crop = category.previewOnTap,
-                        isActive = state.activeItemId == item.id,
-                        isSpeaking = state.playbackVisual.isSpeaking && state.playbackVisual.activeWordId == item.id,
-                        caregiverMode = state.caregiverMode,
-                        onClick = { actions.onItemTapped(item, flashcard = false) },
-                        onLongClick = { actions.onItemLongPressed(item) }, onHint = { actions.onHint(item) }, cardHeight = cardHeight)
+                    Box(Modifier.fillMaxWidth()) {
+                        WordCard(item = item, palette = palette, crop = category.previewOnTap,
+                            isActive = state.activeItemId == item.id,
+                            isSpeaking = state.playbackVisual.isSpeaking && state.playbackVisual.activeWordId == item.id,
+                            caregiverMode = state.caregiverMode,
+                            onClick = { actions.onItemTapped(item, flashcard = false) },
+                            onLongClick = { actions.onItemLongPressed(item) }, onHint = { actions.onHint(item) },
+                            cardHeight = cardHeights[index])
+                        if (state.caregiverMode) {
+                            Row(Modifier.align(Alignment.TopStart)
+                                .background(Color(0xDD0F172A), RoundedCornerShape(12.dp))) {
+                                IconButton(
+                                    onClick = { actions.moveWord(category.id, item.subgroup, item.id, -1) },
+                                    enabled = index > 0, modifier = Modifier.size(48.dp),
+                                ) {
+                                    Icon(Icons.Filled.KeyboardArrowUp,
+                                        contentDescription = "نقل بطاقة ${item.displayText} للأعلى", tint = Color.White)
+                                }
+                                IconButton(
+                                    onClick = { actions.moveWord(category.id, item.subgroup, item.id, 1) },
+                                    enabled = index < items.lastIndex, modifier = Modifier.size(48.dp),
+                                ) {
+                                    Icon(Icons.Filled.KeyboardArrowDown,
+                                        contentDescription = "نقل بطاقة ${item.displayText} للأسفل", tint = Color.White)
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -273,8 +317,7 @@ internal fun WordCard(item: WordItem, palette: CategoryPalette, crop: Boolean, i
                 Box(modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth()
                     .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 20.dp, bottomEnd = 20.dp))
                     .background(bannerColor).padding(horizontal = 8.dp, vertical = 5.dp), contentAlignment = Alignment.Center) {
-                    Text(text = item.displayText, color = Color.White, fontSize = 18.sp, lineHeight = 24.sp,
-                        fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center, maxLines = 4, overflow = TextOverflow.Ellipsis)
+                    Text(text = item.displayText, color = Color.White, style = WordCaptionStyle)
                 }
                 // In the app's RTL layout TopEnd is the former speech-bubble slot.
                 HintButton(onClick = onHint, modifier = Modifier.align(Alignment.TopEnd).padding(6.dp))
@@ -289,6 +332,25 @@ private fun FlashcardCarousel(items: List<WordItem>, category: Category, palette
     if (items.isEmpty()) return
     val pager = rememberPagerState(pageCount = { items.size })
     val scope = rememberCoroutineScope()
+    var pendingFollowId by remember { mutableStateOf<Long?>(null) }
+    var pendingFollowFromIndex by remember { mutableIntStateOf(-1) }
+
+    LaunchedEffect(items, pendingFollowId) {
+        val id = pendingFollowId ?: return@LaunchedEffect
+        val targetIndex = items.indexOfFirst { it.id == id }
+        if (targetIndex < 0) {
+            // The item was removed while its reorder was pending.
+            pendingFollowId = null
+            pendingFollowFromIndex = -1
+        } else if (targetIndex != pendingFollowFromIndex) {
+            // A tap updates local state before the asynchronous Room Flow emits.
+            // Only follow after the moved item has actually changed position.
+            pager.scrollToPage(targetIndex)
+            pendingFollowId = null
+            pendingFollowFromIndex = -1
+        }
+    }
+
     Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         HorizontalPager(state = pager, modifier = Modifier.weight(1f).fillMaxWidth(),
             contentPadding = PaddingValues(horizontal = 24.dp), pageSpacing = 16.dp, key = { items[it].id }) { page ->
@@ -304,6 +366,30 @@ private fun FlashcardCarousel(items: List<WordItem>, category: Category, palette
             NavCircle(enabled = pager.currentPage < items.size - 1, palette = palette, label = stringResource(R.string.next_card),
                 onClick = { scope.launch { pager.animateScrollToPage(pager.currentPage + 1) } }) {
                 Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, tint = Color.White)
+            }
+        }
+        if (state.caregiverMode) {
+            val current = items.getOrNull(pager.currentPage)
+            if (current != null) {
+                Row(Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)) {
+                    IconButton(onClick = {
+                        pendingFollowFromIndex = pager.currentPage
+                        pendingFollowId = current.id
+                        actions.moveWord(category.id, current.subgroup, current.id, -1)
+                    }, enabled = pager.currentPage > 0, modifier = Modifier.size(48.dp)) {
+                        Icon(Icons.Filled.KeyboardArrowUp,
+                            contentDescription = "نقل بطاقة ${current.displayText} للأعلى")
+                    }
+                    IconButton(onClick = {
+                        pendingFollowFromIndex = pager.currentPage
+                        pendingFollowId = current.id
+                        actions.moveWord(category.id, current.subgroup, current.id, 1)
+                    }, enabled = pager.currentPage < items.lastIndex, modifier = Modifier.size(48.dp)) {
+                        Icon(Icons.Filled.KeyboardArrowDown,
+                            contentDescription = "نقل بطاقة ${current.displayText} للأسفل")
+                    }
+                }
             }
         }
     }
@@ -324,27 +410,46 @@ private fun FlashcardPage(item: WordItem, category: Category, palette: CategoryP
     state: LibraryUiState, actions: LibraryActions, onCall: (String) -> Unit) {
     CeramicCard(isSpeaking = state.playbackVisual.activeWordId == item.id && state.playbackVisual.isSpeaking,
         accent = palette.banner, modifier = Modifier.fillMaxSize().padding(vertical = 8.dp)) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Box(Modifier.weight(1f).fillMaxWidth().bounceClick(
-                onLongClick = { actions.onItemLongPressed(item) }, onClick = { actions.onItemTapped(item, flashcard = true) },
-                accent = categoryBannerColor(category.id, palette.banner)), contentAlignment = Alignment.Center) {
-                CardImageContent(item = item, accent = palette.banner,
-                    isCurrentlyPlaying = state.playbackVisual.isSpeaking && state.playbackVisual.activeWordId == item.id,
-                    modifier = Modifier.fillMaxSize().padding(22.dp), crop = category.previewOnTap)
-                HintButton(onClick = { actions.onHint(item) }, modifier = Modifier.align(Alignment.TopEnd).padding(6.dp))
-            }
-            Text(item.displayText, color = MaterialTheme.colorScheme.onSurface, fontSize = 34.sp, lineHeight = 44.sp,
-                fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp))
-            Row(Modifier.padding(start = 16.dp, end = 16.dp, bottom = 18.dp), verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                ActionPill(label = stringResource(R.string.listen), icon = Icons.AutoMirrored.Filled.VolumeUp,
-                    color = palette.banner, onClick = { actions.onSpeakAgain(item) },
-                    modifier = Modifier.testTag("flashcard-listen-${item.id}"))
-                if (item.phone.isNotBlank() && !state.caregiverMode) {
-                    ActionPill(label = stringResource(R.string.call), icon = Icons.Filled.Call, color = palette.banner, onClick = { onCall(item.phone) })
+        BoxWithConstraints(Modifier.fillMaxSize()) {
+            val imageHeight = minOf(maxHeight * 0.58f, maxWidth, 360.dp)
+            Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally) {
+                Box(Modifier.fillMaxWidth().height(imageHeight).bounceClick(
+                    onLongClick = { actions.onItemLongPressed(item) },
+                    onClick = { actions.onItemTapped(item, flashcard = true) },
+                    accent = categoryBannerColor(category.id, palette.banner)), contentAlignment = Alignment.Center) {
+                    CardImageContent(item = item, accent = palette.banner,
+                        isCurrentlyPlaying = state.playbackVisual.isSpeaking && state.playbackVisual.activeWordId == item.id,
+                        modifier = Modifier.fillMaxSize().padding(22.dp), crop = category.previewOnTap)
+                    HintButton(onClick = { actions.onHint(item) },
+                        modifier = Modifier.align(Alignment.TopEnd).padding(6.dp))
+                }
+                Text(item.displayText, color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 34.sp, lineHeight = 44.sp,
+                    fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp))
+                BoxWithConstraints(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 18.dp)) {
+                    val compact = maxWidth < 380.dp || LocalDensity.current.fontScale > 1.3f
+                    val buttons: @Composable () -> Unit = {
+                        ActionPill(label = stringResource(R.string.listen),
+                            icon = Icons.AutoMirrored.Filled.VolumeUp, color = palette.banner,
+                            onClick = { actions.onSpeakAgain(item) },
+                            modifier = Modifier.testTag("flashcard-listen-${item.id}"))
+                        if (item.phone.isNotBlank() && !state.caregiverMode) {
+                            ActionPill(label = stringResource(R.string.call),
+                                icon = Icons.Filled.Call, color = palette.banner,
+                                onClick = { onCall(item.phone) })
+                        }
+                    }
+                    if (compact) {
+                        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(12.dp)) { buttons() }
+                    } else {
+                        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)) { buttons() }
+                    }
                 }
             }
         }
     }
 }
-

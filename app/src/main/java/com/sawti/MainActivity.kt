@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -36,18 +35,15 @@ class MainActivity : ComponentActivity() {
             navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
         )
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        window.statusBarColor = Color.TRANSPARENT
-        window.navigationBarColor = Color.TRANSPARENT
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             window.isStatusBarContrastEnforced = false
             window.isNavigationBarContrastEnforced = false
         }
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         setContent {
             val app = application as SawtiApp
             val startup by app.startup.collectAsStateWithLifecycle()
             if (startup != StartupStatus.READY) {
-                androidx.compose.material3.MaterialTheme {
+                SawtiTheme {
                     androidx.compose.material3.Surface(modifier = androidx.compose.ui.Modifier.fillMaxSize()) {
                         androidx.compose.foundation.layout.Column(
                             horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,

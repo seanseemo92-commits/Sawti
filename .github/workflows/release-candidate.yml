@@ -33,7 +33,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '21'
       - name: Verify protected publisher key before spending time on compilation
         env:
           KEYSTORE_BASE64: ${{ secrets.SAWTI_RELEASE_KEYSTORE_BASE64 }}
@@ -60,15 +60,15 @@ jobs:
             echo "SAWTI_KEY_PASSWORD=$KEY_PASSWORD"
           } >> "$GITHUB_ENV"
       - uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.9'
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
       - name: Verify every bundled Quran file and decode its audio
         run: |
           set -euo pipefail
           python3 scripts/verify_quran_passages.py --decode
           python3 scripts/verify_quran_surahs.py --decode
       - name: Run all unit tests, Release Lint and the signed R8 build
-        run: gradle --no-daemon :app:testDebugUnitTest :app:lintRelease :app:assembleRelease
+        run: ./gradlew --no-daemon :app:testDebugUnitTest :app:lintRelease :app:assembleRelease
       - name: Check database schema stability, package and original publisher signature
         shell: bash
         run: |
@@ -102,7 +102,7 @@ jobs:
           TAG="sawti-v${RELEASE_VERSION}-candidate-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           gh release create "$TAG" dist/* --target "$GITHUB_SHA" --prerelease --latest=false \
             --title "صوتي ${RELEASE_VERSION} — مرشح الإصدار النهائي" \
-            --notes-file docs/final-apk-verification-1.5.md
+            --notes-file docs/release-1.5.2.md
           gh release view "$TAG" --json url --jq .url >> "$GITHUB_STEP_SUMMARY"
       - name: Upload diagnostic reports
         if: always()
