@@ -23,3 +23,21 @@
 *.apk
 *.aab
 *.apks
+
+# Pre-public safety: never commit credentials, service accounts, or local secrets
+keystore.properties
+**/keystore.properties
+*.pem
+*.pfx
+*.key
+*.asc
+*.env
+.env
+.env.*
+google-services.json
+**/google-services.json
+service-account*.json
+firebase-adminsdk*.json
+secrets.properties
+**/secrets.properties
+**/build/
