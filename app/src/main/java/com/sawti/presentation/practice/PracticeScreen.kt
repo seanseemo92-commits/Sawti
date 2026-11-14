@@ -196,6 +196,7 @@ private fun RecallContent(state: PracticeUiState, actions: PracticeActions) {
 }
 
 @Composable
+@OptIn(ExperimentalLayoutApi::class)
 private fun ChoiceContent(state: PracticeUiState, actions: PracticeActions) {
     val card = state.card ?: return
     val palette = categoryPaletteFor(card.item.categoryId, card.palette)
