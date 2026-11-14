@@ -52,6 +52,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -331,6 +332,25 @@ private fun FlashcardCarousel(items: List<WordItem>, category: Category, palette
     if (items.isEmpty()) return
     val pager = rememberPagerState(pageCount = { items.size })
     val scope = rememberCoroutineScope()
+    var pendingFollowId by remember { mutableStateOf<Long?>(null) }
+    var pendingFollowFromIndex by remember { mutableIntStateOf(-1) }
+
+    LaunchedEffect(items, pendingFollowId) {
+        val id = pendingFollowId ?: return@LaunchedEffect
+        val targetIndex = items.indexOfFirst { it.id == id }
+        if (targetIndex < 0) {
+            // The item was removed while its reorder was pending.
+            pendingFollowId = null
+            pendingFollowFromIndex = -1
+        } else if (targetIndex != pendingFollowFromIndex) {
+            // A tap updates local state before the asynchronous Room Flow emits.
+            // Only follow after the moved item has actually changed position.
+            pager.scrollToPage(targetIndex)
+            pendingFollowId = null
+            pendingFollowFromIndex = -1
+        }
+    }
+
     Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         HorizontalPager(state = pager, modifier = Modifier.weight(1f).fillMaxWidth(),
             contentPadding = PaddingValues(horizontal = 24.dp), pageSpacing = 16.dp, key = { items[it].id }) { page ->
@@ -354,12 +374,16 @@ private fun FlashcardCarousel(items: List<WordItem>, category: Category, palette
                 Row(Modifier.fillMaxWidth().padding(bottom = 12.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)) {
                     IconButton(onClick = {
+                        pendingFollowFromIndex = pager.currentPage
+                        pendingFollowId = current.id
                         actions.moveWord(category.id, current.subgroup, current.id, -1)
                     }, enabled = pager.currentPage > 0, modifier = Modifier.size(48.dp)) {
                         Icon(Icons.Filled.KeyboardArrowUp,
                             contentDescription = "نقل بطاقة ${current.displayText} للأعلى")
                     }
                     IconButton(onClick = {
+                        pendingFollowFromIndex = pager.currentPage
+                        pendingFollowId = current.id
                         actions.moveWord(category.id, current.subgroup, current.id, 1)
                     }, enabled = pager.currentPage < items.lastIndex, modifier = Modifier.size(48.dp)) {
                         Icon(Icons.Filled.KeyboardArrowDown,

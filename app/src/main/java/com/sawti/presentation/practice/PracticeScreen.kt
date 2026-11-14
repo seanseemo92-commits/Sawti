@@ -205,7 +205,7 @@ private fun ChoiceContent(state: PracticeUiState, actions: PracticeActions) {
         ActionPill(label = stringResource(R.string.choice_replay), icon = Icons.AutoMirrored.Filled.VolumeUp,
             color = AppBarBlue, onClick = actions::replayQuestion)
         Text(stringResource(R.string.choice_instruction), fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-        BoxWithConstraints(Modifier.weight(1f).fillMaxWidth().padding(bottom = 8.dp),
+        BoxWithConstraints(Modifier.weight(1f).fillMaxWidth().heightIn(min = 148.dp).padding(bottom = 8.dp),
             contentAlignment = Alignment.TopCenter) {
             val narrow = maxWidth < 380.dp || LocalDensity.current.fontScale >= 1.5f
             if (narrow) {
@@ -223,12 +223,12 @@ private fun ChoiceContent(state: PracticeUiState, actions: PracticeActions) {
                     }
                 }
             } else {
-                Row(Modifier.fillMaxHeight().widthIn(max = 960.dp).fillMaxWidth(),
+                Row(Modifier.heightIn(min = 140.dp).fillMaxHeight().widthIn(max = 960.dp).fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     state.choices.forEach { choice ->
                         ChoiceCard(choice = choice, isTarget = choice.item.id == card.item.id,
                             state = state, onChoose = actions::choose,
-                            modifier = Modifier.weight(1f).fillMaxHeight())
+                            modifier = Modifier.weight(1f).fillMaxHeight().heightIn(min = 140.dp))
                     }
                 }
             }
