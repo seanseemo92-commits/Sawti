@@ -200,7 +200,10 @@ private fun RecallContent(state: PracticeUiState, actions: PracticeActions) {
 private fun ChoiceContent(state: PracticeUiState, actions: PracticeActions) {
     val card = state.card ?: return
     val palette = categoryPaletteFor(card.item.categoryId, card.palette)
-    Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(14.dp)) {
+    // The scrollable parent can grow beyond a short landscape viewport instead
+    // of shrinking the weighted choice area and its 140.dp touch/image cards.
+    Column(Modifier.fillMaxSize().heightIn(min = 350.dp), horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(14.dp)) {
         ProgressHeader(state, palette.banner, palette.pastel)
         ActionPill(label = stringResource(R.string.choice_replay), icon = Icons.AutoMirrored.Filled.VolumeUp,
             color = AppBarBlue, onClick = actions::replayQuestion)
