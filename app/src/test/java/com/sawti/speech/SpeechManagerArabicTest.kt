@@ -66,7 +66,7 @@ class SpeechManagerArabicTest {
         assertEquals("الطلب الثاني", shadow.lastSpokenText)
     }
 
-    @Test fun dialectChangesPreserveWrittenSpeechAndGeneralArabicEngine() {
+    @Test fun dialectChangesPreserveWrittenSpeechAndArabicOnlyEngine() {
         ShadowTextToSpeech.addLanguageAvailability(Locale.forLanguageTag("ar"))
         val manager = manager()
         val shadow = shadowOf(ShadowTextToSpeech.getLastTextToSpeechInstance())
@@ -77,7 +77,8 @@ class SpeechManagerArabicTest {
             manager.speak("نَبِّيْ إِمِّيَّهْ")
             shadowOf(Looper.getMainLooper()).idle()
             assertEquals("نَبِّيْ إِمِّيَّهْ", shadow.lastSpokenText)
-            assertEquals("ar", shadow.currentLanguage.toLanguageTag())
+            assertEquals("ar", shadow.currentLanguage.language)
+            assertTrue(RegionalVoicePolicy.candidates(dialect).contains(shadow.currentLanguage))
             assertEquals(dialect, manager.voiceStatus.value.requested)
         }
     }
