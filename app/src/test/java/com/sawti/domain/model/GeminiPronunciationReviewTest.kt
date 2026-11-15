@@ -23,7 +23,11 @@ class GeminiPronunciationReviewTest {
     }
 
     @Test fun safeDiacriticOnlySuggestionsRemainAvailable() {
-        assertEquals("مِخَدَّة",
+        assertEquals("حَفِيدْتِي",
+            GeminiPronunciationReview.apply(ArabicDialect.LIBYAN,
+                "family.granddaughter", "حَفِيدَتِي"))
+        // The older Libyan approved pillow pronunciation must remain stable.
+        assertEquals("مَخَدَّة",
             GeminiPronunciationReview.apply(ArabicDialect.LIBYAN, "home.pillow", "مَخَدَّة"))
     }
 

@@ -1867,12 +1867,12 @@ internal object GeminiPronunciationReview {
         // A changed built-in, caregiver override, or later revision must never
         // be overwritten by a stale Gemini review row.
         if (candidate.original != current) return current
-        // Classical endings and previously verified dialect-specific expressions
+        // Classical endings and previously verified/patch-protected dialect expressions
         // require individual listening evidence before changing production speech.
         if (dialect == ArabicDialect.STANDARD ||
             key.substringBefore('.') in independentlyReviewedNamespaces ||
             NeuralLexicon161.forms[key]?.containsKey(dialect) == true ||
-            DialectSpeechRevisions.hasCompletedCandidate(dialect, key)
+            DialectSpeechRevisions.hasPatch(dialect, key)
         ) return current
         val proposed = candidate.proposed
         // Edge Neural voices are not verified to pronounce Persian/extended
