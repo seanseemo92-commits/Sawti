@@ -120,7 +120,7 @@ class QuranPlaybackService : Service() {
         return START_NOT_STICKY
     }
 
-    fun render(current: QuranPlaybackSnapshot) {
+    internal fun render(current: QuranPlaybackSnapshot) {
         if (!inForeground) return
         updateMediaSession(current)
         // Android 13+ allows foreground media playback even if notification permission
