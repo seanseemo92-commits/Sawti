@@ -164,7 +164,8 @@ class LibraryViewModel(
     private fun canEdit(): Boolean = caregiver.enabled.value
     fun onAppBackgrounded() {
         recorder.cancel()
-        voice.stop()
+        // AAC cards stop on background; Quran owns its separate foreground playback.
+        voice.stopAac()
         _uiState.update { it.copy(recordingItemId = null) }
     }
     override fun onItemTapped(item: WordItem, flashcard: Boolean) {

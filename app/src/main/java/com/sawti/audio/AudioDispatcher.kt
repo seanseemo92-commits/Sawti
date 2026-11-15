@@ -50,6 +50,7 @@ class AudioDispatcher(
         }
         if (recording != null && player.play(recording,
                 onDone = { if (current == generation) _playback.value = PlaybackVisual() },
+                onCanceled = { if (current == generation) _playback.value = PlaybackVisual() },
                 onFailed = { speakFallback() })) {
             if (current == generation) _playback.value =
                 PlaybackVisual(activeWordId = item.id, isSpeaking = true)

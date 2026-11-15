@@ -140,10 +140,14 @@ class QuranAyahPlayerTest {
         assertEquals(RecitationPhase.PLAYING, states.last().phase)
         assertEquals(3, states.last().remaining)
         assertEquals(ShadowMediaPlayer.State.STARTED, current.state)
+        assertEquals(0.25f, current.leftVolume, 0.001f)
+        assertEquals(0.25f, current.rightVolume, 0.001f)
         focusListener.onAudioFocusChange(AudioManager.AUDIOFOCUS_GAIN)
         shadowOf(Looper.getMainLooper()).idle()
         assertEquals(RecitationPhase.PLAYING, states.last().phase)
         assertEquals(ShadowMediaPlayer.State.STARTED, current.state)
+        assertEquals(1.0f, current.leftVolume, 0.001f)
+        assertEquals(1.0f, current.rightVolume, 0.001f)
         assertEquals(1, created.size)
     }
 
@@ -169,6 +173,26 @@ class QuranAyahPlayerTest {
         shadowOf(Looper.getMainLooper()).idle()
         assertEquals(RecitationPhase.IDLE, states.last().phase)
         assertEquals(ShadowMediaPlayer.State.END, current.state)
+    }
+
+    @Test
+    fun manualPauseSurvivesAudioFocusGainUntilNotificationPlayIsPressed() {
+        val app = RuntimeEnvironment.getApplication() as Application
+        val manager = app.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        audio.play(verse, 3)
+        val current = preparedPlayer(0)
+        current.invokePreparedListener()
+        val listener = shadowOf(manager).lastAudioFocusRequest.listener
+        audio.pause()
+        assertEquals(RecitationPhase.PAUSED, states.last().phase)
+        listener.onAudioFocusChange(AudioManager.AUDIOFOCUS_GAIN)
+        shadowOf(Looper.getMainLooper()).idle()
+        assertEquals(RecitationPhase.PAUSED, states.last().phase)
+        assertEquals(ShadowMediaPlayer.State.PAUSED, current.state)
+        audio.resume()
+        assertEquals(RecitationPhase.PLAYING, states.last().phase)
+        assertEquals(3, states.last().remaining)
+        assertEquals(ShadowMediaPlayer.State.STARTED, current.state)
     }
 
     @Test

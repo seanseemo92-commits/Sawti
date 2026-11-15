@@ -47,7 +47,25 @@ internal class QuranViewModel(application: Application) : AndroidViewModel(appli
     private var player = createPlayer()
     private val stopQuran: () -> Unit = { player.stop() }
 
-    init { app.container.audioDispatcher.registerQuranStopper(stopQuran) }
+    init {
+        app.container.audioDispatcher.registerQuranStopper(stopQuran)
+        QuranPlaybackBridge.attach(this,
+            onPlay = { player.resume() },
+            onPause = { player.pause() },
+            onStop = { player.stop() },
+        )
+    }
+
+    private fun notificationTitle(status: RecitationStatus): String {
+        val current = _state.value
+        val selection = QuranSource.selections.firstOrNull { it.selectionId == current.surahId }
+        val verse = current.verses.firstOrNull {
+            it.globalNumber == status.globalVerseNumber && it.segmentKey == status.segmentKey
+        }
+        val detail = if (status.fullSelectionId != null) "التلاوة الكاملة" else verse?.label
+        return listOfNotNull(selection?.title, detail).joinToString(" • ")
+            .ifBlank { "القرآن الكريم" }
+    }
 
     private fun createPlayer(): QuranAyahPlayer {
         val owner = ++playerGeneration
@@ -56,6 +74,7 @@ internal class QuranViewModel(application: Application) : AndroidViewModel(appli
             if (owner == playerGeneration) {
                 val previous = _state.value.audio
                 _state.update { it.copy(audio = status) }
+                QuranPlaybackBridge.publish(status, notificationTitle(status))
                 if (status.phase == RecitationPhase.PLAYING && status.fullSelectionId == null &&
                     (previous.phase != RecitationPhase.PLAYING || status.segmentKey != previous.segmentKey)) refreshSavedCount()
             }
@@ -116,6 +135,7 @@ internal class QuranViewModel(application: Application) : AndroidViewModel(appli
     fun play(verse: QuranVerse) {
         if (verse !in _state.value.verses) return
         player.play(verse, _state.value.repeats)
+        QuranPlaybackBridge.start(app)
     }
 
     /** Whole recording is independent from per-ayah bundled audio and never enters the APK. */
@@ -142,6 +162,7 @@ internal class QuranViewModel(application: Application) : AndroidViewModel(appli
             }
         }
         player.playFull(surah, current.verses.first(), current.repeats)
+        QuranPlaybackBridge.start(app)
     }
 
     fun stopAudio() = player.stop()
@@ -206,6 +227,7 @@ internal class QuranViewModel(application: Application) : AndroidViewModel(appli
         ++playerGeneration
         app.container.audioDispatcher.unregisterQuranStopper(stopQuran)
         player.release()
+        QuranPlaybackBridge.detach(this)
         super.onCleared()
     }
 }
