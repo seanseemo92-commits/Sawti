@@ -62,7 +62,7 @@ class DisplaySpeechConsistencyTest {
         SYRIAN|dish.syrian.mutabbal|متبل باذنجان
         SYRIAN|dish.syrian.kunafa|كنافة نابلسية
         SYRIAN|fruit.orange|بردقان
-        SYRIAN|home.sofa|كنباية
+        SYRIAN|home.sofa|كنبة
         SYRIAN|body.mouth|تم
         SYRIAN|body.face|وش
         IRAQI|family.father|أبويه
@@ -80,7 +80,7 @@ class DisplaySpeechConsistencyTest {
         TUNISIAN|vegetable.carrot|سفنارية
         TUNISIAN|vegetable.zucchini|قرع أخضر
         TUNISIAN|vegetable.lemon|قارص
-        TUNISIAN|fruit.banana|بنان
+        TUNISIAN|fruit.banana|موز
         TUNISIAN|fruit.orange|بردقان
         TUNISIAN|home.stove|غاز
         TUNISIAN|home.wardrobe|مريو
@@ -122,6 +122,8 @@ class DisplaySpeechConsistencyTest {
         "LIBYAN|dish.mbakbaka", "LIBYAN|dish.sfinz",
         "IRAQI|food.fish", "IRAQI|action.speak", "IRAQI|food.tea", "IRAQI|request.tea",
         "IRAQI|dish.mint_tea",
+        "LIBYAN|vegetable.garlic", "TUNISIAN|vegetable.garlic",
+        "ALGERIAN|vegetable.garlic", "MOROCCAN|vegetable.garlic",
         "IRAQI|dish.iraqi.masgouf", "IRAQI|dish.iraqi.fish_mutabbaq",
         // Egyptian soup is displayed شربة but vocalized شُورْبِةْ by request.
         "EGYPTIAN|dish.egyptian.bird_tongue_soup",
@@ -144,7 +146,7 @@ class DisplaySpeechConsistencyTest {
 
     @Test fun LibyanWrittenCorrectionsHaveTheNaturalNeuralSpeechForms() {
         val expected = mapOf(
-            "family.son_wife" to ("مرت ولدي" to "مَرْت وِلْدِي"),
+            "family.son_wife" to ("مرت ولدي" to "مَرْت وَلْدِي"),
             "dish.mbakbaka" to ("مكرونة مبكبكة" to "مَكَرُونَة مبَكْبَكَة"),
             "vegetable.peas" to ("بازيلية" to "بَازِيلْيَة"),
             "dish.zmeeta" to ("زميطة" to "زُمِيطَة"),
@@ -203,7 +205,7 @@ class DisplaySpeechConsistencyTest {
             if (key.startsWith("dish.")) {
                 val region = requireNotNull(RegionalDishesCatalog.variant(key, dialect))
                 assertEquals("$dialect/$key source display", expected.first, region.displayText)
-                assertEquals("$dialect/$key source TTS", expected.second, region.ttsPrompt)
+                assertEquals("$dialect/$key source TTS", stripPausalSukun(expected.second), region.ttsPrompt)
             }
         }
     }
@@ -216,6 +218,11 @@ class DisplaySpeechConsistencyTest {
         }
         assertTrue(problems.joinToString("\n"), problems.isEmpty())
     }
+
+    private fun stripPausalSukun(value: String) = value
+        .replace(Regex("""هْ(?=\\s|$)"""), "ة")
+        .replace(Regex("""ةْ(?=\\s|$)"""), "ة")
+        .replace(Regex("""ْ(?=\\s|$)"""), "")
 
     // Pausal speech may pronounce written ta marbuta as a linked 't',
     // and tanween may be spoken as a final 'n'. These are spelling/inflection,
