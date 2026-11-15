@@ -84,6 +84,21 @@ class AudioPlayerLifecycleTest {
         assertEquals(ShadowMediaPlayer.State.END, current.state)
     }
 
+    @Test fun replacingAacRecordingByAnotherFocusOwnerClearsItsIndicator() {
+        val dispatcher = AudioDispatcher(SpeechManager(app, focus), audio)
+        val card = WordItem(1, "transport", "", "سيارة", "سَيَّارَة", "سَـ...", null,
+            file.path, null, "", "", semanticKey = "transport.car")
+        dispatcher.play(card)
+        assertTrue(dispatcher.playback.value.isSpeaking)
+        val replacement = AudioPlayer(focus)
+        try {
+            assertTrue(replacement.play(file.path))
+            assertFalse(dispatcher.playback.value.isSpeaking)
+        } finally {
+            replacement.stop()
+        }
+    }
+
     @Test fun cancellationAndCompletionEachFireOnceAndStaleCallbacksAreIgnored() {
         var completed = 0
         var canceled = 0

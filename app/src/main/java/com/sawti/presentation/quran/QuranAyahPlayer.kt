@@ -48,6 +48,7 @@ class QuranAyahPlayer(
     private var generation = 0L
     private var playsLeft = 0
     private var pausedForFocus = false
+    private var activeVerse: QuranVerse? = null
     private var released = false
 
     fun play(verse: QuranVerse, repeatCount: Int) {
@@ -57,6 +58,7 @@ class QuranAyahPlayer(
         stop()
         beforePlay()
         val request = generation
+        activeVerse = verse
         playsLeft = repeatCount
         publish(verse, RecitationPhase.BUFFERING)
         downloadJob = scope.launch {
@@ -82,6 +84,7 @@ class QuranAyahPlayer(
         beforePlay()
         fullSurah = surah
         val request = generation
+        activeVerse = representativeVerse
         playsLeft = repeatCount
         publish(representativeVerse, RecitationPhase.BUFFERING)
         downloadJob = scope.launch {
@@ -133,10 +136,15 @@ class QuranAyahPlayer(
                                 .onFailure { fail(verse, RecitationFailure.FOCUS) }
                         }
                     },
-                    // Recitation continues through short notification chimes.
-                    onDuck = {},
+                    // Recitation continues through short notification chimes at reduced volume.
+                    onDuck = {
+                        if (owns(request) && player === mp) {
+                            runCatching { mp.setVolume(0.25f, 0.25f) }
+                        }
+                    },
                     onGain = {
                         if (owns(request) && player === mp) {
+                            runCatching { mp.setVolume(1.0f, 1.0f) }
                             if (pausedForFocus) {
                                 pausedForFocus = false
                                 runCatching {
@@ -271,12 +279,39 @@ class QuranAyahPlayer(
         focusToken = null
     }
 
+    /** Notification controls pause the same clip without giving up focus or losing repeats. */
+    fun pause() {
+        val mp = player ?: return
+        if (currentPhase == RecitationPhase.PAUSED) {
+            // An explicit user pause must cancel automatic focus-loss resume.
+            pausedForFocus = false
+            return
+        }
+        if (currentPhase != RecitationPhase.PLAYING) return
+        runCatching { mp.pause() }
+            .onSuccess {
+                pausedForFocus = false
+                activeVerse?.let { publish(it, RecitationPhase.PAUSED) }
+            }
+            .onFailure { stop() }
+    }
+
+    fun resume() {
+        if (currentPhase != RecitationPhase.PAUSED) return
+        val mp = player ?: return
+        pausedForFocus = false
+        runCatching { mp.start() }
+            .onSuccess { activeVerse?.let { publish(it, RecitationPhase.PLAYING) } }
+            .onFailure { stop() }
+    }
+
     fun stop() {
         generation++
         downloadJob?.cancel()
         downloadJob = null
         playsLeft = 0
         clearPlayer()
+        activeVerse = null
         fullSurah = null
         fullPositionMs = 0
         currentPhase = RecitationPhase.IDLE

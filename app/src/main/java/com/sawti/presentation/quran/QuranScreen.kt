@@ -71,10 +71,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sawti.presentation.common.StaggeredCascade
 import com.sawti.presentation.common.bounceClick
@@ -88,7 +85,6 @@ import com.sawti.presentation.theme.cardBorder
 fun QuranScreen(chosenSurahId: Int?, onChooseSurah: (Int?) -> Unit, focusFirstVerse: Boolean = false) {
     val vm: QuranViewModel = viewModel()
     val state by vm.state.collectAsStateWithLifecycle()
-    val lifecycle = LocalLifecycleOwner.current.lifecycle
     val view = LocalView.current
     val playing = state.audio.phase == RecitationPhase.PLAYING
     DisposableEffect(view, playing) {
@@ -97,12 +93,9 @@ fun QuranScreen(chosenSurahId: Int?, onChooseSurah: (Int?) -> Unit, focusFirstVe
         onDispose { view.keepScreenOn = originallyAwake }
     }
     LaunchedEffect(chosenSurahId) { vm.openSurah(chosenSurahId) }
-    DisposableEffect(vm, lifecycle) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_STOP) vm.stopAudio()
-        }
-        lifecycle.addObserver(observer)
-        onDispose { lifecycle.removeObserver(observer); vm.leaveScreen() }
+    // Leaving the Quran destination stops playback; locking the phone does not.
+    DisposableEffect(vm) {
+        onDispose { vm.leaveScreen() }
     }
     QuranContent(state, chosenSurahId, onChooseSurah, vm::selectReciter,
         vm::selectRepeats, vm::play, vm::stopAudio, vm::toggleDownload,

@@ -28,10 +28,13 @@ class AudioPlayer(private val focus: AudioFocusController) {
                         .onFailure { stop() }
                 }
             },
-            // Short notifications must not pause recordings.
-            onDuck = {},
+            // Duck notifications without changing player state.
+            onDuck = {
+                if (player === mp) runCatching { mp.setVolume(0.25f, 0.25f) }
+            },
             onGain = {
                 if (player === mp) {
+                    runCatching { mp.setVolume(1.0f, 1.0f) }
                     if (pausedForFocus) {
                         pausedForFocus = false
                         runCatching { mp.start() }.onFailure { stop() }
