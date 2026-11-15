@@ -63,7 +63,7 @@ class AudioDispatcher(
             current == generation && playNeural(item.semanticKey, item.speechText, done, canceled, fallback)
         }
         val recording = item.audioPath?.takeIf { File(it).isFile }
-        if (recording != null && player.play(recording.path,
+        if (recording != null && player.play(recording,
                 onDone = done, onCanceled = canceled,
                 onFailed = { if (!startNeural()) fallback() })) {
             mark()
@@ -101,7 +101,7 @@ class AudioDispatcher(
                     done, canceled, fallback)
             }
             val recording = piece.audioPath?.takeIf { File(it).isFile }
-            if (recording != null && player.play(recording.path,
+            if (recording != null && player.play(recording,
                     onDone = done, onCanceled = canceled,
                     onFailed = { if (!startNeural()) fallback() })) return
             if (startNeural()) return
