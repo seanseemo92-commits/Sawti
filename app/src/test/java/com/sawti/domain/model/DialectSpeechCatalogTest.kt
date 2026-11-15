@@ -224,7 +224,9 @@ class DialectSpeechCatalogTest {
             val seed = item(dish.semanticKey)
             val legacy = seed.copy(ttsPrompt = "أَرُزٌّ بِاللَّحْمْ")
             val form = DialectSpeechCatalog.resolve(legacy, ArabicDialect.STANDARD)
-            assertEquals(dish.semanticKey, dish.ttsPrompt, form.speechText)
+            assertEquals(dish.semanticKey,
+                DialectSpeechCatalog.cleanSpeech(dish.displayText, dish.ttsPrompt,
+                    ArabicDialect.STANDARD), form.speechText)
             assertEquals(dish.semanticKey, legacy, DialectCatalog.localize(legacy,
                 ArabicDialect.STANDARD).forEditing())
             val caregiver = legacy.copy(ttsPrompt = "صوتي الشخصي",
