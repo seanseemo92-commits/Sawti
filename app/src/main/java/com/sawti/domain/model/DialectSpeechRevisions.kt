@@ -1153,6 +1153,20 @@ internal object DialectSpeechRevisions {
     fun applySpeech(item: WordItem, dialect: ArabicDialect, form: SpeechForm): SpeechForm {
         if (item.categoryId.startsWith("custom_")) return form
         val key = item.semanticKey ?: return form
+        // A previously installed Room seed can still contain the pre-1.6.1
+        // Standard-Arabic cuisine pronunciation. Update the runtime projection
+        // only; never rewrite saved rows or caregiver-customized speech/labels.
+        if (dialect == ArabicDialect.STANDARD && key.startsWith("dish.arabic.") &&
+            item.customTextFields and (CardDetails.LABEL or CardDetails.SPEECH) == 0) {
+            val canonical = RegionalDishesCatalog.variant(key, ArabicDialect.STANDARD)
+            if (canonical != null) {
+                val revisedSpeech = canonical.ttsPrompt
+                val revisedCue = if (item.customTextFields and CardDetails.CUE != 0)
+                    form.phonemicCue else PhonemicCue.derive(revisedSpeech)
+                return form.copy(speechText = revisedSpeech, phonemicCue = revisedCue,
+                    source = SpeechSource.CANONICAL)
+            }
+        }
         // New lexical forms supersede historical exact candidates, but never user edits.
         val newest = NeuralLexicon161.forms[key]?.get(dialect)
         if (newest != null) {
