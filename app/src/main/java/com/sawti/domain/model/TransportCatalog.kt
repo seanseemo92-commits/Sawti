@@ -50,7 +50,7 @@ object TransportCatalog {
             ArabicDialect.IRAQI to DialectForm("باص صغير", "بَاص صْغِير"),
             ArabicDialect.TUNISIAN to DialectForm("لواج", "لُوَاج"),
             ArabicDialect.MOROCCAN to DialectForm("طوبيس صغير", "طُوبِيس صْغِير"),
-            ArabicDialect.ALGERIAN to DialectForm("حافلة صغيرة", "حَافْلَة صْغِيرَة"),
+            ArabicDialect.ALGERIAN to DialectForm("حافلة صغيرة", "حَافِلَة صَغِيرَة"),
         )),
         Vehicle("transport.bicycle", "🚲", mapOf(
             ArabicDialect.STANDARD to DialectForm("دراجة هوائية", "دَرَّاجَة هَوَائِيَّة"),
