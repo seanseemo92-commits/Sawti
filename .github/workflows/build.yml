@@ -27,7 +27,7 @@ jobs:
     env:
       # Fast path (PRs): validation + unit tests + schema check only.
       # Full path (push to main, or manual dispatch with full_build): also APKs and lint.
-      FULL_BUILD: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && (github.head_ref == 'integration/android26-36-adaptive-20261113' || github.head_ref == 'fix/dialect-display-speech-86-20261114' || github.head_ref == 'fix/sawti-153-audio-ui-polish-20261115' || github.head_ref == 'fix/dialect-speech-245-20261115' || github.head_ref == 'fix/sawti-154-quran-background-ducking-20261115' || github.head_ref == 'fix/libyan-dialect-polish-five-20261115' || github.head_ref == 'fix/other-dialects-polish-20261115' || github.head_ref == 'feature/neural-voices-hybrid-v160-20261115' || github.head_ref == 'fix/sawti-v161-neural-lexicon-20261115')) || (github.event_name == 'workflow_dispatch' && inputs.full_build) }}
+      FULL_BUILD: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && (github.head_ref == 'integration/android26-36-adaptive-20261113' || github.head_ref == 'fix/dialect-display-speech-86-20261114' || github.head_ref == 'fix/sawti-153-audio-ui-polish-20261115' || github.head_ref == 'fix/dialect-speech-245-20261115' || github.head_ref == 'fix/sawti-154-quran-background-ducking-20261115' || github.head_ref == 'fix/libyan-dialect-polish-five-20261115' || github.head_ref == 'fix/other-dialects-polish-20261115' || github.head_ref == 'feature/neural-voices-hybrid-v160-20261115' || github.head_ref == 'fix/sawti-v161-neural-lexicon-20261115' || github.head_ref == 'review/gemini-phonetic-2399-20261115')) || (github.event_name == 'workflow_dispatch' && inputs.full_build) }}
     steps:
       - name: Checkout Sawti source
         uses: actions/checkout@v4
@@ -54,7 +54,7 @@ jobs:
         run: python3 scripts/validate_neural_packs.py
       - name: Build debug and R8 release APKs and run Android lint (full path only)
         if: ${{ env.FULL_BUILD == 'true' }}
-        run: ./gradlew --no-daemon :app:assembleDebug :app:assembleRelease :app:lintRelease
+        run: ./gradlew --no-daemon -PgeminiPreview=true :app:assembleDebug :app:assembleRelease :app:lintRelease
       - name: Summarize pending speech reviews
         run: |
           python3 - <<'PYREPORT'
@@ -91,7 +91,7 @@ jobs:
         continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
-          name: Sawti-debug-ci
+          name: Sawti-Gemini-pronunciation-preview-APK
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 7

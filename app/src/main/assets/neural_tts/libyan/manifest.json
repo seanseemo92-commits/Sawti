@@ -97,7 +97,7 @@
     },
     "animal.pigeon": {
       "file": "animal.pigeon.mp3",
-      "speechText": "حَمَامَة"
+      "speechText": "حْمَامَة"
     },
     "animal.rabbit": {
       "file": "animal.rabbit.mp3",
@@ -261,7 +261,7 @@
     },
     "clothing.shoes": {
       "file": "clothing.shoes.mp3",
-      "speechText": "كَنْدَرَة"
+      "speechText": "كَنْدْرَة"
     },
     "clothing.shorts": {
       "file": "clothing.shorts.mp3",
@@ -393,7 +393,7 @@
     },
     "family.female_in_law": {
       "file": "family.female_in_law.mp3",
-      "speechText": "نَسِيبَتِي"
+      "speechText": "نَسِيبْتِي"
     },
     "family.female_relative": {
       "file": "family.female_relative.mp3",
@@ -401,7 +401,7 @@
     },
     "family.granddaughter": {
       "file": "family.granddaughter.mp3",
-      "speechText": "حَفِيدَتِي"
+      "speechText": "حَفِيدْتِي"
     },
     "family.grandfather": {
       "file": "family.grandfather.mp3",
@@ -597,7 +597,7 @@
     },
     "food.pasta": {
       "file": "food.pasta.mp3",
-      "speechText": "مَكَرُونَة"
+      "speechText": "مَكْرُونَة"
     },
     "food.rice": {
       "file": "food.rice.mp3",
@@ -949,7 +949,7 @@
     },
     "routine.walk": {
       "file": "routine.walk.mp3",
-      "speechText": "مَشْي"
+      "speechText": "مَشِي"
     },
     "transport.airplane": {
       "file": "transport.airplane.mp3",

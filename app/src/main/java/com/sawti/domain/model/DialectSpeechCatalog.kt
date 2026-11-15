@@ -74,11 +74,19 @@ object DialectSpeechCatalog {
         if (form.source == SpeechSource.USER ||
             value.semanticKey?.substringBefore('.') !in builtinNamespaces) return form
         val clean = cleanSpeech(form.displayText, form.speechText, dialect)
-        val reviewedCue = if (DialectSpeechRevisions.hasCompletedCandidate(
+        // The Gemini review is a conditional overlay, never a mutation of Room
+        // seed rows, caregivers' recordings or editable user-supplied content.
+        // Store the exact proposed speech after pausal cleanup so the neural export
+        // and Android fallback resolve the same reviewed form.
+        val proposed = GeminiPronunciationReview.apply(dialect, value.semanticKey, clean)
+        val reviewedCue = if (proposed != clean || DialectSpeechRevisions.hasCompletedCandidate(
                 dialect, value.semanticKey.orEmpty()
-            )) PhonemicCue.derive(clean) else ""
-        val cue = reviewedCue.ifBlank { form.phonemicCue }
-        return form.copy(speechText = clean, phonemicCue = cue)
+            )) PhonemicCue.derive(proposed) else ""
+        // Caregiver-entered first-syllable hints are private input. Neither
+        // completed revisions nor Gemini proposals may replace a custom cue.
+        val cue = if (value.customTextFields and CardDetails.CUE != 0)
+            form.phonemicCue else reviewedCue.ifBlank { form.phonemicCue }
+        return form.copy(speechText = proposed, phonemicCue = cue)
     }
 
     /** Kept as an API alias for callers which export the voice catalog; no second pipeline. */

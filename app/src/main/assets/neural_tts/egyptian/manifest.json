@@ -97,7 +97,7 @@
     },
     "animal.pigeon": {
       "file": "animal.pigeon.mp3",
-      "speechText": "حَمَامَة"
+      "speechText": "حَمامَة"
     },
     "animal.rabbit": {
       "file": "animal.rabbit.mp3",
@@ -205,7 +205,7 @@
     },
     "clothing.blouse": {
       "file": "clothing.blouse.mp3",
-      "speechText": "بْلُوزَة"
+      "speechText": "بْلوزَة"
     },
     "clothing.cap": {
       "file": "clothing.cap.mp3",
@@ -373,15 +373,15 @@
     },
     "family.female_in_law": {
       "file": "family.female_in_law.mp3",
-      "speechText": "نَسِيبَتِي"
+      "speechText": "نَسِيبْتِي"
     },
     "family.female_relative": {
       "file": "family.female_relative.mp3",
-      "speechText": "قَرِيبَتِي"
+      "speechText": "قَرِيبْتِي"
     },
     "family.granddaughter": {
       "file": "family.granddaughter.mp3",
-      "speechText": "حَفِيدَتِي"
+      "speechText": "حَفِيدْتِي"
     },
     "family.grandfather": {
       "file": "family.grandfather.mp3",
@@ -389,11 +389,11 @@
     },
     "family.grandmother": {
       "file": "family.grandmother.mp3",
-      "speechText": "جَدَّتِي"
+      "speechText": "جَدَّتي"
     },
     "family.grandson": {
       "file": "family.grandson.mp3",
-      "speechText": "حَفِيدِي"
+      "speechText": "حَفيدي"
     },
     "family.husband": {
       "file": "family.husband.mp3",
@@ -417,15 +417,15 @@
     },
     "family.male_in_law": {
       "file": "family.male_in_law.mp3",
-      "speechText": "نَسِيبِي"
+      "speechText": "نَسيبي"
     },
     "family.male_relative": {
       "file": "family.male_relative.mp3",
-      "speechText": "قَرِيبِي"
+      "speechText": "قَريبي"
     },
     "family.maternal_aunt": {
       "file": "family.maternal_aunt.mp3",
-      "speechText": "خَالَتِي"
+      "speechText": "خَالْتِي"
     },
     "family.maternal_aunt_daughter": {
       "file": "family.maternal_aunt_daughter.mp3",
@@ -437,7 +437,7 @@
     },
     "family.maternal_uncle": {
       "file": "family.maternal_uncle.mp3",
-      "speechText": "خَالِي"
+      "speechText": "خَالي"
     },
     "family.maternal_uncle_daughter": {
       "file": "family.maternal_uncle_daughter.mp3",
@@ -453,7 +453,7 @@
     },
     "family.paternal_aunt": {
       "file": "family.paternal_aunt.mp3",
-      "speechText": "عَمَّتِي"
+      "speechText": "عَمِّتِي"
     },
     "family.paternal_aunt_daughter": {
       "file": "family.paternal_aunt_daughter.mp3",
@@ -477,7 +477,7 @@
     },
     "family.sister": {
       "file": "family.sister.mp3",
-      "speechText": "أُخْتِي"
+      "speechText": "أُخْتي"
     },
     "family.sister_daughter": {
       "file": "family.sister_daughter.mp3",
@@ -493,7 +493,7 @@
     },
     "family.son": {
       "file": "family.son.mp3",
-      "speechText": "اِبْنِي"
+      "speechText": "اِبْني"
     },
     "family.son_wife": {
       "file": "family.son_wife.mp3",
@@ -605,7 +605,7 @@
     },
     "food.yogurt": {
       "file": "food.yogurt.mp3",
-      "speechText": "زَبَادِي"
+      "speechText": "زَبادي"
     },
     "fruit.apple": {
       "file": "fruit.apple.mp3",
@@ -617,7 +617,7 @@
     },
     "fruit.avocado": {
       "file": "fruit.avocado.mp3",
-      "speechText": "أَفُوكَادُو"
+      "speechText": "أَفوكادو"
     },
     "fruit.banana": {
       "file": "fruit.banana.mp3",
@@ -653,11 +653,11 @@
     },
     "fruit.mandarin": {
       "file": "fruit.mandarin.mp3",
-      "speechText": "يُوسَفِي"
+      "speechText": "يُوسَفي"
     },
     "fruit.mango": {
       "file": "fruit.mango.mp3",
-      "speechText": "مَانْجُو"
+      "speechText": "مَانْجو"
     },
     "fruit.melon": {
       "file": "fruit.melon.mp3",
@@ -685,7 +685,7 @@
     },
     "fruit.strawberry": {
       "file": "fruit.strawberry.mp3",
-      "speechText": "فَرَاوْلَة"
+      "speechText": "فَراوْلَة"
     },
     "fruit.watermelon": {
       "file": "fruit.watermelon.mp3",
@@ -765,7 +765,7 @@
     },
     "home.chair": {
       "file": "home.chair.mp3",
-      "speechText": "كُرْسِي"
+      "speechText": "كُرْسي"
     },
     "home.clock": {
       "file": "home.clock.mp3",
@@ -905,7 +905,7 @@
     },
     "routine.prayer": {
       "file": "routine.prayer.mp3",
-      "speechText": "صَلَاة"
+      "speechText": "صَلاة"
     },
     "routine.prayer_beads": {
       "file": "routine.prayer_beads.mp3",
@@ -913,7 +913,7 @@
     },
     "routine.prayer_rug": {
       "file": "routine.prayer_rug.mp3",
-      "speechText": "سَجَّادَة صَلَاة"
+      "speechText": "سِجَّادِة صَلَاة"
     },
     "routine.quran": {
       "file": "routine.quran.mp3",
@@ -969,7 +969,7 @@
     },
     "transport.taxi": {
       "file": "transport.taxi.mp3",
-      "speechText": "تَاكْسِي"
+      "speechText": "تَاكْسي"
     },
     "transport.train": {
       "file": "transport.train.mp3",
@@ -981,7 +981,7 @@
     },
     "vegetable.broccoli": {
       "file": "vegetable.broccoli.mp3",
-      "speechText": "بُرُوكْلِي"
+      "speechText": "بُروكْلي"
     },
     "vegetable.carrot": {
       "file": "vegetable.carrot.mp3",
