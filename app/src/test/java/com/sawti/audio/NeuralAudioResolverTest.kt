@@ -14,7 +14,7 @@ import org.robolectric.annotation.Config
 @Config(sdk = [28], application = Application::class)
 class NeuralAudioResolverTest {
     @Test fun onlyManifestMatchedSpeechCanUseAnOfflineClip() {
-        val app = RuntimeEnvironment.getApplication<Application>()
+        val app = RuntimeEnvironment.getApplication() as Application
         val folder = File(app.filesDir, "neural_tts/libyan").apply { mkdirs() }
         val audio = File(folder, "request.water.mp3").apply { writeBytes(byteArrayOf(1, 2, 3)) }
         val manifest = File(folder, "manifest.json").apply {
