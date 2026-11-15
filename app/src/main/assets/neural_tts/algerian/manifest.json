@@ -5,7 +5,7 @@
   "entries": {
     "action.close": {
       "file": "action.close.mp3",
-      "speechText": "نسَكِّر"
+      "speechText": "نْسَكِّر"
     },
     "action.dress": {
       "file": "action.dress.mp3",
@@ -29,11 +29,11 @@
     },
     "action.open": {
       "file": "action.open.mp3",
-      "speechText": "نحِلّ"
+      "speechText": "نْحِلّ"
     },
     "action.pray": {
       "file": "action.pray.mp3",
-      "speechText": "نصَلِّي"
+      "speechText": "نْصَلِّي"
     },
     "action.read": {
       "file": "action.read.mp3",
@@ -41,7 +41,7 @@
     },
     "action.see": {
       "file": "action.see.mp3",
-      "speechText": "نشُوف"
+      "speechText": "نْشُوف"
     },
     "action.sit": {
       "file": "action.sit.mp3",
@@ -205,7 +205,7 @@
     },
     "clothing.blouse": {
       "file": "clothing.blouse.mp3",
-      "speechText": "بُلُوزَة"
+      "speechText": "بْلُوزَة"
     },
     "clothing.cap": {
       "file": "clothing.cap.mp3",
@@ -225,7 +225,7 @@
     },
     "clothing.high_heels": {
       "file": "clothing.high_heels.mp3",
-      "speechText": "سبَاط طَالُون"
+      "speechText": "سْبَاط طَالُون"
     },
     "clothing.hijab": {
       "file": "clothing.hijab.mp3",
@@ -261,7 +261,7 @@
     },
     "clothing.shoes": {
       "file": "clothing.shoes.mp3",
-      "speechText": "سبَاط"
+      "speechText": "سْبَاط"
     },
     "clothing.shorts": {
       "file": "clothing.shorts.mp3",
@@ -269,7 +269,7 @@
     },
     "clothing.socks": {
       "file": "clothing.socks.mp3",
-      "speechText": "تقَاشِر"
+      "speechText": "تْقَاشِر"
     },
     "clothing.trousers": {
       "file": "clothing.trousers.mp3",
@@ -297,19 +297,19 @@
     },
     "dish.algerian.couscous": {
       "file": "dish.algerian.couscous.mp3",
-      "speechText": "طعَام"
+      "speechText": "طْعَام"
     },
     "dish.algerian.douara": {
       "file": "dish.algerian.douara.mp3",
-      "speechText": "دوَارَة"
+      "speechText": "دْوَارَة"
     },
     "dish.algerian.frik_soup": {
       "file": "dish.algerian.frik_soup.mp3",
-      "speechText": "شُرْبِة فرِيك"
+      "speechText": "شُرْبِة فْرِيك"
     },
     "dish.algerian.garantita": {
       "file": "dish.algerian.garantita.mp3",
-      "speechText": "كرَانْتِيكَا"
+      "speechText": "كْرَانْتِيكَا"
     },
     "dish.algerian.kalb_el_louz": {
       "file": "dish.algerian.kalb_el_louz.mp3",
@@ -317,7 +317,7 @@
     },
     "dish.algerian.mahajeb": {
       "file": "dish.algerian.mahajeb.mp3",
-      "speechText": "محَاجِب"
+      "speechText": "مْحَاجِب"
     },
     "dish.algerian.makrout": {
       "file": "dish.algerian.makrout.mp3",
@@ -329,7 +329,7 @@
     },
     "dish.algerian.potato_stew": {
       "file": "dish.algerian.potato_stew.mp3",
-      "speechText": "جوَاز بَطَاطَا"
+      "speechText": "جْوَاز بَطَاطَا"
     },
     "dish.algerian.rechta": {
       "file": "dish.algerian.rechta.mp3",
@@ -337,7 +337,7 @@
     },
     "dish.algerian.stuffed_artichoke": {
       "file": "dish.algerian.stuffed_artichoke.mp3",
-      "speechText": "قَرْنُون معَمَّر"
+      "speechText": "قَرْنُون مْعَمَّر"
     },
     "dish.algerian.sweet_tajine": {
       "file": "dish.algerian.sweet_tajine.mp3",
@@ -545,7 +545,7 @@
     },
     "food.eggs": {
       "file": "food.eggs.mp3",
-      "speechText": "ولَاد الجَاج"
+      "speechText": "وْلَاد الجَاج"
     },
     "food.fish": {
       "file": "food.fish.mp3",
@@ -633,7 +633,7 @@
     },
     "fruit.coconut": {
       "file": "fruit.coconut.mp3",
-      "speechText": "جَوْز الهِنْد"
+      "speechText": "جَوْزُ الهِنْد"
     },
     "fruit.dates": {
       "file": "fruit.dates.mp3",
@@ -693,59 +693,59 @@
     },
     "greeting.bless": {
       "file": "greeting.bless.mp3",
-      "speechText": "ربي يبارك فيك"
+      "speechText": "رَبِّي يبَارِك فِيك"
     },
     "greeting.brighten": {
       "file": "greeting.brighten.mp3",
-      "speechText": "نورت"
+      "speechText": "نَوَّرْت"
     },
     "greeting.fine": {
       "file": "greeting.fine.mp3",
-      "speechText": "الحمد لله"
+      "speechText": "الحَمْدُ لِلَّه"
     },
     "greeting.good_evening": {
       "file": "greeting.good_evening.mp3",
-      "speechText": "مسا الخير"
+      "speechText": "مَسَا الخِير"
     },
     "greeting.good_health": {
       "file": "greeting.good_health.mp3",
-      "speechText": "يعطيك الصحة"
+      "speechText": "يَعْطِيك الصَّحَّة"
     },
     "greeting.good_morning": {
       "file": "greeting.good_morning.mp3",
-      "speechText": "صباح الخير"
+      "speechText": "صَبَاح الخِير"
     },
     "greeting.goodbye": {
       "file": "greeting.goodbye.mp3",
-      "speechText": "بالسلامة"
+      "speechText": "بِالسَّلَامَة"
     },
     "greeting.hello": {
       "file": "greeting.hello.mp3",
-      "speechText": "مرحبا"
+      "speechText": "مَرْحَبَا"
     },
     "greeting.how_are_you": {
       "file": "greeting.how_are_you.mp3",
-      "speechText": "لاباس عليك؟"
+      "speechText": "لَابَاس عَلِيك؟"
     },
     "greeting.reply": {
       "file": "greeting.reply.mp3",
-      "speechText": "وعليكم السلام"
+      "speechText": "وَعَلَيْكُمُ السَّلَام"
     },
     "greeting.safe": {
       "file": "greeting.safe.mp3",
-      "speechText": "في أمان الله"
+      "speechText": "فِي أَمَانِ اللَّه"
     },
     "greeting.salam": {
       "file": "greeting.salam.mp3",
-      "speechText": "السلام عليكم"
+      "speechText": "السَّلَامُ عَلَيْكُم"
     },
     "greeting.thanks": {
       "file": "greeting.thanks.mp3",
-      "speechText": "صحا"
+      "speechText": "صَحَّا"
     },
     "greeting.welcome": {
       "file": "greeting.welcome.mp3",
-      "speechText": "أهلا وسهلا"
+      "speechText": "أَهْلًا وَسَهْلًا"
     },
     "home.air_conditioner": {
       "file": "home.air_conditioner.mp3",
@@ -845,7 +845,7 @@
     },
     "home.wardrobe": {
       "file": "home.wardrobe.mp3",
-      "speechText": "خزَانَة"
+      "speechText": "خْزَانَة"
     },
     "home.washing_machine": {
       "file": "home.washing_machine.mp3",
@@ -873,23 +873,23 @@
     },
     "request.medicine": {
       "file": "request.medicine.mp3",
-      "speechText": "نحَب دْوَايَا"
+      "speechText": "نْحَب دْوَايَا"
     },
     "request.rest": {
       "file": "request.rest.mp3",
-      "speechText": "نحَب نِرْتَاح"
+      "speechText": "نْحَب نِرْتَاح"
     },
     "request.tea": {
       "file": "request.tea.mp3",
-      "speechText": "نحَب أَتَاي"
+      "speechText": "نْحَب أَتَاي"
     },
     "request.toilet": {
       "file": "request.toilet.mp3",
-      "speechText": "نحَب نرُوح لِلتْوَالِيت"
+      "speechText": "نْحَب نْرُوح لِلتْوَالِيت"
     },
     "request.water": {
       "file": "request.water.mp3",
-      "speechText": "نحَب نَشْرَب المَا"
+      "speechText": "نْحَب نَشْرَب المَا"
     },
     "routine.ablution": {
       "file": "routine.ablution.mp3",
@@ -957,7 +957,7 @@
     },
     "transport.minibus": {
       "file": "transport.minibus.mp3",
-      "speechText": "حَافْلَة صغِيرَة"
+      "speechText": "حَافْلَة صْغِيرَة"
     },
     "transport.motorcycle": {
       "file": "transport.motorcycle.mp3",
@@ -973,7 +973,7 @@
     },
     "transport.train": {
       "file": "transport.train.mp3",
-      "speechText": "ترَان"
+      "speechText": "تْرَان"
     },
     "transport.truck": {
       "file": "transport.truck.mp3",
@@ -985,7 +985,7 @@
     },
     "vegetable.carrot": {
       "file": "vegetable.carrot.mp3",
-      "speechText": "زرُودِيَّة"
+      "speechText": "زْرُودِيَّة"
     },
     "vegetable.cauliflower": {
       "file": "vegetable.cauliflower.mp3",
@@ -1061,7 +1061,7 @@
     },
     "vegetable.tomato": {
       "file": "vegetable.tomato.mp3",
-      "speechText": "طمَاطَم"
+      "speechText": "طْمَاطَم"
     },
     "vegetable.zucchini": {
       "file": "vegetable.zucchini.mp3",

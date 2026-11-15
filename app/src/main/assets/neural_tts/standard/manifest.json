@@ -693,11 +693,11 @@
     },
     "greeting.bless": {
       "file": "greeting.bless.mp3",
-      "speechText": "بَارَكَ اللَّهُ فِيكَ"
+      "speechText": "بَارَكَ اللَّهُ فِيك"
     },
     "greeting.brighten": {
       "file": "greeting.brighten.mp3",
-      "speechText": "نَوَّرْتَ"
+      "speechText": "نَوَّرْت"
     },
     "greeting.fine": {
       "file": "greeting.fine.mp3",
@@ -709,7 +709,7 @@
     },
     "greeting.good_health": {
       "file": "greeting.good_health.mp3",
-      "speechText": "يُعْطِيكَ العَافِيَةَ"
+      "speechText": "يُعْطِيكَ العَافِيَة"
     },
     "greeting.good_morning": {
       "file": "greeting.good_morning.mp3",
@@ -725,7 +725,7 @@
     },
     "greeting.how_are_you": {
       "file": "greeting.how_are_you.mp3",
-      "speechText": "كَيْفَ حَالُكَ؟"
+      "speechText": "كَيْفَ حَالُك؟"
     },
     "greeting.reply": {
       "file": "greeting.reply.mp3",
@@ -741,7 +741,7 @@
     },
     "greeting.thanks": {
       "file": "greeting.thanks.mp3",
-      "speechText": "شُكْرًا لَكَ"
+      "speechText": "شُكْرًا لَك"
     },
     "greeting.welcome": {
       "file": "greeting.welcome.mp3",
