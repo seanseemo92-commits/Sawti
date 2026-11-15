@@ -1853,13 +1853,38 @@ internal object GeminiPronunciationReview {
         }
     }
 
+    // Written suggestions are review candidates, not certified playback forms.
+    // Do not reintroduce the pausal-sukun / unsupported-glyph bugs removed in v1.6.1.
+    private val diacritics = Regex("[\u064B-\u065F\u0670\u0640]")
+    private val unsupportedTtsLetters = Regex("[چپگڤ]")
+    private val wordFinalSukun = Regex("ْ(?=\\s|[؟!،.؛:]|$)")
+    private val inflectedPausalTa = Regex("ة[ًٌٍَُِ]")
+    private val independentlyReviewedNamespaces = setOf("dish", "greeting", "request")
+
     fun apply(dialect: ArabicDialect, semanticKey: String?, current: String): String {
         val key = semanticKey ?: return current
         val candidate = entries[dialect to key] ?: return current
-        // Fail safe for custom/persisted or future catalog texts: never replace an
-        // unexpected source, even when its semantic key matches a reviewed seed.
+        // A changed built-in, caregiver override, or later revision must never
+        // be overwritten by a stale Gemini review row.
         if (candidate.original != current) return current
-        return candidate.proposed
+        // Classical endings and previously verified dialect-specific expressions
+        // require individual listening evidence before changing production speech.
+        if (dialect == ArabicDialect.STANDARD ||
+            key.substringBefore('.') in independentlyReviewedNamespaces ||
+            NeuralLexicon161.forms[key]?.containsKey(dialect) == true ||
+            DialectSpeechRevisions.hasCompletedCandidate(dialect, key)
+        ) return current
+        val proposed = candidate.proposed
+        // Edge Neural voices are not verified to pronounce Persian/extended
+        // graphemes as intended. Keep them in the CSV for native review.
+        if (unsupportedTtsLetters.containsMatchIn(proposed) ||
+            wordFinalSukun.containsMatchIn(proposed) ||
+            inflectedPausalTa.containsMatchIn(proposed)
+        ) return current
+        // Any change in lexical letters or spaces is a translation/wording
+        // change, not a verified diacritic refinement.
+        if (diacritics.replace(proposed, "") != diacritics.replace(current, "")) return current
+        return proposed
     }
 
     internal fun candidateCount(): Int = entries.size

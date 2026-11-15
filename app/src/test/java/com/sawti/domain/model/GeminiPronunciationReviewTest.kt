@@ -5,28 +5,32 @@ import org.junit.Test
 
 class GeminiPronunciationReviewTest {
     @Test fun allGeminiCandidatesAreIndexedWithoutDuplicateKeys() {
+        // Preserve the full submitted review as auditable proposals, including
+        // forms that are unsafe to synthesize until listened to on-device.
         assertEquals(1809, GeminiPronunciationReview.candidateCount())
     }
 
-    @Test fun representativeOriginalTextMatchesBeforeApplying() {
-        assertEquals(
-            "بُويْ",
-            GeminiPronunciationReview.apply(ArabicDialect.LIBYAN, "family.father", "بُوي")
-        )
-        assertEquals(
-            "زَوْجَةُ أَخِي",
-            GeminiPronunciationReview.apply(ArabicDialect.STANDARD, "family.brother_wife", "زَوْجَة أَخِي")
-        )
+    @Test fun existingReviewedFormsAndUnsupportedSymbolsRemainUntouched() {
+        assertEquals("بُوي",
+            GeminiPronunciationReview.apply(ArabicDialect.LIBYAN, "family.father", "بُوي"))
+        assertEquals("زَوْجَة أَخِي",
+            GeminiPronunciationReview.apply(ArabicDialect.STANDARD,
+                "family.brother_wife", "زَوْجَة أَخِي"))
+        assertEquals("مَيَّة",
+            GeminiPronunciationReview.apply(ArabicDialect.LIBYAN, "request.water", "مَيَّة"))
+        assertEquals("أَقُوم",
+            GeminiPronunciationReview.apply(ArabicDialect.SAUDI, "action.stand", "أَقُوم"))
+    }
+
+    @Test fun safeDiacriticOnlySuggestionsRemainAvailable() {
+        assertEquals("مِخَدَّة",
+            GeminiPronunciationReview.apply(ArabicDialect.LIBYAN, "home.pillow", "مَخَدَّة"))
     }
 
     @Test fun unexpectedSourcesAndUnlistedKeysNeverGetOverwritten() {
-        assertEquals(
-            "مَيَّة خاصة",
-            GeminiPronunciationReview.apply(ArabicDialect.LIBYAN, "food.water", "مَيَّة خاصة")
-        )
-        assertEquals(
-            "عْرُوق",
-            GeminiPronunciationReview.apply(ArabicDialect.LIBYAN, "custom.card", "عْرُوق")
-        )
+        assertEquals("مَيَّة خاصة",
+            GeminiPronunciationReview.apply(ArabicDialect.LIBYAN, "food.water", "مَيَّة خاصة"))
+        assertEquals("عْرُوق",
+            GeminiPronunciationReview.apply(ArabicDialect.LIBYAN, "custom.card", "عْرُوق"))
     }
 }

@@ -82,7 +82,10 @@ object DialectSpeechCatalog {
         val reviewedCue = if (proposed != clean || DialectSpeechRevisions.hasCompletedCandidate(
                 dialect, value.semanticKey.orEmpty()
             )) PhonemicCue.derive(proposed) else ""
-        val cue = reviewedCue.ifBlank { form.phonemicCue }
+        // Caregiver-entered first-syllable hints are private input. Neither
+        // completed revisions nor Gemini proposals may replace a custom cue.
+        val cue = if (value.customTextFields and CardDetails.CUE != 0)
+            form.phonemicCue else reviewedCue.ifBlank { form.phonemicCue }
         return form.copy(speechText = proposed, phonemicCue = cue)
     }
 
