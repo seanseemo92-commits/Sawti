@@ -108,8 +108,8 @@ class DialectSpeechCatalogTest {
             "fruit", "food", "home", "clothing", "body", "action", "animal",
             "transport", "greeting")
         assertEquals(namespaces, allSeeds.mapNotNull { it.semanticKey?.substringBefore('.') }.toSet())
-        val trailingSukun = Regex("""ْ(?=\\s|$|[؟،؛.!])""")
-        val trailingHaSukun = Regex("""هْ(?=\\s|$|[؟،؛.!])""")
+        val trailingSukun = Regex("""ْ(?=\s|$|[؟،؛.!])""")
+        val trailingHaSukun = Regex("""هْ(?=\s|$|[؟،؛.!])""")
         for (dialect in ArabicDialect.entries) {
             for (seed in allSeeds) {
                 if (seed.categoryId == RegionalDishesCatalog.CATEGORY_ID &&
