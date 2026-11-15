@@ -39,11 +39,8 @@ data class DialectVoiceStatus(
         get() = initialized && !arabicVoiceAvailable
 }
 
-/**
- * One stable Arabic TTS engine language is used for ALL dialects; colloquial speech
- * comes exclusively from the card's speechText. It never selects an ar-TN/ar-LY/
- * ar-DZ locale on dialect change. Installed engines differ in their Arabic support.
- * The selected engine may use its own network voice; this class does not install voice data.
+/** Uses the best available Arabic regional voice, with Arabic-only fallback.
+ * This does not claim Android has installed a neural voice for every dialect.
  */
 class SpeechManager(context: Context, private val focus: AudioFocusController) : TextToSpeech.OnInitListener {
     private val appContext = context.applicationContext
@@ -57,6 +54,7 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
     private var ready = false
     private var speechRate = 0.85f
     private var dialect = ArabicDialect.STANDARD
+    val activeDialect: ArabicDialect get() = dialect
     private var preferredVoice: String? = null
     private var pending: (() -> Unit)? = null
     private var pendingCancel: (() -> Unit)? = null
@@ -129,37 +127,39 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
     }
 
 
-    /** The UI dialect affects text/phonetics only, never the engine language. */
+    /** Dialect changes select a regional voice when it exists on this device. */
     fun setDialect(value: ArabicDialect, voiceName: String?) {
-        val voiceChanged = preferredVoice != voiceName
-        if (dialect == value && !voiceChanged && ready && _voiceStatus.value.initialized) return
+        if (dialect == value && preferredVoice == voiceName && ready && _voiceStatus.value.initialized) return
         dialect = value
         preferredVoice = voiceName
-        if (ready) {
-            if (voiceChanged) configureEngine()
-            else _voiceStatus.value = _voiceStatus.value.copy(requested = value)
-        }
+        if (ready) configureEngine()
     }
 
     private fun supportedLanguage(engine: TextToSpeech, locale: Locale): Boolean =
         runCatching { engine.setLanguage(locale) >= TextToSpeech.LANG_AVAILABLE }.getOrDefault(false)
 
-    /** Use only general Arabic. Missing Arabic data must not fall through to English/French. */
+    /** Device voices are optional; all candidates must remain Arabic. */
+    fun selectBestVoiceForDialect(dialect: ArabicDialect, preferOffline: Boolean = true): android.speech.tts.Voice? {
+        val installed = runCatching { tts?.voices.orEmpty() }.getOrDefault(emptySet())
+        return RegionalVoicePolicy.best(installed, dialect, preferOffline)
+    }
+
     private fun configureEngine() {
         val engine = tts ?: return
-        val arabic = runCatching { engine.voices.orEmpty() }
-            .getOrDefault(emptySet())
+        val arabic = runCatching { engine.voices.orEmpty() }.getOrDefault(emptySet())
             .filter { it.locale.language == "ar" }
             .sortedWith(compareBy({ it.isNetworkConnectionRequired }, { it.name }))
 
-        activeLanguage = ArabicTtsLocalePolicy.select { supportedLanguage(engine, it) }
-        // Respect an explicitly chosen voice only if it uses the same general Arabic
-        // language family. Never set an ar-TN/ar-LY/... voice on a dialect switch.
-        val selected = arabic.firstOrNull {
-            it.name == preferredVoice && ArabicTtsLocalePolicy.isGenericArabic(it.locale)
+        activeLanguage = RegionalVoicePolicy.candidates(dialect).firstOrNull {
+            supportedLanguage(engine, it)
         }
-        if (activeLanguage?.language == "ar" && selected != null) {
-            runCatching { engine.setVoice(selected) }
+        // Respect the caregiver's explicit voice choice, but never choose a foreign language.
+        val manual = arabic.firstOrNull { it.name == preferredVoice }
+        val selected = manual ?: selectBestVoiceForDialect(dialect)
+        if (selected != null) {
+            val accepted = runCatching { engine.setVoice(selected) == TextToSpeech.SUCCESS }
+                .getOrDefault(false)
+            if (accepted) activeLanguage = selected.locale
         }
         refreshVoiceStatus(engine, arabic)
         _issue.value = if (_voiceStatus.value.arabicVoiceAvailable) null else SpeechIssue.MissingArabicVoice
@@ -209,7 +209,7 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
         }.getOrDefault(false)
         if (initial) return true
         val original = activeLanguage
-        for (locale in ArabicTtsLocalePolicy.candidates()) {
+        for (locale in RegionalVoicePolicy.candidates(dialect)) {
             if (locale == activeLanguage || !supportedLanguage(engine, locale)) continue
             activeLanguage = locale
             refreshVoiceStatus(engine)

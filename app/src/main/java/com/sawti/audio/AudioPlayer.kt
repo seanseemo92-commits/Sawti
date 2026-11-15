@@ -1,9 +1,10 @@
 package com.sawti.audio
 
+import android.content.res.AssetFileDescriptor
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 
-/** Plays caregiver recordings / imported audio files. One clip at a time; never throws. */
+/** Plays one AAC recording or bundled neural MP3, preserving focus ducking and lifecycle. */
 class AudioPlayer(private val focus: AudioFocusController) {
     private var player: MediaPlayer? = null
     private var focusToken: Long? = null
@@ -12,13 +13,24 @@ class AudioPlayer(private val focus: AudioFocusController) {
 
     /** Returns false for immediate setup failures; asynchronous failures call onFailed. */
     fun play(path: String, onDone: () -> Unit = {}, onCanceled: () -> Unit = onDone,
-        onFailed: () -> Unit = {}): Boolean {
-        stop()
-        val mp = try {
-            MediaPlayer()
-        } catch (_: Exception) {
-            return false
+        onFailed: () -> Unit = {}): Boolean =
+        playSource(onDone, onCanceled, onFailed) { it.setDataSource(path) }
+
+    /** Closing the descriptor after setDataSource is safe: MediaPlayer retains its own FD. */
+    fun playAsset(afd: AssetFileDescriptor, onDone: () -> Unit = {},
+        onCanceled: () -> Unit = onDone, onFailed: () -> Unit = {}): Boolean =
+        try {
+            playSource(onDone, onCanceled, onFailed) {
+                it.setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
+            }
+        } finally {
+            runCatching { afd.close() }
         }
+
+    private fun playSource(onDone: () -> Unit, onCanceled: () -> Unit,
+        onFailed: () -> Unit, source: (MediaPlayer) -> Unit): Boolean {
+        stop()
+        val mp = try { MediaPlayer() } catch (_: Exception) { return false }
         val token = focus.acquire(
             onLost = { if (player === mp) stop() },
             onTransientLoss = {
@@ -28,10 +40,7 @@ class AudioPlayer(private val focus: AudioFocusController) {
                         .onFailure { stop() }
                 }
             },
-            // Duck notifications without changing player state.
-            onDuck = {
-                if (player === mp) runCatching { mp.setVolume(0.25f, 0.25f) }
-            },
+            onDuck = { if (player === mp) runCatching { mp.setVolume(0.25f, 0.25f) } },
             onGain = {
                 if (player === mp) {
                     runCatching { mp.setVolume(1.0f, 1.0f) }
@@ -53,7 +62,7 @@ class AudioPlayer(private val focus: AudioFocusController) {
                     .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
                     .build()
             )
-            mp.setDataSource(path)
+            source(mp)
             mp.setOnCompletionListener {
                 if (player === mp) {
                     this.onCanceled = null
@@ -63,6 +72,7 @@ class AudioPlayer(private val focus: AudioFocusController) {
             }
             mp.setOnErrorListener { _, _, _ ->
                 if (player === mp) {
+                    this.onCanceled = null
                     stop()
                     onFailed()
                 }
@@ -71,6 +81,7 @@ class AudioPlayer(private val focus: AudioFocusController) {
             mp.setOnPreparedListener {
                 if (player === mp) {
                     runCatching { mp.start() }.onFailure {
+                        this.onCanceled = null
                         stop()
                         onFailed()
                     }
@@ -102,12 +113,9 @@ class AudioPlayer(private val focus: AudioFocusController) {
         pausedForFocus = false
         if (current != null) {
             runCatching { current.stop() }
-            // Always release, even if stop() throws IllegalStateException.
             runCatching { current.release() }
         }
         if (token != null) focus.release(token)
-        // Focus loss and explicit stops are terminal too: clear the AAC playing indicator.
-        // Clear ownership before invoking user code, which may start another clip.
         canceled?.invoke()
     }
 }
