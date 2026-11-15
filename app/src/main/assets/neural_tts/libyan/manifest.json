@@ -77,7 +77,7 @@
     },
     "animal.chicken": {
       "file": "animal.chicken.mp3",
-      "speechText": "دْجَاجَة"
+      "speechText": "دجَاجَة"
     },
     "animal.cow": {
       "file": "animal.cow.mp3",
@@ -829,7 +829,7 @@
     },
     "home.pillow": {
       "file": "home.pillow.mp3",
-      "speechText": "مِخَدَّة"
+      "speechText": "مَخَدَّة"
     },
     "home.pot": {
       "file": "home.pot.mp3",
