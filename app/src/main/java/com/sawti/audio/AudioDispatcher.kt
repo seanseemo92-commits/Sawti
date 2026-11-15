@@ -1,5 +1,6 @@
 package com.sawti.audio
 
+import com.sawti.domain.model.DialectSpeechCatalog
 import com.sawti.domain.model.PhonemicCue
 import com.sawti.domain.model.SentenceComposer
 import com.sawti.domain.model.SentencePiece
@@ -10,56 +11,75 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-/** Visual playback follows real player and TTS lifecycle; no guessed timers or always-on loops. */
 data class PlaybackVisual(
     val activeWordId: Long? = null,
     val sentenceIndex: Int? = null,
     val isSpeaking: Boolean = false,
 )
 
-/** Shared application-scoped voice channel for spoken AAC cards and caregiver recordings. */
+/** Priority: caregiver recording -> keyed neural clip -> dialect-aware Android TTS. */
 class AudioDispatcher(
     private val speech: SpeechManager,
     private val player: AudioPlayer,
+    private val neural: NeuralAudioResolver? = null,
 ) {
     private val _playback = MutableStateFlow(PlaybackVisual())
     val playback: StateFlow<PlaybackVisual> = _playback.asStateFlow()
     private var generation = 0L
-    // Cancel Quran downloads that have not yet acquired audio focus when AAC starts.
     private var quranStopper: (() -> Unit)? = null
 
-    fun registerQuranStopper(stopper: () -> Unit) {
-        quranStopper = stopper
-    }
-
+    fun registerQuranStopper(stopper: () -> Unit) { quranStopper = stopper }
     fun unregisterQuranStopper(stopper: () -> Unit) {
         if (quranStopper === stopper) quranStopper = null
     }
 
-    /** Main tap: caregiver recording when available, TTS otherwise. */
+    private fun playNeural(key: String?, text: String, done: () -> Unit,
+        canceled: () -> Unit, failed: () -> Unit): Boolean {
+        val resolver = neural ?: return false
+        val speed = NeuralPlaybackSpeed.forTtsRate(speech.activeSpeechRate)
+        return when (val clip = resolver.resolve(speech.activeDialect, key, text)) {
+            is NeuralClip.Downloaded ->
+                player.play(clip.file.path, onDone = done, onCanceled = canceled,
+                    onFailed = failed, speed = speed)
+            is NeuralClip.Bundled -> {
+                val afd = resolver.openBundled(clip) ?: return false
+                player.playAsset(afd, onDone = done, onCanceled = canceled,
+                    onFailed = failed, speed = speed)
+            }
+            null -> false
+        }
+    }
+
     fun play(item: WordItem) {
         stopAll()
         val current = generation
-        val recording = item.audioPath?.takeIf { File(it).isFile }
-        fun speakFallback() {
-            if (current != generation) return
-            _playback.value = PlaybackVisual(activeWordId = item.id, isSpeaking = true)
-            speech.speak(item.speechText,
-                onDone = { if (current == generation) _playback.value = PlaybackVisual() },
-                onCanceled = { if (current == generation) _playback.value = PlaybackVisual() })
+        val done = { if (current == generation) _playback.value = PlaybackVisual() }
+        val canceled = { if (current == generation) _playback.value = PlaybackVisual() }
+        val mark = { if (current == generation)
+            _playback.value = PlaybackVisual(activeWordId = item.id, isSpeaking = true) }
+        val fallback = {
+            if (current == generation) {
+                mark()
+                speech.speak(item.speechText, onDone = done, onCanceled = canceled)
+            }
         }
+        // Personal speech/labels are ineligible. No fragile text equality with old manifests.
+        val neuralText = DialectSpeechCatalog.neuralTextFor(item, speech.activeDialect)
+        val startNeural = {
+            current == generation && neuralText != null &&
+                playNeural(item.semanticKey, neuralText, done, canceled, fallback)
+        }
+        val recording = item.audioPath?.takeIf { File(it).isFile }
         if (recording != null && player.play(recording,
-                onDone = { if (current == generation) _playback.value = PlaybackVisual() },
-                onCanceled = { if (current == generation) _playback.value = PlaybackVisual() },
-                onFailed = { speakFallback() })) {
-            if (current == generation) _playback.value =
-                PlaybackVisual(activeWordId = item.id, isSpeaking = true)
+                onDone = done, onCanceled = canceled,
+                onFailed = { if (!startNeural()) fallback() })) {
+            mark()
             return
         }
-        speakFallback()
+        if (startNeural()) { mark(); return }
+        fallback()
     }
 
-    /** Sentence-strip playback is independent of the retired card hint feature. */
     fun speakSentence(pieces: List<SentencePiece>) {
         val speakable = SentenceComposer.spokenPieces(pieces)
         if (speakable.isEmpty()) return
@@ -77,23 +97,24 @@ class AudioDispatcher(
                 sentenceIndex = piece.pieceIndex,
                 isSpeaking = true,
             )
-            val speakFallback = {
-                if (current == generation) {
-                    speech.speak(
-                        piece.speech,
-                        onDone = { if (current == generation) playPiece(position + 1) },
-                        onCanceled = { if (current == generation) _playback.value = PlaybackVisual() },
-                    )
-                }
+            val done = { if (current == generation) playPiece(position + 1) }
+            val canceled = { if (current == generation) _playback.value = PlaybackVisual() }
+            val fallback = {
+                if (current == generation) speech.speak(piece.speech,
+                    onDone = done, onCanceled = canceled)
+            }
+            val startNeural = {
+                current == generation && piece.neuralDialect == speech.activeDialect &&
+                    piece.neuralSpeechText != null &&
+                    playNeural(piece.semanticKey, piece.neuralSpeechText,
+                        done, canceled, fallback)
             }
             val recording = piece.audioPath?.takeIf { File(it).isFile }
-            if (recording != null && player.play(
-                    recording,
-                    onDone = { if (current == generation) playPiece(position + 1) },
-                    onCanceled = { if (current == generation) _playback.value = PlaybackVisual() },
-                    onFailed = { speakFallback() },
-                )) return
-            speakFallback()
+            if (recording != null && player.play(recording,
+                    onDone = done, onCanceled = canceled,
+                    onFailed = { if (!startNeural()) fallback() })) return
+            if (startNeural()) return
+            fallback()
         }
         playPiece(0)
     }
@@ -104,17 +125,10 @@ class AudioDispatcher(
         speech.speak(PhonemicCue.forSpeech(cue))
     }
 
-    fun say(text: String) {
-        stopAll()
-        speech.speak(text)
-    }
-    fun playFile(path: String): Boolean {
-        stopAll()
-        return player.play(path)
-    }
+    fun say(text: String) { stopAll(); speech.speak(text) }
+    fun playFile(path: String): Boolean { stopAll(); return player.play(path) }
     fun stop() = stopAll()
 
-    /** Stop AAC before Quran starts without canceling the Quran request itself. */
     fun stopAac() {
         ++generation
         _playback.value = PlaybackVisual()

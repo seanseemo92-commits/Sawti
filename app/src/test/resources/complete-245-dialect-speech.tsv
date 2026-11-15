@@ -59,7 +59,7 @@ SYRIAN	food.chicken	جاج	جَاجْ
 SYRIAN	food.rice	رز	رِزّْ
 SYRIAN	food.soup	شوربة	شُورْبَة
 SYRIAN	food.yogurt	لبن	لَبَنْ
-SYRIAN	home.blanket	بطانية	بَطَّانِيَّة
+SYRIAN	home.blanket	حرام	حْرَام
 SYRIAN	home.cup	كاسة	كَاسَة
 SYRIAN	home.pillow	مخدة	مَخَدَّة
 SYRIAN	home.water_bottle	قنينة مي	قَنِّينَةُ مَيّْ
@@ -205,7 +205,7 @@ MOROCCAN	action.stand	نوقف	نُوقَفْ
 MOROCCAN	action.walk	نمشي	نِمْشِي
 MOROCCAN	action.wash	نغسل	نِغْسِلْ
 MOROCCAN	animal.cat	مش	مُشّْ
-MOROCCAN	animal.rabbit	قنينية	قِنِينِيَّة
+MOROCCAN	animal.rabbit	قنية	قْنِيَّة
 MOROCCAN	animal.sheep	حولي	حَوْلِي
 MOROCCAN	body.ear	وذن	وِذْنْ
 MOROCCAN	body.finger	صبع	صُبَعْ

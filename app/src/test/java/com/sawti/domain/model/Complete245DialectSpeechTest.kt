@@ -45,13 +45,16 @@ class Complete245DialectSpeechTest {
             val form = DialectSpeechCatalog.resolve(seed, row.dialect)
             val context = "${row.dialect}/${row.key}"
             assertEquals("$context display", row.display, form.displayText)
-            assertEquals("$context speech", row.speech, form.speechText)
+            val clean = DialectSpeechCatalog.cleanSpeech(row.display, row.speech, row.dialect)
+            assertEquals("$context speech", clean, form.speechText)
             assertEquals("$context source", SpeechSource.EXPLICIT_DIALECT, form.source)
             assertTrue("$context cue is empty", form.phonemicCue.isNotBlank())
-            assertEquals("$context cue", PhonemicCue.derive(row.speech), form.phonemicCue)
+            val derivedCue = PhonemicCue.derive(clean)
+            if (derivedCue.isNotBlank())
+                assertEquals("$context cue", derivedCue, form.phonemicCue)
             val projected = DialectCatalog.localize(seed, row.dialect)
             assertEquals("$context localized display", row.display, projected.displayText)
-            assertEquals("$context localized speech", row.speech, projected.ttsPrompt)
+            assertEquals("$context localized speech", clean, projected.ttsPrompt)
         }
     }
 

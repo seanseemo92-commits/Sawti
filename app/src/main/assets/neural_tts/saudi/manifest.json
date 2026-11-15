@@ -1,0 +1,1071 @@
+{
+  "version": 1,
+  "voice": "ar-SA-ZariyahNeural",
+  "rate": "-18%",
+  "entries": {
+    "action.close": {
+      "file": "action.close.mp3",
+      "speechText": "أَسَكِّر"
+    },
+    "action.dress": {
+      "file": "action.dress.mp3",
+      "speechText": "أَلْبَس"
+    },
+    "action.drink": {
+      "file": "action.drink.mp3",
+      "speechText": "أَشْرَب"
+    },
+    "action.eat": {
+      "file": "action.eat.mp3",
+      "speechText": "آكُل"
+    },
+    "action.hear": {
+      "file": "action.hear.mp3",
+      "speechText": "أَسْمَع"
+    },
+    "action.laugh": {
+      "file": "action.laugh.mp3",
+      "speechText": "أَضْحَك"
+    },
+    "action.open": {
+      "file": "action.open.mp3",
+      "speechText": "أَفْتَح"
+    },
+    "action.pray": {
+      "file": "action.pray.mp3",
+      "speechText": "أُصَلِّي"
+    },
+    "action.read": {
+      "file": "action.read.mp3",
+      "speechText": "أَقْرَأ"
+    },
+    "action.see": {
+      "file": "action.see.mp3",
+      "speechText": "أَشُوف"
+    },
+    "action.sit": {
+      "file": "action.sit.mp3",
+      "speechText": "أَجْلِس"
+    },
+    "action.sleep": {
+      "file": "action.sleep.mp3",
+      "speechText": "أَنَام"
+    },
+    "action.speak": {
+      "file": "action.speak.mp3",
+      "speechText": "أَتَكَلَّم"
+    },
+    "action.stand": {
+      "file": "action.stand.mp3",
+      "speechText": "أَقُوم"
+    },
+    "action.walk": {
+      "file": "action.walk.mp3",
+      "speechText": "أَمْشِي"
+    },
+    "action.wash": {
+      "file": "action.wash.mp3",
+      "speechText": "أَغْسِل"
+    },
+    "animal.camel": {
+      "file": "animal.camel.mp3",
+      "speechText": "جَمَل"
+    },
+    "animal.cat": {
+      "file": "animal.cat.mp3",
+      "speechText": "بِسَّة"
+    },
+    "animal.chicken": {
+      "file": "animal.chicken.mp3",
+      "speechText": "دَجَاجَة"
+    },
+    "animal.cow": {
+      "file": "animal.cow.mp3",
+      "speechText": "بَقَرَة"
+    },
+    "animal.dog": {
+      "file": "animal.dog.mp3",
+      "speechText": "كَلْب"
+    },
+    "animal.duck": {
+      "file": "animal.duck.mp3",
+      "speechText": "بَطَّة"
+    },
+    "animal.horse": {
+      "file": "animal.horse.mp3",
+      "speechText": "حِصَان"
+    },
+    "animal.pigeon": {
+      "file": "animal.pigeon.mp3",
+      "speechText": "حَمَامَة"
+    },
+    "animal.rabbit": {
+      "file": "animal.rabbit.mp3",
+      "speechText": "أَرْنَب"
+    },
+    "animal.rooster": {
+      "file": "animal.rooster.mp3",
+      "speechText": "دِيك"
+    },
+    "animal.sheep": {
+      "file": "animal.sheep.mp3",
+      "speechText": "خَرُوف"
+    },
+    "animal.sparrow": {
+      "file": "animal.sparrow.mp3",
+      "speechText": "عُصْفُور"
+    },
+    "body.abdomen": {
+      "file": "body.abdomen.mp3",
+      "speechText": "بَطْن"
+    },
+    "body.back": {
+      "file": "body.back.mp3",
+      "speechText": "ظَهْر"
+    },
+    "body.chest": {
+      "file": "body.chest.mp3",
+      "speechText": "صَدْر"
+    },
+    "body.ear": {
+      "file": "body.ear.mp3",
+      "speechText": "أُذُن"
+    },
+    "body.eye": {
+      "file": "body.eye.mp3",
+      "speechText": "عَيْن"
+    },
+    "body.face": {
+      "file": "body.face.mp3",
+      "speechText": "وَجْه"
+    },
+    "body.finger": {
+      "file": "body.finger.mp3",
+      "speechText": "إِصْبَع"
+    },
+    "body.hair": {
+      "file": "body.hair.mp3",
+      "speechText": "شَعْر"
+    },
+    "body.hand": {
+      "file": "body.hand.mp3",
+      "speechText": "يَد"
+    },
+    "body.head": {
+      "file": "body.head.mp3",
+      "speechText": "رَاس"
+    },
+    "body.heart": {
+      "file": "body.heart.mp3",
+      "speechText": "قَلْب"
+    },
+    "body.knee": {
+      "file": "body.knee.mp3",
+      "speechText": "رُكْبَة"
+    },
+    "body.leg": {
+      "file": "body.leg.mp3",
+      "speechText": "رِجْل"
+    },
+    "body.mouth": {
+      "file": "body.mouth.mp3",
+      "speechText": "فَم"
+    },
+    "body.neck": {
+      "file": "body.neck.mp3",
+      "speechText": "رَقَبَة"
+    },
+    "body.nose": {
+      "file": "body.nose.mp3",
+      "speechText": "خَشِم"
+    },
+    "body.shoulder": {
+      "file": "body.shoulder.mp3",
+      "speechText": "كَتِف"
+    },
+    "body.tongue": {
+      "file": "body.tongue.mp3",
+      "speechText": "لِسَان"
+    },
+    "body.tooth": {
+      "file": "body.tooth.mp3",
+      "speechText": "سِنّ"
+    },
+    "clothing.abaya": {
+      "file": "clothing.abaya.mp3",
+      "speechText": "عَبَاءَة"
+    },
+    "clothing.bag": {
+      "file": "clothing.bag.mp3",
+      "speechText": "شَنْطَة"
+    },
+    "clothing.belt": {
+      "file": "clothing.belt.mp3",
+      "speechText": "حِزَام"
+    },
+    "clothing.blouse": {
+      "file": "clothing.blouse.mp3",
+      "speechText": "بْلُوزَة"
+    },
+    "clothing.cap": {
+      "file": "clothing.cap.mp3",
+      "speechText": "طَاقِيَّة"
+    },
+    "clothing.coat": {
+      "file": "clothing.coat.mp3",
+      "speechText": "مِعْطَف"
+    },
+    "clothing.dress": {
+      "file": "clothing.dress.mp3",
+      "speechText": "فُسْتَان"
+    },
+    "clothing.glasses": {
+      "file": "clothing.glasses.mp3",
+      "speechText": "نَظَّارَة"
+    },
+    "clothing.high_heels": {
+      "file": "clothing.high_heels.mp3",
+      "speechText": "جَزْمَة كَعَب"
+    },
+    "clothing.hijab": {
+      "file": "clothing.hijab.mp3",
+      "speechText": "حِجَاب"
+    },
+    "clothing.jacket": {
+      "file": "clothing.jacket.mp3",
+      "speechText": "جَاكِيت"
+    },
+    "clothing.pajamas": {
+      "file": "clothing.pajamas.mp3",
+      "speechText": "بِيجَامَة"
+    },
+    "clothing.ring": {
+      "file": "clothing.ring.mp3",
+      "speechText": "خَاتَم"
+    },
+    "clothing.robe": {
+      "file": "clothing.robe.mp3",
+      "speechText": "رِدَاء"
+    },
+    "clothing.sandals": {
+      "file": "clothing.sandals.mp3",
+      "speechText": "صَنْدَل"
+    },
+    "clothing.scarf": {
+      "file": "clothing.scarf.mp3",
+      "speechText": "وِشَاح"
+    },
+    "clothing.shirt": {
+      "file": "clothing.shirt.mp3",
+      "speechText": "قَمِيص"
+    },
+    "clothing.shoes": {
+      "file": "clothing.shoes.mp3",
+      "speechText": "جَزْمَة"
+    },
+    "clothing.shorts": {
+      "file": "clothing.shorts.mp3",
+      "speechText": "شُورْت"
+    },
+    "clothing.socks": {
+      "file": "clothing.socks.mp3",
+      "speechText": "دِلَاغَات"
+    },
+    "clothing.trousers": {
+      "file": "clothing.trousers.mp3",
+      "speechText": "بَنْطَلُون"
+    },
+    "clothing.tshirt": {
+      "file": "clothing.tshirt.mp3",
+      "speechText": "تِيشِيرْت"
+    },
+    "clothing.watch": {
+      "file": "clothing.watch.mp3",
+      "speechText": "سَاعَة يَد"
+    },
+    "dish.saudi.bukhari": {
+      "file": "dish.saudi.bukhari.mp3",
+      "speechText": "رُز بُخَارِي"
+    },
+    "dish.saudi.haneeth": {
+      "file": "dish.saudi.haneeth.mp3",
+      "speechText": "حَنِيذ"
+    },
+    "dish.saudi.hanini": {
+      "file": "dish.saudi.hanini.mp3",
+      "speechText": "حَنِينِي"
+    },
+    "dish.saudi.jareesh": {
+      "file": "dish.saudi.jareesh.mp3",
+      "speechText": "جِرِيش"
+    },
+    "dish.saudi.kabsa": {
+      "file": "dish.saudi.kabsa.mp3",
+      "speechText": "كَبْسَة لَحَم"
+    },
+    "dish.saudi.liver": {
+      "file": "dish.saudi.liver.mp3",
+      "speechText": "كِبْدَة حَاشِي"
+    },
+    "dish.saudi.luqaimat": {
+      "file": "dish.saudi.luqaimat.mp3",
+      "speechText": "لِقَيْمَات"
+    },
+    "dish.saudi.madfoon": {
+      "file": "dish.saudi.madfoon.mp3",
+      "speechText": "مَدْفُون"
+    },
+    "dish.saudi.madhbi": {
+      "file": "dish.saudi.madhbi.mp3",
+      "speechText": "مَظْبِي دَجَاج"
+    },
+    "dish.saudi.mandi": {
+      "file": "dish.saudi.mandi.mp3",
+      "speechText": "مَنْدِي"
+    },
+    "dish.saudi.marqooq": {
+      "file": "dish.saudi.marqooq.mp3",
+      "speechText": "مَرْقُوق"
+    },
+    "dish.saudi.masoub": {
+      "file": "dish.saudi.masoub.mp3",
+      "speechText": "مَعْصُوب"
+    },
+    "dish.saudi.matazeez": {
+      "file": "dish.saudi.matazeez.mp3",
+      "speechText": "مَطَازِيز"
+    },
+    "dish.saudi.qursan": {
+      "file": "dish.saudi.qursan.mp3",
+      "speechText": "قُرْصَان"
+    },
+    "dish.saudi.saleeg": {
+      "file": "dish.saudi.saleeg.mp3",
+      "speechText": "سَلِيق طَائِفِي"
+    },
+    "family.brother": {
+      "file": "family.brother.mp3",
+      "speechText": "أَخُوي"
+    },
+    "family.brother_daughter": {
+      "file": "family.brother_daughter.mp3",
+      "speechText": "بِنْت أَخُوي"
+    },
+    "family.brother_son": {
+      "file": "family.brother_son.mp3",
+      "speechText": "وَلَد أَخُوي"
+    },
+    "family.brother_wife": {
+      "file": "family.brother_wife.mp3",
+      "speechText": "مَرْت أَخُوي"
+    },
+    "family.daughter": {
+      "file": "family.daughter.mp3",
+      "speechText": "بِنْتِي"
+    },
+    "family.daughter_husband": {
+      "file": "family.daughter_husband.mp3",
+      "speechText": "زَوْج بِنْتِي"
+    },
+    "family.father": {
+      "file": "family.father.mp3",
+      "speechText": "أَبُوي"
+    },
+    "family.female_in_law": {
+      "file": "family.female_in_law.mp3",
+      "speechText": "نَسِيبَتِي"
+    },
+    "family.female_relative": {
+      "file": "family.female_relative.mp3",
+      "speechText": "قَرِيبَتِي"
+    },
+    "family.granddaughter": {
+      "file": "family.granddaughter.mp3",
+      "speechText": "حَفِيدَتِي"
+    },
+    "family.grandfather": {
+      "file": "family.grandfather.mp3",
+      "speechText": "جَدِّي"
+    },
+    "family.grandmother": {
+      "file": "family.grandmother.mp3",
+      "speechText": "جَدَّتِي"
+    },
+    "family.grandson": {
+      "file": "family.grandson.mp3",
+      "speechText": "حَفِيدِي"
+    },
+    "family.husband": {
+      "file": "family.husband.mp3",
+      "speechText": "زَوْجِي"
+    },
+    "family.husband_brother": {
+      "file": "family.husband_brother.mp3",
+      "speechText": "أَخُو زَوْجِي"
+    },
+    "family.husband_father": {
+      "file": "family.husband_father.mp3",
+      "speechText": "أَبُو زَوْجِي"
+    },
+    "family.husband_mother": {
+      "file": "family.husband_mother.mp3",
+      "speechText": "أُمّ زَوْجِي"
+    },
+    "family.husband_sister": {
+      "file": "family.husband_sister.mp3",
+      "speechText": "أُخْت زَوْجِي"
+    },
+    "family.male_in_law": {
+      "file": "family.male_in_law.mp3",
+      "speechText": "نَسِيبِي"
+    },
+    "family.male_relative": {
+      "file": "family.male_relative.mp3",
+      "speechText": "قَرِيبِي"
+    },
+    "family.maternal_aunt": {
+      "file": "family.maternal_aunt.mp3",
+      "speechText": "خَالَتِي"
+    },
+    "family.maternal_aunt_daughter": {
+      "file": "family.maternal_aunt_daughter.mp3",
+      "speechText": "بِنْت خَالَتِي"
+    },
+    "family.maternal_aunt_son": {
+      "file": "family.maternal_aunt_son.mp3",
+      "speechText": "وَلَد خَالتِي"
+    },
+    "family.maternal_uncle": {
+      "file": "family.maternal_uncle.mp3",
+      "speechText": "خَالِي"
+    },
+    "family.maternal_uncle_daughter": {
+      "file": "family.maternal_uncle_daughter.mp3",
+      "speechText": "بِنْت خَالِي"
+    },
+    "family.maternal_uncle_son": {
+      "file": "family.maternal_uncle_son.mp3",
+      "speechText": "وَلَد خَالِي"
+    },
+    "family.mother": {
+      "file": "family.mother.mp3",
+      "speechText": "أُمِّي"
+    },
+    "family.paternal_aunt": {
+      "file": "family.paternal_aunt.mp3",
+      "speechText": "عَمَّتِي"
+    },
+    "family.paternal_aunt_daughter": {
+      "file": "family.paternal_aunt_daughter.mp3",
+      "speechText": "بِنْت عَمَّتِي"
+    },
+    "family.paternal_aunt_son": {
+      "file": "family.paternal_aunt_son.mp3",
+      "speechText": "وَلَد عَمْتِي"
+    },
+    "family.paternal_uncle": {
+      "file": "family.paternal_uncle.mp3",
+      "speechText": "عَمِّي"
+    },
+    "family.paternal_uncle_daughter": {
+      "file": "family.paternal_uncle_daughter.mp3",
+      "speechText": "بِنْت عَمِّي"
+    },
+    "family.paternal_uncle_son": {
+      "file": "family.paternal_uncle_son.mp3",
+      "speechText": "وَلَد عَمِّي"
+    },
+    "family.sister": {
+      "file": "family.sister.mp3",
+      "speechText": "أُخْتِي"
+    },
+    "family.sister_daughter": {
+      "file": "family.sister_daughter.mp3",
+      "speechText": "بِنْت أُخْتِي"
+    },
+    "family.sister_husband": {
+      "file": "family.sister_husband.mp3",
+      "speechText": "زَوْج أُخْتِي"
+    },
+    "family.sister_son": {
+      "file": "family.sister_son.mp3",
+      "speechText": "وَلَد أُخْتِي"
+    },
+    "family.son": {
+      "file": "family.son.mp3",
+      "speechText": "وَلَدِي"
+    },
+    "family.son_wife": {
+      "file": "family.son_wife.mp3",
+      "speechText": "مَرْت وَلَدِي"
+    },
+    "family.wife": {
+      "file": "family.wife.mp3",
+      "speechText": "زَوْجِتِي"
+    },
+    "family.wife_brother": {
+      "file": "family.wife_brother.mp3",
+      "speechText": "أَخُو زَوْجَتِي"
+    },
+    "family.wife_father": {
+      "file": "family.wife_father.mp3",
+      "speechText": "أَبُو زَوْجَتِي"
+    },
+    "family.wife_mother": {
+      "file": "family.wife_mother.mp3",
+      "speechText": "أُمّ زَوْجَتِي"
+    },
+    "family.wife_sister": {
+      "file": "family.wife_sister.mp3",
+      "speechText": "أُخْت زَوْجَتِي"
+    },
+    "food.biscuit": {
+      "file": "food.biscuit.mp3",
+      "speechText": "بِسْكُوِيت"
+    },
+    "food.bread": {
+      "file": "food.bread.mp3",
+      "speechText": "خُبْز"
+    },
+    "food.butter": {
+      "file": "food.butter.mp3",
+      "speechText": "زُبْدَة"
+    },
+    "food.cheese": {
+      "file": "food.cheese.mp3",
+      "speechText": "جُبْن"
+    },
+    "food.chicken": {
+      "file": "food.chicken.mp3",
+      "speechText": "دَجَاج"
+    },
+    "food.coffee": {
+      "file": "food.coffee.mp3",
+      "speechText": "قَهْوَة"
+    },
+    "food.eggs": {
+      "file": "food.eggs.mp3",
+      "speechText": "بَيْض"
+    },
+    "food.fish": {
+      "file": "food.fish.mp3",
+      "speechText": "سِمَك"
+    },
+    "food.honey": {
+      "file": "food.honey.mp3",
+      "speechText": "عَسَل"
+    },
+    "food.juice": {
+      "file": "food.juice.mp3",
+      "speechText": "عَصِير"
+    },
+    "food.meat": {
+      "file": "food.meat.mp3",
+      "speechText": "لَحْم"
+    },
+    "food.milk": {
+      "file": "food.milk.mp3",
+      "speechText": "حَلِيب"
+    },
+    "food.oil": {
+      "file": "food.oil.mp3",
+      "speechText": "زَيْت"
+    },
+    "food.olives": {
+      "file": "food.olives.mp3",
+      "speechText": "زَيْتُون"
+    },
+    "food.pasta": {
+      "file": "food.pasta.mp3",
+      "speechText": "مَكَرُونَة"
+    },
+    "food.rice": {
+      "file": "food.rice.mp3",
+      "speechText": "رُزّ"
+    },
+    "food.salt": {
+      "file": "food.salt.mp3",
+      "speechText": "مِلْح"
+    },
+    "food.soup": {
+      "file": "food.soup.mp3",
+      "speechText": "شُورْبَة"
+    },
+    "food.sugar": {
+      "file": "food.sugar.mp3",
+      "speechText": "سُكَّر"
+    },
+    "food.tea": {
+      "file": "food.tea.mp3",
+      "speechText": "شَاهِي"
+    },
+    "food.water": {
+      "file": "food.water.mp3",
+      "speechText": "مَاي"
+    },
+    "food.yogurt": {
+      "file": "food.yogurt.mp3",
+      "speechText": "زَبَادِي"
+    },
+    "fruit.apple": {
+      "file": "fruit.apple.mp3",
+      "speechText": "تُفَّاح"
+    },
+    "fruit.apricot": {
+      "file": "fruit.apricot.mp3",
+      "speechText": "مِشْمِش"
+    },
+    "fruit.avocado": {
+      "file": "fruit.avocado.mp3",
+      "speechText": "أَفُوكَادُو"
+    },
+    "fruit.banana": {
+      "file": "fruit.banana.mp3",
+      "speechText": "مَوْز"
+    },
+    "fruit.berries": {
+      "file": "fruit.berries.mp3",
+      "speechText": "تُوت"
+    },
+    "fruit.cherry": {
+      "file": "fruit.cherry.mp3",
+      "speechText": "كَرَز"
+    },
+    "fruit.coconut": {
+      "file": "fruit.coconut.mp3",
+      "speechText": "جَوْزُ الهِنْد"
+    },
+    "fruit.dates": {
+      "file": "fruit.dates.mp3",
+      "speechText": "تَمْر"
+    },
+    "fruit.figs": {
+      "file": "fruit.figs.mp3",
+      "speechText": "تِين"
+    },
+    "fruit.grapes": {
+      "file": "fruit.grapes.mp3",
+      "speechText": "عِنَب"
+    },
+    "fruit.kiwi": {
+      "file": "fruit.kiwi.mp3",
+      "speechText": "كِيوِي"
+    },
+    "fruit.mandarin": {
+      "file": "fruit.mandarin.mp3",
+      "speechText": "يُوسُفِي"
+    },
+    "fruit.mango": {
+      "file": "fruit.mango.mp3",
+      "speechText": "مَانْجُو"
+    },
+    "fruit.melon": {
+      "file": "fruit.melon.mp3",
+      "speechText": "شَمَّام"
+    },
+    "fruit.orange": {
+      "file": "fruit.orange.mp3",
+      "speechText": "بُرْتُقَال"
+    },
+    "fruit.peach": {
+      "file": "fruit.peach.mp3",
+      "speechText": "خَوْخ"
+    },
+    "fruit.pear": {
+      "file": "fruit.pear.mp3",
+      "speechText": "كُمَّثْرَى"
+    },
+    "fruit.pineapple": {
+      "file": "fruit.pineapple.mp3",
+      "speechText": "أَنَانَاس"
+    },
+    "fruit.pomegranate": {
+      "file": "fruit.pomegranate.mp3",
+      "speechText": "رُمَّان"
+    },
+    "fruit.strawberry": {
+      "file": "fruit.strawberry.mp3",
+      "speechText": "فَرَاوْلَة"
+    },
+    "fruit.watermelon": {
+      "file": "fruit.watermelon.mp3",
+      "speechText": "حَبْحَب"
+    },
+    "greeting.bless": {
+      "file": "greeting.bless.mp3",
+      "speechText": "اللَّهُ يبَارِك فِيك"
+    },
+    "greeting.brighten": {
+      "file": "greeting.brighten.mp3",
+      "speechText": "نَوَّرْت"
+    },
+    "greeting.fine": {
+      "file": "greeting.fine.mp3",
+      "speechText": "الحَمْدُ لِلَّه"
+    },
+    "greeting.good_evening": {
+      "file": "greeting.good_evening.mp3",
+      "speechText": "مَسَا الخِير"
+    },
+    "greeting.good_health": {
+      "file": "greeting.good_health.mp3",
+      "speechText": "يَعْطِيك العَافْيَة"
+    },
+    "greeting.good_morning": {
+      "file": "greeting.good_morning.mp3",
+      "speechText": "صَبَاح الخِير"
+    },
+    "greeting.goodbye": {
+      "file": "greeting.goodbye.mp3",
+      "speechText": "مَعَ السَّلَامَة"
+    },
+    "greeting.hello": {
+      "file": "greeting.hello.mp3",
+      "speechText": "هَلَا"
+    },
+    "greeting.how_are_you": {
+      "file": "greeting.how_are_you.mp3",
+      "speechText": "كِيف حَالَك؟"
+    },
+    "greeting.reply": {
+      "file": "greeting.reply.mp3",
+      "speechText": "وَعَلَيْكُمُ السَّلَام"
+    },
+    "greeting.safe": {
+      "file": "greeting.safe.mp3",
+      "speechText": "فِي أَمَانِ اللَّه"
+    },
+    "greeting.salam": {
+      "file": "greeting.salam.mp3",
+      "speechText": "السَّلَامُ عَلَيْكُم"
+    },
+    "greeting.thanks": {
+      "file": "greeting.thanks.mp3",
+      "speechText": "شُكْرًا لَك"
+    },
+    "greeting.welcome": {
+      "file": "greeting.welcome.mp3",
+      "speechText": "حَيَّاكَ اللَّه"
+    },
+    "home.air_conditioner": {
+      "file": "home.air_conditioner.mp3",
+      "speechText": "مُكَيِّف"
+    },
+    "home.bed": {
+      "file": "home.bed.mp3",
+      "speechText": "سَرِير"
+    },
+    "home.blanket": {
+      "file": "home.blanket.mp3",
+      "speechText": "بَطَّانِيَّة"
+    },
+    "home.carpet": {
+      "file": "home.carpet.mp3",
+      "speechText": "بِسَاط"
+    },
+    "home.chair": {
+      "file": "home.chair.mp3",
+      "speechText": "كُرْسِي"
+    },
+    "home.clock": {
+      "file": "home.clock.mp3",
+      "speechText": "سَاعَة"
+    },
+    "home.cup": {
+      "file": "home.cup.mp3",
+      "speechText": "كُوب"
+    },
+    "home.door": {
+      "file": "home.door.mp3",
+      "speechText": "بَاب"
+    },
+    "home.fan": {
+      "file": "home.fan.mp3",
+      "speechText": "مِرْوَحَة"
+    },
+    "home.fork": {
+      "file": "home.fork.mp3",
+      "speechText": "شَوْكَة"
+    },
+    "home.fridge": {
+      "file": "home.fridge.mp3",
+      "speechText": "ثَلَّاجَة"
+    },
+    "home.key": {
+      "file": "home.key.mp3",
+      "speechText": "مِفْتَاح"
+    },
+    "home.kitchen": {
+      "file": "home.kitchen.mp3",
+      "speechText": "مَطْبَخ"
+    },
+    "home.knife": {
+      "file": "home.knife.mp3",
+      "speechText": "سِكِّين"
+    },
+    "home.oven": {
+      "file": "home.oven.mp3",
+      "speechText": "فُرْن"
+    },
+    "home.pillow": {
+      "file": "home.pillow.mp3",
+      "speechText": "مَخَدَّة"
+    },
+    "home.pot": {
+      "file": "home.pot.mp3",
+      "speechText": "قِدِر"
+    },
+    "home.sofa": {
+      "file": "home.sofa.mp3",
+      "speechText": "كَنَبَة"
+    },
+    "home.spoon": {
+      "file": "home.spoon.mp3",
+      "speechText": "مِلْعَقَة"
+    },
+    "home.stove": {
+      "file": "home.stove.mp3",
+      "speechText": "مَوْقِد"
+    },
+    "home.table": {
+      "file": "home.table.mp3",
+      "speechText": "طَاوِلَة"
+    },
+    "home.teapot": {
+      "file": "home.teapot.mp3",
+      "speechText": "إِبْرِيق شَاي"
+    },
+    "home.television": {
+      "file": "home.television.mp3",
+      "speechText": "تِلِفِزْيُون"
+    },
+    "home.tray": {
+      "file": "home.tray.mp3",
+      "speechText": "صِينِيَّة"
+    },
+    "home.wardrobe": {
+      "file": "home.wardrobe.mp3",
+      "speechText": "دُولَاب"
+    },
+    "home.washing_machine": {
+      "file": "home.washing_machine.mp3",
+      "speechText": "غَسَّالَة"
+    },
+    "home.water_bottle": {
+      "file": "home.water_bottle.mp3",
+      "speechText": "قَارُورَة مَوْيَة"
+    },
+    "home.window": {
+      "file": "home.window.mp3",
+      "speechText": "شُبَّاك"
+    },
+    "request.adjust_pillow": {
+      "file": "request.adjust_pillow.mp3",
+      "speechText": "عَدِّل لِي المِخَدَّة"
+    },
+    "request.cold": {
+      "file": "request.cold.mp3",
+      "speechText": "أَحِس بِالبَرْد"
+    },
+    "request.headache": {
+      "file": "request.headache.mp3",
+      "speechText": "رَاسِي يْعَوِّرْنِي"
+    },
+    "request.medicine": {
+      "file": "request.medicine.mp3",
+      "speechText": "أَبْغَى دَوَاي"
+    },
+    "request.rest": {
+      "file": "request.rest.mp3",
+      "speechText": "أَبْغَى أَرْتَاح"
+    },
+    "request.tea": {
+      "file": "request.tea.mp3",
+      "speechText": "أَبْغَى شَاي"
+    },
+    "request.toilet": {
+      "file": "request.toilet.mp3",
+      "speechText": "أَبْغَى أَرُوح الحَمَّام"
+    },
+    "request.water": {
+      "file": "request.water.mp3",
+      "speechText": "أَبْغَى مَاي"
+    },
+    "routine.ablution": {
+      "file": "routine.ablution.mp3",
+      "speechText": "وُضُوء"
+    },
+    "routine.call_to_prayer": {
+      "file": "routine.call_to_prayer.mp3",
+      "speechText": "أَذَان"
+    },
+    "routine.evening_coffee": {
+      "file": "routine.evening_coffee.mp3",
+      "speechText": "قَهْوَة المَسَا"
+    },
+    "routine.prayer": {
+      "file": "routine.prayer.mp3",
+      "speechText": "صَلَاة"
+    },
+    "routine.prayer_beads": {
+      "file": "routine.prayer_beads.mp3",
+      "speechText": "مِسْبَحَة"
+    },
+    "routine.prayer_rug": {
+      "file": "routine.prayer_rug.mp3",
+      "speechText": "سَجَّادَة صَلَاة"
+    },
+    "routine.quran": {
+      "file": "routine.quran.mp3",
+      "speechText": "مُصْحَف"
+    },
+    "routine.rest": {
+      "file": "routine.rest.mp3",
+      "speechText": "رَاحَة"
+    },
+    "routine.sleep": {
+      "file": "routine.sleep.mp3",
+      "speechText": "نَوْم"
+    },
+    "routine.walk": {
+      "file": "routine.walk.mp3",
+      "speechText": "مَشْي"
+    },
+    "transport.airplane": {
+      "file": "transport.airplane.mp3",
+      "speechText": "طَيَّارَة"
+    },
+    "transport.bicycle": {
+      "file": "transport.bicycle.mp3",
+      "speechText": "سَيْكَل"
+    },
+    "transport.boat": {
+      "file": "transport.boat.mp3",
+      "speechText": "قَارِب"
+    },
+    "transport.bus": {
+      "file": "transport.bus.mp3",
+      "speechText": "بَاص"
+    },
+    "transport.car": {
+      "file": "transport.car.mp3",
+      "speechText": "سَيَّارَة"
+    },
+    "transport.helicopter": {
+      "file": "transport.helicopter.mp3",
+      "speechText": "هِلِيكُوبْتَر"
+    },
+    "transport.minibus": {
+      "file": "transport.minibus.mp3",
+      "speechText": "بَاص صْغِير"
+    },
+    "transport.motorcycle": {
+      "file": "transport.motorcycle.mp3",
+      "speechText": "دَبَّاب"
+    },
+    "transport.ship": {
+      "file": "transport.ship.mp3",
+      "speechText": "سَفِينَة"
+    },
+    "transport.taxi": {
+      "file": "transport.taxi.mp3",
+      "speechText": "تَاكْسِي"
+    },
+    "transport.train": {
+      "file": "transport.train.mp3",
+      "speechText": "قِطَار"
+    },
+    "transport.truck": {
+      "file": "transport.truck.mp3",
+      "speechText": "شَاحِنَة"
+    },
+    "vegetable.broccoli": {
+      "file": "vegetable.broccoli.mp3",
+      "speechText": "بُرُوكْلِي"
+    },
+    "vegetable.carrot": {
+      "file": "vegetable.carrot.mp3",
+      "speechText": "جَزَر"
+    },
+    "vegetable.cauliflower": {
+      "file": "vegetable.cauliflower.mp3",
+      "speechText": "زَهْرَة"
+    },
+    "vegetable.coriander": {
+      "file": "vegetable.coriander.mp3",
+      "speechText": "كُزْبَرَة"
+    },
+    "vegetable.corn": {
+      "file": "vegetable.corn.mp3",
+      "speechText": "ذُرَة"
+    },
+    "vegetable.cucumber": {
+      "file": "vegetable.cucumber.mp3",
+      "speechText": "خِيَار"
+    },
+    "vegetable.eggplant": {
+      "file": "vegetable.eggplant.mp3",
+      "speechText": "بَاذِنْجَان"
+    },
+    "vegetable.garlic": {
+      "file": "vegetable.garlic.mp3",
+      "speechText": "ثُوم"
+    },
+    "vegetable.green_beans": {
+      "file": "vegetable.green_beans.mp3",
+      "speechText": "فَاصُولْيَا خَضْرَا"
+    },
+    "vegetable.lemon": {
+      "file": "vegetable.lemon.mp3",
+      "speechText": "لِيمُون"
+    },
+    "vegetable.lettuce": {
+      "file": "vegetable.lettuce.mp3",
+      "speechText": "خَسّ"
+    },
+    "vegetable.mint": {
+      "file": "vegetable.mint.mp3",
+      "speechText": "نَعْنَاع"
+    },
+    "vegetable.onion": {
+      "file": "vegetable.onion.mp3",
+      "speechText": "بَصَل"
+    },
+    "vegetable.parsley": {
+      "file": "vegetable.parsley.mp3",
+      "speechText": "بَقْدُونِس"
+    },
+    "vegetable.peas": {
+      "file": "vegetable.peas.mp3",
+      "speechText": "بَازِلَّا"
+    },
+    "vegetable.pepper": {
+      "file": "vegetable.pepper.mp3",
+      "speechText": "فُلْفُل"
+    },
+    "vegetable.potato": {
+      "file": "vegetable.potato.mp3",
+      "speechText": "بَطَاطِس"
+    },
+    "vegetable.pumpkin": {
+      "file": "vegetable.pumpkin.mp3",
+      "speechText": "قَرَع"
+    },
+    "vegetable.radish": {
+      "file": "vegetable.radish.mp3",
+      "speechText": "فِجِل"
+    },
+    "vegetable.spinach": {
+      "file": "vegetable.spinach.mp3",
+      "speechText": "سَبَانِخ"
+    },
+    "vegetable.tomato": {
+      "file": "vegetable.tomato.mp3",
+      "speechText": "طَمَاطِم"
+    },
+    "vegetable.zucchini": {
+      "file": "vegetable.zucchini.mp3",
+      "speechText": "كُوسَة"
+    }
+  }
+}

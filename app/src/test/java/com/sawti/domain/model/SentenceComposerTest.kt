@@ -29,7 +29,7 @@ class SentenceComposerTest {
         val parts = listOf(SentenceComposer.piece(rooster), SentenceComposer.piece(rabbit))
         assertEquals(rooster.ttsPrompt, SentenceComposer.spokenPieces(parts)[0].speech)
         assertEquals(rabbit.ttsPrompt, SentenceComposer.spokenPieces(parts)[1].speech)
-        assertEquals("دِيكْ، أَرْنَبْ", SentenceComposer.spokenSentence(parts))
+        assertEquals("دِيك، أَرْنَب", SentenceComposer.spokenSentence(parts))
     }
 
     @Test fun cappedAndSupportsRepeatedWords() {

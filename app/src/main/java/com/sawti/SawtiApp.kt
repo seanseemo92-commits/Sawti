@@ -6,6 +6,7 @@ import com.sawti.audio.AudioPlayer
 import com.sawti.audio.SoftChime
 import com.sawti.audio.VoiceRecorder
 import com.sawti.audio.AudioDispatcher
+import com.sawti.audio.NeuralAudioResolver
 import com.sawti.data.BackupManager
 import com.sawti.data.BackupOperations
 import com.sawti.data.RoomProgressRepository
@@ -29,7 +30,8 @@ class AppContainer(private val app: Application) {
     val speech by lazy { SpeechManager(app, audioFocus) }
     val player by lazy { AudioPlayer(audioFocus) }
     val recorder by lazy { VoiceRecorder(app, audioFocus) }
-    val audioDispatcher by lazy { AudioDispatcher(speech, player) }
+    val neuralAudioResolver by lazy { NeuralAudioResolver(app) }
+    val audioDispatcher by lazy { AudioDispatcher(speech, player, neuralAudioResolver) }
     val caregiver = CaregiverMode()
     val wordRepository: WordRepository by lazy { RoomWordRepository(database, app, settingsRepository) }
     val progressRepository: ProgressRepository by lazy { RoomProgressRepository(database) }

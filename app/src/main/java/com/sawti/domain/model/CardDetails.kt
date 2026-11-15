@@ -37,5 +37,6 @@ data class CardDetails(
 fun WordItem.forEditing(): WordItem {
     val saved = sourceDetails ?: return this
     return copy(displayText = saved.display, ttsPrompt = saved.speech, phonemicCue = saved.cue,
-        sentencePrompt = saved.sentence, phone = saved.phone, subgroup = saved.group, sourceDetails = null)
+        sentencePrompt = saved.sentence, phone = saved.phone, subgroup = saved.group,
+        sourceDetails = null)
 }

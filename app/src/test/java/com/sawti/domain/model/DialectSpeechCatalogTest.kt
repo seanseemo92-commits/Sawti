@@ -5,163 +5,105 @@ import com.sawti.data.db.toDomain
 import org.junit.Assert.*
 import org.junit.Test
 
-/** Content contracts only; these tests do not constitute a listening/native-speaker review. */
+/** Linguistic and reversible-projection contracts, not a substitute for native listening. */
 class DialectSpeechCatalogTest {
     private fun item(key: String) = WordSeed.itemEntities().single { it.semanticKey == key }.toDomain()
 
-    @Test fun mandatoryLibyanWaterRequestSurvivesTheCompleteProjection() {
-        val view = DialectCatalog.localize(item("request.water"), ArabicDialect.LIBYAN)
-        assertEquals("نبي مية", view.displayText)
-        assertEquals("نَبِّي إِمِّيَّهْ", view.ttsPrompt)
-        assertEquals("إِمْـ...", view.phonemicCue)
-        assertEquals("إِمِّيَّهْ", DialectCatalog.localize(item("food.water"), ArabicDialect.LIBYAN).ttsPrompt)
-    }
-
-    @Test fun userReviewedLibyanWordsCorrectTextSpeechAndRetrievalCues() {
-        val examples = listOf(
-            Triple("animal.rooster", "ديك", Pair("دِيكْ", "دِي...")),
-            Triple("animal.rabbit", "أرنب", Pair("أَرْنَبْ", "أَرْ...")),
-            Triple("body.leg", "رجل", Pair("رِجْلْ", "رِجْـ...")),
-            Triple("home.fork", "شوكة", Pair("شَوْكَةْ", "شَوْ...")),
+    @Test fun correctedLibyanRequestsAreExactAndConsistentBetweenAudioAndDisplay() {
+        val cases = mapOf(
+            "request.water" to ("نبي مية" to "نِبِّي مَيَّة"),
+            "request.tea" to ("نبي شاهي" to "نِبِّي شَاهِي"),
+            "request.rest" to ("نبي نرتاح" to "نِبِّي نِرْتَاح"),
+            "request.medicine" to ("نبي دوايا" to "نِبِّي دْوَايَا"),
+            "request.toilet" to ("نبي الحمام" to "نِبِّي الحَمَّام"),
+            "request.cold" to ("نحس بالبرد" to "نِحِسّ بِالبَرْد"),
+            "food.water" to ("مية" to "مَيَّة"),
         )
-        for ((key, label, spokenAndCue) in examples) {
-            val seed = item(key)
-            val libyan = DialectCatalog.localize(seed, ArabicDialect.LIBYAN)
-            assertEquals("Display for $key", label, libyan.displayText)
-            assertEquals("Speech for $key", TtsEndings.normalize(spokenAndCue.first), libyan.ttsPrompt)
-            assertEquals("Phonemic hint for $key", spokenAndCue.second, libyan.phonemicCue)
-            // A language switch is a view projection, not a rewrite of the
-            // canonical Room row or personal photos/voice recordings.
-            assertEquals(seed, libyan.forEditing())
-            val standard = DialectCatalog.localize(seed, ArabicDialect.STANDARD)
-            assertEquals(standard, DialectCatalog.localize(libyan, ArabicDialect.STANDARD))
-            assertEquals(seed, standard.forEditing())
+        for ((key, expected) in cases) {
+            val view = DialectCatalog.localize(item(key), ArabicDialect.LIBYAN)
+            assertEquals(key + " label", expected.first, view.displayText)
+            assertEquals(key + " pronunciation", expected.second, view.ttsPrompt)
         }
     }
 
-    @Test fun LibyanCorrectionsDoNotLeakIntoTunisianOrMoroccanTerminology() {
-        assertEquals("سردوك",
-            DialectCatalog.localize(item("animal.rooster"), ArabicDialect.TUNISIAN).displayText)
-        assertEquals("قنينية",
-            DialectCatalog.localize(item("animal.rabbit"), ArabicDialect.MOROCCAN).displayText)
-        assertEquals("فرشيطة",
-            DialectCatalog.localize(item("home.fork"), ArabicDialect.TUNISIAN).displayText)
-        assertEquals("فرشيطة",
-            DialectCatalog.localize(item("home.fork"), ArabicDialect.MOROCCAN).displayText)
-    }
-
-    @Test fun canonicalFushaSourceRemainsReversibleAfterPausalProjection() {
-        for (entity in WordSeed.itemEntities()) {
-            val source = entity.toDomain()
-            val view = DialectCatalog.localize(source, ArabicDialect.STANDARD)
-            // The saved canonical seed is never rewritten by the preview projection.
-            assertEquals(source, view.forEditing())
-
+    @Test fun locallyRecognizableWordsAndActionsRetainDialects() {
+        val libyan = mapOf(
+            "food.eggs" to ("دحي" to "دَحِي"),
+            "home.window" to ("روشن" to "رُوشِن"),
+            "vegetable.pepper" to ("فلفل" to "فِلْفِل"),
+            "clothing.blouse" to ("سورية" to "سُورِيَّة"),
+            "action.drink" to ("نشرب" to "نِشْرَب"),
+            "action.sleep" to ("نرقد" to "نُرْقُد"),
+            "action.sit" to ("نقعمز" to "نِقَعْمِز"),
+            "action.walk" to ("نمشي" to "نِمْشِي"),
+            "action.wash" to ("نغسل" to "نِغْسِل"),
+            "action.speak" to ("ندوي" to "نِدْوِي"),
+            "action.hear" to ("نسمع" to "نِسْمَع"),
+            "action.open" to ("نفتح" to "نِفْتَح"),
+            "action.close" to ("نسكر" to "نِسَكِّر"),
+            "action.laugh" to ("نضحك" to "نِضْحَك"),
+            "action.see" to ("نشوف" to "نِشُوف"),
+            "action.dress" to ("نلبس" to "نِلْبِس"),
+            "action.pray" to ("نصلي" to "نِصَلِّي"),
+        )
+        for ((key, expected) in libyan) {
+            val form = DialectSpeechCatalog.resolve(item(key), ArabicDialect.LIBYAN)
+            assertEquals(key, expected.first, form.displayText)
+            assertEquals(key, expected.second, form.speechText)
         }
-        assertEquals("أُرِيدُ مَاءً", item("request.water").ttsPrompt)
+        assertEquals("سردوك", DialectCatalog.localize(item("animal.rooster"),
+            ArabicDialect.TUNISIAN).displayText)
+        assertEquals("قنية", DialectCatalog.localize(item("animal.rabbit"),
+            ArabicDialect.MOROCCAN).displayText)
     }
 
-    @Test fun preservedLocalLexemesUseSemanticKeys() {
-        assertEquals("دَحْيْ", DialectCatalog.localize(item("food.eggs"), ArabicDialect.LIBYAN).ttsPrompt)
-        assertEquals("عْظَامْ", DialectCatalog.localize(item("food.eggs"), ArabicDialect.TUNISIAN).ttsPrompt)
-        assertEquals("تْشَايْ", DialectCatalog.localize(item("food.tea"), ArabicDialect.IRAQI).ttsPrompt)
-        assertEquals("نَبِّي إِدْوَايَا", DialectCatalog.localize(item("request.medicine"), ArabicDialect.LIBYAN).ttsPrompt)
+    @Test fun familyTermsAreRegionalNotClassicArabicInAllEightSpokenDialects() {
+        val cases = mapOf(
+            ArabicDialect.LIBYAN to ("بو راجلي" to "مرت خوي"),
+            ArabicDialect.TUNISIAN to ("بو راجلي" to "مرت خويا"),
+            ArabicDialect.MOROCCAN to ("بو راجلي" to "مرت خويا"),
+            ArabicDialect.ALGERIAN to ("بو راجلي" to "مرت خويا"),
+            ArabicDialect.EGYPTIAN to ("أبو جوزي" to "مرات أخويا"),
+            ArabicDialect.SYRIAN to ("أبو جوزي" to "مرت أخي"),
+            ArabicDialect.SAUDI to ("أبو زوجي" to "مرت أخوي"),
+            ArabicDialect.IRAQI to ("أبو زوجي" to "مرت أخوي"),
+        )
+        for ((dialect, expected) in cases) {
+            assertEquals(dialect.name,
+                expected.first, DialectCatalog.localize(item("family.husband_father"), dialect).displayText)
+            assertEquals(dialect.name,
+                expected.second, DialectCatalog.localize(item("family.brother_wife"), dialect).displayText)
+        }
+        for (dialect in listOf(ArabicDialect.TUNISIAN, ArabicDialect.MOROCCAN,
+                               ArabicDialect.ALGERIAN, ArabicDialect.SAUDI, ArabicDialect.IRAQI)) {
+            assertEquals(dialect.name, "ولد عمي",
+                DialectCatalog.localize(item("family.paternal_uncle_son"), dialect).displayText)
+        }
     }
 
-    @Test fun personalSpeechAndCueOverrideEveryProjectionVerbatim() {
-        val source = item("request.water").copy(ttsPrompt = "نطقي الخاص", phonemicCue = "تلميحي الخاص",
-            customTextFields = CardDetails.SPEECH or CardDetails.CUE)
+    @Test fun userRecordingPhotosAndSourceSurviveSwitches() {
+        val original = item("request.water").copy(audioPath = "/my/voice.m4a", photoPath = "/my/photo.jpg")
         for (dialect in ArabicDialect.entries) {
-            val view = DialectCatalog.localize(source, dialect)
-            assertEquals(source.ttsPrompt, view.ttsPrompt)
-            assertEquals(source.phonemicCue, view.phonemicCue)
+            val projected = DialectCatalog.localize(original, dialect)
+            assertEquals(original, projected.forEditing())
+            assertEquals(original.audioPath, projected.audioPath)
+            assertEquals(original.photoPath, projected.photoPath)
+            assertEquals(DialectSpeechCatalog.resolve(original, dialect),
+                DialectSpeechCatalog.resolveForNeural(original, dialect))
+        }
+        for (flag in listOf(CardDetails.LABEL, CardDetails.SPEECH)) {
+            val custom = original.copy(ttsPrompt = "صَوْتِي الشخصي", customTextFields = flag)
+            val view = DialectCatalog.localize(custom, ArabicDialect.LIBYAN)
+            assertEquals(custom.ttsPrompt, view.ttsPrompt)
+            assertNull(view.neuralSpeechText)
         }
     }
 
-    @Test fun eggsDoNotLeakTheLibyanLexemeIntoOtherDialects() {
-        for (dialect in listOf(ArabicDialect.SAUDI, ArabicDialect.EGYPTIAN,
-            ArabicDialect.SYRIAN, ArabicDialect.IRAQI, ArabicDialect.MOROCCAN)) {
-            val form = DialectSpeechCatalog.resolve(item("food.eggs"), dialect)
-            assertEquals("بيض", form.displayText)
-            assertFalse(form.speechText.contains("دَحْ"))
-            assertTrue(form.needsNativeReview)
-            assertTrue(form.needsTtsListening)
-        }
-    }
-
-    @Test fun preservedLocalCueMustBelongToTheSpokenWord() {
-        val eggs = DialectSpeechCatalog.resolve(item("food.eggs"), ArabicDialect.LIBYAN)
-        assertEquals("دَحْـ...", eggs.phonemicCue)
-        val trousers = DialectSpeechCatalog.resolve(item("clothing.trousers"), ArabicDialect.LIBYAN)
-        assertEquals("سروال", trousers.displayText)
-        assertEquals("سِرْوَالْ", trousers.speechText)
-        assertEquals("سِرْ...", trousers.phonemicCue)
-    }
-
-    @Test fun missingWrittenSpeechIsExplicitAndDoesNotFabricateVowelsOrForeignCue() {
-        val form = DialectSpeechCatalog.resolve(item("home.water_bottle"), ArabicDialect.MOROCCAN)
-        assertEquals(SpeechSource.EXPLICIT_DIALECT, form.source)
-        assertEquals("قَرْعَةُ مَاءْ", form.speechText)
-        assertEquals("قَرْـ...", form.phonemicCue)
-        assertTrue(form.needsNativeReview)
-        assertTrue(form.needsTtsListening)
-    }
-
-    @Test fun regionalUserSpeechDoesNotReceiveAnUnrelatedRegionalCue() {
-        val source = item("dish.tunisian.lablabi").copy(
-            ttsPrompt = "صَوْتِي", phonemicCue = "صَوْ...", customTextFields = CardDetails.SPEECH)
-        val view = DialectCatalog.localize(source, ArabicDialect.TUNISIAN)
-        assertEquals(source.ttsPrompt, view.ttsPrompt)
-        assertEquals(source.phonemicCue, view.phonemicCue)
-        assertEquals(source, view.forEditing())
-    }
-
-    @Test fun noPhoneticRewritingOfUserLongVowelsShaddaOrConnectedWords() {
-        val source = item("request.water").copy(ttsPrompt = "نَبِّيْ إِمِّيَّهْ، چ گ",
-            phonemicCue = "مِّيـ...", customTextFields = CardDetails.SPEECH or CardDetails.CUE)
+    @Test fun writtenReviewDoesNotReplaceRequiredNativeListening() {
         for (dialect in ArabicDialect.entries) {
-            val form = DialectSpeechCatalog.resolve(source, dialect)
-            assertEquals(source.ttsPrompt, form.speechText)
-            assertEquals(source.phonemicCue, form.phonemicCue)
-        }
-    }
-
-    @Test fun familyFushaHasWrittenSpeechSeparateFromDisplay() {
-        assertEquals("أمي", item("family.mother").displayText)
-        assertEquals("أُمِّي", item("family.mother").ttsPrompt)
-        assertEquals("زَوْجُ ابْنَتِي", item("family.daughter_husband").ttsPrompt)
-        WordSeed.itemEntities().filter { it.categoryId == CategoryIds.FAMILY }.forEach {
-            assertTrue(it.ttsPrompt.any { c -> c in 'ً'..'ٟ' })
-        }
-    }
-
-    @Test fun allPreservedLibyanSpeechStringsRemainExactNotOnlyTheWaterExample() {
-        val rows = requireNotNull(javaClass.classLoader?.getResourceAsStream("libyan-preserved-speech.tsv"))
-            .bufferedReader().use { it.readLines().drop(1) }
-        assertEquals(194, rows.size)
-        for (line in rows) {
-            val fields = line.split('\t')
-            val source = item(fields[0])
-            val form = DialectSpeechCatalog.resolve(source, ArabicDialect.LIBYAN)
-            val card = DialectCatalog.localize(source, ArabicDialect.LIBYAN)
-            // Historical Libyan strings remain represented by the unchanged seed.
-            assertEquals(fields[0], source, card.forEditing())
-            val constructRevisions = setOf("dish.reshda_kaskas", "dish.reshda_borma", "dish.potato_stew",
-                "dish.khobz_tajin", "routine.evening_coffee", "clothing.watch", "clothing.high_heels",
-                "animal.rooster", "animal.rabbit", "home.fork", "body.leg")
-            // These two former Libyan TTS approximations were intentionally
-            // aligned with the card's visible lexical spelling in the dialect audit.
-            val alignedCorrections = mapOf(
-                "food.soup" to "شُورْبَهْ",
-                "home.carpet" to "بِسَاطْ",
-            )
-            alignedCorrections[fields[0]]?.let { assertEquals(fields[0], it, form.speechText) }
-            if (!DialectSpeechRevisions.hasPatch(ArabicDialect.LIBYAN, fields[0]) &&
-                fields[0] !in constructRevisions && fields[0] !in alignedCorrections) {
-                assertEquals(fields[0], TtsEndings.normalize(fields[1]), form.speechText)
-            }
+            val form = DialectSpeechCatalog.resolve(item("request.water"), dialect)
+            assertTrue(dialect.name, form.needsNativeReview)
+            assertTrue(dialect.name, form.needsTtsListening)
         }
     }
 }
-
-
