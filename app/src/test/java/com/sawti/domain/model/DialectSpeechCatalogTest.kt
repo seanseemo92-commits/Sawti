@@ -53,7 +53,7 @@ class DialectSpeechCatalogTest {
         }
         assertEquals("سردوك", DialectCatalog.localize(item("animal.rooster"),
             ArabicDialect.TUNISIAN).displayText)
-        assertEquals("قنينية", DialectCatalog.localize(item("animal.rabbit"),
+        assertEquals("قنية", DialectCatalog.localize(item("animal.rabbit"),
             ArabicDialect.MOROCCAN).displayText)
     }
 

@@ -54,7 +54,7 @@ class RegionalDishesCatalogTest {
             "حرايمي" to ("حَرَايْمِي" to "حَـ..."),
             "سفنز" to ("سفِنْز" to "سفِـ..."),
             "زميطة" to ("زُمِيطَة" to "زُـ..."),
-            "عيش باللبن" to ("عَيْشْ بِاللَّبَنْ" to "عَيْـ..."),
+            "عيش باللبن" to ("عِيش بِاللَّبَن" to "عِي..."),
         )
         val dishes = RegionalDishesCatalog.forDialect(ArabicDialect.LIBYAN).dishes
         assertEquals(expected.keys, dishes.map { it.displayText }.toSet())

@@ -121,6 +121,7 @@ class DisplaySpeechConsistencyTest {
         // Review-approved spellings: visible مبكبكة/سفنز vs spoken إِمبكبكة/إِسفنز.
         "LIBYAN|dish.mbakbaka", "LIBYAN|dish.sfinz",
         "IRAQI|food.fish", "IRAQI|action.speak", "IRAQI|food.tea", "IRAQI|request.tea",
+        "IRAQI|dish.mint_tea",
         "IRAQI|dish.iraqi.masgouf", "IRAQI|dish.iraqi.fish_mutabbaq",
         // Egyptian soup is displayed شربة but vocalized شُورْبِةْ by request.
         "EGYPTIAN|dish.egyptian.bird_tongue_soup",
