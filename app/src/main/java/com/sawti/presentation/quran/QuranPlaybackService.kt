@@ -5,11 +5,14 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.media.MediaMetadata
 import android.media.session.MediaSession
 import android.media.session.PlaybackState
+import android.os.Build
 import android.os.IBinder
 import android.os.SystemClock
 import android.util.Log
@@ -120,8 +123,13 @@ class QuranPlaybackService : Service() {
     fun render(current: QuranPlaybackSnapshot) {
         if (!inForeground) return
         updateMediaSession(current)
-        runCatching { notifications.notify(NOTIFICATION_ID, notification(current)) }
-            .onFailure { Log.w("SawtiQuran", "Could not refresh media notification", it) }
+        // Android 13+ allows foreground media playback even if notification permission
+        // is denied, but optional notification updates should respect that choice.
+        if (Build.VERSION.SDK_INT < 33 ||
+            checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            runCatching { notifications.notify(NOTIFICATION_ID, notification(current)) }
+                .onFailure { Log.w("SawtiQuran", "Could not refresh media notification", it) }
+        }
     }
 
     private fun updateMediaSession(current: QuranPlaybackSnapshot) {
