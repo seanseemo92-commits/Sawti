@@ -1,12 +1,14 @@
 name: Generate regional neural voices
 on:
   push:
-    branches: [feature/neural-voices-hybrid-v160-20261115]
+    branches: [main, fix/sawti-v161-neural-lexicon-20261115]
     paths:
       - 'app/src/main/java/com/sawti/domain/model/NeuralSpeechNormalizer.kt'
       - 'app/src/main/java/com/sawti/domain/model/DialectSpeechCatalog.kt'
       - 'app/src/main/java/com/sawti/domain/model/DialectCatalog.kt'
       - 'app/src/main/java/com/sawti/domain/model/DialectSpeechRevisions.kt'
+      - 'app/src/main/java/com/sawti/domain/model/NeuralLexicon161.kt'
+      - 'app/build.gradle.kts'
       - 'app/src/main/java/com/sawti/domain/model/RegionalDishesCatalog.kt'
       - 'scripts/generate_neural_voices.py'
       - '.github/workflows/generate-neural-voices.yml'
