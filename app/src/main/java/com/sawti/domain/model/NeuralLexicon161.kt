@@ -263,7 +263,7 @@ internal object NeuralLexicon161 {
         register(all, "body", """
             eye|عين|عِين
             shoulder|كتف|كِتْف
-            neck|رقبة|رَقَبَة
+            neck|رقبة|رَقْبَة
         """)
         register(maghreb, "body", "ear|وذن|وِذِن")
         regional(ArabicDialect.EGYPTIAN, "body", "ear|ودن|وِدْن")
