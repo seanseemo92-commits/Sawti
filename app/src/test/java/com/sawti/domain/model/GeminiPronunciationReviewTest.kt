@@ -10,12 +10,12 @@ class GeminiPronunciationReviewTest {
 
     @Test fun representativeOriginalTextMatchesBeforeApplying() {
         assertEquals(
-            "إِمَّيَّهْ",
-            GeminiPronunciationReview.apply(ArabicDialect.LIBYAN, "food.water", "مَيَّة")
+            "بُويْ",
+            GeminiPronunciationReview.apply(ArabicDialect.LIBYAN, "family.father", "بُوي")
         )
         assertEquals(
-            "مَاءٌ",
-            GeminiPronunciationReview.apply(ArabicDialect.STANDARD, "food.water", "مَاء")
+            "زَوْجَةُ أَخِي",
+            GeminiPronunciationReview.apply(ArabicDialect.STANDARD, "family.brother_wife", "زَوْجَة أَخِي")
         )
     }
 
