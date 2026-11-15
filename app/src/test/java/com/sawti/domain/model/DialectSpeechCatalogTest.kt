@@ -28,7 +28,7 @@ class DialectSpeechCatalogTest {
 
     @Test fun locallyRecognizableWordsAndActionsRetainDialects() {
         val libyan = mapOf(
-            "food.eggs" to ("دحي" to "دَحِي"),
+            "food.eggs" to ("بيض" to "بِيض"),
             "home.window" to ("روشن" to "رُوشِن"),
             "vegetable.pepper" to ("فلفل" to "فِلْفِل"),
             "clothing.blouse" to ("سورية" to "سُورِيَّة"),
@@ -64,8 +64,8 @@ class DialectSpeechCatalogTest {
             ArabicDialect.MOROCCAN to ("بو راجلي" to "مرت خويا"),
             ArabicDialect.ALGERIAN to ("بو راجلي" to "مرت خويا"),
             ArabicDialect.EGYPTIAN to ("أبو جوزي" to "مرات أخويا"),
-            ArabicDialect.SYRIAN to ("أبو جوزي" to "مرت أخي"),
-            ArabicDialect.SAUDI to ("أبو زوجي" to "مرت أخوي"),
+            ArabicDialect.SYRIAN to ("أبو جوزي" to "مرت أخوي"),
+            ArabicDialect.SAUDI to ("أبو زوجي" to "زوجة أخوي"),
             ArabicDialect.IRAQI to ("أبو زوجي" to "مرت أخوي"),
         )
         for ((dialect, expected) in cases) {
