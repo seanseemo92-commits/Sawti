@@ -42,11 +42,11 @@ class DialectSpeechCatalogTest {
     @Test fun LibyanCorrectionsDoNotLeakIntoTunisianOrMoroccanTerminology() {
         assertEquals("سردوك",
             DialectCatalog.localize(item("animal.rooster"), ArabicDialect.TUNISIAN).displayText)
-        assertEquals("قنية",
+        assertEquals("قنينية",
             DialectCatalog.localize(item("animal.rabbit"), ArabicDialect.MOROCCAN).displayText)
         assertEquals("فرشيطة",
             DialectCatalog.localize(item("home.fork"), ArabicDialect.TUNISIAN).displayText)
-        assertEquals("فورشيطة",
+        assertEquals("فرشيطة",
             DialectCatalog.localize(item("home.fork"), ArabicDialect.MOROCCAN).displayText)
     }
 
@@ -101,7 +101,7 @@ class DialectSpeechCatalogTest {
     @Test fun missingWrittenSpeechIsExplicitAndDoesNotFabricateVowelsOrForeignCue() {
         val form = DialectSpeechCatalog.resolve(item("home.water_bottle"), ArabicDialect.MOROCCAN)
         assertEquals(SpeechSource.EXPLICIT_DIALECT, form.source)
-        assertEquals("قَرْعَتْ مَا", form.speechText)
+        assertEquals("قَرْعَةُ مَاءْ", form.speechText)
         assertEquals("قَرْـ...", form.phonemicCue)
         assertTrue(form.needsNativeReview)
         assertTrue(form.needsTtsListening)

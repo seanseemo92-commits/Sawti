@@ -220,6 +220,9 @@ internal object PronunciationCorrections {
         if (form.source == SpeechSource.USER || item.categoryId.startsWith("custom_")) return form
         if (item.customTextFields and (CardDetails.SPEECH or CardDetails.LABEL) != 0) return form
         val key = item.semanticKey ?: return form
+        // These 245 supplied candidates must keep their exact ending marks.
+        // TtsEndings.normalize still applies to all other built-in cards.
+        if (DialectSpeechRevisions.hasCompletedCandidate(dialect, key)) return form
         if (key !in DialectCatalog.words && !DialectSpeechRevisions.hasPatch(dialect, key)
             && RegionalDishesCatalog.variant(key, dialect) == null) return form
         val revision = revisions[dialect to key]

@@ -72,19 +72,19 @@ class NaturalPronunciationTest {
     }
 
     @Test fun formerlyMissingRegionalWordsHaveReviewedWrittenCandidates() {
-        assertEquals("حْرَامْ", spoken("home.blanket", ArabicDialect.SYRIAN))
-        assertEquals("بَالْطُو", spoken("clothing.coat", ArabicDialect.IRAQI))
-        assertEquals("قَارُورَهْ", spoken("home.water_bottle", ArabicDialect.TUNISIAN))
-        assertEquals("قْنِيَّهْ", spoken("animal.rabbit", ArabicDialect.MOROCCAN))
-        assertEquals("نَضَاضِرْ", spoken("clothing.glasses", ArabicDialect.ALGERIAN))
+        assertEquals("بَطَّانِيَّة", spoken("home.blanket", ArabicDialect.SYRIAN))
+        assertEquals("قَبُّوطْ", spoken("clothing.coat", ArabicDialect.IRAQI))
+        assertEquals("دَبُّوزَةُ مَاءْ", spoken("home.water_bottle", ArabicDialect.TUNISIAN))
+        assertEquals("قِنِينِيَّة", spoken("animal.rabbit", ArabicDialect.MOROCCAN))
+        assertEquals("نَظَّارَة", spoken("clothing.glasses", ArabicDialect.ALGERIAN))
     }
 
     @Test fun connectedConstructCandidatesDoNotLoseTheirTaaInDialectSpeech() {
-        assertEquals("إِزَازِتْ مَيَّهْ", spoken("home.water_bottle", ArabicDialect.EGYPTIAN))
+        assertEquals("إِزَازَةُ مَيَّة", spoken("home.water_bottle", ArabicDialect.EGYPTIAN))
         assertEquals("حَلَاوِتْ الْجِبِنْ", spoken("dish.syrian.halawet_jibn", ArabicDialect.SYRIAN))
         assertEquals("كُبَّتْ تِمَنْ", spoken("dish.iraqi.rice_kibbeh", ArabicDialect.IRAQI))
         assertEquals("مَرْقِتْ جِلْبَانَهْ", spoken("dish.tunisian.pea_stew", ArabicDialect.TUNISIAN))
-        assertEquals("قَرْعَتْ مَا", spoken("home.water_bottle", ArabicDialect.MOROCCAN))
+        assertEquals("قَرْعَةُ مَاءْ", spoken("home.water_bottle", ArabicDialect.MOROCCAN))
         assertEquals("سَيَّارَةُ أُجْرَهْ", spoken("transport.taxi", ArabicDialect.STANDARD))
     }
 
@@ -119,7 +119,13 @@ class NaturalPronunciationTest {
         }) {
             val form = DialectSpeechCatalog.resolve(source, dialect)
             assertNotEquals("$dialect/${source.semanticKey}", SpeechSource.UNVOCALIZED_FALLBACK, form.source)
-            assertFalse("$dialect/${source.semanticKey}", Regex("ة[ً-ٟ]*[؟!،.\\s]*$").containsMatchIn(form.speechText))
+            // The supplied 245 candidates are preserved verbatim, including their
+            // explicit pausal endings; the older automatic-ending rule remains
+            // relevant only to the untouched built-in entries.
+            if (!DialectSpeechRevisions.hasCompletedCandidate(dialect, source.semanticKey.orEmpty())) {
+                assertFalse("$dialect/${source.semanticKey}",
+                    Regex("ة[ً-ٟ]*[؟!،.\\s]*$").containsMatchIn(form.speechText))
+            }
             assertEquals(form.speechText, DialectCatalog.localize(source, dialect).ttsPrompt)
             assertTrue(form.needsNativeReview && form.needsTtsListening)
         }
