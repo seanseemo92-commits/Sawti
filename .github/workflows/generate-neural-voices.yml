@@ -1,9 +1,5 @@
 name: Generate regional neural voices
 on:
-  # One-time preview on the feature branch; remove after generating the initial Libyan pack.
-  push:
-    branches: [feature/neural-voices-hybrid-v160-20261115]
-    paths: [.github/workflows/generate-neural-voices.yml]
   workflow_dispatch:
     inputs:
       dialects:
@@ -67,7 +63,7 @@ jobs:
           if-no-files-found: error
           retention-days: 7
       - name: Commit generated audio to this branch
-        if: ${{ (github.event_name == 'push' || inputs.commit_to_branch) && github.ref_type == 'branch' }}
+        if: ${{ inputs.commit_to_branch && github.ref_type == 'branch' }}
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
