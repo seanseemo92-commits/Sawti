@@ -39,6 +39,19 @@ class NeuralAudioResolverTest {
         assertTrue(NeuralAudioResolver.safeKey("dish.tunisian.brik"))
     }
 
+    @Test fun downloadedClipWithOldVowelsCannotShadowUpdatedBundledClip() {
+        val app = RuntimeEnvironment.getApplication() as Application
+        val folder = File(app.filesDir, "neural_tts/libyan").apply { mkdirs() }
+        val audio = File(folder, "request.water.mp3").apply { writeBytes(ByteArray(256) { 42 }) }
+        val manifest = File(folder, "manifest.json").apply {
+            writeText("""{"version":1,"rate":"-18%","entries":{"request.water":{"file":"request.water.mp3","speechText":"نَبِّيْ إِمِّيَّهْ"}}}""")
+        }
+        try {
+            assertEquals(NeuralClip.Bundled("neural_tts/libyan/request.water.mp3"),
+                NeuralAudioResolver(app).resolve(ArabicDialect.LIBYAN, "request.water", "نِبِّي مَيَّة"))
+        } finally { audio.delete(); manifest.delete(); folder.delete() }
+    }
+
     @Test fun obsoleteDownloadedRateFallsBackToFreshBundledVoice() {
         val app = RuntimeEnvironment.getApplication() as Application
         val folder = File(app.filesDir, "neural_tts/libyan").apply { mkdirs() }

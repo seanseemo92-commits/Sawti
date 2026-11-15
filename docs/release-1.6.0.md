@@ -17,6 +17,15 @@ This source release modernizes AAC card narration across the nine available Arab
 
 The GitHub generation workflow exports speech directly from Kotlin and bundles **2,399 MP3 clips** at the corrected `-18%` synthesis rate: Libyan 271; Tunisian, Moroccan, Algerian, Egyptian, Syrian, Iraqi, Saudi and Standard Arabic 266 each. Each dialect contains `manifest.json` and individual concept-keyed MP3s.
 
+## Final pronunciation correction pass (PR #50)
+
+- Eight regional dialects have 14 individually vowelled greeting phrases each (112 explicit forms). Standard Arabic greeting pauses are corrected as well.
+- 423 previously display-only dialect entries now carry explicit written speech candidates, including Iraqi mint tea "تشَاي", Syrian "حْرَام" for blanket and Moroccan "قْنِيَّة" for rabbit.
+- Correct Libyan diphthongs, common verbs, in-law/family references and 22 problematic lexical forms. The approved Syrian/Moroccan amendments are reflected in the 245-entry speech fixture.
+- Regenerate all **2,399 voice clips** after the correction commits at a native synthesis rate of **-18%**; normal playback remains 1.0×.
+- Avoid stale downloaded recordings shadowing updated embedded clips by comparing local and embedded per-key manifest speech entries.
+- Native-speaker listening and voice-output redistribution rights remain independent release requirements.
+
 ## Validation requirements
 
 - Passing `testDebugUnitTest`, `lintRelease` and `assembleRelease` is required before merge.
