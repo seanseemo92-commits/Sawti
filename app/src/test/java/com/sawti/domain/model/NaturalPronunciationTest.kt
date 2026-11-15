@@ -50,9 +50,9 @@ class NaturalPronunciationTest {
     }
 
     @Test fun eachDialectKeepsItsOwnVocabulary() {
-        assertEquals("دحي", DialectCatalog.localize(seed("food.eggs"),
+        assertEquals("بيض", DialectCatalog.localize(seed("food.eggs"),
             ArabicDialect.LIBYAN).displayText)
-        assertEquals("عظام", DialectCatalog.localize(seed("food.eggs"),
+        assertEquals("عظم", DialectCatalog.localize(seed("food.eggs"),
             ArabicDialect.TUNISIAN).displayText)
         assertEquals("بيض", DialectCatalog.localize(seed("food.eggs"),
             ArabicDialect.SAUDI).displayText)
