@@ -1215,11 +1215,10 @@ object DialectCatalog {
             sentencePrompt = if (custom(CardDetails.SENTENCE)) item.sentencePrompt
                 else regional?.sentencePrompt ?: TransportCatalog.sentencePrompt(key, dialect) ?: item.sentencePrompt,
             sourceDetails = CardDetails.from(item),
-            neuralSpeechText = neuralSpeech,
         )
         val revised = DialectSpeechRevisions.applySentence(item, dialect, projected)
-        return if (revised.copy(sourceDetails = null, neuralSpeechText = null) == item)
-            item.copy(neuralSpeechText = neuralSpeech) else revised
+        val result = if (revised.copy(sourceDetails = null) == item) item.copy() else revised
+        return result.also { it.neuralSpeechText = neuralSpeech }
     }
 }
 

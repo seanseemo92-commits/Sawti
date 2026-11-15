@@ -115,6 +115,7 @@ class DisplaySpeechConsistencyTest {
     // Only documented device-TTS spellings may differ from the visible label.
     private val phoneticAllowlist = setOf(
         "LIBYAN|request.water", "LIBYAN|request.medicine", "LIBYAN|food.water",
+        "LIBYAN|request.cold",
         "LIBYAN|action.sit", "LIBYAN|action.close", "LIBYAN|action.see",
         "LIBYAN|action.pray", "LIBYAN|clothing.socks", "LIBYAN|dish.potato_stew",
         // Review-approved spellings: visible مبكبكة/سفنز vs spoken إِمبكبكة/إِسفنز.

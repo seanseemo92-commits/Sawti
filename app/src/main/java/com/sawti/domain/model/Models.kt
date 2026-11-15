@@ -26,9 +26,9 @@ data class WordItem(
     val semanticKey: String? = null,
     val customTextFields: Int = 0,
     val sourceDetails: CardDetails? = null,
-    /** Transient, non-Room text to match the exact neural pack manifest. */
-    val neuralSpeechText: String? = null,
 ) {
+    /** Transient, non-Room voice projection; excluded from persistent identity and equality. */
+    var neuralSpeechText: String? = null
     /** Speech-only channel backed by the existing Room ttsPrompt column. */
     val speechText: String get() = ttsPrompt
 
