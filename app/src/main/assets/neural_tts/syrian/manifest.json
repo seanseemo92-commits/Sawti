@@ -1,6 +1,7 @@
 {
   "version": 1,
   "voice": "ar-SY-AmanyNeural",
+  "rate": "-18%",
   "entries": {
     "action.close": {
       "file": "action.close.mp3",
@@ -356,7 +357,7 @@
     },
     "family.brother_wife": {
       "file": "family.brother_wife.mp3",
-      "speechText": "زَوْجِة أَخِي"
+      "speechText": "مَرْت أَخِي"
     },
     "family.daughter": {
       "file": "family.daughter.mp3",
@@ -364,7 +365,7 @@
     },
     "family.daughter_husband": {
       "file": "family.daughter_husband.mp3",
-      "speechText": "زَوْج ابْنَتِي"
+      "speechText": "جَوْز بِنْتِي"
     },
     "family.father": {
       "file": "family.father.mp3",
@@ -400,19 +401,19 @@
     },
     "family.husband_brother": {
       "file": "family.husband_brother.mp3",
-      "speechText": "أَخُو زَوْجِي"
+      "speechText": "أَخُو جَوْزِي"
     },
     "family.husband_father": {
       "file": "family.husband_father.mp3",
-      "speechText": "أَبُو زَوْجِي"
+      "speechText": "أَبُو جَوْزِي"
     },
     "family.husband_mother": {
       "file": "family.husband_mother.mp3",
-      "speechText": "أُمّ زَوْجِي"
+      "speechText": "أُمّ جَوْزِي"
     },
     "family.husband_sister": {
       "file": "family.husband_sister.mp3",
-      "speechText": "أُخْت زَوْجِي"
+      "speechText": "أُخْت جَوْزِي"
     },
     "family.male_in_law": {
       "file": "family.male_in_law.mp3",
@@ -432,7 +433,7 @@
     },
     "family.maternal_aunt_son": {
       "file": "family.maternal_aunt_son.mp3",
-      "speechText": "اِبْن خَالَتِي"
+      "speechText": "اِبْن خَالتِي"
     },
     "family.maternal_uncle": {
       "file": "family.maternal_uncle.mp3",
@@ -460,7 +461,7 @@
     },
     "family.paternal_aunt_son": {
       "file": "family.paternal_aunt_son.mp3",
-      "speechText": "اِبْن عَمَّتِي"
+      "speechText": "اِبْن عَمْتِي"
     },
     "family.paternal_uncle": {
       "file": "family.paternal_uncle.mp3",
@@ -484,7 +485,7 @@
     },
     "family.sister_husband": {
       "file": "family.sister_husband.mp3",
-      "speechText": "زَوْج أُخْتِي"
+      "speechText": "جَوْز أُخْتِي"
     },
     "family.sister_son": {
       "file": "family.sister_son.mp3",
@@ -496,7 +497,7 @@
     },
     "family.son_wife": {
       "file": "family.son_wife.mp3",
-      "speechText": "زَوْجِة ابْنِي"
+      "speechText": "مَرْت اِبْنِي"
     },
     "family.wife": {
       "file": "family.wife.mp3",
@@ -504,19 +505,19 @@
     },
     "family.wife_brother": {
       "file": "family.wife_brother.mp3",
-      "speechText": "أَخُو زَوْجَتِي"
+      "speechText": "أَخُو مَرْتِي"
     },
     "family.wife_father": {
       "file": "family.wife_father.mp3",
-      "speechText": "أَبُو زَوْجَتِي"
+      "speechText": "أَبُو مَرْتِي"
     },
     "family.wife_mother": {
       "file": "family.wife_mother.mp3",
-      "speechText": "أُمّ زَوْجَتِي"
+      "speechText": "أُمّ مَرْتِي"
     },
     "family.wife_sister": {
       "file": "family.wife_sister.mp3",
-      "speechText": "أُخْت زَوْجَتِي"
+      "speechText": "أُخْت مَرْتِي"
     },
     "food.biscuit": {
       "file": "food.biscuit.mp3",
@@ -876,7 +877,7 @@
     },
     "request.rest": {
       "file": "request.rest.mp3",
-      "speechText": "بِدِّي اِرْتَاح"
+      "speechText": "بِدِّي إِرْتَاح"
     },
     "request.tea": {
       "file": "request.tea.mp3",

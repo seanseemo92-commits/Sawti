@@ -1,6 +1,7 @@
 {
   "version": 1,
   "voice": "ar-AE-FatimaNeural",
+  "rate": "-18%",
   "entries": {
     "action.close": {
       "file": "action.close.mp3",
