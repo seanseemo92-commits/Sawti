@@ -173,7 +173,7 @@
     },
     "body.neck": {
       "file": "body.neck.mp3",
-      "speechText": "رَقَبَة"
+      "speechText": "رَقْبَة"
     },
     "body.nose": {
       "file": "body.nose.mp3",
@@ -293,7 +293,7 @@
     },
     "dish.algerian.chakhchoukha": {
       "file": "dish.algerian.chakhchoukha.mp3",
-      "speechText": "شَخْشُوخَة"
+      "speechText": "شَخْشُوخَة بِسْكْرِيَّة"
     },
     "dish.algerian.couscous": {
       "file": "dish.algerian.couscous.mp3",
@@ -429,11 +429,11 @@
     },
     "family.maternal_aunt_daughter": {
       "file": "family.maternal_aunt_daughter.mp3",
-      "speechText": "بِنْت خَالتِي"
+      "speechText": "بِنْت خَالْتِي"
     },
     "family.maternal_aunt_son": {
       "file": "family.maternal_aunt_son.mp3",
-      "speechText": "وَلْد خَالتِي"
+      "speechText": "وَلْد خَالْتِي"
     },
     "family.maternal_uncle": {
       "file": "family.maternal_uncle.mp3",

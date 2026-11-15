@@ -173,7 +173,7 @@
     },
     "body.neck": {
       "file": "body.neck.mp3",
-      "speechText": "رَقَبَة"
+      "speechText": "رَقْبَة"
     },
     "body.nose": {
       "file": "body.nose.mp3",
@@ -289,7 +289,7 @@
     },
     "dish.iraqi.dolma": {
       "file": "dish.iraqi.dolma.mp3",
-      "speechText": "دُولْمَة"
+      "speechText": "دُولْمَة عِرَاقِيَّة"
     },
     "dish.iraqi.fish_mutabbaq": {
       "file": "dish.iraqi.fish_mutabbaq.mp3",
@@ -317,7 +317,7 @@
     },
     "dish.iraqi.okra": {
       "file": "dish.iraqi.okra.mp3",
-      "speechText": "بَامْيَا عَالتِمَّن"
+      "speechText": "بَامْيَا عَالْتِمَّن"
     },
     "dish.iraqi.pacha": {
       "file": "dish.iraqi.pacha.mp3",
@@ -325,7 +325,7 @@
     },
     "dish.iraqi.quzi": {
       "file": "dish.iraqi.quzi.mp3",
-      "speechText": "قُوزِي عَالتِمَّن"
+      "speechText": "قُوزِي عَالْتِمَّن"
     },
     "dish.iraqi.rice_kibbeh": {
       "file": "dish.iraqi.rice_kibbeh.mp3",
@@ -429,11 +429,11 @@
     },
     "family.maternal_aunt_daughter": {
       "file": "family.maternal_aunt_daughter.mp3",
-      "speechText": "بِنْت خَالتِي"
+      "speechText": "بِنْت خَالْتِي"
     },
     "family.maternal_aunt_son": {
       "file": "family.maternal_aunt_son.mp3",
-      "speechText": "وَلَد خَالتِي"
+      "speechText": "وَلَد خَالْتِي"
     },
     "family.maternal_uncle": {
       "file": "family.maternal_uncle.mp3",
@@ -885,7 +885,7 @@
     },
     "request.toilet": {
       "file": "request.toilet.mp3",
-      "speechText": "أَرِيد أَرُوح لِلْحَمَّام"
+      "speechText": "أَرِيد أَرُوح لِلحَمَّام"
     },
     "request.water": {
       "file": "request.water.mp3",
@@ -1037,7 +1037,7 @@
     },
     "vegetable.peas": {
       "file": "vegetable.peas.mp3",
-      "speechText": "بَزَاليَا"
+      "speechText": "بَزَالْيَا"
     },
     "vegetable.pepper": {
       "file": "vegetable.pepper.mp3",

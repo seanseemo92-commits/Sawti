@@ -173,7 +173,7 @@
     },
     "body.neck": {
       "file": "body.neck.mp3",
-      "speechText": "رَقَبَة"
+      "speechText": "رَقْبَة"
     },
     "body.nose": {
       "file": "body.nose.mp3",
@@ -213,7 +213,7 @@
     },
     "clothing.coat": {
       "file": "clothing.coat.mp3",
-      "speechText": "بَالطُو"
+      "speechText": "بَالْطُو"
     },
     "clothing.dress": {
       "file": "clothing.dress.mp3",
@@ -317,11 +317,11 @@
     },
     "dish.egyptian.molokhia": {
       "file": "dish.egyptian.molokhia.mp3",
-      "speechText": "مُلُوخِيَّة"
+      "speechText": "مُلُوخِيَّة بِالتَّقْلِيَة"
     },
     "dish.egyptian.moussaka": {
       "file": "dish.egyptian.moussaka.mp3",
-      "speechText": "مِسَقَّعَة"
+      "speechText": "مِسَقَّعَة بَلَدِي"
     },
     "dish.egyptian.potato_tray": {
       "file": "dish.egyptian.potato_tray.mp3",
@@ -337,7 +337,7 @@
     },
     "dish.egyptian.trotters_fattah": {
       "file": "dish.egyptian.trotters_fattah.mp3",
-      "speechText": "كَوَارِع"
+      "speechText": "كَوَارِع وَفَتَّة"
     },
     "dish.egyptian.umm_ali": {
       "file": "dish.egyptian.umm_ali.mp3",
@@ -429,11 +429,11 @@
     },
     "family.maternal_aunt_daughter": {
       "file": "family.maternal_aunt_daughter.mp3",
-      "speechText": "بِنْت خَالتِي"
+      "speechText": "بِنْت خَالْتِي"
     },
     "family.maternal_aunt_son": {
       "file": "family.maternal_aunt_son.mp3",
-      "speechText": "اِبْن خَالتِي"
+      "speechText": "اِبْن خَالْتِي"
     },
     "family.maternal_uncle": {
       "file": "family.maternal_uncle.mp3",

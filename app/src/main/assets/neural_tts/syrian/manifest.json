@@ -173,7 +173,7 @@
     },
     "body.neck": {
       "file": "body.neck.mp3",
-      "speechText": "رَقَبَة"
+      "speechText": "رَقْبَة"
     },
     "body.nose": {
       "file": "body.nose.mp3",
@@ -313,7 +313,7 @@
     },
     "dish.syrian.kunafa": {
       "file": "dish.syrian.kunafa.mp3",
-      "speechText": "كْنَافِة"
+      "speechText": "كْنَافَة نَابُلْسِيَّة"
     },
     "dish.syrian.maqluba": {
       "file": "dish.syrian.maqluba.mp3",
@@ -429,11 +429,11 @@
     },
     "family.maternal_aunt_daughter": {
       "file": "family.maternal_aunt_daughter.mp3",
-      "speechText": "بِنْت خَالتِي"
+      "speechText": "بِنْت خَالْتِي"
     },
     "family.maternal_aunt_son": {
       "file": "family.maternal_aunt_son.mp3",
-      "speechText": "اِبْن خَالتِي"
+      "speechText": "اِبْن خَالْتِي"
     },
     "family.maternal_uncle": {
       "file": "family.maternal_uncle.mp3",
@@ -885,7 +885,7 @@
     },
     "request.toilet": {
       "file": "request.toilet.mp3",
-      "speechText": "بِدِّي رُوح عَالحَمَّام"
+      "speechText": "بِدِّي رُوح عَالْحَمَّام"
     },
     "request.water": {
       "file": "request.water.mp3",

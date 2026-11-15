@@ -173,7 +173,7 @@
     },
     "body.neck": {
       "file": "body.neck.mp3",
-      "speechText": "رَقَبَة"
+      "speechText": "رَقْبَة"
     },
     "body.nose": {
       "file": "body.nose.mp3",
@@ -297,11 +297,11 @@
     },
     "dish.moroccan.harira": {
       "file": "dish.moroccan.harira.mp3",
-      "speechText": "حْرِيرَة"
+      "speechText": "حْرِيرَة مَغْرِبِيَّة"
     },
     "dish.moroccan.kefta_tajine": {
       "file": "dish.moroccan.kefta_tajine.mp3",
-      "speechText": "طَاجِين كُفْتَة"
+      "speechText": "طَاجِين كُفْتَة بِالبِيض"
     },
     "dish.moroccan.msemen": {
       "file": "dish.moroccan.msemen.mp3",
@@ -309,7 +309,7 @@
     },
     "dish.moroccan.pastilla": {
       "file": "dish.moroccan.pastilla.mp3",
-      "speechText": "بَسْطِيلَة"
+      "speechText": "بَسْطِيلَة بِالحُوت"
     },
     "dish.moroccan.prune_tajine": {
       "file": "dish.moroccan.prune_tajine.mp3",
@@ -317,7 +317,7 @@
     },
     "dish.moroccan.rfissa": {
       "file": "dish.moroccan.rfissa.mp3",
-      "speechText": "رْفِيسَة"
+      "speechText": "رْفِيسَة بِالدْجَاج"
     },
     "dish.moroccan.seffa": {
       "file": "dish.moroccan.seffa.mp3",
@@ -337,7 +337,7 @@
     },
     "dish.moroccan.tangia": {
       "file": "dish.moroccan.tangia.mp3",
-      "speechText": "طَنْجِيَّة"
+      "speechText": "طَنْجِيَّة مَرَّاكْشِيَّة"
     },
     "dish.moroccan.zaalouk": {
       "file": "dish.moroccan.zaalouk.mp3",
@@ -429,11 +429,11 @@
     },
     "family.maternal_aunt_daughter": {
       "file": "family.maternal_aunt_daughter.mp3",
-      "speechText": "بِنْت خَالتِي"
+      "speechText": "بِنْت خَالْتِي"
     },
     "family.maternal_aunt_son": {
       "file": "family.maternal_aunt_son.mp3",
-      "speechText": "وَلْد خَالتِي"
+      "speechText": "وَلْد خَالْتِي"
     },
     "family.maternal_uncle": {
       "file": "family.maternal_uncle.mp3",
@@ -885,7 +885,7 @@
     },
     "request.toilet": {
       "file": "request.toilet.mp3",
-      "speechText": "بْغِيت نَمْشِي لِلْحَمَّام"
+      "speechText": "بْغِيت نَمْشِي لِلحَمَّام"
     },
     "request.water": {
       "file": "request.water.mp3",
