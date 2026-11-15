@@ -219,6 +219,21 @@ class DialectSpeechCatalogTest {
         }
     }
 
+    @Test fun previouslySavedStandardDishesUseCorrectedSpeechWithoutDestructiveMigration() {
+        for (dish in RegionalDishesCatalog.forDialect(ArabicDialect.STANDARD).dishes) {
+            val seed = item(dish.semanticKey)
+            val legacy = seed.copy(ttsPrompt = "أَرُزٌّ بِاللَّحْمْ")
+            val form = DialectSpeechCatalog.resolve(legacy, ArabicDialect.STANDARD)
+            assertEquals(dish.semanticKey, dish.ttsPrompt, form.speechText)
+            assertEquals(dish.semanticKey, legacy, DialectCatalog.localize(legacy,
+                ArabicDialect.STANDARD).forEditing())
+            val caregiver = legacy.copy(ttsPrompt = "صوتي الشخصي",
+                customTextFields = CardDetails.SPEECH)
+            assertEquals("صوتي الشخصي",
+                DialectSpeechCatalog.resolve(caregiver, ArabicDialect.STANDARD).speechText)
+        }
+    }
+
     @Test fun writtenReviewDoesNotReplaceRequiredNativeListening() {
         for (dialect in ArabicDialect.entries) {
             val form = DialectSpeechCatalog.resolve(item("request.water"), dialect)
