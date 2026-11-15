@@ -140,10 +140,14 @@ class QuranAyahPlayerTest {
         assertEquals(RecitationPhase.PLAYING, states.last().phase)
         assertEquals(3, states.last().remaining)
         assertEquals(ShadowMediaPlayer.State.STARTED, current.state)
+        assertEquals(0.25f, current.leftVolume, 0.001f)
+        assertEquals(0.25f, current.rightVolume, 0.001f)
         focusListener.onAudioFocusChange(AudioManager.AUDIOFOCUS_GAIN)
         shadowOf(Looper.getMainLooper()).idle()
         assertEquals(RecitationPhase.PLAYING, states.last().phase)
         assertEquals(ShadowMediaPlayer.State.STARTED, current.state)
+        assertEquals(1.0f, current.leftVolume, 0.001f)
+        assertEquals(1.0f, current.rightVolume, 0.001f)
         assertEquals(1, created.size)
     }
 
