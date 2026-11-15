@@ -34,7 +34,12 @@ android {
     }
     buildTypes {
         debug {
-            if (providers.gradleProperty("quranPreview").orNull == "true") {
+            if (providers.gradleProperty("geminiPreview").orNull == "true") {
+                // Independent package so the test build does not replace signed Sawti.
+                applicationIdSuffix = ".geminipreview"
+                versionNameSuffix = "-gemini-preview"
+                manifestPlaceholders["appLabel"] = "صوتي — تجربة النطق"
+            } else if (providers.gradleProperty("quranPreview").orNull == "true") {
                 applicationIdSuffix = ".quranpreview"
                 versionNameSuffix = "-quran-test"
                 manifestPlaceholders["appLabel"] = "صوتي — اختبار القرآن"
