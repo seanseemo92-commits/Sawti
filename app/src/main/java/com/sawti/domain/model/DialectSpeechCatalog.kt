@@ -108,7 +108,6 @@ object DialectSpeechCatalog {
         val aligned = sounds.size == labels.size
         val marks = Regex("""[\u064B-\u065F\u0670]""")
         val vowelSukun = Regex("""(?:ِّ?ي|ُّ?و|َّ?ا)ْ""")
-        val initialSukun = Regex("""^([ء-ي])ْ""")
         val terminalTa = Regex("""(?:ة[ٌٍُْ]?|هْ?|تْ)$""")
         return sounds.mapIndexed { i, sound ->
             val base = sound.trimEnd('؟', '!', '،', '.', '؛', ':')
@@ -127,14 +126,12 @@ object DialectSpeechCatalog {
             word = word.replace("تْش", "تش").replace("الْ", "ال")
                 .replace(vowelSukun) { it.value.dropLast(1) }
             // صْبَع is a deliberate Libyan lexical cluster, not a prosthetic sukun.
-            if (word != "صْبَع" && word != "دْوَايَا")
-                word = word.replace(initialSukun, "$1")
+            // Explicit regional onset clusters (حْرَام، قْنِيَّة، دْجَاج)
+            // are lexical, not synthetic prefixes; keep their initial sukun.
             if (visible?.endsWith('ة') == true) word = word.replace(terminalTa, "ة")
             word = word.removeSuffix("ْ")
-            if (dialect != ArabicDialect.STANDARD && i < sounds.lastIndex &&
-                !word.endsWith("ًا") && !word.endsWith("اً")) {
-                word = word.replace(Regex("""[ٌٍُ]$"""), "")
-            }
+            // Keep every deliberately specified medial vowel. In Arabic greetings
+            // these vowels control liaison and the pronunciation of 'اللَّهُ'.
             word + punctuation
         }.joinToString(" ")
     }

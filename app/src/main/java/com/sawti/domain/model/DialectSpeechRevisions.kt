@@ -52,6 +52,11 @@ internal object DialectSpeechRevisions {
     )
 
     private fun libyan(): Map<String, Patch> = mapOf(
+        "family.father" to Patch(display = Field("أبي", "بوي"), speech = Field("أَبِي", "بُوي"), cue = Field("أَـ...", "بُو...")),
+        "family.husband" to Patch(display = Field("زوجي", "راجلي"), speech = Field("زَوْجِي", "رَاجْلِي"), cue = Field("زَوْـ...", "رَا...")),
+        "family.wife" to Patch(display = Field("زوجتي", "مرتي"), speech = Field("زَوْجَتِي", "مَرْتِي"), cue = Field("زَوْـ...", "مَرْ...")),
+        "family.brother" to Patch(display = Field("أخي", "خوي"), speech = Field("أَخِي", "خُوي"), cue = Field("أَـ...", "خُو...")),
+        "family.grandmother" to Patch(display = Field("جدتي", "حناي"), speech = Field("جَدَّتِي", "حَنَّاي"), cue = Field("جَدْـ...", "حَنْـ...")),
         "family.wife_brother" to Patch(display = Field("أخو زوجتي", "خو مرتي"), speech = Field("أَخُو زَوْجَتِي", "خُو مَرْتِي")),
         "family.husband_brother" to Patch(display = Field("أخو زوجي", "خو راجلي"), speech = Field("أَخُو زَوْجِي", "خُو رَاجْلِي")),
         "family.wife_father" to Patch(display = Field("أبو زوجتي", "بو مرتي"), speech = Field("أَبُو زَوْجَتِي", "بُو مَرْتِي")),
@@ -122,6 +127,7 @@ internal object DialectSpeechRevisions {
     )
 
     private fun saudi(): Map<String, Patch> = mapOf(
+        "family.son" to Patch(display = Field("ابني", "ولدي"), speech = Field("اِبْنِي", "وَلَدِي"), cue = Field("اِبْـ...", "وَ...")),
         "family.wife_brother" to Patch(display = Field("أخو زوجتي", "أخو زوجتي"), speech = Field("أَخُو زَوْجَتِي", "أَخُو زَوْجَتِي")),
         "family.husband_brother" to Patch(display = Field("أخو زوجي", "أخو زوجي"), speech = Field("أَخُو زَوْجِي", "أَخُو زَوْجِي")),
         "family.wife_father" to Patch(display = Field("أبو زوجتي", "أبو زوجتي"), speech = Field("أَبُو زَوْجَتِي", "أَبُو زَوْجَتِي")),
@@ -415,6 +421,7 @@ internal object DialectSpeechRevisions {
     )
 
     private fun iraqi(): Map<String, Patch> = mapOf(
+        "family.wife" to Patch(display = Field("زوجتي", "مرتي"), speech = Field("زَوْجَتِي", "مَرْتِي"), cue = Field("زَوْـ...", "مَرْ...")),
         "family.wife_brother" to Patch(display = Field("أخو زوجتي", "أخو مرتي"), speech = Field("أَخُو زَوْجَتِي", "أَخُو مَرْتِي")),
         "family.husband_brother" to Patch(display = Field("أخو زوجي", "أخو زوجي"), speech = Field("أَخُو زَوْجِي", "أَخُو زَوْجِي")),
         "family.wife_father" to Patch(display = Field("أبو زوجتي", "أبو مرتي"), speech = Field("أَبُو زَوْجَتِي", "أَبُو مَرْتِي")),
@@ -619,6 +626,8 @@ internal object DialectSpeechRevisions {
     )
 
     private fun moroccan(): Map<String, Patch> = mapOf(
+        "family.father" to Patch(display = Field("أبي", "بّا"), speech = Field("أَبِي", "بَّا"), cue = Field("أَـ...", "بَّا...")),
+        "family.mother" to Patch(display = Field("أمي", "مّي"), speech = Field("أُمِّي", "مِّي"), cue = Field("أُمْـ...", "مِّي...")),
         "family.wife_brother" to Patch(display = Field("أخو زوجتي", "خو مرتي"), speech = Field("أَخُو زَوْجَتِي", "خُو مَرْتِي")),
         "family.husband_brother" to Patch(display = Field("أخو زوجي", "خو راجلي"), speech = Field("أَخُو زَوْجِي", "خُو رَاجْلِي")),
         "family.wife_father" to Patch(display = Field("أبو زوجتي", "بو مرتي"), speech = Field("أَبُو زَوْجَتِي", "بُو مَرْتِي")),
