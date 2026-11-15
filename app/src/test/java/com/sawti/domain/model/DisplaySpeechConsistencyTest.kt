@@ -110,7 +110,7 @@ class DisplaySpeechConsistencyTest {
         .replace('أ', 'ا').replace('إ', 'ا').replace('آ', 'ا').replace('ٱ', 'ا')
         .replace('ى', 'ي').replace('ة', 'ه')
         .replace(Regex("[؟،؛:!()./\\u200F]"), "")
-        .replace(Regex("\\s+"), " ").trim()
+        .replace(Regex("\s+"), " ").trim()
 
     // Only documented device-TTS spellings may differ from the visible label.
     private val phoneticAllowlist = setOf(
@@ -220,9 +220,9 @@ class DisplaySpeechConsistencyTest {
     }
 
     private fun stripPausalSukun(value: String) = value
-        .replace(Regex("""هْ(?=\\s|$)"""), "ة")
-        .replace(Regex("""ةْ(?=\\s|$)"""), "ة")
-        .replace(Regex("""ْ(?=\\s|$)"""), "")
+        .replace(Regex("""هْ(?=\s|$)"""), "ة")
+        .replace(Regex("""ةْ(?=\s|$)"""), "ة")
+        .replace(Regex("""ْ(?=\s|$)"""), "")
 
     // Pausal speech may pronounce written ta marbuta as a linked 't',
     // and tanween may be spoken as a final 'n'. These are spelling/inflection,
