@@ -30,11 +30,11 @@ class DisplaySpeechConsistencyTest {
         LIBYAN|family.husband_sister|أخت راجلي
         LIBYAN|family.wife_sister|أخت مرتي
         LIBYAN|family.brother_wife|مرت خوي
-        LIBYAN|family.son_wife|مرت ابني
+        LIBYAN|family.son_wife|مرت ولدي
         LIBYAN|request.cold|إنحس بالبرد
-        LIBYAN|dish.mbakbaka|مكرونه مبكبكه
+        LIBYAN|dish.mbakbaka|مكرونة مبكبكة
         LIBYAN|vegetable.coriander|قصبر
-        LIBYAN|vegetable.peas|بازيليا
+        LIBYAN|vegetable.peas|بازيلية
         LIBYAN|fruit.pear|كمثرى
         LIBYAN|clothing.blouse|بلوزة
         SAUDI|family.father|أبوي
@@ -117,6 +117,8 @@ class DisplaySpeechConsistencyTest {
         "LIBYAN|request.water", "LIBYAN|request.medicine", "LIBYAN|food.water",
         "LIBYAN|action.sit", "LIBYAN|action.close", "LIBYAN|action.see",
         "LIBYAN|action.pray", "LIBYAN|clothing.socks", "LIBYAN|dish.potato_stew",
+        // Review-approved spellings: visible مبكبكة/سفنز vs spoken إِمبكبكة/إِسفنز.
+        "LIBYAN|dish.mbakbaka", "LIBYAN|dish.sfinz",
         "IRAQI|food.fish", "IRAQI|action.speak", "IRAQI|food.tea", "IRAQI|request.tea",
         "IRAQI|dish.iraqi.masgouf", "IRAQI|dish.iraqi.fish_mutabbaq",
         "EGYPTIAN|fruit.pear", "IRAQI|action.sit",
@@ -134,6 +136,25 @@ class DisplaySpeechConsistencyTest {
                 problems += "${fields[0]} ${fields[1]}: expected '${fields[2]}' got '${form.displayText}'"
         }
         assertTrue(problems.joinToString("\n"), problems.isEmpty())
+    }
+
+    @Test fun fiveLibyanPolishCorrectionsResolveToExactVisibleAndSpokenForms() {
+        val expected = mapOf(
+            "family.son_wife" to ("مرت ولدي" to "مَرْتْ وِلْدِي"),
+            "dish.mbakbaka" to ("مكرونة مبكبكة" to "مَكَرُونَهْ إِمْبَكْبَكَهْ"),
+            "vegetable.peas" to ("بازيلية" to "بَازِيلْيَهْ"),
+            "dish.zmeeta" to ("زميطة" to "زُمِيطَهْ"),
+            "dish.sfinz" to ("سفنز" to "إِسْفِنْزْ"),
+        )
+        expected.forEach { (key, pair) ->
+            val seed = requireNotNull(seeds[key]) { "Missing Libyan card $key" }
+            val result = DialectSpeechCatalog.resolve(seed, ArabicDialect.LIBYAN)
+            assertEquals("$key visible", pair.first, result.displayText)
+            assertEquals("$key TTS", pair.second, result.speechText)
+        }
+        val sfinz = DialectSpeechCatalog.resolve(
+            requireNotNull(seeds["dish.sfinz"]), ArabicDialect.LIBYAN)
+        assertEquals("إِسْـ...", sfinz.phonemicCue)
     }
 
     @Test fun allBuiltInCardsAvoidUnsupportedTtsConsonantGlyphs() {
