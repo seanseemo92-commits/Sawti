@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Native launch window before Compose draws the Aurora splash. -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <gradient
-        android:angle="315"
-        android:startColor="#102E74"
-        android:centerColor="#344BCD"
-        android:endColor="#7152DE" />
-</shape>

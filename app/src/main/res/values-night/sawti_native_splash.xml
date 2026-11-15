@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- Android 12+ native system launch background; no legacy Compose welcome screen. -->
-    <color name="sawti_native_splash_background">#081934</color>
-</resources>
