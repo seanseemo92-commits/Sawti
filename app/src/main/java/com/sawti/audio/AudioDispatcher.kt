@@ -36,7 +36,7 @@ class AudioDispatcher(
     private fun playNeural(key: String?, text: String, done: () -> Unit,
         canceled: () -> Unit, failed: () -> Unit): Boolean {
         val resolver = neural ?: return false
-        val speed = if (speech.activeSpeechRate < 0.85f) 0.8f else 1.0f
+        val speed = NeuralPlaybackSpeed.forTtsRate(speech.activeSpeechRate)
         return when (val clip = resolver.resolve(speech.activeDialect, key, text)) {
             is NeuralClip.Downloaded ->
                 player.play(clip.file.path, onDone = done, onCanceled = canceled,
