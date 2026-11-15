@@ -1,13 +1,14 @@
 name: Generate regional neural voices
 on:
   push:
-    branches: [main, fix/sawti-v161-neural-lexicon-20261115]
+    branches: [main, fix/sawti-v161-neural-lexicon-20261115, review/gemini-phonetic-2399-20261115]
     paths:
       - 'app/src/main/java/com/sawti/domain/model/NeuralSpeechNormalizer.kt'
       - 'app/src/main/java/com/sawti/domain/model/DialectSpeechCatalog.kt'
       - 'app/src/main/java/com/sawti/domain/model/DialectCatalog.kt'
       - 'app/src/main/java/com/sawti/domain/model/DialectSpeechRevisions.kt'
       - 'app/src/main/java/com/sawti/domain/model/NeuralLexicon161.kt'
+      - 'app/src/main/java/com/sawti/domain/model/GeminiPronunciationReview.kt'
       - 'app/src/main/java/com/sawti/domain/model/GreetingsCatalog.kt'
       - 'app/src/main/java/com/sawti/domain/model/TransportCatalog.kt'
       - 'app/src/main/java/com/sawti/data/db/WordSeed.kt'
