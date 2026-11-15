@@ -22,7 +22,7 @@ data class SpeechForm(
 }
 
 object DialectSpeechCatalog {
-    fun resolve(value: WordItem, dialect: ArabicDialect): SpeechForm {
+    private fun resolveUncorrected(value: WordItem, dialect: ArabicDialect): SpeechForm {
         val item = value.forEditing()
         val key = item.semanticKey
         fun custom(flag: Int) = item.customTextFields and flag != 0
@@ -55,7 +55,21 @@ object DialectSpeechCatalog {
             else -> variant?.phonemicCue ?: PhonemicCue.derive(speech)
         }
         val audited = DialectSpeechRevisions.applySpeech(item, dialect, SpeechForm(visible, speech, cue, source))
-        return PronunciationCorrections.apply(item, dialect, audited)
+        return audited
+    }
+
+    /** Unchanged legacy path: keeps historical Android TTS fixes and regression tests. */
+    fun resolve(value: WordItem, dialect: ArabicDialect): SpeechForm =
+        PronunciationCorrections.apply(value.forEditing(), dialect, resolveUncorrected(value, dialect))
+
+    /** The neural path intentionally skips PronunciationCorrections and TtsEndings. */
+    fun resolveForNeural(value: WordItem, dialect: ArabicDialect): SpeechForm {
+        val form = resolveUncorrected(value, dialect)
+        return if (form.source == SpeechSource.USER) form else form.copy(
+            speechText = NeuralSpeechNormalizer.normalize(
+                form.displayText, form.speechText, dialect, value.semanticKey
+            )
+        )
     }
 }
 

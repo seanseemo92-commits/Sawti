@@ -30,9 +30,9 @@ class ExportSpeechCatalogTest {
                 if (seed.categoryId == RegionalDishesCatalog.CATEGORY_ID &&
                     !RegionalDishesCatalog.visibleForDialect(seed.subgroup, dialect)) continue
                 val key = requireNotNull(seed.semanticKey)
-                val localized = DialectCatalog.localize(seed, dialect)
-                require(localized.ttsPrompt.isNotBlank()) { "No speech for $dialect/$key" }
-                result += Entry(dialect.name, key, localized.ttsPrompt)
+                val neural = DialectSpeechCatalog.resolveForNeural(seed, dialect)
+                require(neural.speechText.isNotBlank()) { "No neural speech for $dialect/$key" }
+                result += Entry(dialect.name, key, neural.speechText)
             }
         }
         assertEquals(9, result.map { it.dialect }.distinct().size)

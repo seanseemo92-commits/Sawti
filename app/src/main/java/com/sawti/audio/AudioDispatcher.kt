@@ -1,5 +1,7 @@
 package com.sawti.audio
 
+import com.sawti.domain.model.CardDetails
+import com.sawti.domain.model.DialectSpeechCatalog
 import com.sawti.domain.model.PhonemicCue
 import com.sawti.domain.model.SentenceComposer
 import com.sawti.domain.model.SentencePiece
@@ -35,12 +37,15 @@ class AudioDispatcher(
     private fun playNeural(key: String?, text: String, done: () -> Unit,
         canceled: () -> Unit, failed: () -> Unit): Boolean {
         val resolver = neural ?: return false
+        val speed = if (speech.activeSpeechRate < 0.85f) 0.8f else 1.0f
         return when (val clip = resolver.resolve(speech.activeDialect, key, text)) {
             is NeuralClip.Downloaded ->
-                player.play(clip.file.path, onDone = done, onCanceled = canceled, onFailed = failed)
+                player.play(clip.file.path, onDone = done, onCanceled = canceled,
+                    onFailed = failed, speed = speed)
             is NeuralClip.Bundled -> {
                 val afd = resolver.openBundled(clip) ?: return false
-                player.playAsset(afd, onDone = done, onCanceled = canceled, onFailed = failed)
+                player.playAsset(afd, onDone = done, onCanceled = canceled,
+                    onFailed = failed, speed = speed)
             }
             null -> false
         }
@@ -59,8 +64,13 @@ class AudioDispatcher(
                 speech.speak(item.speechText, onDone = done, onCanceled = canceled)
             }
         }
+        val neuralText = if (item.customTextFields and
+            (CardDetails.SPEECH or CardDetails.LABEL) != 0 || item.categoryId.startsWith("custom_"))
+            null else item.neuralSpeechText ?: DialectSpeechCatalog.resolveForNeural(
+                item, speech.activeDialect).speechText
         val startNeural = {
-            current == generation && playNeural(item.semanticKey, item.speechText, done, canceled, fallback)
+            current == generation && neuralText != null &&
+                playNeural(item.semanticKey, neuralText, done, canceled, fallback)
         }
         val recording = item.audioPath?.takeIf { File(it).isFile }
         if (recording != null && player.play(recording,
@@ -97,8 +107,9 @@ class AudioDispatcher(
                     onDone = done, onCanceled = canceled)
             }
             val startNeural = {
-                current == generation && playNeural(piece.semanticKey, piece.sourceSpeech,
-                    done, canceled, fallback)
+                current == generation && piece.neuralSpeechText != null &&
+                    playNeural(piece.semanticKey, piece.neuralSpeechText,
+                        done, canceled, fallback)
             }
             val recording = piece.audioPath?.takeIf { File(it).isFile }
             if (recording != null && player.play(recording,

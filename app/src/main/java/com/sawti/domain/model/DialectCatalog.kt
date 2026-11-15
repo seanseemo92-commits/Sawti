@@ -1205,6 +1205,9 @@ object DialectCatalog {
             else RegionalDishesCatalog.variant(key, dialect)
         fun custom(flag: Int) = item.customTextFields and flag != 0
         val form = DialectSpeechCatalog.resolve(item, dialect)
+        val neuralForm = DialectSpeechCatalog.resolveForNeural(item, dialect)
+        val neuralSpeech = if (custom(CardDetails.SPEECH) || custom(CardDetails.LABEL))
+            null else neuralForm.speechText
         val projected = item.copy(
             displayText = form.displayText,
             ttsPrompt = form.speechText,
@@ -1212,9 +1215,11 @@ object DialectCatalog {
             sentencePrompt = if (custom(CardDetails.SENTENCE)) item.sentencePrompt
                 else regional?.sentencePrompt ?: TransportCatalog.sentencePrompt(key, dialect) ?: item.sentencePrompt,
             sourceDetails = CardDetails.from(item),
+            neuralSpeechText = neuralSpeech,
         )
         val revised = DialectSpeechRevisions.applySentence(item, dialect, projected)
-        return if (revised.copy(sourceDetails = null) == item) item else revised
+        return if (revised.copy(sourceDetails = null, neuralSpeechText = null) == item)
+            item.copy(neuralSpeechText = neuralSpeech) else revised
     }
 }
 

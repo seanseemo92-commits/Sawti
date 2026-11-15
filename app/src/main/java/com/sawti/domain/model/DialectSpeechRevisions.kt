@@ -84,7 +84,7 @@ internal object DialectSpeechRevisions {
         "request.toilet" to Patch(speech = Field("نَبِّيْ الحَمَّامْ", "نَبِّي الْحَمَّامْ"), sentence = Field("أَذْهَبُ إِلَى الـ...", "عِنْدَ الطَّلَبِ أَقُولُ: نبي الحمام")),
         "request.adjust_pillow" to Patch(sentence = Field("أُرِيدُ تَعْدِيلَ الـ...", "عِنْدَ الطَّلَبِ أَقُولُ: عدّل لي المخدة")),
         "request.headache" to Patch(speech = Field("رَاسِي يُوجِعْ فِيا", "رَاسِي يُوجَعْ فِيَّا"), sentence = Field("", "عِنْدَمَا أَتَأَلَّمُ أَقُولُ: ...")),
-        "request.cold" to Patch(display = Field("نحس بالبرد", "إنحس بالبرد"), speech = Field("نْحِسْ بِالْبَرْدْ", "إِنْحِسّْ بِالْبَرْدْ"), sentence = Field("", "فِي الشِّتَاءِ أَقُولُ: ...")),
+        "request.cold" to Patch(speech = Field("نْحِسْ بِالْبَرْدْ", "إِنْحِسّْ بِالْبَرْدْ"), sentence = Field("", "فِي الشِّتَاءِ أَقُولُ: ...")),
         "dish.mbakbaka" to Patch(display = Field("مكرونة مبكبكة", "مكرونة مبكبكة"), speech = Field("مَكَرُونَهْ إِمْبَكْبَكَهْ", "مَكَرُونَهْ إِمْبَكْبَكَهْ")),
         "routine.evening_coffee" to Patch(cue = Field("عَشِيـ...", "قَهْـ...")),
         "vegetable.coriander" to Patch(display = Field("كزبرة", "قصبر"), speech = Field("كُزْبُرَهْ", "قُصْبُرْ"), cue = Field("كُزْ...", "قُصْـ...")),

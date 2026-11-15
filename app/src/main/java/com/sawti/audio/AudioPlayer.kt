@@ -3,6 +3,7 @@ package com.sawti.audio
 import android.content.res.AssetFileDescriptor
 import android.media.AudioAttributes
 import android.media.MediaPlayer
+import android.os.Build
 
 /** Plays one AAC recording or bundled neural MP3, preserving focus ducking and lifecycle. */
 class AudioPlayer(private val focus: AudioFocusController) {
@@ -13,14 +14,15 @@ class AudioPlayer(private val focus: AudioFocusController) {
 
     /** Returns false for immediate setup failures; asynchronous failures call onFailed. */
     fun play(path: String, onDone: () -> Unit = {}, onCanceled: () -> Unit = onDone,
-        onFailed: () -> Unit = {}): Boolean =
-        playSource(onDone, onCanceled, onFailed) { it.setDataSource(path) }
+        onFailed: () -> Unit = {}, speed: Float = 1.0f): Boolean =
+        playSource(onDone, onCanceled, onFailed, speed) { it.setDataSource(path) }
 
     /** Closing the descriptor after setDataSource is safe: MediaPlayer retains its own FD. */
     fun playAsset(afd: AssetFileDescriptor, onDone: () -> Unit = {},
-        onCanceled: () -> Unit = onDone, onFailed: () -> Unit = {}): Boolean =
+        onCanceled: () -> Unit = onDone, onFailed: () -> Unit = {},
+        speed: Float = 1.0f): Boolean =
         try {
-            playSource(onDone, onCanceled, onFailed) {
+            playSource(onDone, onCanceled, onFailed, speed) {
                 it.setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
             }
         } finally {
@@ -28,7 +30,7 @@ class AudioPlayer(private val focus: AudioFocusController) {
         }
 
     private fun playSource(onDone: () -> Unit, onCanceled: () -> Unit,
-        onFailed: () -> Unit, source: (MediaPlayer) -> Unit): Boolean {
+        onFailed: () -> Unit, speed: Float, source: (MediaPlayer) -> Unit): Boolean {
         stop()
         val mp = try { MediaPlayer() } catch (_: Exception) { return false }
         val token = focus.acquire(
@@ -80,6 +82,12 @@ class AudioPlayer(private val focus: AudioFocusController) {
             }
             mp.setOnPreparedListener {
                 if (player === mp) {
+                    // Slow AAC mode should slow only neural clips, not caregiver recordings.
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && speed != 1.0f) {
+                        runCatching {
+                            mp.playbackParams = mp.playbackParams.setSpeed(speed.coerceIn(0.5f, 2.0f))
+                        }
+                    }
                     runCatching { mp.start() }.onFailure {
                         this.onCanceled = null
                         stop()

@@ -31,7 +31,7 @@ class DisplaySpeechConsistencyTest {
         LIBYAN|family.wife_sister|أخت مرتي
         LIBYAN|family.brother_wife|مرت خوي
         LIBYAN|family.son_wife|مرت ولدي
-        LIBYAN|request.cold|إنحس بالبرد
+        LIBYAN|request.cold|نحس بالبرد
         LIBYAN|dish.mbakbaka|مكرونة مبكبكة
         LIBYAN|vegetable.coriander|قصبر
         LIBYAN|vegetable.peas|بازيلية

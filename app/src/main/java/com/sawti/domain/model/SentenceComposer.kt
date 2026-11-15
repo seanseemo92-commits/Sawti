@@ -9,6 +9,7 @@ data class SentencePiece(
     val emoji: String,
     val audioPath: String? = null,
     val semanticKey: String? = null,
+    val neuralSpeechText: String? = null,
 )
 
 object SentenceComposer {
@@ -23,6 +24,8 @@ object SentenceComposer {
         emoji = word.emoji,
         audioPath = word.audioPath,
         semanticKey = word.semanticKey,
+        neuralSpeechText = if (word.customTextFields and
+            (CardDetails.SPEECH or CardDetails.LABEL) == 0) word.neuralSpeechText else null,
     )
 
     fun add(current: List<SentencePiece>, word: WordItem): List<SentencePiece> {
@@ -32,7 +35,7 @@ object SentenceComposer {
     }
 
     /** Plain spoken pieces: stable indexes, no engine-specific word-range or time offsets. */
-    data class SpokenPiece(val pieceIndex: Int, val sourceId: Long, val speech: String, val audioPath: String? = null, val semanticKey: String? = null, val sourceSpeech: String = speech)
+    data class SpokenPiece(val pieceIndex: Int, val sourceId: Long, val speech: String, val audioPath: String? = null, val semanticKey: String? = null, val sourceSpeech: String = speech, val neuralSpeechText: String? = null)
 
     private fun spokenWord(piece: SentencePiece): String =
         piece.spokenText.trim().trimEnd('،', '.', '!', '؟')
@@ -41,7 +44,8 @@ object SentenceComposer {
         parts.mapIndexedNotNull { index, part ->
             val text = spokenWord(part)
             if (text.isBlank()) null
-            else SpokenPiece(pieceIndex = index, sourceId = part.sourceId, speech = text, audioPath = part.audioPath, semanticKey = part.semanticKey, sourceSpeech = part.spokenText.trim())
+            else SpokenPiece(pieceIndex = index, sourceId = part.sourceId, speech = text, audioPath = part.audioPath, semanticKey = part.semanticKey, sourceSpeech = part.spokenText.trim(),
+                neuralSpeechText = part.neuralSpeechText)
         }
 
     /** A single TTS request preserves sentence context and natural engine pacing. */

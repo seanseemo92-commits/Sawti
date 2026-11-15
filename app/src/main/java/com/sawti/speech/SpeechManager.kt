@@ -55,6 +55,7 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
     private var speechRate = 0.85f
     private var dialect = ArabicDialect.STANDARD
     val activeDialect: ArabicDialect get() = dialect
+    val activeSpeechRate: Float get() = speechRate
     private var preferredVoice: String? = null
     private var pending: (() -> Unit)? = null
     private var pendingCancel: (() -> Unit)? = null
