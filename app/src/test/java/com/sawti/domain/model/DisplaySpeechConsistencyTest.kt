@@ -110,7 +110,7 @@ class DisplaySpeechConsistencyTest {
         .replace('أ', 'ا').replace('إ', 'ا').replace('آ', 'ا').replace('ٱ', 'ا')
         .replace('ى', 'ي').replace('ة', 'ه')
         .replace(Regex("[؟،؛:!()./\\u200F]"), "")
-        .replace(Regex("\s+"), " ").trim()
+        .replace(Regex("\\s+"), " ").trim()
 
     // Only documented device-TTS spellings may differ from the visible label.
     private val phoneticAllowlist = setOf(
