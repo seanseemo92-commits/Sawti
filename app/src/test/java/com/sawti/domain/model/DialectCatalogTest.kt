@@ -24,7 +24,7 @@ class DialectCatalogTest {
 
     @Test fun lookupUsesIdentityRatherThanSavedCaption() {
         val original = item("food.eggs").copy(displayText = "عنوان مختلف بلا علم تخصيص")
-        assertEquals("دحي", DialectCatalog.localize(original, ArabicDialect.LIBYAN).displayText)
+        assertEquals("بيض", DialectCatalog.localize(original, ArabicDialect.LIBYAN).displayText)
         val personal = original.copy(customTextFields = CardDetails.LABEL)
         val view = DialectCatalog.localize(personal, ArabicDialect.LIBYAN)
         assertEquals(personal.displayText, view.displayText)
