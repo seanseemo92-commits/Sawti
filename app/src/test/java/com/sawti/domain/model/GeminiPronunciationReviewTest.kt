@@ -29,6 +29,8 @@ class GeminiPronunciationReviewTest {
         // The older Libyan approved pillow pronunciation must remain stable.
         assertEquals("مَخَدَّة",
             GeminiPronunciationReview.apply(ArabicDialect.LIBYAN, "home.pillow", "مَخَدَّة"))
+        assertEquals("دجَاجَة",
+            GeminiPronunciationReview.apply(ArabicDialect.LIBYAN, "animal.chicken", "دجَاجَة"))
     }
 
     @Test fun unexpectedSourcesAndUnlistedKeysNeverGetOverwritten() {

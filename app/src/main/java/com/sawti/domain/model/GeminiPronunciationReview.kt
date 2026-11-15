@@ -1860,6 +1860,9 @@ internal object GeminiPronunciationReview {
     private val wordFinalSukun = Regex("ْ(?=\\s|[؟!،.؛:]|$)")
     private val inflectedPausalTa = Regex("ة[ًٌٍَُِ]")
     private val independentlyReviewedNamespaces = setOf("dish", "greeting", "request")
+    // Explicit 1.6.1 Libyan pronunciation regression targets. The independent
+    // localization audit must not be silently invalidated by an unlistened proposal.
+    private val preservedLibyanPronunciations = setOf("home.pillow", "animal.chicken")
 
     fun apply(dialect: ArabicDialect, semanticKey: String?, current: String): String {
         val key = semanticKey ?: return current
@@ -1867,6 +1870,7 @@ internal object GeminiPronunciationReview {
         // A changed built-in, caregiver override, or later revision must never
         // be overwritten by a stale Gemini review row.
         if (candidate.original != current) return current
+        if (dialect == ArabicDialect.LIBYAN && key in preservedLibyanPronunciations) return current
         // Classical endings and previously verified/patch-protected dialect expressions
         // require individual listening evidence before changing production speech.
         if (dialect == ArabicDialect.STANDARD ||
