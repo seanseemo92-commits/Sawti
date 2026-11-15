@@ -20,7 +20,9 @@ def main():
         if not path.is_file():
             raise SystemExit(f"Missing neural manifest: {path}")
         manifest = json.loads(path.read_text(encoding="utf-8"))
-        if manifest.get("version") != 1 or manifest.get("voice") not in VOICES[dialect]:
+        if (manifest.get("version") != 1 or
+                manifest.get("voice") not in VOICES[dialect] or
+                manifest.get("rate") != "-18%"):
             raise SystemExit(f"Invalid neural manifest version/voice: {path}")
         actual = manifest.get("entries")
         if not isinstance(actual, dict) or set(actual) != set(expected):

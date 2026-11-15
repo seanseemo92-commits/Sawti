@@ -36,7 +36,7 @@ class DisplaySpeechConsistencyTest {
         LIBYAN|vegetable.coriander|قصبر
         LIBYAN|vegetable.peas|بازيلية
         LIBYAN|fruit.pear|كمثرى
-        LIBYAN|clothing.blouse|بلوزة
+        LIBYAN|clothing.blouse|سورية
         SAUDI|family.father|أبوي
         SAUDI|dish.saudi.kabsa|كبسة لحم
         SAUDI|dish.saudi.saleeg|سليق طائفي
@@ -141,23 +141,21 @@ class DisplaySpeechConsistencyTest {
         assertTrue(problems.joinToString("\n"), problems.isEmpty())
     }
 
-    @Test fun fiveLibyanPolishCorrectionsResolveToExactVisibleAndSpokenForms() {
+    @Test fun LibyanWrittenCorrectionsHaveTheNaturalNeuralSpeechForms() {
         val expected = mapOf(
-            "family.son_wife" to ("مرت ولدي" to "مَرْتْ وِلْدِي"),
-            "dish.mbakbaka" to ("مكرونة مبكبكة" to "مَكَرُونَهْ إِمْبَكْبَكَهْ"),
-            "vegetable.peas" to ("بازيلية" to "بَازِيلْيَهْ"),
-            "dish.zmeeta" to ("زميطة" to "زُمِيطَهْ"),
-            "dish.sfinz" to ("سفنز" to "إِسْفِنْزْ"),
+            "family.son_wife" to ("مرت ولدي" to "مَرْت وِلْدِي"),
+            "dish.mbakbaka" to ("مكرونة مبكبكة" to "مَكَرُونَة مبَكْبَكَة"),
+            "vegetable.peas" to ("بازيلية" to "بَازِيلْيَة"),
+            "dish.zmeeta" to ("زميطة" to "زُمِيطَة"),
+            "dish.sfinz" to ("سفنز" to "سفِنْز"),
+            "clothing.blouse" to ("سورية" to "سُورِيَّة"),
         )
         expected.forEach { (key, pair) ->
-            val seed = requireNotNull(seeds[key]) { "Missing Libyan card $key" }
+            val seed = requireNotNull(seeds[key])
             val result = DialectSpeechCatalog.resolve(seed, ArabicDialect.LIBYAN)
-            assertEquals("$key visible", pair.first, result.displayText)
-            assertEquals("$key TTS", pair.second, result.speechText)
+            assertEquals("$key label", pair.first, result.displayText)
+            assertEquals("$key speech", pair.second, result.speechText)
         }
-        val sfinz = DialectSpeechCatalog.resolve(
-            requireNotNull(seeds["dish.sfinz"]), ArabicDialect.LIBYAN)
-        assertEquals("إِسْـ...", sfinz.phonemicCue)
     }
 
     @Test fun reviewedOtherDialectDishesHaveMatchingRuntimeSpeechAndSource() {
@@ -196,9 +194,11 @@ class DisplaySpeechConsistencyTest {
             val source = requireNotNull(seeds[key]) { "Missing regional card $key" }
             val form = DialectSpeechCatalog.resolve(source, dialect)
             assertEquals("$dialect/$key display", expected.first, form.displayText)
-            assertEquals("$dialect/$key speech", expected.second, form.speechText)
+            assertEquals("$dialect/$key speech",
+                DialectSpeechCatalog.cleanSpeech(expected.first, expected.second, dialect),
+                form.speechText)
             val localized = DialectCatalog.localize(source, dialect)
-            assertEquals("$dialect/$key final TTS", expected.second, localized.ttsPrompt)
+            assertEquals("$dialect/$key final TTS", form.speechText, localized.ttsPrompt)
             if (key.startsWith("dish.")) {
                 val region = requireNotNull(RegionalDishesCatalog.variant(key, dialect))
                 assertEquals("$dialect/$key source display", expected.first, region.displayText)

@@ -13,27 +13,40 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28], application = Application::class)
 class NeuralAudioResolverTest {
-    @Test fun onlyManifestMatchedSpeechCanUseAnOfflineClip() {
+    @Test fun signedRateManifestResolvesByDialectAndSemanticKeyDespiteRevisedVowels() {
         val app = RuntimeEnvironment.getApplication() as Application
         val folder = File(app.filesDir, "neural_tts/libyan").apply { mkdirs() }
-        val audio = File(folder, "request.water.mp3").apply { writeBytes(byteArrayOf(1, 2, 3)) }
+        val audio = File(folder, "request.water.mp3").apply { writeBytes(ByteArray(128) { 1 }) }
         val manifest = File(folder, "manifest.json").apply {
-            writeText("""{"version":1,"entries":{"request.water":{"file":"request.water.mp3","speechText":"نَبِّي إِمِّيَّهْ"}}}""")
+            writeText("""{"version":1,"rate":"-18%","entries":{"request.water":{"file":"request.water.mp3","speechText":"نِبِّي مَيَّة"}}}""")
         }
         try {
             val resolver = NeuralAudioResolver(app)
             assertEquals(NeuralClip.Downloaded(audio),
-                resolver.resolve(ArabicDialect.LIBYAN, "request.water", "نَبِّي إِمِّيَّهْ"))
-            assertNull(resolver.resolve(ArabicDialect.LIBYAN, "request.water", "النص بعد التعديل"))
-            assertNull(resolver.resolve(ArabicDialect.LIBYAN, "custom.user", "نَبِّي إِمِّيَّهْ"))
-            assertNull(resolver.resolve(ArabicDialect.TUNISIAN, "request.water", "نَبِّي إِمِّيَّهْ"))
+                resolver.resolve(ArabicDialect.LIBYAN, "request.water", "نِبِّي مَيَّة"))
+            assertEquals(NeuralClip.Downloaded(audio),
+                resolver.resolve(ArabicDialect.LIBYAN, "request.water", "نِبِّي مَيّه"))
+            assertNull(resolver.resolve(ArabicDialect.LIBYAN, "custom.user", "نِبِّي مَيَّة"))
+            assertNull(resolver.resolve(ArabicDialect.TUNISIAN, "request.water", "نِبِّي مَيَّة"))
         } finally { audio.delete(); manifest.delete(); folder.delete() }
     }
 
-    @Test fun unsafeKeysAreNeverResolvedIntoPaths() {
+    @Test fun unsafeKeysCannotEscapeBundleDirectory() {
         for (key in listOf("../escape", "a/secret", "", "..", "x\\y", "a..b")) {
             assertFalse(NeuralAudioResolver.safeKey(key))
         }
         assertTrue(NeuralAudioResolver.safeKey("dish.tunisian.brik"))
+    }
+
+    @Test fun obsoleteRateManifestsAreRejected() {
+        val app = RuntimeEnvironment.getApplication() as Application
+        val folder = File(app.filesDir, "neural_tts/libyan").apply { mkdirs() }
+        val audio = File(folder, "request.water.mp3").apply { writeBytes(ByteArray(128) { 1 }) }
+        val manifest = File(folder, "manifest.json").apply {
+            writeText("""{"version":1,"entries":{"request.water":{"file":"request.water.mp3","speechText":"صوت"}}}""")
+        }
+        try {
+            assertNull(NeuralAudioResolver(app).resolve(ArabicDialect.LIBYAN, "request.water", "صوت"))
+        } finally { audio.delete(); manifest.delete(); folder.delete() }
     }
 }

@@ -25,7 +25,7 @@ object SentenceComposer {
         emoji = word.emoji,
         audioPath = word.audioPath,
         semanticKey = word.semanticKey,
-        neuralSpeechText = word.neuralDialect?.let { NeuralPlaybackPolicy.forCard(word, it) },
+        neuralSpeechText = word.neuralDialect?.let { DialectSpeechCatalog.neuralTextFor(word, it) },
         neuralDialect = word.neuralDialect,
     )
 

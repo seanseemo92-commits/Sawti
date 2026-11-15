@@ -52,8 +52,8 @@ class RegionalDishesCatalogTest {
         val expected = mapOf(
             "مبطن" to ("مِبَطَّنْ" to "مِبَـ..."),
             "حرايمي" to ("حَرَايْمِي" to "حَـ..."),
-            "سفنز" to ("إِسْفِنْزْ" to "إِسْـ..."),
-            "زميطة" to ("زُمِيطَهْ" to "زَمْـ..."),
+            "سفنز" to ("سفِنْز" to "سفِـ..."),
+            "زميطة" to ("زُمِيطَة" to "زُـ..."),
             "عيش باللبن" to ("عَيْشْ بِاللَّبَنْ" to "عَيْـ..."),
         )
         val dishes = RegionalDishesCatalog.forDialect(ArabicDialect.LIBYAN).dishes

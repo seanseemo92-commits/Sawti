@@ -53,14 +53,14 @@ def load_catalog(path):
     return grouped
 
 
-async def synthesize(voice, text, target, semaphore, attempts):
+async def synthesize(voice, text, target, semaphore, attempts, rate):
     import edge_tts
     async with semaphore:
         for attempt in range(attempts):
             try:
                 partial = target.with_suffix(".mp3.partial")
                 partial.unlink(missing_ok=True)
-                await edge_tts.Communicate(text, voice).save(str(partial))
+                await edge_tts.Communicate(text, voice, rate=rate).save(str(partial))
                 if partial.stat().st_size < 64:
                     raise IOError(f"Empty/short TTS response: {target}")
                 partial.replace(target)
@@ -94,14 +94,15 @@ async def generate(args):
             # A changed text or gender invalidates the previous audio, even if it exists.
             previous = prior.get("entries", {}).get(key, {})
             reusable = (not args.force and target.is_file() and target.stat().st_size > 64
-                        and prior.get("voice") == voice and previous.get("speechText") == text)
+                        and prior.get("voice") == voice and prior.get("rate") == args.rate
+                        and previous.get("speechText") == text)
             if not reusable:
-                tasks.append(synthesize(voice, text, target, semaphore, args.attempts))
+                tasks.append(synthesize(voice, text, target, semaphore, args.attempts, args.rate))
             manifest_entries[key] = {"file": filename, "speechText": text}
         print(f"{dialect}: voice={voice}, clips={len(manifest_entries)}, generating={len(tasks)}", flush=True)
         # Fail before replacing the authoritative manifest if even one MP3 fails.
         await asyncio.gather(*tasks)
-        new_manifest = {"version": 1, "voice": voice, "entries": manifest_entries}
+        new_manifest = {"version": 1, "voice": voice, "rate": args.rate, "entries": manifest_entries}
         manifest_path.write_text(json.dumps(new_manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print("All requested regional neural packs completed.", flush=True)
 
@@ -112,10 +113,13 @@ def main():
     parser.add_argument("--output", type=Path, default=Path("app/src/main/assets/neural_tts"))
     parser.add_argument("--dialects", type=dialects_arg, default=list(VOICES))
     parser.add_argument("--gender", choices=["male", "female"], default="female")
+    parser.add_argument("--rate", default="-18%", help="Native synthesis rate (default -18%%)")
     parser.add_argument("--concurrency", type=int, default=8)
     parser.add_argument("--attempts", type=int, default=4)
     parser.add_argument("--force", action="store_true")
     args = parser.parse_args()
+    if not re.fullmatch(r"[+-]?\d{1,2}%", args.rate) or not (-50 <= int(args.rate[:-1]) <= 50):
+        parser.error("rate must be between -50% and +50%")
     if not (1 <= args.concurrency <= 8 and 1 <= args.attempts <= 10):
         parser.error("concurrency must be 1..8 and attempts 1..10")
     asyncio.run(generate(args))

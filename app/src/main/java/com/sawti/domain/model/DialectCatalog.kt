@@ -6,7 +6,7 @@ package com.sawti.domain.model
 object DialectCatalog {
     internal val words: Map<String, Map<ArabicDialect, DialectForm>> = mapOf(
         "request.water" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("نبي مية", "نَبِّيْ إِمِّيَّهْ", "إِمْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("نبي مية", "نِبِّي مَيَّة", "نِبْـ..."),
             ArabicDialect.SAUDI to DialectForm("أبغى ماي", "أَبْغَى مَايْ", "مَا..."),
             ArabicDialect.EGYPTIAN to DialectForm("عايز مية", "عَايِزْ مَيَّهْ", "مَيْـ..."),
             ArabicDialect.SYRIAN to DialectForm("بدي مي", "بَدِّي مَيّْ", "مَيْـ..."),
@@ -16,7 +16,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("نحب نشرب الما", "نْحَبْ نَشْرَبْ الْمَا", "مَا..."),
         ),
         "request.tea" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("نبي شاهي", "نَبِّيْ شَاهِي", "شَا..."),
+            ArabicDialect.LIBYAN to DialectForm("نبي شاهي", "نِبِّي شَاهِي", "نِبْـ..."),
             ArabicDialect.SAUDI to DialectForm("أبغى شاي", "أَبْغَى شَايْ", "شَا..."),
             ArabicDialect.EGYPTIAN to DialectForm("ممكن شاي", "مُمْكِنْ شَايْ", "شَا..."),
             ArabicDialect.SYRIAN to DialectForm("بدي شاي", "بَدِّي شَايْ", "شَا..."),
@@ -26,7 +26,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("نحب أتاي", "نْحَبْ أَتَايْ", "أَتَا..."),
         ),
         "request.rest" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("نبي نرتاح", "نَبِّيْ نَرْتَاحْ", "نَرْ..."),
+            ArabicDialect.LIBYAN to DialectForm("نبي نرتاح", "نِبِّي نِرْتَاح", "نِبْـ..."),
             ArabicDialect.SAUDI to DialectForm("أبغى أرتاح", "أَبْغَى أَرْتَاحْ", "أَرْ..."),
             ArabicDialect.EGYPTIAN to DialectForm("ممكن أرتاح شوية", "مُمْكِنْ أَرْتَاحْ شْوَيَّهْ", "أَرْ..."),
             ArabicDialect.SYRIAN to DialectForm("بدي ارتاح", "بَدِّي اِرْتَاحْ", "اِرْ..."),
@@ -36,7 +36,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("نحب نرتاح", "نْحَبْ نِرْتَاحْ", "نِرْ..."),
         ),
         "request.medicine" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("نبي دوايا", "نَبِّيْ إِدْوَايَا", "دْوَا..."),
+            ArabicDialect.LIBYAN to DialectForm("نبي دوايا", "نِبِّي دْوَايَا", "نِبْـ..."),
             ArabicDialect.SAUDI to DialectForm("أبغى دواي", "أَبْغَى دَوَايْ", "دَوَا..."),
             ArabicDialect.EGYPTIAN to DialectForm("ممكن دوايا", "مُمْكِنْ دَوَايَا", "دَوَا..."),
             ArabicDialect.SYRIAN to DialectForm("بدي دواي", "بَدِّي دَوَايْ", "دَوَا..."),
@@ -46,7 +46,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("نحب دوايا", "نْحَبْ دْوَايَا", "دْوَا..."),
         ),
         "request.toilet" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("نبي الحمام", "نَبِّيْ الحَمَّامْ", "حَمْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("نبي الحمام", "نِبِّي الحَمَّام", "نِبْـ..."),
             ArabicDialect.SAUDI to DialectForm("أبغى أروح الحمام", "أَبْغَى أَرُوحْ الْحَمَّامْ", "حَمْ..."),
             ArabicDialect.EGYPTIAN to DialectForm("ممكن أدخل الحمام", "مُمْكِنْ أَدْخُلْ الْحَمَّامْ", "حَمْ..."),
             ArabicDialect.SYRIAN to DialectForm("بدي روح عالحمام", "بَدِّي رُوحْ عَالْحَمَّامْ", "حَمْ..."),
@@ -76,7 +76,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("راسي يوجعني", "رَاسِي يُوجَعْنِي", "رَا..."),
         ),
         "request.cold" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("نحس بالبرد", "نْحِسْ بِالْبَرْدْ", "بَرْ..."),
+            ArabicDialect.LIBYAN to DialectForm("نحس بالبرد", "نِحِسّ بِالبَرْد", "نِـ..."),
             ArabicDialect.SAUDI to DialectForm("أحس بالبرد", "أَحِسْ بِالْبَرْدْ", "بَرْ..."),
             ArabicDialect.EGYPTIAN to DialectForm("أنا سقعان", "أَنَا سَقْعَانْ", "سَقْ..."),
             ArabicDialect.SYRIAN to DialectForm("كتير برد", "كْتِيرْ بَرْدْ", "بَرْ..."),
@@ -85,17 +85,23 @@ object DialectCatalog {
             ArabicDialect.MOROCCAN to DialectForm("حسّيت بالبرد", "حَسِّيتْ بِالْبَرْدْ", "بَرْ..."),
             ArabicDialect.ALGERIAN to DialectForm("راني بردان", "رَانِي بَرْدَانْ", "بَرْ..."),
         ),
+        "dish.sfinz" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("سفنز", "سفِنْز"),
+        ),
+        "dish.zmeeta" to mapOf(
+            ArabicDialect.LIBYAN to DialectForm("زميطة", "زُمِيطَة"),
+        ),
         "dish.bazin" to mapOf(
             ArabicDialect.LIBYAN to DialectForm("بازين", "بَازِينْ", "بَا..."),
         ),
         "dish.reshda_kaskas" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("رشدة كسكاس", "رِشْدِةْ كِسْكَاسْ", "رِشْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("رشدة كسكاس", "رِشْدَة كِسْكَاس"),
         ),
         "dish.reshda_borma" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("رشدة برمة", "رِشْدِةْ بُرْمَهْ", "رِشْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("رشدة برمة", "رِشْدَة بُرْمَة"),
         ),
         "dish.mbakbaka" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("مكرونة مبكبكة", "مَكَرُونَهْ إِمْبَكْبَكَهْ", "مْبَكْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("مكرونة مبكبكة", "مَكَرُونَة مبَكْبَكَة"),
         ),
         "dish.pasta_masqiya" to mapOf(
             ArabicDialect.LIBYAN to DialectForm("مكرونة مسقية", "مَكَرُونَهْ مَسْقِيَّهْ", "مَسْـ..."),
@@ -110,7 +116,7 @@ object DialectCatalog {
             ArabicDialect.LIBYAN to DialectForm("شربة ليبية", "شُرْبَهْ لِيبِيَّهْ", "شُرْ..."),
         ),
         "dish.potato_stew" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("طبيخة بطاطا", "إِطْبِيخِةْ بَطَاطَا", "طْبِيـ..."),
+            ArabicDialect.LIBYAN to DialectForm("طبيخة بطاطا", "طبِيخَة بَطَاطَا"),
         ),
         "dish.osban" to mapOf(
             ArabicDialect.LIBYAN to DialectForm("عصبان", "عُصْبَانْ", "عُصْـ..."),
@@ -119,7 +125,7 @@ object DialectCatalog {
             ArabicDialect.LIBYAN to DialectForm("بوريك", "بُورِيكْ", "بُو..."),
         ),
         "dish.khobz_tajin" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("خبزة طاجين", "خُبْزِةْ طَاجِينْ", "طَا..."),
+            ArabicDialect.LIBYAN to DialectForm("خبزة طاجين", "خُبْزَة طَاجِين"),
         ),
         "dish.maqroudh" to mapOf(
             ArabicDialect.LIBYAN to DialectForm("مقروض", "مَقْرُوضْ", "مَقْـ..."),
@@ -207,7 +213,7 @@ object DialectCatalog {
             ArabicDialect.LIBYAN to DialectForm("خيار", "خِيَارْ", "خِيَا..."),
         ),
         "vegetable.pepper" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("فلفل", "فُلْفُلْ", "فُلْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("فلفل", "فِلْفِل"),
         ),
         "vegetable.eggplant" to mapOf(
             ArabicDialect.LIBYAN to DialectForm("باذنجان", "بَاذِنْجَانْ", "بَاذِنْـ..."),
@@ -249,7 +255,7 @@ object DialectCatalog {
             ArabicDialect.LIBYAN to DialectForm("ليمون", "لِيمُونْ", "لِيـ..."),
         ),
         "vegetable.peas" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("بازيليه", "بَازِيلْيَهْ", "بَا..."),
+            ArabicDialect.LIBYAN to DialectForm("بازيلية", "بَازِيلْيَة"),
             ArabicDialect.SAUDI to DialectForm("بازيلا"),
             ArabicDialect.EGYPTIAN to DialectForm("بسلة", "بَسِلَّهْ"),
             ArabicDialect.SYRIAN to DialectForm("بازيلا", "بَازِيلَّا"),
@@ -422,7 +428,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("حليب"),
         ),
         "food.eggs" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("دحي", "دَحْيْ", "دَحْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("دحي", "دَحِي"),
             ArabicDialect.SAUDI to DialectForm("بيض", "بَيْضْ"),
             ArabicDialect.EGYPTIAN to DialectForm("بيض", "بَيْضْ"),
             ArabicDialect.SYRIAN to DialectForm("بيض", "بَيْضْ"),
@@ -432,7 +438,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("ولاد الجاج", "وْلَادْ الْجَاجْ"),
         ),
         "food.cheese" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("جبنة", "جُبْنَهْ", "جُبْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("جبنة", "جِبْنَة"),
             ArabicDialect.SAUDI to DialectForm("جبن"),
             ArabicDialect.EGYPTIAN to DialectForm("جبنة"),
             ArabicDialect.SYRIAN to DialectForm("جبنة"),
@@ -537,7 +543,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("عصير"),
         ),
         "food.water" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("مية", "إِمِّيَّهْ", "إِمْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("مية", "مَيَّة", "مَـ..."),
             ArabicDialect.SAUDI to DialectForm("ماي", "مَايْ"),
             ArabicDialect.EGYPTIAN to DialectForm("مية", "مَيَّهْ"),
             ArabicDialect.SYRIAN to DialectForm("مي", "مَيّْ"),
@@ -582,7 +588,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("مانطة"),
         ),
         "home.table" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("طاولة", "طَاوْلَهْ", "طَاوْ..."),
+            ArabicDialect.LIBYAN to DialectForm("طاولة", "طَاوِلَة"),
         ),
         "home.chair" to mapOf(
             ArabicDialect.LIBYAN to DialectForm("كرسي", "كُرْسِي", "كُرْ..."),
@@ -594,7 +600,7 @@ object DialectCatalog {
             ArabicDialect.LIBYAN to DialectForm("باب", "بَابْ", "بَا..."),
         ),
         "home.window" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("روشن", "رَوْشَنْ", "رَوْ..."),
+            ArabicDialect.LIBYAN to DialectForm("روشن", "رُوشِن"),
             ArabicDialect.SAUDI to DialectForm("شباك"),
             ArabicDialect.EGYPTIAN to DialectForm("شباك"),
             ArabicDialect.SYRIAN to DialectForm("شباك"),
@@ -714,7 +720,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("براد"),
         ),
         "home.pot" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("طنجرة", "طَنْجْرَهْ", "طَنْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("طنجرة", "طَنْجَرَة"),
         ),
         "home.water_bottle" to mapOf(
             ArabicDialect.LIBYAN to DialectForm("شيشة", "شِيشَهْ", "شِيـ..."),
@@ -746,7 +752,7 @@ object DialectCatalog {
             ArabicDialect.LIBYAN to DialectForm("شورت", "شُورْتْ", "شُو..."),
         ),
         "clothing.blouse" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("سورية", "سُورِيَّهْ", "سُو..."),
+            ArabicDialect.LIBYAN to DialectForm("سورية", "سُورِيَّة", "سُو..."),
             ArabicDialect.SAUDI to DialectForm("بلوزة"),
             ArabicDialect.EGYPTIAN to DialectForm("بلوزة"),
             ArabicDialect.SYRIAN to DialectForm("بلوزة"),
@@ -781,7 +787,7 @@ object DialectCatalog {
             ArabicDialect.LIBYAN to DialectForm("وشاح", "وِشَاحْ", "وِشَا..."),
         ),
         "clothing.shoes" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("كندرة", "كَنْدْرَهْ", "كَنْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("كندرة", "كَنْدَرَة"),
             ArabicDialect.SAUDI to DialectForm("جزمة", "جَزْمَهْ"),
             ArabicDialect.EGYPTIAN to DialectForm("جزمة", "جَزْمَهْ"),
             ArabicDialect.SYRIAN to DialectForm("كندرة", "كَنْدَرَهْ"),
@@ -791,7 +797,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("سباط", "سْبَاطْ"),
         ),
         "clothing.socks" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("شخاشير", "إِشْخَاشِيرْ", "إِشْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("شخاشير", "شخَاشِير", "شخَا..."),
             ArabicDialect.SAUDI to DialectForm("دلاغات", "دِلَاغَاتْ"),
             ArabicDialect.EGYPTIAN to DialectForm("شرابات", "شَرَابَاتْ"),
             ArabicDialect.SYRIAN to DialectForm("جرابات", "جْرَابَاتْ"),
@@ -847,7 +853,7 @@ object DialectCatalog {
             ArabicDialect.LIBYAN to DialectForm("صندل", "صَنْدَلْ", "صَنْـ..."),
         ),
         "clothing.high_heels" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("كندرة كعب", "كَنْدْرِةْ كَعْبْ", "كَنْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("كندرة كعب", "كَنْدَرَة كَعَب"),
         ),
         "clothing.pajamas" to mapOf(
             ArabicDialect.LIBYAN to DialectForm("بيجامة", "بِيجَامَهْ", "بِيـ..."),
@@ -869,7 +875,7 @@ object DialectCatalog {
             ArabicDialect.LIBYAN to DialectForm("عين", "عَيْنْ", "عَيْـ..."),
         ),
         "body.nose" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("خشم", "خَشْمْ", "خَشْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("خشم", "خَشِم"),
             ArabicDialect.SAUDI to DialectForm("خشم"),
             ArabicDialect.EGYPTIAN to DialectForm("مناخير"),
             ArabicDialect.SYRIAN to DialectForm("منخار"),
@@ -930,7 +936,7 @@ object DialectCatalog {
             ArabicDialect.LIBYAN to DialectForm("ركبة", "رُكْبَهْ", "رُكْـ..."),
         ),
         "body.finger" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("صبع", "صُبْعْ", "صُبْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("صبع", "صْبَع"),
             ArabicDialect.SAUDI to DialectForm("إصبع"),
             ArabicDialect.EGYPTIAN to DialectForm("صُباع"),
             ArabicDialect.SYRIAN to DialectForm("إصبع"),
@@ -975,7 +981,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("ناكل"),
         ),
         "action.drink" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("نشرب", "نَشْرَبْ", "نَشْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("نشرب", "نِشْرَب"),
             ArabicDialect.SAUDI to DialectForm("أشرب"),
             ArabicDialect.EGYPTIAN to DialectForm("أشرب"),
             ArabicDialect.SYRIAN to DialectForm("أشرب"),
@@ -985,7 +991,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("نشرب"),
         ),
         "action.sleep" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("نرقد", "نُرْقُدْ", "نُرْ..."),
+            ArabicDialect.LIBYAN to DialectForm("نرقد", "نُرْقُد"),
             ArabicDialect.SAUDI to DialectForm("أنام"),
             ArabicDialect.EGYPTIAN to DialectForm("أنام"),
             ArabicDialect.SYRIAN to DialectForm("نام"),
@@ -995,7 +1001,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("نرقد"),
         ),
         "action.sit" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("نقعمز", "إِنْقَعِّمِزْ", "إِنْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("نقعمز", "نِقَعْمِز"),
             ArabicDialect.SAUDI to DialectForm("أجلس", "أَجْلِسْ"),
             ArabicDialect.EGYPTIAN to DialectForm("أقعد", "أَقْعُدْ"),
             ArabicDialect.SYRIAN to DialectForm("أقعد", "أَقْعُدْ"),
@@ -1005,7 +1011,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("نقعد", "نُقْعُدْ"),
         ),
         "action.walk" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("نمشي", "نَمْشِي", "نَمْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("نمشي", "نِمْشِي"),
             ArabicDialect.SAUDI to DialectForm("أمشي"),
             ArabicDialect.EGYPTIAN to DialectForm("أمشي"),
             ArabicDialect.SYRIAN to DialectForm("أمشي"),
@@ -1025,7 +1031,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("نوقف"),
         ),
         "action.wash" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("نغسل", "نَغْسِلْ", "نَغْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("نغسل", "نِغْسِل"),
             ArabicDialect.SAUDI to DialectForm("أغسل"),
             ArabicDialect.EGYPTIAN to DialectForm("أغسل"),
             ArabicDialect.SYRIAN to DialectForm("أغسل"),
@@ -1035,7 +1041,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("نغسل"),
         ),
         "action.speak" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("ندوي", "نَدْوِي", "نَدْ..."),
+            ArabicDialect.LIBYAN to DialectForm("ندوي", "نِدْوِي"),
             ArabicDialect.SAUDI to DialectForm("أتكلم", "أَتَكَلَّمْ"),
             ArabicDialect.EGYPTIAN to DialectForm("أتكلم", "أَتْكَلِّمْ"),
             ArabicDialect.SYRIAN to DialectForm("إحكي", "أَحْكِيْ"),
@@ -1045,7 +1051,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("نهدر", "نْهْدَرْ"),
         ),
         "action.hear" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("نسمع", "نَسْمَعْ", "نَسْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("نسمع", "نِسْمَع"),
             ArabicDialect.SAUDI to DialectForm("أسمع"),
             ArabicDialect.EGYPTIAN to DialectForm("أسمع"),
             ArabicDialect.SYRIAN to DialectForm("أسمع"),
@@ -1055,7 +1061,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("نسمع"),
         ),
         "action.open" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("نفتح", "نَفْتَحْ", "نَفْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("نفتح", "نِفْتَح"),
             ArabicDialect.SAUDI to DialectForm("أفتح"),
             ArabicDialect.EGYPTIAN to DialectForm("أفتح"),
             ArabicDialect.SYRIAN to DialectForm("أفتح"),
@@ -1065,7 +1071,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("نفتح"),
         ),
         "action.close" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("نسكر", "إِنْسَكِّرْ", "إِنْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("نسكر", "نِسَكِّر"),
             ArabicDialect.SAUDI to DialectForm("أسكر", "أَسَكِّرْ"),
             ArabicDialect.EGYPTIAN to DialectForm("أقفل", "أَقْفِلْ"),
             ArabicDialect.SYRIAN to DialectForm("سكّر", "سَكِّرْ"),
@@ -1085,7 +1091,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("نقرا"),
         ),
         "action.laugh" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("نضحك", "نَضْحَكْ", "نَضْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("نضحك", "نِضْحَك"),
             ArabicDialect.SAUDI to DialectForm("أضحك"),
             ArabicDialect.EGYPTIAN to DialectForm("أضحك"),
             ArabicDialect.SYRIAN to DialectForm("أضحك"),
@@ -1095,7 +1101,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("نضحك"),
         ),
         "action.see" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("نشوف", "إِنْشُوفْ", "إِنْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("نشوف", "نِشُوف"),
             ArabicDialect.SAUDI to DialectForm("أشوف", "أَشُوفْ"),
             ArabicDialect.EGYPTIAN to DialectForm("أشوف", "أَشُوفْ"),
             ArabicDialect.SYRIAN to DialectForm("شوف", "شُوفْ"),
@@ -1105,7 +1111,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("نشوف", "نْشُوفْ"),
         ),
         "action.dress" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("نلبس", "نَلْبِسْ", "نَلْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("نلبس", "نِلْبِس"),
             ArabicDialect.SAUDI to DialectForm("ألبس"),
             ArabicDialect.EGYPTIAN to DialectForm("ألبس", "أَلْبِسْ"),
             ArabicDialect.SYRIAN to DialectForm("ألبس"),
@@ -1115,7 +1121,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("نلبس"),
         ),
         "action.pray" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("نصلي", "إِنْصَلِّي", "إِنْـ..."),
+            ArabicDialect.LIBYAN to DialectForm("نصلي", "نِصَلِّي"),
             ArabicDialect.SAUDI to DialectForm("أصلّي"),
             ArabicDialect.EGYPTIAN to DialectForm("أصلّي"),
             ArabicDialect.SYRIAN to DialectForm("صلّي"),

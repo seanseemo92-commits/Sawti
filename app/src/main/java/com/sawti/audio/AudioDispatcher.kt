@@ -1,6 +1,6 @@
 package com.sawti.audio
 
-import com.sawti.domain.model.NeuralPlaybackPolicy
+import com.sawti.domain.model.DialectSpeechCatalog
 import com.sawti.domain.model.PhonemicCue
 import com.sawti.domain.model.SentenceComposer
 import com.sawti.domain.model.SentencePiece
@@ -17,7 +17,7 @@ data class PlaybackVisual(
     val isSpeaking: Boolean = false,
 )
 
-/** Priority: caregiver recording -> exact-text neural clip -> dialect-aware Android TTS. */
+/** Priority: caregiver recording -> keyed neural clip -> dialect-aware Android TTS. */
 class AudioDispatcher(
     private val speech: SpeechManager,
     private val player: AudioPlayer,
@@ -63,9 +63,8 @@ class AudioDispatcher(
                 speech.speak(item.speechText, onDone = done, onCanceled = canceled)
             }
         }
-        // Require the exact projected dialect label, legacy TTS string and neural text.
-        // Never let a custom edit or a stale language projection reuse a built-in clip.
-        val neuralText = NeuralPlaybackPolicy.forCard(item, speech.activeDialect)
+        // Personal speech/labels are ineligible. No fragile text equality with old manifests.
+        val neuralText = DialectSpeechCatalog.neuralTextFor(item, speech.activeDialect)
         val startNeural = {
             current == generation && neuralText != null &&
                 playNeural(item.semanticKey, neuralText, done, canceled, fallback)

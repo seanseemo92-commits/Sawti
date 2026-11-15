@@ -7,7 +7,7 @@ import java.io.File
 import java.util.Locale
 import org.json.JSONObject
 
-/** The manifest is the authority for the exact text that was synthesized. */
+/** Bundle metadata checks clip integrity; semantic identity selects the voice. */
 sealed interface NeuralClip {
     data class Downloaded(val file: File) : NeuralClip
     data class Bundled(val assetPath: String) : NeuralClip
@@ -30,7 +30,8 @@ class NeuralAudioResolver(context: Context) {
 
     private fun parse(json: String): Map<String, Entry> = runCatching {
         val root = JSONObject(json)
-        if (root.optInt("version") != 1) return@runCatching emptyMap()
+        if (root.optInt("version") != 1 || root.optString("rate") != "-18%")
+            return@runCatching emptyMap()
         val entries = root.getJSONObject("entries")
         val result = mutableMapOf<String, Entry>()
         val iterator = entries.keys()
@@ -59,16 +60,16 @@ class NeuralAudioResolver(context: Context) {
             }.getOrDefault(emptyMap())
         }
 
-    /** Returns null for custom/changed text, so a caregiver's edit is always pronounced verbatim. */
+    /** The caller has checked whether the card was customized; never use vowel-string equality. */
     fun resolve(dialect: ArabicDialect, semanticKey: String?, speechText: String): NeuralClip? {
         val key = semanticKey?.takeIf(::safeKey) ?: return null
         if (speechText.isBlank()) return null
         val folder = dialect.name.lowercase(Locale.ROOT)
-        localManifest(folder)[key]?.takeIf { it.speechText == speechText }?.let {
+        localManifest(folder)[key]?.let {
             val file = File(File(root, folder), it.file)
-            if (file.isFile && file.length() > 0L) return NeuralClip.Downloaded(file)
+            if (file.isFile && file.length() >= 64L) return NeuralClip.Downloaded(file)
         }
-        bundledManifest(folder)[key]?.takeIf { it.speechText == speechText }?.let {
+        bundledManifest(folder)[key]?.let {
             val path = "neural_tts/$folder/${it.file}"
             if (path !in invalidAssets) return NeuralClip.Bundled(path)
         }

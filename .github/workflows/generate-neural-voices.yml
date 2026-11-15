@@ -5,6 +5,9 @@ on:
     paths:
       - 'app/src/main/java/com/sawti/domain/model/NeuralSpeechNormalizer.kt'
       - 'app/src/main/java/com/sawti/domain/model/DialectSpeechCatalog.kt'
+      - 'app/src/main/java/com/sawti/domain/model/DialectCatalog.kt'
+      - 'app/src/main/java/com/sawti/domain/model/DialectSpeechRevisions.kt'
+      - 'app/src/main/java/com/sawti/domain/model/RegionalDishesCatalog.kt'
       - 'scripts/generate_neural_voices.py'
       - '.github/workflows/generate-neural-voices.yml'
   workflow_dispatch:
@@ -61,7 +64,7 @@ jobs:
           DIALECTS: ${{ inputs.dialects || 'ALL' }}
           GENDER: ${{ inputs.voice_gender || 'female' }}
         run: |
-          python scripts/generate_neural_voices.py --dialects "$DIALECTS" --gender "$GENDER" --force
+          python scripts/generate_neural_voices.py --dialects "$DIALECTS" --gender "$GENDER" --force --rate=-18%
       - name: Upload voice pack
         uses: actions/upload-artifact@v4
         with:

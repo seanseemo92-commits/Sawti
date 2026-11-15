@@ -5,74 +5,53 @@ import com.sawti.data.db.toDomain
 import org.junit.Assert.*
 import org.junit.Test
 
-/** Regression contracts: neural assets are never used for changed or stale card text. */
+/** One catalog policy controls eligibility, without manifest diacritic equality. */
 class NeuralPlaybackPolicyTest {
-    private fun source(key: String) = WordSeed.itemEntities()
-        .single { it.semanticKey == key }.toDomain()
+    private fun source(key: String) =
+        WordSeed.itemEntities().single { it.semanticKey == key }.toDomain()
 
-    @Test fun intactBuiltInCardsAreEligibleInEveryDialect() {
+    @Test fun intactBuiltInCardsResolveInAllNineDialects() {
         val original = source("request.water")
         for (dialect in ArabicDialect.entries) {
             val view = DialectCatalog.localize(original, dialect)
-            val expected = DialectSpeechCatalog.resolveForNeural(original, dialect).speechText
-            assertEquals(dialect.name, expected, NeuralPlaybackPolicy.forCard(view, dialect))
-            assertEquals(dialect, view.neuralDialect)
-            assertEquals(expected, view.neuralSpeechText)
+            val expected = DialectSpeechCatalog.resolve(original, dialect).speechText
+            assertEquals(dialect.name, expected, DialectSpeechCatalog.neuralTextFor(view, dialect))
+            assertEquals(dialect.name, expected, view.neuralSpeechText)
             assertEquals(original, view.forEditing())
         }
     }
 
-    @Test fun staleDialectProjectionCannotSelectAnOtherDialectClip() {
-        val view = DialectCatalog.localize(source("request.water"), ArabicDialect.LIBYAN)
-        assertNull(NeuralPlaybackPolicy.forCard(view, ArabicDialect.EGYPTIAN))
-        assertEquals(ArabicDialect.LIBYAN,
-            SentenceComposer.piece(view).neuralDialect)
-        val strip = SentenceComposer.spokenPieces(listOf(SentenceComposer.piece(view)))
-        assertEquals(ArabicDialect.LIBYAN, strip.single().neuralDialect)
-    }
-
-    @Test fun editedSpeechOrLabelNeverMatchesNeuralEvenWithoutEditFlags() {
-        val view = DialectCatalog.localize(source("request.water"), ArabicDialect.LIBYAN)
-        val changes = listOf(
-            view.copy(displayText = "غيرت العنوان"),
-            view.copy(ttsPrompt = "النطق من عندي"),
-            view.copy(displayText = view.displayText, ttsPrompt = "نطق مختلف")
-        )
-        for (changed in changes) {
-            assertNull(NeuralPlaybackPolicy.forCard(changed, ArabicDialect.LIBYAN))
-        }
-    }
-
-    @Test fun explicitPersonalTextAndCustomCategoriesAlwaysUseFallback() {
-        val original = source("request.water")
-        for (flag in listOf(CardDetails.SPEECH, CardDetails.LABEL)) {
-            val personalized = original.copy(customTextFields = flag)
-            val projected = DialectCatalog.localize(personalized, ArabicDialect.LIBYAN)
-            assertNull(NeuralPlaybackPolicy.forCard(projected, ArabicDialect.LIBYAN))
-            assertNull(SentenceComposer.piece(projected).neuralSpeechText)
-        }
-        val custom = original.copy(categoryId = "custom_personal")
-        assertNull(NeuralPlaybackPolicy.forCard(custom, ArabicDialect.LIBYAN))
-        assertNull(NeuralPlaybackPolicy.forCard(original.copy(semanticKey = null), ArabicDialect.LIBYAN))
-    }
-
-    @Test fun synthesizedTextCannotBeReplacedByAStaleCachedVoice() {
+    @Test fun wrongDialectAndPersonalEditsAlwaysRejectBundledNeuralSound() {
         val original = source("request.water")
         val view = DialectCatalog.localize(original, ArabicDialect.LIBYAN)
-        view.neuralSpeechText = "صوت قديم"
-        assertNull(NeuralPlaybackPolicy.forCard(view, ArabicDialect.LIBYAN))
-        view.neuralSpeechText = DialectSpeechCatalog.resolveForNeural(
-            original, ArabicDialect.LIBYAN).speechText
-        assertNotNull(NeuralPlaybackPolicy.forCard(view, ArabicDialect.LIBYAN))
-        view.neuralDialect = ArabicDialect.SAUDI
-        assertNull(NeuralPlaybackPolicy.forCard(view, ArabicDialect.LIBYAN))
+        assertNull(DialectSpeechCatalog.neuralTextFor(view, ArabicDialect.EGYPTIAN))
+        for (flag in listOf(CardDetails.LABEL, CardDetails.SPEECH,
+                           CardDetails.LABEL or CardDetails.SPEECH)) {
+            val edited = DialectCatalog.localize(
+                original.copy(customTextFields = flag, ttsPrompt = "صوت خاص"),
+                ArabicDialect.LIBYAN)
+            assertNull(DialectSpeechCatalog.neuralTextFor(edited, ArabicDialect.LIBYAN))
+            assertNull(SentenceComposer.piece(edited).neuralSpeechText)
+        }
+        assertNull(DialectSpeechCatalog.neuralTextFor(original.copy(categoryId = "custom_personal"),
+            ArabicDialect.LIBYAN))
+        assertNull(DialectSpeechCatalog.neuralTextFor(original.copy(semanticKey = null),
+            ArabicDialect.LIBYAN))
     }
 
-    @Test fun sentenceRetainsFallbackSpeechForPersonalizedCards() {
+    @Test fun purelyChangedVowelsDoNotRejectBuiltInCardSelection() {
+        val view = DialectCatalog.localize(source("request.water"), ArabicDialect.LIBYAN)
+        val altered = view.copy(ttsPrompt = "نِبِّي مَيّه")
+        assertEquals(DialectSpeechCatalog.neuralTextFor(view, ArabicDialect.LIBYAN),
+            DialectSpeechCatalog.neuralTextFor(altered, ArabicDialect.LIBYAN))
+    }
+
+    @Test fun personalFallbackSpeechRemainsPersonalInSentence() {
         val original = source("request.water")
-        val custom = original.copy(ttsPrompt = "نطقي الخاص", customTextFields = CardDetails.SPEECH)
-        val view = DialectCatalog.localize(custom, ArabicDialect.LIBYAN)
-        val part = SentenceComposer.spokenPieces(listOf(SentenceComposer.piece(view))).single()
+        val edited = DialectCatalog.localize(
+            original.copy(ttsPrompt = "نطقي الخاص", customTextFields = CardDetails.SPEECH),
+            ArabicDialect.LIBYAN)
+        val part = SentenceComposer.spokenPieces(listOf(SentenceComposer.piece(edited))).single()
         assertEquals("نطقي الخاص", part.speech)
         assertNull(part.neuralSpeechText)
     }

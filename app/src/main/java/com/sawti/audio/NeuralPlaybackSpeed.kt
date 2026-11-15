@@ -1,15 +1,13 @@
 package com.sawti.audio
 
 /**
- * Neural MP3s are normally a little slower than their synthesized native pace
- * to make individual words easier to follow for an aphasia communication app.
- *
- * Do not apply this policy to recorded caregiver audio or Android TTS.
- * A user-selected slow TTS setting still requests the slower neural option.
+ * Clips are synthesized at -18% by the neural service itself.
+ * Normal playback must not stretch or distort this recording.
+ * Slow mode is an explicit accessibility preference.
  */
 object NeuralPlaybackSpeed {
-    const val NORMAL = 0.90f
-    const val SLOW = 0.80f
+    const val NORMAL = 1.0f
+    const val SLOW = 0.85f
     private const val SLOW_TTS_THRESHOLD = 0.85f
 
     fun forTtsRate(rate: Float): Float =
