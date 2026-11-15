@@ -29,6 +29,8 @@ data class WordItem(
 ) {
     /** Transient, non-Room voice projection; excluded from persistent identity and equality. */
     var neuralSpeechText: String? = null
+    /** Dialect which produced the transient neural text; never persisted to Room. */
+    var neuralDialect: ArabicDialect? = null
     /** Speech-only channel backed by the existing Room ttsPrompt column. */
     val speechText: String get() = ttsPrompt
 

@@ -1218,7 +1218,10 @@ object DialectCatalog {
         )
         val revised = DialectSpeechRevisions.applySentence(item, dialect, projected)
         val result = if (revised.copy(sourceDetails = null) == item) item.copy() else revised
-        return result.also { it.neuralSpeechText = neuralSpeech }
+        return result.also {
+            it.neuralSpeechText = neuralSpeech
+            it.neuralDialect = if (neuralSpeech != null) dialect else null
+        }
     }
 }
 

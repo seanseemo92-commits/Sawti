@@ -1,7 +1,6 @@
 package com.sawti.audio
 
-import com.sawti.domain.model.CardDetails
-import com.sawti.domain.model.DialectSpeechCatalog
+import com.sawti.domain.model.NeuralPlaybackPolicy
 import com.sawti.domain.model.PhonemicCue
 import com.sawti.domain.model.SentenceComposer
 import com.sawti.domain.model.SentencePiece
@@ -64,10 +63,9 @@ class AudioDispatcher(
                 speech.speak(item.speechText, onDone = done, onCanceled = canceled)
             }
         }
-        val neuralText = if (item.customTextFields and
-            (CardDetails.SPEECH or CardDetails.LABEL) != 0 || item.categoryId.startsWith("custom_"))
-            null else item.neuralSpeechText ?: DialectSpeechCatalog.resolveForNeural(
-                item, speech.activeDialect).speechText
+        // Require the exact projected dialect label, legacy TTS string and neural text.
+        // Never let a custom edit or a stale language projection reuse a built-in clip.
+        val neuralText = NeuralPlaybackPolicy.forCard(item, speech.activeDialect)
         val startNeural = {
             current == generation && neuralText != null &&
                 playNeural(item.semanticKey, neuralText, done, canceled, fallback)
@@ -107,7 +105,8 @@ class AudioDispatcher(
                     onDone = done, onCanceled = canceled)
             }
             val startNeural = {
-                current == generation && piece.neuralSpeechText != null &&
+                current == generation && piece.neuralDialect == speech.activeDialect &&
+                    piece.neuralSpeechText != null &&
                     playNeural(piece.semanticKey, piece.neuralSpeechText,
                         done, canceled, fallback)
             }
