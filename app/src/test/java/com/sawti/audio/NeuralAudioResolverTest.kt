@@ -27,7 +27,8 @@ class NeuralAudioResolverTest {
             assertEquals(NeuralClip.Downloaded(audio),
                 resolver.resolve(ArabicDialect.LIBYAN, "request.water", "نِبِّي مَيّه"))
             assertNull(resolver.resolve(ArabicDialect.LIBYAN, "custom.user", "نِبِّي مَيَّة"))
-            assertNull(resolver.resolve(ArabicDialect.TUNISIAN, "request.water", "نِبِّي مَيَّة"))
+            assertEquals(NeuralClip.Bundled("neural_tts/tunisian/request.water.mp3"),
+                resolver.resolve(ArabicDialect.TUNISIAN, "request.water", "نِبِّي مَيَّة"))
         } finally { audio.delete(); manifest.delete(); folder.delete() }
     }
 
@@ -38,7 +39,7 @@ class NeuralAudioResolverTest {
         assertTrue(NeuralAudioResolver.safeKey("dish.tunisian.brik"))
     }
 
-    @Test fun obsoleteRateManifestsAreRejected() {
+    @Test fun obsoleteDownloadedRateFallsBackToFreshBundledVoice() {
         val app = RuntimeEnvironment.getApplication() as Application
         val folder = File(app.filesDir, "neural_tts/libyan").apply { mkdirs() }
         val audio = File(folder, "request.water.mp3").apply { writeBytes(ByteArray(128) { 1 }) }
@@ -46,7 +47,8 @@ class NeuralAudioResolverTest {
             writeText("""{"version":1,"entries":{"request.water":{"file":"request.water.mp3","speechText":"صوت"}}}""")
         }
         try {
-            assertNull(NeuralAudioResolver(app).resolve(ArabicDialect.LIBYAN, "request.water", "صوت"))
+            assertEquals(NeuralClip.Bundled("neural_tts/libyan/request.water.mp3"),
+                NeuralAudioResolver(app).resolve(ArabicDialect.LIBYAN, "request.water", "صوت"))
         } finally { audio.delete(); manifest.delete(); folder.delete() }
     }
 }
