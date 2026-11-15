@@ -33,7 +33,8 @@ class GreetingsCatalogTest {
                 val actual = DialectCatalog.localize(original, dialect)
                 assertEquals(expected.displayText, actual.displayText)
                 assertEquals(original, actual.forEditing())
-                assertTrue(actual.ttsPrompt.any { it in 'ً'..'ْ' })
+                assertTrue("Natural speech can be unvoweled but cannot be empty",
+                    actual.ttsPrompt.isNotBlank())
                 assertEquals(DialectSpeechCatalog.resolve(original, dialect).speechText, actual.ttsPrompt)
                 assertEquals(original.id, actual.id)
                 assertEquals(original.semanticKey, actual.semanticKey)

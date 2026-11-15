@@ -22,6 +22,12 @@ data class SpeechForm(
 }
 
 object DialectSpeechCatalog {
+    /** Unknown semantic namespaces are personal/unregistered concepts, never normalized. */
+    private val builtinNamespaces = setOf(
+        "family", "request", "dish", "routine", "vegetable", "fruit", "food",
+        "home", "clothing", "body", "action", "animal", "transport", "greeting"
+    )
+
     private fun resolveUncorrected(value: WordItem, dialect: ArabicDialect): SpeechForm {
         val item = value.forEditing()
         val key = item.semanticKey
@@ -65,11 +71,13 @@ object DialectSpeechCatalog {
      */
     fun resolve(value: WordItem, dialect: ArabicDialect): SpeechForm {
         val form = resolveUncorrected(value, dialect)
-        if (form.source == SpeechSource.USER) return form
+        if (form.source == SpeechSource.USER ||
+            value.semanticKey?.substringBefore('.') !in builtinNamespaces) return form
         val clean = cleanSpeech(form.displayText, form.speechText, dialect)
-        val cue = if (DialectSpeechRevisions.hasCompletedCandidate(
+        val reviewedCue = if (DialectSpeechRevisions.hasCompletedCandidate(
                 dialect, value.semanticKey.orEmpty()
-            )) PhonemicCue.derive(clean) else form.phonemicCue
+            )) PhonemicCue.derive(clean) else ""
+        val cue = reviewedCue.ifBlank { form.phonemicCue }
         return form.copy(speechText = clean, phonemicCue = cue)
     }
 
@@ -81,7 +89,8 @@ object DialectSpeechCatalog {
      * Users' personal labels/speech always use their recording or Android TTS.
      */
     fun neuralTextFor(item: WordItem, dialect: ArabicDialect): String? {
-        if (item.semanticKey.isNullOrBlank() || item.categoryId.startsWith("custom_"))
+        if (item.semanticKey.isNullOrBlank() || item.categoryId.startsWith("custom_") ||
+            item.semanticKey.substringBefore('.') !in builtinNamespaces)
             return null
         if (item.customTextFields and (CardDetails.LABEL or CardDetails.SPEECH) != 0)
             return null
