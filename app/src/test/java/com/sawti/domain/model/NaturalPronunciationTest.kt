@@ -82,7 +82,7 @@ class NaturalPronunciationTest {
     @Test fun connectedConstructCandidatesDoNotLoseTheirTaaInDialectSpeech() {
         assertEquals("إِزَازَةُ مَيَّة", spoken("home.water_bottle", ArabicDialect.EGYPTIAN))
         assertEquals("حَلَاوِتْ الْجِبِنْ", spoken("dish.syrian.halawet_jibn", ArabicDialect.SYRIAN))
-        assertEquals("كُبَّتْ تِمَنْ", spoken("dish.iraqi.rice_kibbeh", ArabicDialect.IRAQI))
+        assertEquals("كُبَّةْ تِمَّنْ", spoken("dish.iraqi.rice_kibbeh", ArabicDialect.IRAQI))
         assertEquals("مَرْقِتْ جِلْبَانَهْ", spoken("dish.tunisian.pea_stew", ArabicDialect.TUNISIAN))
         assertEquals("قَرْعَةُ مَاءْ", spoken("home.water_bottle", ArabicDialect.MOROCCAN))
         assertEquals("سَيَّارَةُ أُجْرَهْ", spoken("transport.taxi", ArabicDialect.STANDARD))

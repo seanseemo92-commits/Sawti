@@ -39,9 +39,9 @@ class DisplaySpeechConsistencyTest {
         LIBYAN|clothing.blouse|بلوزة
         SAUDI|family.father|أبوي
         SAUDI|dish.saudi.kabsa|كبسة لحم
-        SAUDI|dish.saudi.saleeg|سليق طايفي
+        SAUDI|dish.saudi.saleeg|سليق طائفي
         SAUDI|dish.saudi.madhbi|مظبي دجاج
-        SAUDI|dish.saudi.liver|كبدة بالحوار
+        SAUDI|dish.saudi.liver|كبدة حاشي
         EGYPTIAN|family.father|أبويا
         EGYPTIAN|dish.egyptian.molokhia|ملوخية بالتقلية
         EGYPTIAN|dish.egyptian.mahshi|محشي مشكل
@@ -57,9 +57,9 @@ class DisplaySpeechConsistencyTest {
         SYRIAN|family.wife|مرتي
         SYRIAN|request.adjust_pillow|زبط لي المخدة
         SYRIAN|dish.syrian.shakriya|شاكرية برز
-        SYRIAN|dish.syrian.maqluba|مقلوبة باتنجان
+        SYRIAN|dish.syrian.maqluba|مقلوبة باذنجان
         SYRIAN|dish.syrian.kebab|كباب حلبي
-        SYRIAN|dish.syrian.mutabbal|متبل باتنجان
+        SYRIAN|dish.syrian.mutabbal|متبل باذنجان
         SYRIAN|dish.syrian.kunafa|كنافة نابلسية
         SYRIAN|fruit.orange|بردقان
         SYRIAN|home.sofa|كنباية
@@ -96,7 +96,7 @@ class DisplaySpeechConsistencyTest {
         ALGERIAN|family.father|بابا
         ALGERIAN|family.mother|يما
         ALGERIAN|dish.algerian.chakhchoukha|شخشوخة بسكرية
-        ALGERIAN|dish.algerian.garantita|كارانتيكا
+        ALGERIAN|dish.algerian.garantita|كرانتيكا
         ALGERIAN|vegetable.carrot|زرودية
         ALGERIAN|vegetable.lemon|قارص
         ALGERIAN|fruit.banana|بنان
@@ -121,6 +121,8 @@ class DisplaySpeechConsistencyTest {
         "LIBYAN|dish.mbakbaka", "LIBYAN|dish.sfinz",
         "IRAQI|food.fish", "IRAQI|action.speak", "IRAQI|food.tea", "IRAQI|request.tea",
         "IRAQI|dish.iraqi.masgouf", "IRAQI|dish.iraqi.fish_mutabbaq",
+        // Egyptian soup is displayed شربة but vocalized شُورْبِةْ by request.
+        "EGYPTIAN|dish.egyptian.bird_tongue_soup",
         "EGYPTIAN|fruit.pear", "IRAQI|action.sit",
     )
 
@@ -155,6 +157,53 @@ class DisplaySpeechConsistencyTest {
         val sfinz = DialectSpeechCatalog.resolve(
             requireNotNull(seeds["dish.sfinz"]), ArabicDialect.LIBYAN)
         assertEquals("إِسْـ...", sfinz.phonemicCue)
+    }
+
+    @Test fun reviewedOtherDialectDishesHaveMatchingRuntimeSpeechAndSource() {
+        val reviewed = mapOf(
+            ArabicDialect.SAUDI to mapOf(
+                "dish.saudi.liver" to ("كبدة حاشي" to "كِبْدَةْ حَاشِي"),
+                "dish.saudi.kabsa" to ("كبسة لحم" to "كَبْسَةْ لَحَمْ"),
+                "dish.saudi.saleeg" to ("سليق طائفي" to "سَلِيقْ طَائِفِي"),
+                "dish.saudi.madhbi" to ("مظبي دجاج" to "مَظْبِي دَجَاجْ"),
+            ),
+            ArabicDialect.IRAQI to mapOf(
+                "family.brother" to ("أخوي" to "أَخُويْ"),
+                "dish.iraqi.rice_kibbeh" to ("كبة تمن" to "كُبَّةْ تِمَّنْ"),
+                "dish.iraqi.tashreeb" to ("تشريب لحم" to "تَشْرِيبْ لَحَمْ"),
+                "dish.iraqi.biryani" to ("برياني عراقي" to "بِرْيَانِي عِرَاقِي"),
+            ),
+            ArabicDialect.SYRIAN to mapOf(
+                "dish.syrian.shakriya" to ("شاكرية برز" to "شَاكْرِيَّهْ بِرِزّْ"),
+                "dish.syrian.maqluba" to ("مقلوبة باذنجان" to "مَقْلُوبِةْ بَاذِنْجَانْ"),
+                "dish.syrian.kebab" to ("كباب حلبي" to "كَبَابْ حَلَبِي"),
+                "dish.syrian.mutabbal" to ("متبل باذنجان" to "مْتَبَّلْ بَاذِنْجَانْ"),
+            ),
+            ArabicDialect.EGYPTIAN to mapOf(
+                "dish.egyptian.mahshi" to ("محشي مشكل" to "مَحْشِي مِشَكِّلْ"),
+                "dish.egyptian.bird_tongue_soup" to ("شربة لسان عصفور" to "شُورْبِةْ لِسَانْ عَصْفُورْ"),
+            ),
+            ArabicDialect.TUNISIAN to mapOf(
+                "dish.tunisian.maqroudh" to ("مقروض قيرواني" to "مَقْرُوضْ قَيْرَوَانِي"),
+            ),
+            ArabicDialect.ALGERIAN to mapOf(
+                "dish.algerian.garantita" to ("كرانتيكا" to "كْرَانْتِيكَا"),
+            ),
+        )
+        assertEquals(16, reviewed.values.sumOf { it.size })
+        for ((dialect, entries) in reviewed) for ((key, expected) in entries) {
+            val source = requireNotNull(seeds[key]) { "Missing regional card $key" }
+            val form = DialectSpeechCatalog.resolve(source, dialect)
+            assertEquals("$dialect/$key display", expected.first, form.displayText)
+            assertEquals("$dialect/$key speech", expected.second, form.speechText)
+            val localized = DialectCatalog.localize(source, dialect)
+            assertEquals("$dialect/$key final TTS", expected.second, localized.ttsPrompt)
+            if (key.startsWith("dish.")) {
+                val region = requireNotNull(RegionalDishesCatalog.variant(key, dialect))
+                assertEquals("$dialect/$key source display", expected.first, region.displayText)
+                assertEquals("$dialect/$key source TTS", expected.second, region.ttsPrompt)
+            }
+        }
     }
 
     @Test fun allBuiltInCardsAvoidUnsupportedTtsConsonantGlyphs() {
