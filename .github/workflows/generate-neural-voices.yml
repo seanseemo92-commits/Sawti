@@ -36,7 +36,7 @@ permissions:
 
 concurrency:
   group: neural-voice-pack-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   generate:
@@ -81,5 +81,6 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add app/src/main/assets/neural_tts/
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m 'feat(audio): generate selected regional neural voice pack'
+          git commit -m 'feat(audio): regenerate all nine v1.6.1 neural voice packs'
+          git pull --rebase origin "${GITHUB_REF_NAME}"
           git push origin HEAD:"${GITHUB_REF_NAME}"
