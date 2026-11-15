@@ -9,9 +9,9 @@ import org.junit.Test
 
 class RegionalDishesCatalogTest {
     private fun stripPausalSukun(value: String) = value
-        .replace(Regex("""هْ(?=\\s|$)"""), "ة")
-        .replace(Regex("""ةْ(?=\\s|$)"""), "ة")
-        .replace(Regex("""ْ(?=\\s|$)"""), "")
+        .replace(Regex("""هْ(?=\s|$)"""), "ة")
+        .replace(Regex("""ةْ(?=\s|$)"""), "ة")
+        .replace(Regex("""ْ(?=\s|$)"""), "")
 
     @Test fun everyDialectHasCompleteAndDistinctCuisine() {
         assertEquals(9, ArabicDialect.entries.size)
