@@ -23,7 +23,7 @@ class NeuralSpeechNormalizerTest {
             "request.water" to "نِبِّي مَيَّة",
             "request.rest" to "نِبِّي نِرْتَاح",
             "request.medicine" to "نِبِّي دْوَايَا",
-            "food.eggs" to "دَحِي", "food.water" to "مَيَّة",
+            "food.eggs" to "بِيض", "food.water" to "مَيَّة",
             "home.window" to "رُوشِن",
             "vegetable.pepper" to "فِلْفِل",
             "body.nose" to "خَشِم",
