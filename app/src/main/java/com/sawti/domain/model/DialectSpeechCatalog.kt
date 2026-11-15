@@ -123,7 +123,12 @@ object DialectSpeechCatalog {
             }
             if (word.startsWith("إِ") && !visible.isNullOrEmpty() &&
                 visible.first() !in "اأإآٱ") word = word.removePrefix("إِ")
-            word = word.replace("تْش", "تش").replace("الْ", "ال")
+            word = word.replace("تْش", "تش")
+            // Keep lexical clusters in خَالْتِي and similar regional words.
+            if (word.startsWith("الْ")) word = word.replaceFirst("الْ", "ال")
+            else if (word.startsWith("بِالْ")) word = word.replaceFirst("بِالْ", "بِال")
+            else if (word.startsWith("لِلْ")) word = word.replaceFirst("لِلْ", "لِل")
+            word = word
                 .replace(vowelSukun) { it.value.dropLast(1) }
             // صْبَع is a deliberate Libyan lexical cluster, not a prosthetic sukun.
             // Explicit regional onset clusters (حْرَام، قْنِيَّة، دْجَاج)

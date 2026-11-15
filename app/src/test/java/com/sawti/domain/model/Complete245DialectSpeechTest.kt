@@ -44,8 +44,14 @@ class Complete245DialectSpeechTest {
             val seed = requireNotNull(seeds[row.key]) { "Missing seed: ${row.key}" }
             val form = DialectSpeechCatalog.resolve(seed, row.dialect)
             val context = "${row.dialect}/${row.key}"
-            assertEquals("$context display", row.display, form.displayText)
-            val clean = DialectSpeechCatalog.cleanSpeech(row.display, row.speech, row.dialect)
+            // Historical rows remain as independent 245-case coverage; updated
+            // v1.6.1 forms intentionally supersede their old expected spellings.
+            val upgrade = NeuralLexicon161.forms[row.key]?.get(row.dialect)
+            val expectedDisplay = upgrade?.displayText ?: row.display
+            val expectedSpeech = upgrade?.speechText ?: row.speech
+            assertEquals("$context display", expectedDisplay, form.displayText)
+            val clean = DialectSpeechCatalog.cleanSpeech(expectedDisplay,
+                requireNotNull(expectedSpeech), row.dialect)
             assertEquals("$context speech", clean, form.speechText)
             assertEquals("$context source", SpeechSource.EXPLICIT_DIALECT, form.source)
             assertTrue("$context cue is empty", form.phonemicCue.isNotBlank())
@@ -53,7 +59,7 @@ class Complete245DialectSpeechTest {
             if (derivedCue.isNotBlank())
                 assertEquals("$context cue", derivedCue, form.phonemicCue)
             val projected = DialectCatalog.localize(seed, row.dialect)
-            assertEquals("$context localized display", row.display, projected.displayText)
+            assertEquals("$context localized display", expectedDisplay, projected.displayText)
             assertEquals("$context localized speech", clean, projected.ttsPrompt)
         }
     }

@@ -1,12 +1,17 @@
 name: Generate regional neural voices
 on:
   push:
-    branches: [feature/neural-voices-hybrid-v160-20261115]
+    branches: [main, fix/sawti-v161-neural-lexicon-20261115]
     paths:
       - 'app/src/main/java/com/sawti/domain/model/NeuralSpeechNormalizer.kt'
       - 'app/src/main/java/com/sawti/domain/model/DialectSpeechCatalog.kt'
       - 'app/src/main/java/com/sawti/domain/model/DialectCatalog.kt'
       - 'app/src/main/java/com/sawti/domain/model/DialectSpeechRevisions.kt'
+      - 'app/src/main/java/com/sawti/domain/model/NeuralLexicon161.kt'
+      - 'app/src/main/java/com/sawti/domain/model/GreetingsCatalog.kt'
+      - 'app/src/main/java/com/sawti/domain/model/TransportCatalog.kt'
+      - 'app/src/main/java/com/sawti/data/db/WordSeed.kt'
+      - 'app/build.gradle.kts'
       - 'app/src/main/java/com/sawti/domain/model/RegionalDishesCatalog.kt'
       - 'scripts/generate_neural_voices.py'
       - '.github/workflows/generate-neural-voices.yml'
@@ -34,7 +39,7 @@ permissions:
 
 concurrency:
   group: neural-voice-pack-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   generate:
@@ -79,5 +84,6 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add app/src/main/assets/neural_tts/
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m 'feat(audio): generate selected regional neural voice pack'
+          git commit -m 'feat(audio): regenerate all nine v1.6.1 neural voice packs'
+          git pull --rebase origin "${GITHUB_REF_NAME}"
           git push origin HEAD:"${GITHUB_REF_NAME}"

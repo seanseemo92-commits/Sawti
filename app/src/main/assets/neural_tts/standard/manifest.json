@@ -297,11 +297,11 @@
     },
     "dish.arabic.boiled_eggs": {
       "file": "dish.arabic.boiled_eggs.mp3",
-      "speechText": "بَيْضٌ مَسْلُوق"
+      "speechText": "بَيْض مَسْلُوق"
     },
     "dish.arabic.boiled_meat": {
       "file": "dish.arabic.boiled_meat.mp3",
-      "speechText": "لَحْمٌ مَسْلُوق"
+      "speechText": "لَحْم مَسْلُوق"
     },
     "dish.arabic.cooked_fish": {
       "file": "dish.arabic.cooked_fish.mp3",
@@ -309,7 +309,7 @@
     },
     "dish.arabic.dates_milk": {
       "file": "dish.arabic.dates_milk.mp3",
-      "speechText": "تَمْرٌ وَحَلِيب"
+      "speechText": "تَمْر وَحَلِيب"
     },
     "dish.arabic.fruits_legumes": {
       "file": "dish.arabic.fruits_legumes.mp3",
@@ -325,11 +325,11 @@
     },
     "dish.arabic.lentil_soup": {
       "file": "dish.arabic.lentil_soup.mp3",
-      "speechText": "حَسَاءُ العَدَس"
+      "speechText": "حَسَاءُ العَدَسِ"
     },
     "dish.arabic.mixed_grill": {
       "file": "dish.arabic.mixed_grill.mp3",
-      "speechText": "مَشْوِيَّاتٌ مُشَكَّلَة"
+      "speechText": "مَشْوِيَّات مُشَكَّلَة"
     },
     "dish.arabic.rice_meat": {
       "file": "dish.arabic.rice_meat.mp3",

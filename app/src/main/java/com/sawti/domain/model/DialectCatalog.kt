@@ -4,7 +4,7 @@ package com.sawti.domain.model
  * Display, explicit speech and optional cues live together to prevent independent catalog drift.
  */
 object DialectCatalog {
-    internal val words: Map<String, Map<ArabicDialect, DialectForm>> = mapOf(
+    private val baseWords: Map<String, Map<ArabicDialect, DialectForm>> = mapOf(
         "request.water" to mapOf(
             ArabicDialect.LIBYAN to DialectForm("نبي مية", "نِبِّي مَيَّة", "نِبْـ..."),
             ArabicDialect.SAUDI to DialectForm("أبغى ماي", "أَبْغَى مَايْ", "مَا..."),
@@ -1196,6 +1196,14 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("قنية", "قْنِيَّة"),
         ),
     ) + TransportCatalog.dialectForms + GreetingsCatalog.dialectForms
+
+    /** Combine the historical variants with v1.6.1's explicit priority candidates. */
+    internal val words: Map<String, Map<ArabicDialect, DialectForm>> by lazy {
+        val newer = NeuralLexicon161.forms
+        (baseWords.keys + newer.keys).associateWith { key ->
+            baseWords[key].orEmpty() + newer[key].orEmpty()
+        }
+    }
 
     fun text(semanticKey: String, dialect: ArabicDialect, fallback: String): String {
         val original = if (dialect == ArabicDialect.STANDARD) fallback

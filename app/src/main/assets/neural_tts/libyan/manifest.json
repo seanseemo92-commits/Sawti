@@ -129,7 +129,7 @@
     },
     "body.ear": {
       "file": "body.ear.mp3",
-      "speechText": "وِدْن"
+      "speechText": "وِذِن"
     },
     "body.eye": {
       "file": "body.eye.mp3",
@@ -429,7 +429,7 @@
     },
     "family.husband_mother": {
       "file": "family.husband_mother.mp3",
-      "speechText": "أُمّ رَاجْلِي"
+      "speechText": "أُم رَاجْلِي"
     },
     "family.husband_sister": {
       "file": "family.husband_sister.mp3",
@@ -445,15 +445,15 @@
     },
     "family.maternal_aunt": {
       "file": "family.maternal_aunt.mp3",
-      "speechText": "خَالتِي"
+      "speechText": "خَالْتِي"
     },
     "family.maternal_aunt_daughter": {
       "file": "family.maternal_aunt_daughter.mp3",
-      "speechText": "بِنْت خَالتِي"
+      "speechText": "بِنْت خَالْتِي"
     },
     "family.maternal_aunt_son": {
       "file": "family.maternal_aunt_son.mp3",
-      "speechText": "وِلْد خَالتِي"
+      "speechText": "وِلْد خَالْتِي"
     },
     "family.maternal_uncle": {
       "file": "family.maternal_uncle.mp3",
@@ -517,7 +517,7 @@
     },
     "family.son_wife": {
       "file": "family.son_wife.mp3",
-      "speechText": "مَرْت وِلْدِي"
+      "speechText": "مَرْت وَلْدِي"
     },
     "family.wife": {
       "file": "family.wife.mp3",
@@ -533,7 +533,7 @@
     },
     "family.wife_mother": {
       "file": "family.wife_mother.mp3",
-      "speechText": "أُمّ مَرْتِي"
+      "speechText": "أُم مَرْتِي"
     },
     "family.wife_sister": {
       "file": "family.wife_sister.mp3",
@@ -565,7 +565,7 @@
     },
     "food.eggs": {
       "file": "food.eggs.mp3",
-      "speechText": "دَحِي"
+      "speechText": "بِيض"
     },
     "food.fish": {
       "file": "food.fish.mp3",
@@ -873,7 +873,7 @@
     },
     "home.water_bottle": {
       "file": "home.water_bottle.mp3",
-      "speechText": "شِيشَة"
+      "speechText": "شِيشَة امَيَّه"
     },
     "home.window": {
       "file": "home.window.mp3",
@@ -921,7 +921,7 @@
     },
     "routine.evening_coffee": {
       "file": "routine.evening_coffee.mp3",
-      "speechText": "قَهْوِة العَشِيَّة"
+      "speechText": "قَهْوَة العَشِيَّة"
     },
     "routine.prayer": {
       "file": "routine.prayer.mp3",
@@ -997,7 +997,7 @@
     },
     "transport.truck": {
       "file": "transport.truck.mp3",
-      "speechText": "شَاحْنَة"
+      "speechText": "شَاحِنَة"
     },
     "vegetable.broccoli": {
       "file": "vegetable.broccoli.mp3",
@@ -1029,7 +1029,7 @@
     },
     "vegetable.garlic": {
       "file": "vegetable.garlic.mp3",
-      "speechText": "ثُوم"
+      "speechText": "تُوم"
     },
     "vegetable.green_beans": {
       "file": "vegetable.green_beans.mp3",

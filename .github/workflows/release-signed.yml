@@ -1,9 +1,10 @@
 name: Sawti signed release
 on:
   workflow_dispatch:
-  push:
+  workflow_run:
+    workflows: ["Generate regional neural voices"]
+    types: [completed]
     branches: [main]
-    paths: [app/build.gradle.kts, .github/workflows/release-signed.yml]
 permissions:
   contents: read
 concurrency:
@@ -14,7 +15,7 @@ jobs:
     permissions:
       contents: write
       actions: read
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     environment: production-release
     timeout-minutes: 40
@@ -22,6 +23,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          ref: main
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -66,6 +68,8 @@ jobs:
           echo "::add-mask::$KEY_PASSWORD"
       - name: Build signed Release APK and AAB
         run: ./gradlew --no-daemon :app:assembleRelease :app:bundleRelease :app:testDebugUnitTest :app:lintRelease
+      - name: Verify every neural voice MP3 and manifest matches current speech text
+        run: python3 scripts/validate_neural_packs.py
       - name: Verify identity, version, publisher certificate and release files
         shell: bash
         run: |

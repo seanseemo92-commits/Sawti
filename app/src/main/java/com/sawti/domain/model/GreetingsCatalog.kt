@@ -18,7 +18,7 @@ object GreetingsCatalog {
     )
 
     val greetings = listOf(
-        Greeting("greeting.salam", "السلام عليكم", "السَّلَامُ عَلَيْكُمْ", "🤝"),
+        Greeting("greeting.salam", "السلام عليكم", "السَّلَامُ عَلَيْكُم", "🤝"),
         Greeting("greeting.reply", "وعليكم السلام", "وَعَلَيْكُمُ السَّلَامُ", "🤝"),
         Greeting("greeting.hello", "مرحبًا", "مَرْحَبًا", "👋"),
         Greeting("greeting.welcome", "أهلًا وسهلًا", "أَهْلًا وَسَهْلًا", "😊"),
