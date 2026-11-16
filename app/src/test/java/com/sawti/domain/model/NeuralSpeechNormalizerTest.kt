@@ -86,9 +86,9 @@ class NeuralSpeechNormalizerTest {
 
     @Test fun exactHotfixFormsAndFinalSukunSurvive() {
         val examples = listOf(
-            Triple(ArabicDialect.LIBYAN, "action.sit", "نْقَعْمِزْ"),
-            Triple(ArabicDialect.LIBYAN, "action.sleep", "نُرْقُدْ"),
-            Triple(ArabicDialect.LIBYAN, "action.stand", "نُوقَفْ"),
+            Triple(ArabicDialect.LIBYAN, "action.sit", "نْجَعْمِزْ"),
+            Triple(ArabicDialect.LIBYAN, "action.sleep", "نُرْجُدْ"),
+            Triple(ArabicDialect.LIBYAN, "action.stand", "نُوجَفْ"),
             Triple(ArabicDialect.LIBYAN, "dish.osban", "عُصْبَانْ"),
             Triple(ArabicDialect.IRAQI, "fruit.mandarin", "لَالَنْكِي"),
             Triple(ArabicDialect.IRAQI, "body.mouth", "حَلِكْ"),

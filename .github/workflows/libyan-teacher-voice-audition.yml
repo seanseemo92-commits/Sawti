@@ -1,0 +1,46 @@
+name: Libyan encouraging teacher voice audition (non-production)
+on:
+  push:
+    branches: [fix/libyan-g-pronunciation-20261116]
+    paths:
+      - 'scripts/libyan_teacher_voice_audition.py'
+      - '.github/workflows/libyan-teacher-voice-audition.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  teacher-voice-trials:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Edge TTS
+        run: python -m pip install 'edge-tts>=6.1,<9' 'imageio-ffmpeg>=0.6,<1'
+      - name: Generate independent voice audition samples
+        run: python scripts/libyan_teacher_voice_audition.py
+      - name: Check all 36 snippets and six demo files
+        run: |
+          python - <<'PY'
+          import csv
+          from pathlib import Path
+          p = Path('build/libyan-teacher-voice-audition')
+          demos = sorted(p.glob('DEMO_*.mp3'))
+          words = sorted(x for x in p.rglob('*.mp3') if not x.name.startswith('DEMO_'))
+          with (p / 'INDEX.csv').open(encoding='utf-8-sig') as f:
+              rows = list(csv.DictReader(f))
+          assert len(demos) == 6, len(demos)
+          assert len(words) == 36, len(words)
+          assert len(rows) == 36, len(rows)
+          assert all(x.stat().st_size > 1024 for x in demos + words)
+          print('Six audition reels and 36 clips validated; emotional suitability requires listener QA.')
+          PY
+      - name: Upload voice demo MP3 bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: sawti-teacher-voice-audition
+          path: build/libyan-teacher-voice-audition/
+          if-no-files-found: error
+          retention-days: 14

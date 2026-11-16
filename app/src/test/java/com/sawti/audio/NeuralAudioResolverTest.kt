@@ -13,12 +13,12 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28], application = Application::class)
 class NeuralAudioResolverTest {
-    @Test fun signedRateManifestResolvesByDialectAndSemanticKeyDespiteRevisedVowels() {
+    @Test fun approvedLibyanVoiceManifestResolvesByDialectAndSemanticKeyDespiteRevisedVowels() {
         val app = RuntimeEnvironment.getApplication() as Application
         val folder = File(app.filesDir, "neural_tts/libyan").apply { mkdirs() }
         val audio = File(folder, "request.water.mp3").apply { writeBytes(ByteArray(128) { 1 }) }
         val manifest = File(folder, "manifest.json").apply {
-            writeText("""{"version":1,"rate":"-18%","entries":{"request.water":{"file":"request.water.mp3","speechText":"نِبِّي مَيَّة"}}}""")
+            writeText("""{"version":1,"voice":"ar-EG-ShakirNeural","rate":"-8%","pitch":"+12Hz","entries":{"request.water":{"file":"request.water.mp3","speechText":"نِبِّي مَيَّة"}}}""")
         }
         try {
             val resolver = NeuralAudioResolver(app)
@@ -28,6 +28,22 @@ class NeuralAudioResolverTest {
             assertNull(resolver.resolve(ArabicDialect.LIBYAN, "request.water", "نِبِّي مَيّه"))
             assertNull(resolver.resolve(ArabicDialect.LIBYAN, "custom.user", "نِبِّي مَيَّة"))
             assertNull(resolver.resolve(ArabicDialect.TUNISIAN, "request.water", "نِبِّي مَيَّة"))
+        } finally { audio.delete(); manifest.delete(); folder.delete() }
+    }
+
+
+    @Test fun oldImanCacheCannotShadowApprovedShakirEvenWithIdenticalSpeech() {
+        val app = RuntimeEnvironment.getApplication() as Application
+        val folder = File(app.filesDir, "neural_tts/libyan").apply { mkdirs() }
+        val audio = File(folder, "request.water.mp3").apply { writeBytes(ByteArray(256) { 42 }) }
+        val current = requireNotNull(com.sawti.domain.model.NeuralLexicon162.get(
+            ArabicDialect.LIBYAN, "request.water"))
+        val manifest = File(folder, "manifest.json").apply {
+            writeText("""{"version":1,"voice":"ar-LY-ImanNeural","rate":"-18%","entries":{"request.water":{"file":"request.water.mp3","speechText":"${current.speechText}"}}}""")
+        }
+        try {
+            assertEquals(NeuralClip.Bundled("neural_tts/libyan/request.water.mp3"),
+                NeuralAudioResolver(app).resolve(ArabicDialect.LIBYAN, "request.water", current.speechText))
         } finally { audio.delete(); manifest.delete(); folder.delete() }
     }
 

@@ -1,0 +1,22 @@
+semantic_key,display_text,source_speech,tts_input,voice_id,rate,pitch,review_status
+family.male_relative,قريبي,قَرِيبِي,جَرِيبِي,ar-EG-ShakirNeural,-8%,+12Hz,needs_native_listening
+family.female_relative,قريبتي,قَرِيبْتِي,جَرِيبْتِي,ar-EG-ShakirNeural,-8%,+12Hz,needs_native_listening
+dish.pasta_masqiya,مكرونة مسقية,مَكْرُونَة مِسْقِيَّة,مَكْرُونَة مِسْجِيَّة,ar-EG-ShakirNeural,-8%,+12Hz,needs_native_listening
+dish.maqroudh,مقروض,مَقْرُوضْ,مَجْرُوضْ,ar-EG-ShakirNeural,-8%,+12Hz,needs_native_listening
+dish.arabic_coffee,قهوة عربية,قَهْوَة عَرَبِيَّة,جَهْوَة عَرَبِيَّة,ar-EG-ShakirNeural,-8%,+12Hz,needs_native_listening
+routine.evening_coffee,قهوة العشية,قَهْوِة الْعَشِيَّة,جَهْوِة الْعَشِيَّة,ar-EG-ShakirNeural,-8%,+12Hz,needs_native_listening
+vegetable.coriander,قصبر,قُصْبُرْ,جُصْبُرْ,ar-EG-ShakirNeural,-8%,+12Hz,needs_native_listening
+vegetable.cauliflower,قرنبيط,قَرْنَبِيطْ,جَرْنَبِيطْ,ar-EG-ShakirNeural,-8%,+12Hz,needs_native_listening
+vegetable.pumpkin,قرعة,قَرْعَة,جَرْعَة,ar-EG-ShakirNeural,-8%,+12Hz,needs_native_listening
+fruit.orange,برتقال,بُرْتُقَالْ,بُرْتُجَالْ,ar-EG-ShakirNeural,-8%,+12Hz,needs_native_listening
+fruit.melon,قلعاوي,قَلْعَاوِي,جَلْعَاوِي,ar-EG-ShakirNeural,-8%,+12Hz,needs_native_listening
+food.coffee,قهوة,قَهْوَة,جَهْوَة,ar-EG-ShakirNeural,-8%,+12Hz,needs_native_listening
+clothing.shirt,قميص,قَمِيصْ,جَمِيصْ,ar-EG-ShakirNeural,-8%,+12Hz,needs_native_listening
+clothing.cap,طاقية,طَاقِيَّة,طَاجِيَّة,ar-EG-ShakirNeural,-8%,+12Hz,needs_native_listening
+body.neck,رقبة,رَقْبَة,رَجْبَة,ar-EG-ShakirNeural,-8%,+12Hz,needs_native_listening
+body.heart,قلب,قَلْبْ,جَلْبْ,ar-EG-ShakirNeural,-8%,+12Hz,needs_native_listening
+action.sleep,نرقد,نُرْقُدْ,نُرْجُدْ,ar-EG-ShakirNeural,-8%,+12Hz,needs_native_listening
+action.sit,نقعمز,نْقَعْمِزْ,نْجَعْمِزْ,ar-EG-ShakirNeural,-8%,+12Hz,needs_native_listening
+action.stand,نوقف,نُوقَفْ,نُوجَفْ,ar-EG-ShakirNeural,-8%,+12Hz,needs_native_listening
+action.read,نقرا,نَقْرَا,نَجْرَا,ar-EG-ShakirNeural,-8%,+12Hz,needs_native_listening
+animal.cat,قطوسة,قَطُّوسَة,جَطُّوسَة,ar-EG-ShakirNeural,-8%,+12Hz,needs_native_listening

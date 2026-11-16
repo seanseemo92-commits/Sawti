@@ -28,10 +28,20 @@ class NeuralAudioResolver(context: Context) {
             key.matches(Regex("[a-z0-9][a-z0-9._-]*")) && !key.contains("..")
     }
 
-    private fun parse(json: String): Map<String, Entry> = runCatching {
+    private fun parse(json: String, dialect: String): Map<String, Entry> = runCatching {
         val root = JSONObject(json)
-        if (root.optInt("version") != 1 || root.optString("rate") != "-18%")
+        if (root.optInt("version") != 1) return@runCatching emptyMap()
+        // Reject previously downloaded Iman (-18%) clips even when the
+        // spoken text is identical: only the approved Shakir (+12 Hz) pack
+        // may be used for LIBYAN in this build.
+        if (dialect == "libyan") {
+            if (root.optString("voice") != "ar-EG-ShakirNeural" ||
+                root.optString("rate") != "-8%" ||
+                root.optString("pitch") != "+12Hz"
+            ) return@runCatching emptyMap()
+        } else if (root.optString("rate") != "-18%") {
             return@runCatching emptyMap()
+        }
         val entries = root.getJSONObject("entries")
         val result = mutableMapOf<String, Entry>()
         val iterator = entries.keys()
@@ -48,7 +58,7 @@ class NeuralAudioResolver(context: Context) {
 
     private fun localManifest(dialect: String): Map<String, Entry> =
         localManifests.getOrPut(dialect) {
-            runCatching { parse(File(File(root, dialect), "manifest.json").readText(Charsets.UTF_8)) }
+            runCatching { parse(File(File(root, dialect), "manifest.json").readText(Charsets.UTF_8), dialect) }
                 .getOrDefault(emptyMap())
         }
 
@@ -56,7 +66,7 @@ class NeuralAudioResolver(context: Context) {
         assetManifests.getOrPut(dialect) {
             runCatching {
                 assets.open("neural_tts/$dialect/manifest.json").bufferedReader(Charsets.UTF_8)
-                    .use { parse(it.readText()) }
+                    .use { parse(it.readText(), dialect) }
             }.getOrDefault(emptyMap())
         }
 

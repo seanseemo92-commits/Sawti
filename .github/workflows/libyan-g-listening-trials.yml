@@ -1,0 +1,88 @@
+name: Libyan G pronunciation listening trials (non-production)
+on:
+  push:
+    branches: [fix/libyan-g-pronunciation-20261116]
+    paths:
+      - 'scripts/libyan_g_listening_trials.py'
+      - 'scripts/libyan_teacher_voice_audition.py'
+      - 'scripts/libyan_cow_pronunciation_trials.py'
+      - '.github/workflows/libyan-g-listening-trials.yml'
+  pull_request:
+    branches: [fix/audit-v161-199-confirmed-20261116]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  samples:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install edge-tts
+        run: python -m pip install 'edge-tts>=6.1,<9' 'imageio-ffmpeg>=0.6,<1'
+      - name: Generate audio variants separate from the Android app
+        run: python scripts/libyan_g_listening_trials.py
+      - name: Assert 7 x 4 playable candidate MP3s
+        run: |
+          test "$(find build/libyan-g-listening-trials -maxdepth 1 -name '*.mp3' | wc -l)" -eq 28
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('build/libyan-g-listening-trials')
+          assert len(list(p.glob('*.mp3'))) == 28
+          assert all(f.stat().st_size > 1024 for f in p.glob('*.mp3'))
+          print('28 non-empty listening trials generated; phoneme accuracy NOT automatically validated.')
+          PY
+      - name: Upload sample pack for native-speaker review
+        uses: actions/upload-artifact@v4
+        with:
+          name: sawti-libyan-hard-g-listening-trials
+          path: build/libyan-g-listening-trials/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Generate warmth and educational-tone samples (separate from app)
+        run: python scripts/libyan_teacher_voice_audition.py
+      - name: Assert six educational-tone reels and 36 MP3 words
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          base = Path('build/libyan-teacher-voice-audition')
+          clips = list(base.rglob('*.mp3'))
+          assert len(clips) == 42, len(clips)
+          assert len(list(base.glob('DEMO_*.mp3'))) == 6
+          assert all(p.stat().st_size > 1024 for p in clips)
+          print('Audition ready; emotional delivery and pronunciation need native-speaker review.')
+          PY
+      - name: Upload six teacher voice demonstrations
+        uses: actions/upload-artifact@v4
+        with:
+          name: sawti-teacher-voice-audition
+          path: build/libyan-teacher-voice-audition/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Generate nine isolated Libyan cow pronunciation candidates
+        run: python scripts/libyan_cow_pronunciation_trials.py
+      - name: Verify nine cow pronunciation comparisons
+        run: |
+          python - <<'PY'
+          import csv
+          from pathlib import Path
+          p=Path('build/libyan-cow-pronunciation-trials')
+          files=list(p.glob('*.mp3'))
+          assert len(files)==9, len(files)
+          assert all(a.stat().st_size>1024 for a in files)
+          with (p/'INDEX.csv').open(encoding='utf-8-sig') as f:
+            rows=list(csv.DictReader(f))
+          assert len(rows)==9
+          assert all(r['voice']=='ar-EG-ShakirNeural' and r['rate']=='-8%' and r['pitch']=='+12Hz' for r in rows)
+          print('9 recordings present; correct pronunciation requires human review.')
+          PY
+      - name: Upload cow pronunciation MP3 samples
+        uses: actions/upload-artifact@v4
+        with:
+          name: sawti-shakir-cow-nine-pronunciation-trials
+          path: build/libyan-cow-pronunciation-trials/
+          if-no-files-found: error
+          retention-days: 14

@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 VOICES = {
-    "LIBYAN": ("ar-LY-ImanNeural", "ar-LY-OmarNeural"),
+    "LIBYAN": ("ar-EG-ShakirNeural", "ar-EG-ShakirNeural"),
     "TUNISIAN": ("ar-TN-ReemNeural", "ar-TN-HediNeural"),
     "MOROCCAN": ("ar-MA-MounaNeural", "ar-MA-JamalNeural"),
     "ALGERIAN": ("ar-DZ-AminaNeural", "ar-DZ-IsmaelNeural"),
@@ -23,6 +23,21 @@ VOICES = {
     "STANDARD": ("ar-AE-FatimaNeural", "ar-AE-HamdanNeural"),
 }
 SAFE_KEY = re.compile(r"^[a-z0-9][a-z0-9._-]*$")
+# User-approved Libyan speaker and delivery profile. Other word pronunciations
+# still require listening QA; never extrapolate qaf-to-jeem globally.
+LIBYAN_TEACHER = {
+    "voice": "ar-EG-ShakirNeural",
+    "rate": "-8%",
+    "pitch": "+12Hz",
+}
+
+
+def speaker_profile(dialect, gender, rate):
+    if dialect == "LIBYAN":
+        return (LIBYAN_TEACHER["voice"], LIBYAN_TEACHER["rate"],
+                LIBYAN_TEACHER["pitch"])
+    return (VOICES[dialect][0 if gender == "female" else 1], rate, "+0Hz")
+
 
 
 def dialects_arg(value):
@@ -53,14 +68,14 @@ def load_catalog(path):
     return grouped
 
 
-async def synthesize(voice, text, target, semaphore, attempts, rate):
+async def synthesize(voice, text, target, semaphore, attempts, rate, pitch):
     import edge_tts
     async with semaphore:
         for attempt in range(attempts):
             try:
                 partial = target.with_suffix(".mp3.partial")
                 partial.unlink(missing_ok=True)
-                await edge_tts.Communicate(text, voice, rate=rate).save(str(partial))
+                await edge_tts.Communicate(text, voice, rate=rate, pitch=pitch).save(str(partial))
                 if partial.stat().st_size <= 1024:
                     raise IOError(f"Empty/short TTS response: {target}")
                 partial.replace(target)
@@ -76,7 +91,7 @@ async def generate(args):
     catalog = load_catalog(args.catalog)
     semaphore = asyncio.Semaphore(args.concurrency)
     for dialect in args.dialects:
-        voice = VOICES[dialect][0 if args.gender == "female" else 1]
+        voice, selected_rate, pitch = speaker_profile(dialect, args.gender, args.rate)
         folder = args.output / dialect.lower()
         folder.mkdir(parents=True, exist_ok=True)
         manifest_path = folder / "manifest.json"
@@ -94,15 +109,18 @@ async def generate(args):
             # A changed text or gender invalidates the previous audio, even if it exists.
             previous = prior.get("entries", {}).get(key, {})
             reusable = (not args.force and target.is_file() and target.stat().st_size > 1024
-                        and prior.get("voice") == voice and prior.get("rate") == args.rate
+                        and prior.get("voice") == voice and prior.get("rate") == selected_rate
+                        and prior.get("pitch", "+0Hz") == pitch
                         and previous.get("speechText") == text)
             if not reusable:
-                tasks.append(synthesize(voice, text, target, semaphore, args.attempts, args.rate))
+                tasks.append(synthesize(voice, text, target, semaphore, args.attempts, selected_rate, pitch))
             manifest_entries[key] = {"file": filename, "speechText": text}
-        print(f"{dialect}: voice={voice}, clips={len(manifest_entries)}, generating={len(tasks)}", flush=True)
+        print(f"{dialect}: voice={voice}, rate={selected_rate}, pitch={pitch}, clips={len(manifest_entries)}, generating={len(tasks)}", flush=True)
         # Fail before replacing the authoritative manifest if even one MP3 fails.
         await asyncio.gather(*tasks)
-        new_manifest = {"version": 1, "voice": voice, "rate": args.rate, "entries": manifest_entries}
+        new_manifest = {"version": 1, "voice": voice, "rate": selected_rate, "entries": manifest_entries}
+        if dialect == "LIBYAN":
+            new_manifest["pitch"] = pitch
         manifest_path.write_text(json.dumps(new_manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print("All requested regional neural packs completed.", flush=True)
 
