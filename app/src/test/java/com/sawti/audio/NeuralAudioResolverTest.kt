@@ -21,11 +21,15 @@ class NeuralAudioResolverTest {
         assertTrue(HabibiAudioResolver.safeKey("dish.tunisian.brik"))
     }
 
-    @Test fun legacyMicrosoftBundledAudioIsRejected() {
-        val app = RuntimeEnvironment.getApplication() as Application
-        val resolver = HabibiAudioResolver(app)
-        assertNull(resolver.open(ArabicDialect.LIBYAN, "animal.cow", "بقرة"))
-        assertNull(resolver.open(ArabicDialect.EGYPTIAN, "request.water", "عايز مية"))
+    @Test fun legacyMicrosoftManifestIsAlwaysRejectedEvenAfterHabibiIsInstalled() {
+        val v1 = """{"version":1,"rate":"-18%","entries":{}}"""
+        val v2 = """{"version":2,"engine":"Habibi-TTS","model":"Unified","license":"CC-BY-NC-SA-4.0","dialectId":"LBY","sampleRate":24000,"bitrate":"96k","entries":{}}"""
+        assertFalse(HabibiAudioResolver.acceptsManifestHeader(
+            v1, ArabicDialect.LIBYAN))
+        assertTrue(HabibiAudioResolver.acceptsManifestHeader(
+            v2, ArabicDialect.LIBYAN))
+        assertFalse(HabibiAudioResolver.acceptsManifestHeader(
+            v2, ArabicDialect.EGYPTIAN))
     }
 
     @Test fun unknownOrInvalidKeysReturnNoAudio() {
