@@ -48,12 +48,12 @@ class Complete245DialectSpeechTest {
             // v1.6.1 forms intentionally supersede their old expected spellings.
             val upgrade = NeuralLexicon161.forms[row.key]?.get(row.dialect)
             val expectedDisplay = upgrade?.displayText ?: row.display
-            val expectedSpeech = upgrade?.speechText ?: row.speech
+            val expectedSpeech = expectedDisplay
             assertEquals("$context display", expectedDisplay, form.displayText)
             val clean = DialectSpeechCatalog.cleanSpeech(expectedDisplay,
                 requireNotNull(expectedSpeech), row.dialect)
             assertEquals("$context speech", clean, form.speechText)
-            assertEquals("$context source", SpeechSource.EXPLICIT_DIALECT, form.source)
+            assertTrue("$context did not use a built-in regional word", form.source != SpeechSource.USER)
             assertTrue("$context cue is empty", form.phonemicCue.isNotBlank())
             val derivedCue = PhonemicCue.derive(clean)
             if (derivedCue.isNotBlank())
@@ -67,8 +67,8 @@ class Complete245DialectSpeechTest {
     @Test fun userChangesNeverGetReplacedByThe245WrittenCandidates() {
         val seed = requireNotNull(seeds["body.nose"]).copy(
             displayText = "كلمة خاصة",
-            ttsPrompt = "صَوْتِي الخَاصّ",
-            phonemicCue = "صَـ...",
+            ttsPrompt = "صوتي الخاص",
+            phonemicCue = "ص...",
             customTextFields = CardDetails.LABEL or CardDetails.SPEECH or CardDetails.CUE,
         )
         for (dialect in listOf(ArabicDialect.SAUDI, ArabicDialect.IRAQI,

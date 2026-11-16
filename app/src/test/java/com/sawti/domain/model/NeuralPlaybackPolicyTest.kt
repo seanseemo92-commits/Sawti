@@ -39,9 +39,9 @@ class NeuralPlaybackPolicyTest {
             ArabicDialect.LIBYAN))
     }
 
-    @Test fun purelyChangedVowelsDoNotRejectBuiltInCardSelection() {
+    @Test fun rebindingAnUnchangedBuiltinCardKeepsTheHabibiKey() {
         val view = DialectCatalog.localize(source("request.water"), ArabicDialect.LIBYAN)
-        val altered = view.copy(ttsPrompt = "نِبِّي مَيّه")
+        val altered = view.copy(ttsPrompt = "نبي ميه")
         assertEquals(DialectSpeechCatalog.neuralTextFor(view, ArabicDialect.LIBYAN),
             DialectSpeechCatalog.neuralTextFor(altered, ArabicDialect.LIBYAN))
     }

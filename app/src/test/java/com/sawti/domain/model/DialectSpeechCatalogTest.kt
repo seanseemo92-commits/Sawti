@@ -11,13 +11,13 @@ class DialectSpeechCatalogTest {
 
     @Test fun correctedLibyanRequestsAreExactAndConsistentBetweenAudioAndDisplay() {
         val cases = mapOf(
-            "request.water" to ("نبي مية" to "نِبِّي مَيَّة"),
-            "request.tea" to ("نبي شاهي" to "نِبِّي شَاهِي"),
-            "request.rest" to ("نبي نرتاح" to "نِبِّي نِرْتَاح"),
-            "request.medicine" to ("نبي دوايا" to "نِبِّي دْوَايَا"),
-            "request.toilet" to ("نبي الحمام" to "نِبِّي الحَمَّام"),
-            "request.cold" to ("نحس بالبرد" to "نِحِسّ بِالبَرْد"),
-            "food.water" to ("مية" to "مَيَّة"),
+            "request.water" to ("نبي مية" to "نبي مية"),
+            "request.tea" to ("نبي شاهي" to "نبي شاهي"),
+            "request.rest" to ("نبي نرتاح" to "نبي نرتاح"),
+            "request.medicine" to ("نبي دوايا" to "نبي دوايا"),
+            "request.toilet" to ("نبي الحمام" to "نبي الحمام"),
+            "request.cold" to ("نحس بالبرد" to "نحس بالبرد"),
+            "food.water" to ("مية" to "مية"),
         )
         for ((key, expected) in cases) {
             val view = DialectCatalog.localize(item(key), ArabicDialect.LIBYAN)
@@ -28,23 +28,23 @@ class DialectSpeechCatalogTest {
 
     @Test fun locallyRecognizableWordsAndActionsRetainDialects() {
         val libyan = mapOf(
-            "food.eggs" to ("بيض" to "بِيض"),
-            "home.window" to ("روشن" to "رُوشِن"),
-            "vegetable.pepper" to ("فلفل" to "فِلْفِل"),
-            "clothing.blouse" to ("سورية" to "سُورِيَّة"),
-            "action.drink" to ("نشرب" to "نِشْرَب"),
-            "action.sleep" to ("نرقد" to "نُرْقُد"),
-            "action.sit" to ("نقعمز" to "نِقَعْمِز"),
-            "action.walk" to ("نمشي" to "نِمْشِي"),
-            "action.wash" to ("نغسل" to "نِغْسِل"),
-            "action.speak" to ("ندوي" to "نِدْوِي"),
-            "action.hear" to ("نسمع" to "نِسْمَع"),
-            "action.open" to ("نفتح" to "نِفْتَح"),
-            "action.close" to ("نسكر" to "نِسَكِّر"),
-            "action.laugh" to ("نضحك" to "نِضْحَك"),
-            "action.see" to ("نشوف" to "نِشُوف"),
-            "action.dress" to ("نلبس" to "نِلْبِس"),
-            "action.pray" to ("نصلي" to "نِصَلِّي"),
+            "food.eggs" to ("بيض" to "بيض"),
+            "home.window" to ("روشن" to "روشن"),
+            "vegetable.pepper" to ("فلفل" to "فلفل"),
+            "clothing.blouse" to ("سورية" to "سورية"),
+            "action.drink" to ("نشرب" to "نشرب"),
+            "action.sleep" to ("نرقد" to "نرقد"),
+            "action.sit" to ("نقعمز" to "نقعمز"),
+            "action.walk" to ("نمشي" to "نمشي"),
+            "action.wash" to ("نغسل" to "نغسل"),
+            "action.speak" to ("ندوي" to "ندوي"),
+            "action.hear" to ("نسمع" to "نسمع"),
+            "action.open" to ("نفتح" to "نفتح"),
+            "action.close" to ("نسكر" to "نسكر"),
+            "action.laugh" to ("نضحك" to "نضحك"),
+            "action.see" to ("نشوف" to "نشوف"),
+            "action.dress" to ("نلبس" to "نلبس"),
+            "action.pray" to ("نصلي" to "نصلي"),
         )
         for ((key, expected) in libyan) {
             val form = DialectSpeechCatalog.resolve(item(key), ArabicDialect.LIBYAN)
@@ -92,7 +92,7 @@ class DialectSpeechCatalogTest {
                 DialectSpeechCatalog.resolveForNeural(original, dialect))
         }
         for (flag in listOf(CardDetails.LABEL, CardDetails.SPEECH)) {
-            val custom = original.copy(ttsPrompt = "صَوْتِي الشخصي", customTextFields = flag)
+            val custom = original.copy(ttsPrompt = "صوتي الشخصي", customTextFields = flag)
             val view = DialectCatalog.localize(custom, ArabicDialect.LIBYAN)
             assertEquals(custom.ttsPrompt, view.ttsPrompt)
             assertNull(view.neuralSpeechText)
@@ -103,64 +103,39 @@ class DialectSpeechCatalogTest {
     private val regional = ArabicDialect.entries.filter { it != ArabicDialect.STANDARD }
     private val allSeeds by lazy { WordSeed.itemEntities().map { it.toDomain() } }
 
-    @Test fun allNineDialectsAndFourteenNamespacesHaveNoWordFinalSukun() {
+    @Test fun allNineDialectsAndFourteenNamespacesHaveCleanSpokenText() {
         val namespaces = setOf("family", "request", "dish", "routine", "vegetable",
             "fruit", "food", "home", "clothing", "body", "action", "animal",
             "transport", "greeting")
-        assertEquals(namespaces, allSeeds.mapNotNull { it.semanticKey?.substringBefore('.') }.toSet())
-        val trailingSukun = Regex("""ْ(?=\s|$|[؟،؛.!])""")
-        val trailingHaSukun = Regex("""هْ(?=\s|$|[؟،؛.!])""")
-        for (dialect in ArabicDialect.entries) {
-            for (seed in allSeeds) {
-                if (seed.categoryId == RegionalDishesCatalog.CATEGORY_ID &&
-                    !RegionalDishesCatalog.visibleForDialect(seed.subgroup, dialect)) continue
-                val speech = DialectSpeechCatalog.resolveForNeural(seed, dialect).speechText
-                assertFalse("$dialect/${seed.semanticKey}: $speech",
-                    trailingSukun.containsMatchIn(speech))
-                assertFalse("$dialect/${seed.semanticKey}: $speech",
-                    trailingHaSukun.containsMatchIn(speech))
-            }
-            for (vehicle in TransportCatalog.vehicles) {
-                val speech = requireNotNull(vehicle.forms.getValue(dialect).speechText)
-                assertFalse("$dialect/${vehicle.semanticKey}: $speech",
-                    trailingSukun.containsMatchIn(speech))
-                assertFalse("$dialect/${vehicle.semanticKey}: $speech",
-                    trailingHaSukun.containsMatchIn(speech))
-            }
-            for (dish in RegionalDishesCatalog.forDialect(dialect).dishes) {
-                assertFalse("$dialect/${dish.semanticKey}: ${dish.ttsPrompt}",
-                    trailingSukun.containsMatchIn(dish.ttsPrompt))
-                assertFalse("$dialect/${dish.semanticKey}: ${dish.ttsPrompt}",
-                    trailingHaSukun.containsMatchIn(dish.ttsPrompt))
-            }
-            for (greeting in GreetingsCatalog.greetings) {
-                val speech = DialectSpeechCatalog.resolve(
-                    allSeeds.single { it.semanticKey == greeting.key }, dialect).speechText
-                assertFalse("$dialect/${greeting.key}: $speech",
-                    trailingSukun.containsMatchIn(speech))
-            }
+        assertEquals(namespaces, allSeeds.mapNotNull {
+            it.semanticKey?.substringBefore('.')
+        }.toSet())
+        var count = 0
+        for (dialect in ArabicDialect.entries) for (seed in allSeeds) {
+            if (seed.categoryId == RegionalDishesCatalog.CATEGORY_ID &&
+                !RegionalDishesCatalog.visibleForDialect(seed.subgroup, dialect)) continue
+            val form = DialectSpeechCatalog.resolveForHabibi(seed, dialect)
+            assertFalse("$dialect/" + seed.semanticKey,
+                HabibiSpeechText.hasForbiddenMarksOrNumbers(form.speechText))
+            assertEquals(form.displayText, form.speechText)
+            count++
         }
+        assertEquals(2399, count)
     }
 
-    @Test fun eightRegionalDialectsHaveNoClassicalDiphthongsOrConstructEndings() {
-        val forbidden = mapOf("food.eggs" to "بَيْض", "food.olives" to "زَيْت",
-            "food.oil" to "زَيْت", "fruit.banana" to "مَوْز",
-            "fruit.peach" to "خَوْخ", "routine.sleep" to "نَوْم",
-            "home.fork" to "شَوْك", "body.eye" to "عَيْن")
+    @Test fun eightRegionalDialectsKeepTheirOwnVocabularyWithoutForcedVowels() {
         for (dialect in regional) {
-            for ((key, classical) in forbidden) {
-                val speech = DialectSpeechCatalog.resolve(item(key), dialect).speechText
-                assertFalse("$dialect/$key: $speech", classical in speech)
+            for (source in allSeeds) {
+                val form = DialectSpeechCatalog.resolve(source, dialect)
+                assertEquals(dialect.name + "/" + source.semanticKey,
+                    form.displayText, form.speechText)
+                assertFalse(HabibiSpeechText.hasForbiddenMarksOrNumbers(form.speechText))
             }
-            for (key in listOf("home.water_bottle", "routine.evening_coffee")) {
-                val speech = DialectSpeechCatalog.resolve(item(key), dialect).speechText
-                assertFalse("$dialect/$key: $speech", "ةُ" in speech)
-            }
-            assertEquals("$dialect coconut", "جُوز الهِنْد",
-                DialectSpeechCatalog.resolve(item("fruit.coconut"), dialect).speechText)
         }
-        assertEquals("جَوْزُ الهِنْد",
-            DialectSpeechCatalog.resolve(item("fruit.coconut"), ArabicDialect.STANDARD).speechText)
+        assertEquals("نقعمز", DialectSpeechCatalog.resolve(
+            item("action.sit"), ArabicDialect.LIBYAN).speechText)
+        assertEquals("سردوك", DialectSpeechCatalog.resolve(
+            item("animal.rooster"), ArabicDialect.TUNISIAN).speechText)
     }
 
     @Test fun everyRegionalInLawAndCousinHasExplicitLocalizedSpeech() {
@@ -191,15 +166,15 @@ class DialectSpeechCatalogTest {
 
     @Test fun v161DirectSpeechAndEditedCaregiverLabelsRemainIndependent() {
         val exact = mapOf(
-            ArabicDialect.SYRIAN to mapOf("action.close" to ("أسكر" to "أَسَكِّر"),
-                "action.see" to ("أشوف" to "أَشُوف"),
-                "action.speak" to ("أحكي" to "أَحْكِي")),
-            ArabicDialect.IRAQI to mapOf("action.sit" to ("أقعد" to "أَقْعُد"),
-                "action.read" to ("أقرا" to "أَقْرَا")),
-            ArabicDialect.MOROCCAN to mapOf("action.sit" to ("نجلس" to "نْجْلِس"),
-                "request.headache" to ("راسي كيوجعني" to "رَاسِي كَيُوجَعْنِي")),
+            ArabicDialect.SYRIAN to mapOf("action.close" to ("أسكر" to "أسكر"),
+                "action.see" to ("أشوف" to "أشوف"),
+                "action.speak" to ("أحكي" to "أحكي")),
+            ArabicDialect.IRAQI to mapOf("action.sit" to ("أقعد" to "أقعد"),
+                "action.read" to ("أقرا" to "أقرا")),
+            ArabicDialect.MOROCCAN to mapOf("action.sit" to ("نجلس" to "نجلس"),
+                "request.headache" to ("راسي كيوجعني" to "راسي كيوجعني")),
             ArabicDialect.ALGERIAN to mapOf(
-                "request.toilet" to ("بغيت نروح للتواليت" to "بْغِيت نْرُوح لِلتْوَالِيت"))
+                "request.toilet" to ("بغيت نروح للتواليت" to "بغيت نروح للتواليت"))
         )
         for ((dialect, cases) in exact) for ((key, expected) in cases) {
             val form = DialectSpeechCatalog.resolve(item(key), dialect)
@@ -222,7 +197,7 @@ class DialectSpeechCatalogTest {
     @Test fun previouslySavedStandardDishesUseCorrectedSpeechWithoutDestructiveMigration() {
         for (dish in RegionalDishesCatalog.forDialect(ArabicDialect.STANDARD).dishes) {
             val seed = item(dish.semanticKey)
-            val legacy = seed.copy(ttsPrompt = "أَرُزٌّ بِاللَّحْمْ")
+            val legacy = seed.copy(ttsPrompt = "أرز باللحم")
             val form = DialectSpeechCatalog.resolve(legacy, ArabicDialect.STANDARD)
             assertEquals(dish.semanticKey,
                 DialectSpeechCatalog.cleanSpeech(dish.displayText, dish.ttsPrompt,

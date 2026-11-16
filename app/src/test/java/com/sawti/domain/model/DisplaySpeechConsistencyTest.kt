@@ -8,7 +8,7 @@ import org.junit.Test
 
 /**
  * Permanent test of the actual runtime projection, not merely source-file spelling.
- * Android TTS-specific phonetic helper spellings remain untouched.
+ * Old phonetic respellings are removed; Habibi uses visible words directly.
  * Passing this test is NOT a claim of native-speaker or TTS-listening validation.
  */
 class DisplaySpeechConsistencyTest {
@@ -112,24 +112,6 @@ class DisplaySpeechConsistencyTest {
         .replace(Regex("[؟،؛:!()./\\u200F]"), "")
         .replace(Regex("\\s+"), " ").trim()
 
-    // Only documented device-TTS spellings may differ from the visible label.
-    private val phoneticAllowlist = setOf(
-        "LIBYAN|request.water", "LIBYAN|request.medicine", "LIBYAN|food.water",
-        "LIBYAN|request.cold",
-        "LIBYAN|action.sit", "LIBYAN|action.close", "LIBYAN|action.see",
-        "LIBYAN|action.pray", "LIBYAN|clothing.socks", "LIBYAN|dish.potato_stew",
-        // Review-approved spellings: visible مبكبكة/سفنز vs spoken إِمبكبكة/إِسفنز.
-        "LIBYAN|dish.mbakbaka", "LIBYAN|dish.sfinz",
-        "IRAQI|food.fish", "IRAQI|action.speak", "IRAQI|food.tea", "IRAQI|request.tea",
-        "IRAQI|dish.mint_tea",
-        "LIBYAN|vegetable.garlic", "TUNISIAN|vegetable.garlic",
-        "ALGERIAN|vegetable.garlic", "MOROCCAN|vegetable.garlic",
-        "IRAQI|dish.iraqi.masgouf", "IRAQI|dish.iraqi.fish_mutabbaq",
-        // Egyptian soup is displayed شربة but vocalized شُورْبِةْ by request.
-        "EGYPTIAN|dish.egyptian.bird_tongue_soup",
-        "EGYPTIAN|fruit.pear", "IRAQI|action.sit",
-    )
-
     @Test fun theEightySixAuditedLabelsHaveTheirExactExpectedVisibleForms() {
         assertEquals(86, auditedLabels.size)
         val problems = mutableListOf<String>()
@@ -144,142 +126,75 @@ class DisplaySpeechConsistencyTest {
         assertTrue(problems.joinToString("\n"), problems.isEmpty())
     }
 
-    @Test fun LibyanWrittenCorrectionsHaveTheNaturalNeuralSpeechForms() {
-        val expected = mapOf(
-            "family.son_wife" to ("مرت ولدي" to "مَرْت وَلْدِي"),
-            "dish.mbakbaka" to ("مكرونة مبكبكة" to "مَكَرُونَة مبَكْبَكَة"),
-            "vegetable.peas" to ("بازيلية" to "بَازِيلْيَة"),
-            "dish.zmeeta" to ("زميطة" to "زُمِيطَة"),
-            "dish.sfinz" to ("سفنز" to "سفِنْز"),
-            "clothing.blouse" to ("سورية" to "سُورِيَّة"),
+    @Test fun libyanVocabIsItsOwnUnvowelizedHabibiSpeech() {
+        val names = mapOf(
+            "family.son_wife" to "مرت ولدي",
+            "dish.mbakbaka" to "مكرونة مبكبكة",
+            "vegetable.peas" to "بازيلية",
+            "dish.zmeeta" to "زميطة",
+            "dish.sfinz" to "سفنز",
+            "clothing.blouse" to "سورية",
         )
-        expected.forEach { (key, pair) ->
-            val seed = requireNotNull(seeds[key])
-            val result = DialectSpeechCatalog.resolve(seed, ArabicDialect.LIBYAN)
-            assertEquals("$key label", pair.first, result.displayText)
-            assertEquals("$key speech", pair.second, result.speechText)
+        names.forEach { (key, display) ->
+            val form = DialectSpeechCatalog.resolve(
+                requireNotNull(seeds[key]), ArabicDialect.LIBYAN)
+            assertEquals(key, display, form.displayText)
+            assertEquals(key, display, form.speechText)
         }
     }
 
-    @Test fun reviewedOtherDialectDishesHaveMatchingRuntimeSpeechAndSource() {
+    @Test fun reviewedRegionalDishesSpeakExactlyTheirCleanDisplayWord() {
         val reviewed = mapOf(
-            ArabicDialect.SAUDI to mapOf(
-                "dish.saudi.liver" to ("كبدة حاشي" to "كِبْدَةْ حَاشِي"),
-                "dish.saudi.kabsa" to ("كبسة لحم" to "كَبْسَةْ لَحَمْ"),
-                "dish.saudi.saleeg" to ("سليق طائفي" to "سَلِيقْ طَائِفِي"),
-                "dish.saudi.madhbi" to ("مظبي دجاج" to "مَظْبِي دَجَاجْ"),
-            ),
-            ArabicDialect.IRAQI to mapOf(
-                "family.brother" to ("أخوي" to "أَخُويْ"),
-                "dish.iraqi.rice_kibbeh" to ("كبة تمن" to "كُبَّةْ تِمَّنْ"),
-                "dish.iraqi.tashreeb" to ("تشريب لحم" to "تَشْرِيبْ لَحَمْ"),
-                "dish.iraqi.biryani" to ("برياني عراقي" to "بِرْيَانِي عِرَاقِي"),
-            ),
-            ArabicDialect.SYRIAN to mapOf(
-                "dish.syrian.shakriya" to ("شاكرية برز" to "شَاكْرِيَّهْ بِرِزّْ"),
-                "dish.syrian.maqluba" to ("مقلوبة باذنجان" to "مَقْلُوبِةْ بَاذِنْجَانْ"),
-                "dish.syrian.kebab" to ("كباب حلبي" to "كَبَابْ حَلَبِي"),
-                "dish.syrian.mutabbal" to ("متبل باذنجان" to "مْتَبَّلْ بَاذِنْجَانْ"),
-            ),
-            ArabicDialect.EGYPTIAN to mapOf(
-                "dish.egyptian.mahshi" to ("محشي مشكل" to "مَحْشِي مِشَكِّلْ"),
-                "dish.egyptian.bird_tongue_soup" to ("شربة لسان عصفور" to "شُورْبِةْ لِسَانْ عَصْفُورْ"),
-            ),
-            ArabicDialect.TUNISIAN to mapOf(
-                "dish.tunisian.maqroudh" to ("مقروض قيرواني" to "مَقْرُوضْ قَيْرَوَانِي"),
-            ),
-            ArabicDialect.ALGERIAN to mapOf(
-                "dish.algerian.garantita" to ("كرانتيكا" to "كْرَانْتِيكَا"),
-            ),
+            ArabicDialect.SAUDI to listOf("dish.saudi.liver", "dish.saudi.kabsa",
+                "dish.saudi.saleeg", "dish.saudi.madhbi"),
+            ArabicDialect.IRAQI to listOf("family.brother", "dish.iraqi.rice_kibbeh",
+                "dish.iraqi.tashreeb", "dish.iraqi.biryani"),
+            ArabicDialect.SYRIAN to listOf("dish.syrian.shakriya", "dish.syrian.maqluba",
+                "dish.syrian.kebab", "dish.syrian.mutabbal"),
+            ArabicDialect.EGYPTIAN to listOf("dish.egyptian.mahshi",
+                "dish.egyptian.bird_tongue_soup"),
+            ArabicDialect.TUNISIAN to listOf("dish.tunisian.maqroudh"),
+            ArabicDialect.ALGERIAN to listOf("dish.algerian.garantita"),
         )
         assertEquals(16, reviewed.values.sumOf { it.size })
-        for ((dialect, entries) in reviewed) for ((key, expected) in entries) {
-            val source = requireNotNull(seeds[key]) { "Missing regional card $key" }
-            val form = DialectSpeechCatalog.resolve(source, dialect)
-            assertEquals("$dialect/$key display", expected.first, form.displayText)
-            assertEquals("$dialect/$key speech",
-                DialectSpeechCatalog.cleanSpeech(expected.first, expected.second, dialect),
-                form.speechText)
-            val localized = DialectCatalog.localize(source, dialect)
-            assertEquals("$dialect/$key final TTS", form.speechText, localized.ttsPrompt)
-            if (key.startsWith("dish.")) {
-                val region = requireNotNull(RegionalDishesCatalog.variant(key, dialect))
-                assertEquals("$dialect/$key source display", expected.first, region.displayText)
-                assertEquals("$dialect/$key source TTS", stripPausalSukun(expected.second), region.ttsPrompt)
-            }
+        for ((dialect, keys) in reviewed) for (key in keys) {
+            val source = requireNotNull(seeds[key])
+            val form = DialectSpeechCatalog.resolveForHabibi(source, dialect)
+            assertEquals("$dialect/$key", form.displayText, form.speechText)
+            assertEquals(form.speechText,
+                DialectCatalog.localize(source, dialect).ttsPrompt)
         }
     }
 
-    @Test fun allBuiltInCardsAvoidUnsupportedTtsConsonantGlyphs() {
+    @Test fun builtInSpeechHasNoArtificialVowelsNumbersOrLatinPhonetics() {
         val problems = mutableListOf<String>()
         for (dialect in ArabicDialect.entries) for ((key, seed) in seeds) {
-            val spoken = DialectSpeechCatalog.resolve(seed, dialect).speechText
-            if (spoken.any { it in "چپگڤ" }) problems += "$dialect|$key: $spoken"
+            val text = DialectSpeechCatalog.resolveForHabibi(seed, dialect).speechText
+            if (HabibiSpeechText.hasForbiddenMarksOrNumbers(text) ||
+                text.any { it in 'A'..'Z' || it in 'a'..'z' })
+                problems += "$dialect/$key: $text"
         }
         assertTrue(problems.joinToString("\n"), problems.isEmpty())
     }
 
-    private fun stripPausalSukun(value: String) = value
-        .replace(Regex("""هْ(?=\s|$)"""), "ة")
-        .replace(Regex("""ةْ(?=\s|$)"""), "ة")
-        .replace(Regex("""ْ(?=\s|$)"""), "")
-
-    // Pausal speech may pronounce written ta marbuta as a linked 't',
-    // and tanween may be spoken as a final 'n'. These are spelling/inflection,
-    // not different lexical content; neither needs an exception by word ID.
-    private fun sameWrittenToken(label: String, spoken: String): Boolean =
-        label == spoken ||
-            (label.endsWith("ه") && spoken == label.dropLast(1) + "ت") ||
-            (label.endsWith("ا") && spoken == label.dropLast(1) + "ن") ||
-            (label.endsWith("ء") && spoken == label + "ا")
-
-    private fun sameWrittenPhrase(display: String, speech: String): Boolean {
-        val labels = plain(display).replace("چ", "تش").split(" ")
-        val spoken = plain(speech).split(" ")
-        return labels.size == spoken.size && labels.zip(spoken)
-            .all { (label, actual) -> sameWrittenToken(label, actual) }
+    @Test fun everyBuiltInDisplayedWordMatchesHabibiInputExactly() {
+        for (dialect in ArabicDialect.entries) for ((key, seed) in seeds) {
+            val form = DialectSpeechCatalog.resolveForHabibi(seed, dialect)
+            assertEquals("$dialect/$key", form.displayText, form.speechText)
+        }
     }
 
-    @Test fun allBuiltInCardLabelsMatchSpeechExceptDocumentedPhoneticSpellings() {
-        val problems = mutableListOf<String>()
+    @Test fun hintsNeverReintroduceArtificialPronunciationMarks() {
         for (dialect in ArabicDialect.entries) for ((key, seed) in seeds) {
             val form = DialectSpeechCatalog.resolve(seed, dialect)
-            val allow = "${dialect.name}|$key" in phoneticAllowlist
-            if (!sameWrittenPhrase(form.displayText, form.speechText) && !allow)
-                problems += "$dialect|$key: '${form.displayText}' vs '${form.speechText}'"
+            assertFalse("$dialect/$key",
+                HabibiSpeechText.hasForbiddenMarksOrNumbers(form.phonemicCue))
         }
-        assertTrue("Unapproved display/audio differences (count=${problems.size}):\\n" +
-            problems.joinToString("\\n"), problems.isEmpty())
-    }
-
-    @Test fun phonemicCueMatchesItsSpokenTargetWord() {
-        val problems = mutableListOf<String>()
-        for (dialect in ArabicDialect.entries) for ((key, seed) in seeds) {
-            val form = DialectSpeechCatalog.resolve(seed, dialect)
-            val cue = plain(PhonemicCue.forSpeech(form.phonemicCue))
-            // Multiword communication requests cue the requested object ("water"),
-            // not the opening verb ("I want"); both are valid if spoken.
-            val available = plain(form.speechText).split(" ").filter { it.isNotEmpty() }
-                .flatMap { word ->
-                    buildList {
-                        add(word.first())
-                        if (word.startsWith("ال") && word.length > 2) add(word[2])
-                        if (word.startsWith("لل") && word.length > 2) add(word[2])
-                        // Syrian colloquial "عالحمام" retains the target word after "عال".
-                        if (word.startsWith("عال") && word.length > 3) add(word[3])
-                    }
-                }.toSet()
-            if (cue.isNotBlank() && cue[0] !in available &&
-                "${dialect.name}|$key" !in phoneticAllowlist)
-                problems += "$dialect|$key: cue '${form.phonemicCue}', speech '${form.speechText}'"
-        }
-        assertTrue("Misleading first-syllable hints:\\n" + problems.joinToString("\\n"),
-            problems.isEmpty())
     }
 
     @Test fun personalLabelAndSpeechOverridesAreNeverReplaced() {
         val sample = requireNotNull(seeds["family.son"]).copy(
-            displayText = "اسم مخصص", ttsPrompt = "نُطْقِي الْخَاصّ",
+            displayText = "اسم مخصص", ttsPrompt = "نطقي الخاص",
             customTextFields = CardDetails.LABEL or CardDetails.SPEECH,
         )
         for (dialect in ArabicDialect.entries) {

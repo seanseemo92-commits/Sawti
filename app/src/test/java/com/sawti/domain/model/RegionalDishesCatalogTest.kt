@@ -8,11 +8,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class RegionalDishesCatalogTest {
-    private fun stripPausalSukun(value: String) = value
-        .replace(Regex("""هْ(?=\s|$)"""), "ة")
-        .replace(Regex("""ةْ(?=\s|$)"""), "ة")
-        .replace(Regex("""ْ(?=\s|$)"""), "")
-
     @Test fun everyDialectHasCompleteAndDistinctCuisine() {
         assertEquals(9, ArabicDialect.entries.size)
         assertTrue(RegionalDishesCatalog.allDialectsCovered())
@@ -53,34 +48,26 @@ class RegionalDishesCatalogTest {
         assertEquals(120, RegionalDishesCatalog.additionalDialects().size)
     }
 
-    @Test fun fiveUserRequestedLibyanDishesHaveExactSpeechAndCue() {
-        val expected = mapOf(
-            "مبطن" to ("مِبَطَّنْ" to "مِبَـ..."),
-            "حرايمي" to ("حَرَايْمِي" to "حَـ..."),
-            "سفنز" to ("سفِنْز" to "سفِـ..."),
-            "زميطة" to ("زُمِيطَة" to "زُـ..."),
-            "عيش باللبن" to ("عِيش بِاللَّبَن" to "عِي..."),
-        )
+    @Test fun fiveUserRequestedLibyanDishesUseWrittenArabic() {
+        val expected = setOf("مبطن", "حرايمي", "سفنز", "زميطة", "عيش باللبن")
         val dishes = RegionalDishesCatalog.forDialect(ArabicDialect.LIBYAN).dishes
-        assertEquals(expected.keys, dishes.map { it.displayText }.toSet())
-        dishes.forEach {
-            assertEquals(stripPausalSukun(expected.getValue(it.displayText).first), it.ttsPrompt)
-            assertEquals(expected.getValue(it.displayText).second, it.phonemicCue)
+        assertEquals(expected, dishes.map { it.displayText }.toSet())
+        dishes.forEach { dish ->
+            assertEquals(dish.displayText, dish.ttsPrompt)
+            assertTrue(dish.phonemicCue.isNotBlank())
+            assertFalse(HabibiSpeechText.hasForbiddenMarksOrNumbers(dish.ttsPrompt))
         }
         val saved = WordSeed.itemEntities().filter {
             it.semanticKey in dishes.map { dish -> dish.semanticKey }
         }
         assertEquals(5, saved.size)
-        assertTrue(saved.all { it.subgroup == RegionalDishesCatalog.subgroupFor(ArabicDialect.LIBYAN) && !it.sentencePrompt.isNullOrBlank() })
-        saved.forEach { source ->
-            val dish = DialectCatalog.localize(source.toDomain(), ArabicDialect.LIBYAN)
-            // The new projection may propose a different speech or cue while
-            // retaining the historical user-requested seed for reversibility.
-            assertEquals(source.toDomain(), dish.forEditing())
-            assertTrue(dish.ttsPrompt.isNotBlank())
-            assertTrue(dish.phonemicCue.isNotBlank())
+        saved.forEach { row ->
+            val result = DialectCatalog.localize(row.toDomain(), ArabicDialect.LIBYAN)
+            assertEquals(row.toDomain(), result.forEditing())
+            assertEquals(result.displayText, result.speechText)
         }
     }
+
     @Test fun exactFullOrderedListsAreNeverAccidentallyTruncatedOrRenamed() {
         val expected = mapOf(
             ArabicDialect.TUNISIAN to "كسكسي بالحوت|لبلابي|بريك|كفتاجي|طاجين تونسي|صحن تونسي|شربة لسان عصفور|ملوخية تونسية|مرقة جلبانة|مقرونة بالصلصة|عجة بالمرقاز|سلاطة مشوية|فريكاسي|مقروض قيرواني|بامبالوني",
@@ -101,22 +88,16 @@ class RegionalDishesCatalogTest {
         }
     }
 
-    @Test fun culturallyDistinctPronunciationsAndCluesStayVerbatim() {
-        val examples = mapOf(
-            ArabicDialect.TUNISIAN to Triple("كسكسي بالحوت", "كُسْكْسِي بِالحُوتْ", "كُسْـ..."),
-            ArabicDialect.EGYPTIAN to Triple("كباب وحواوشي", "كَبَابْ وَحَوَاوْشِي", "كَـ..."),
-            ArabicDialect.ALGERIAN to Triple("طعام", "طْعَامْ", "طْعَا..."),
-            ArabicDialect.MOROCCAN to Triple("قطبان", "قُطْبَانْ", "قُطْـ..."),
-            ArabicDialect.SYRIAN to Triple("كوسا بلبن", "كُوسَا بِلَبَنْ", "كُو..."),
-            ArabicDialect.IRAQI to Triple("سمچ مسكوف", "سِمَتْشْ مَسْكُوفْ", "سِـ..."),
-            ArabicDialect.SAUDI to Triple("رز بخاري", "رُزْ بُخَارِي", "بُـ..."),
-            ArabicDialect.STANDARD to Triple("أرز باللحم", "أَرُزٌّ بِاللَّحْمْ", "أَ..."),
-        )
-        examples.forEach { (dialect, expected) ->
-            val item = RegionalDishesCatalog.forDialect(dialect).dishes.single { it.displayText == expected.first }
-            assertEquals(stripPausalSukun(expected.second).replace("أَرُزٌّ", "أَرُزّ"), item.ttsPrompt)
-            assertEquals(expected.third, item.phonemicCue)
+    @Test fun allNineCuisineListsContainOnlyPlainHabibiSpeech() {
+        for (dialect in ArabicDialect.entries) for (
+            dish in RegionalDishesCatalog.forDialect(dialect).dishes
+        ) {
+            assertEquals(dish.semanticKey, dish.displayText, dish.ttsPrompt)
+            assertFalse(dish.semanticKey,
+                HabibiSpeechText.hasForbiddenMarksOrNumbers(dish.ttsPrompt))
+            assertTrue(dish.phonemicCue.isNotBlank())
         }
     }
+
 
 }

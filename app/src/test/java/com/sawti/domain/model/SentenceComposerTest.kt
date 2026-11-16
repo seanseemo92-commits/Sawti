@@ -12,9 +12,9 @@ class SentenceComposerTest {
     )
 
     @Test fun concatenatesSpokenPromptsWithPunctuation() {
-        val strip = listOf(SentenceComposer.piece(word(1,"نبي", "نَبِّيْ")),
-            SentenceComposer.piece(word(2,"شاهي","شَاهِي")))
-        assertEquals("نَبِّيْ، شَاهِي", SentenceComposer.spokenSentence(strip))
+        val strip = listOf(SentenceComposer.piece(word(1,"نبي", "نبي")),
+            SentenceComposer.piece(word(2,"شاهي","شاهي")))
+        assertEquals("نبي، شاهي", SentenceComposer.spokenSentence(strip))
     }
 
     @Test fun localizedLibyanPronunciationSurvivesSentenceCompositionWithoutRenormalizing() {
@@ -29,7 +29,7 @@ class SentenceComposerTest {
         val parts = listOf(SentenceComposer.piece(rooster), SentenceComposer.piece(rabbit))
         assertEquals(rooster.ttsPrompt, SentenceComposer.spokenPieces(parts)[0].speech)
         assertEquals(rabbit.ttsPrompt, SentenceComposer.spokenPieces(parts)[1].speech)
-        assertEquals("دِيك، أَرْنَب", SentenceComposer.spokenSentence(parts))
+        assertEquals("ديك، أرنب", SentenceComposer.spokenSentence(parts))
     }
 
     @Test fun cappedAndSupportsRepeatedWords() {
@@ -40,26 +40,26 @@ class SentenceComposerTest {
     }
     @Test fun spokenPiecesKeepOrderAndIndexesWithoutEngineWordTimings() {
         val strip = listOf(
-            SentenceComposer.piece(word(1, "نبي", "نَبِّيْ،")),
-            SentenceComposer.piece(word(2, "مية", "مِيَّهْ")),
-            SentenceComposer.piece(word(3, "توا", "تَوَّا")),
+            SentenceComposer.piece(word(1, "نبي", "نبي،")),
+            SentenceComposer.piece(word(2, "مية", "ميه")),
+            SentenceComposer.piece(word(3, "توا", "توا")),
         )
         val pieces = SentenceComposer.spokenPieces(strip)
         assertEquals(3, pieces.size)
         assertEquals(listOf(0, 1, 2), pieces.map { it.pieceIndex })
         assertEquals(listOf(1L, 2L, 3L), pieces.map { it.sourceId })
-        assertEquals(listOf("نَبِّيْ", "مِيَّهْ", "تَوَّا"), pieces.map { it.speech })
-        assertEquals("نَبِّيْ، مِيَّهْ، تَوَّا", SentenceComposer.spokenSentence(strip))
+        assertEquals(listOf("نبي", "ميه", "توا"), pieces.map { it.speech })
+        assertEquals("نبي، ميه، توا", SentenceComposer.spokenSentence(strip))
     }
 
     @Test fun sentencePiecePreservesRecordingAndChoosesSpeechText() {
-        val original = word(18, "نبي مية", "نَبِّيْ إِمِّيَّهْ", "/data/user/0/com.sawti/files/custom_audio/test.m4a")
+        val original = word(18, "نبي مية", "نبي مية", "/data/user/0/com.sawti/files/custom_audio/test.m4a")
         val piece = SentenceComposer.piece(original)
         assertEquals(original.speechText, piece.spokenText)
         assertEquals(original.audioPath, piece.audioPath)
         val spoken = SentenceComposer.spokenPieces(listOf(piece)).single()
         assertEquals(original.audioPath, spoken.audioPath)
-        assertEquals("نَبِّيْ إِمِّيَّهْ", spoken.speech)
+        assertEquals("نبي مية", spoken.speech)
     }
 
     @Test fun blankSpeechFallsBackToDisplayWithoutLosingOptionalAudio() {
