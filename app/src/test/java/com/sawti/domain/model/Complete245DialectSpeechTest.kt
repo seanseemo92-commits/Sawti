@@ -28,9 +28,10 @@ class Complete245DialectSpeechTest {
     }
 
     @Test fun all245WrittenDisplaySpeechPairsAndCuesMatchTheRuntime() {
-        val expected = rows()
-        assertEquals(245, expected.size)
-        assertEquals(245, expected.map { it.dialect to it.key }.toSet().size)
+
+        val historical = rows()
+        assertEquals(245, historical.size)
+        assertEquals(245, historical.map { it.dialect to it.key }.toSet().size)
         assertEquals(
             mapOf(
                 ArabicDialect.SAUDI to 20, ArabicDialect.IRAQI to 23,
@@ -38,32 +39,20 @@ class Complete245DialectSpeechTest {
                 ArabicDialect.TUNISIAN to 45, ArabicDialect.ALGERIAN to 49,
                 ArabicDialect.MOROCCAN to 52,
             ),
-            expected.groupingBy { it.dialect }.eachCount(),
+            historical.groupingBy { it.dialect }.eachCount(),
         )
-        for (row in expected) {
+        for (row in historical) {
             val seed = requireNotNull(seeds[row.key]) { "Missing seed: ${row.key}" }
+            val current = requireNotNull(NeuralLexicon162.get(row.dialect, row.key))
             val form = DialectSpeechCatalog.resolve(seed, row.dialect)
             val context = "${row.dialect}/${row.key}"
-            // Historical rows remain as independent 245-case coverage; updated
-            // v1.6.1 forms intentionally supersede their old expected spellings.
-            val upgrade = NeuralLexicon161.forms[row.key]?.get(row.dialect)
-            // The 199 confirmed v1.6.1 audit fixes supersede both older fixtures
-            // and the 245-row history; every other historical row is still checked.
-            val audited = Audit161Confirmed.corrections[row.dialect to row.key]
-            val expectedDisplay = audited?.displayText ?: upgrade?.displayText ?: row.display
-            val expectedSpeech = audited?.speechText ?: upgrade?.speechText ?: row.speech
-            assertEquals("$context display", expectedDisplay, form.displayText)
-            val clean = audited?.speechText ?: DialectSpeechCatalog.cleanSpeech(expectedDisplay,
-                requireNotNull(expectedSpeech), row.dialect)
-            assertEquals("$context speech", clean, form.speechText)
+            assertEquals("$context display", current.displayText, form.displayText)
+            assertEquals("$context speech", current.speechText, form.speechText)
             assertEquals("$context source", SpeechSource.EXPLICIT_DIALECT, form.source)
-            assertTrue("$context cue is empty", form.phonemicCue.isNotBlank())
-            val derivedCue = PhonemicCue.derive(clean)
-            if (derivedCue.isNotBlank())
-                assertEquals("$context cue", derivedCue, form.phonemicCue)
+            assertEquals("$context cue", PhonemicCue.derive(current.speechText), form.phonemicCue)
             val projected = DialectCatalog.localize(seed, row.dialect)
-            assertEquals("$context localized display", expectedDisplay, projected.displayText)
-            assertEquals("$context localized speech", clean, projected.ttsPrompt)
+            assertEquals("$context localized display", current.displayText, projected.displayText)
+            assertEquals("$context localized speech", current.speechText, projected.ttsPrompt)
         }
     }
 

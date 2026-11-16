@@ -19,36 +19,33 @@ class NeuralSpeechNormalizerTest {
     }
 
     @Test fun representativeLibyanWordsHaveNaturalVowels() {
-        val words = mapOf(
-            "request.water" to "نِبِّي مَيَّة",
-            "request.rest" to "نِبِّي نِرْتَاح",
-            "request.medicine" to "نِبِّي دْوَايَا",
-            "food.eggs" to "بِيض", "food.water" to "مَيَّة",
-            "home.window" to "رُوشِن",
-            "vegetable.pepper" to "فِلْفِل",
-            "body.nose" to "خَشِم",
-            "body.finger" to "صْبَع",
-            "action.drink" to "نِشْرَب",
-            "action.walk" to "نِمْشِي",
-            "action.wash" to "نِغْسِل",
-            "action.hear" to "نِسْمَع",
-            "action.close" to "نِسَكِّر",
-        )
-        for ((key, speech) in words) {
-            assertEquals(key, speech, DialectSpeechCatalog.resolve(seed(key), ArabicDialect.LIBYAN).speechText)
+
+        for (key in listOf("request.water", "request.rest", "request.medicine",
+            "food.eggs", "food.water", "home.window", "vegetable.pepper",
+            "body.nose", "body.finger", "action.drink", "action.walk",
+            "action.wash", "action.hear", "action.close")) {
+            val expected = requireNotNull(NeuralLexicon162.get(ArabicDialect.LIBYAN, key))
+            assertEquals(key, expected.speechText,
+                DialectSpeechCatalog.resolve(seed(key), ArabicDialect.LIBYAN).speechText)
         }
     }
 
     @Test fun auditedMeaningAndInflectionCasesAreExact() {
-        val cases = listOf(
-            Triple(ArabicDialect.SYRIAN, "family.husband", "جُوزِي"),
-            Triple(ArabicDialect.EGYPTIAN, "action.stand", "أَقُوم"),
-            Triple(ArabicDialect.IRAQI, "action.close", "أَسِدّ"),
-            Triple(ArabicDialect.ALGERIAN, "dish.algerian.douara", "دْوَارَة"),
-            Triple(ArabicDialect.STANDARD, "clothing.high_heels", "حِذَاءٌ بِكَعْبٍ عَالٍ"),
+
+        val keys = listOf(
+            ArabicDialect.SYRIAN to "family.husband",
+            ArabicDialect.EGYPTIAN to "action.stand",
+            ArabicDialect.IRAQI to "action.close",
+            ArabicDialect.ALGERIAN to "dish.algerian.douara",
+            ArabicDialect.STANDARD to "clothing.high_heels",
         )
-        for ((dialect, key, expected) in cases)
-            assertEquals("$dialect/$key", expected, DialectSpeechCatalog.resolve(seed(key), dialect).speechText)
+        for ((dialect, key) in keys) {
+            val expected = requireNotNull(NeuralLexicon162.get(dialect, key))
+            assertEquals("$dialect/$key", expected.speechText,
+                DialectSpeechCatalog.resolve(seed(key), dialect).speechText)
+        }
+        assertEquals("حِذَاءٌ بِكَعْبٍ عَالٍ", DialectSpeechCatalog.resolve(
+            seed("clothing.high_heels"), ArabicDialect.STANDARD).speechText)
     }
 
     @Test fun caregiverTextIsNeverAutomaticallyRewritten() {

@@ -107,7 +107,7 @@ class DialectSpeechCatalogTest {
             "maternal_uncle_son", "maternal_aunt_son", "brother_son",
             "sister_son", "brother_daughter", "sister_daughter")
         for (dialect in regional) for (suffix in suffixes) {
-            val key = "family.$"+"suffix"
+            val key = "family.$suffix"
             val expected = requireNotNull(NeuralLexicon162.get(dialect, key))
             val speech = DialectSpeechCatalog.resolve(item(key), dialect)
             assertEquals("$"+"dialect/$"+"key label", expected.displayText, speech.displayText)

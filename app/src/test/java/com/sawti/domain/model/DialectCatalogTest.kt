@@ -59,10 +59,14 @@ class DialectCatalogTest {
     }
 
     @Test fun returningFromAnotherDialectRestoresCanonicalSource() {
+
         val source = item("food.bread")
         val egyptian = DialectCatalog.localize(source, ArabicDialect.EGYPTIAN)
         assertEquals("عيش", egyptian.displayText)
-        assertEquals(source, DialectCatalog.localize(egyptian, ArabicDialect.STANDARD))
+        val standard = DialectCatalog.localize(egyptian, ArabicDialect.STANDARD)
+        val currentStandard = requireNotNull(NeuralLexicon162.get(ArabicDialect.STANDARD, "food.bread"))
+        assertEquals(currentStandard.displayText, standard.displayText)
+        assertEquals(source, standard.forEditing())
         assertEquals(source, egyptian.forEditing())
     }
 

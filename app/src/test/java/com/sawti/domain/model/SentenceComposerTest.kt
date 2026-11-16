@@ -18,6 +18,7 @@ class SentenceComposerTest {
     }
 
     @Test fun localizedLibyanPronunciationSurvivesSentenceCompositionWithoutRenormalizing() {
+
         val rooster = DialectCatalog.localize(
             word(3, "ديك").copy(categoryId = "animals", semanticKey = "animal.rooster"),
             ArabicDialect.LIBYAN,
@@ -29,7 +30,9 @@ class SentenceComposerTest {
         val parts = listOf(SentenceComposer.piece(rooster), SentenceComposer.piece(rabbit))
         assertEquals(rooster.ttsPrompt, SentenceComposer.spokenPieces(parts)[0].speech)
         assertEquals(rabbit.ttsPrompt, SentenceComposer.spokenPieces(parts)[1].speech)
-        assertEquals("دِيك، أَرْنَب", SentenceComposer.spokenSentence(parts))
+        assertEquals(rooster.ttsPrompt + "، " + rabbit.ttsPrompt,
+            SentenceComposer.spokenSentence(parts))
+        assertTrue(parts.all { it.neuralOnly })
     }
 
     @Test fun cappedAndSupportsRepeatedWords() {

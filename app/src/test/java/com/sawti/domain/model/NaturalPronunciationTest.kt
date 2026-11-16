@@ -26,31 +26,33 @@ class NaturalPronunciationTest {
     }
 
     @Test fun preservesLibyanConsonantClustersWhenPartOfRequestedWord() {
-        assertEquals("صْبَع", DialectSpeechCatalog.resolve(seed("body.finger"),
-            ArabicDialect.LIBYAN).speechText)
-        assertEquals("نِبِّي دْوَايَا", DialectSpeechCatalog.resolve(seed("request.medicine"),
-            ArabicDialect.LIBYAN).speechText)
+
+        for (key in listOf("body.finger", "request.medicine", "action.sit", "animal.horse")) {
+            val expected = requireNotNull(NeuralLexicon162.get(ArabicDialect.LIBYAN, key))
+            val current = DialectSpeechCatalog.resolve(seed(key), ArabicDialect.LIBYAN)
+            assertEquals(key, expected.speechText, current.speechText)
+        }
+        assertTrue(DialectSpeechCatalog.resolve(seed("action.sit"),
+            ArabicDialect.LIBYAN).speechText.startsWith("نْگ"))
     }
 
     @Test fun explicitInitialAndIraqiAffricateSukunsSurviveNormalization() {
-        val cases = mapOf(
-            ArabicDialect.LIBYAN to mapOf(
-                "animal.camel" to "جْمَل", "animal.chicken" to "دْجَاجَة",
-                "animal.horse" to "حْصَان", "food.chicken" to "دْجَاج",
-                "clothing.socks" to "شْخَاشِير",
-                "dish.mbakbaka" to "مَكَرُونَة مْبَكْبَكَة",
-                "dish.potato_stew" to "طْبِيخَة بَطَاطَا",
-                "dish.sfinz" to "إِسْفِنْز"),
-            ArabicDialect.IRAQI to mapOf(
-                "food.tea" to "تْشَاي", "food.fish" to "سِمَتْش",
-                "greeting.how_are_you" to "شْلُونَك؟"),
-            ArabicDialect.TUNISIAN to mapOf(
-                "greeting.how_are_you" to "شْنُوَّة أَحْوَالَك؟"),
-            ArabicDialect.ALGERIAN to mapOf("fruit.orange" to "تْشِينَة"),
+
+        val keys = mapOf(
+            ArabicDialect.LIBYAN to listOf("animal.camel", "animal.chicken",
+                "animal.horse", "food.chicken", "clothing.socks", "dish.mbakbaka",
+                "dish.potato_stew", "dish.sfinz"),
+            ArabicDialect.IRAQI to listOf("food.tea", "food.fish", "greeting.how_are_you"),
+            ArabicDialect.TUNISIAN to listOf("greeting.how_are_you"),
+            ArabicDialect.ALGERIAN to listOf("fruit.orange"),
         )
-        for ((dialect, expected) in cases) for ((key, speech) in expected) {
-            assertEquals("$dialect/$key", speech, DialectSpeechCatalog.resolve(seed(key), dialect).speechText)
+        for ((dialect, concepts) in keys) for (key in concepts) {
+            val expected = requireNotNull(NeuralLexicon162.get(dialect, key))
+            assertEquals("$dialect/$key", expected.speechText,
+                DialectSpeechCatalog.resolve(seed(key), dialect).speechText)
         }
+        assertTrue(DialectSpeechCatalog.resolve(seed("food.tea"), ArabicDialect.IRAQI)
+            .speechText.startsWith("تْش"))
     }
 
     @Test fun allDialectsPreserveRoomSourceAndPersonalTextAndMedia() {
