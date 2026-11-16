@@ -69,7 +69,7 @@ class NeuralVocalizationAuditTest {
         }
         for ((dialect, key) in listOf(
             ArabicDialect.SYRIAN to "home.blanket",
-            ArabicDialect.IRAQI to "dish.mint_tea",
+            ArabicDialect.IRAQI to "food.tea",
             ArabicDialect.MOROCCAN to "animal.rabbit")) {
             val expected = requireNotNull(NeuralLexicon162.get(dialect, key))
             assertEquals("$dialect/$key", expected.speechText, form(key, dialect).speechText)
