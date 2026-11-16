@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "voice": "ar-LY-ImanNeural",
-  "rate": "-18%",
+  "voice": "ar-EG-ShakirNeural",
+  "rate": "-8%",
   "entries": {
     "action.close": {
       "file": "action.close.mp3",
@@ -81,7 +81,7 @@
     },
     "animal.cow": {
       "file": "animal.cow.mp3",
-      "speechText": "بَقْرَة"
+      "speechText": "بُجْرَهْ"
     },
     "animal.dog": {
       "file": "animal.dog.mp3",
@@ -1087,5 +1087,6 @@
       "file": "vegetable.zucchini.mp3",
       "speechText": "كُوسَة"
     }
-  }
+  },
+  "pitch": "+12Hz"
 }
