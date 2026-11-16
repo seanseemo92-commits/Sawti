@@ -63,4 +63,41 @@ class NeuralSpeechNormalizerTest {
             assertEquals(original, view.forEditing())
         }
     }
+
+    @Test fun everyNeuralSpeechEntryUsesSupportedCharacters() {
+        val catalogs = NeuralLexicon162.allEntries()
+        assertEquals(9, catalogs.size)
+        assertEquals(2399, catalogs.values.sumOf { it.size })
+        val unsupported = setOf('گ', 'ڨ', 'چ', 'پ', 'ڤ')
+        for ((dialect, records) in catalogs) for ((key, entry) in records) {
+            assertTrue("$dialect/$key has an unsupported speech character: ${entry.speechText}",
+                entry.speechText.none { it in unsupported })
+        }
+        // The CSV explicitly retains six native Iraqi display spellings with چ.
+        // Display labels are NOT sent to neural synthesis; their speech uses تْش.
+        val iraqiCh = catalogs.getValue(ArabicDialect.IRAQI)
+            .filterValues { 'چ' in it.displayText }.keys
+        assertEquals(setOf("request.tea", "dish.iraqi.masgouf",
+            "dish.iraqi.fish_mutabbaq", "food.fish", "food.tea",
+            "action.speak"), iraqiCh)
+        assertTrue(catalogs.filterKeys { it != ArabicDialect.IRAQI }.values
+            .flatMap { it.values }.none { 'چ' in it.displayText })
+    }
+
+    @Test fun exactHotfixFormsAndFinalSukunSurvive() {
+        val examples = listOf(
+            Triple(ArabicDialect.LIBYAN, "action.sit", "نْقَعْمِزْ"),
+            Triple(ArabicDialect.LIBYAN, "action.sleep", "نُرْقُدْ"),
+            Triple(ArabicDialect.LIBYAN, "action.stand", "نُوقَفْ"),
+            Triple(ArabicDialect.LIBYAN, "dish.osban", "عُصْبَانْ"),
+            Triple(ArabicDialect.IRAQI, "fruit.mandarin", "لَالَنْكِي"),
+            Triple(ArabicDialect.IRAQI, "body.mouth", "حَلِكْ"),
+        )
+        for ((dialect, key, expected) in examples) {
+            assertEquals("$dialect/$key", expected,
+                DialectSpeechCatalog.resolve(seed(key), dialect).speechText)
+        }
+        assertEquals("نْقَعْمِزْ", NeuralSpeechNormalizer.normalize("نْگَعْمِزْ"))
+        assertEquals("رَجْ فْ بْ", NeuralSpeechNormalizer.normalize("رَچْ ڤْ پْ"))
+    }
 }
