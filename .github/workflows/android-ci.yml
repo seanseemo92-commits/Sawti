@@ -24,6 +24,10 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+      - name: Export speech catalog and validate Habibi-only offline packs
+        run: |
+          ./gradlew --no-daemon :app:testDebugUnitTest --tests 'com.sawti.domain.model.ExportSpeechCatalogTest'
+          python3 scripts/verify_habibi_packs.py
       - name: Build debug APK
         run: ./gradlew :app:assembleDebug
       - name: Upload debug APK

@@ -39,3 +39,9 @@ secrets.properties
 *.apk
 *.aab
 *.apks
+
+# Licensed private speaker references never belong in a public repository
+/scripts/ref_voices/*.wav
+/scripts/ref_voices/*.mp3
+/scripts/ref_voices/*.flac
+/scripts/ref_voices/*.m4a
