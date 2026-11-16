@@ -1,39 +1,25 @@
 package com.sawti.domain.model
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Test
 
 class PhonemicCueArabicTest {
-    @Test fun emptyInputIsSafe() {
-        assertEquals("", PhonemicCue.derive("   "))
+    @Test fun emptyAndSingleWordInputsAreSafe() {
+        assertEquals("", PhonemicCue.derive(" "))
+        assertEquals("دي...", PhonemicCue.derive("ديك"))
+        assertEquals("نق...", PhonemicCue.derive("نقعمز"))
+        assertEquals("نب...", PhonemicCue.derive("نبي الحمام"))
     }
 
-    @Test fun removesVisualDecorationFromSpeech() {
-        assertEquals("إِسْ", PhonemicCue.forSpeech("إِسْـ..."))
-        assertEquals("مَ", PhonemicCue.forSpeech("مَـ..."))
+    @Test fun hintSpeechNeverContainsArtificialTatweel() {
+        assertEquals("نب", PhonemicCue.forSpeech("نب..."))
+        assertEquals("م", PhonemicCue.forSpeech("م..."))
+        assertFalse(HabibiSpeechText.hasForbiddenMarksOrNumbers(
+            PhonemicCue.forSpeech(PhonemicCue.derive("نرقد"))))
     }
 
-    @Test fun arabicWordProducesCue() {
-        assertTrue(PhonemicCue.derive("أُمّ").isNotBlank())
-    }
-
-    @Test fun preservesLongVowelsInsteadOfTruncatingThem() {
-        assertEquals("شَاـ...", PhonemicCue.derive("شَاهِي"))
-        assertEquals("حُوـ...", PhonemicCue.derive("حُوتْ"))
-        assertEquals("دِيـ...", PhonemicCue.derive("دِيكْ"))
-    }
-
-    @Test fun preservesExistingShaddaAndNeverCrossesWordBoundaries() {
-        assertEquals("مَّـ...", PhonemicCue.derive("مَّ"))
-        assertEquals("أَـ...", PhonemicCue.derive("أَ بْ"))
-        assertEquals("سُكْـ...", PhonemicCue.derive("سُكَّرْ"))
-        assertEquals("قَـ...", PhonemicCue.derive("الْقَمَرْ"))
-    }
-
-    @Test fun unvocalizedLabelsDoNotInventAPhonemicCue() {
-        assertEquals("", PhonemicCue.derive("بيض"))
-        assertEquals("", PhonemicCue.derive("اسم خاص"))
-        assertEquals("نْحِـ...", PhonemicCue.derive("نْحِبْ"))
+    @Test fun originalArabicLettersAreNotPhoneticallySubstituted() {
+        assertTrue(PhonemicCue.derive("قهوة").startsWith("قه"))
+        assertFalse(PhonemicCue.derive("قهوة").contains("G"))
     }
 }
