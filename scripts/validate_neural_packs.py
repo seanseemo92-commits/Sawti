@@ -2,7 +2,7 @@
 """Fail closed if any of the nine offline neural packs is incomplete or stale."""
 import json
 from pathlib import Path
-from generate_neural_voices import VOICES, load_catalog
+from generate_neural_voices import VOICES, LIBYAN_TEACHER, load_catalog
 
 ROOT = Path("app/src/main/assets/neural_tts")
 CATALOG = Path("app/build/speech_catalog.json")
@@ -20,10 +20,14 @@ def main():
         if not path.is_file():
             raise SystemExit(f"Missing neural manifest: {path}")
         manifest = json.loads(path.read_text(encoding="utf-8"))
+        expected_voice = LIBYAN_TEACHER["voice"] if dialect == "LIBYAN" else VOICES[dialect][0]
+        expected_rate = LIBYAN_TEACHER["rate"] if dialect == "LIBYAN" else "-18%"
+        expected_pitch = LIBYAN_TEACHER["pitch"] if dialect == "LIBYAN" else "+0Hz"
         if (manifest.get("version") != 1 or
-                manifest.get("voice") not in VOICES[dialect] or
-                manifest.get("rate") != "-18%"):
-            raise SystemExit(f"Invalid neural manifest version/voice: {path}")
+                manifest.get("voice") != expected_voice or
+                manifest.get("rate") != expected_rate or
+                manifest.get("pitch", "+0Hz") != expected_pitch):
+            raise SystemExit(f"Invalid neural manifest version/voice/rate/pitch: {path}")
         actual = manifest.get("entries")
         if not isinstance(actual, dict) or set(actual) != set(expected):
             missing = set(expected) - set(actual or {})
