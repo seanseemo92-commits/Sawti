@@ -1,7 +1,7 @@
 name: Sawti Android build and validation
 on:
   push:
-    branches: [main, feature/quran-full-recitation-cache-20261111]
+    branches: [main, feature/quran-full-recitation-cache-20261111, fix/libyan-g-pronunciation-20261116]
   pull_request:
     branches: [main]
   workflow_dispatch:
