@@ -47,20 +47,16 @@ class DisplaySpeechConsistencyTest {
     }
 
     @Test fun allBuiltInCardsAvoidUnsupportedTtsConsonantGlyphs() {
-        val allowedG = setOf(ArabicDialect.LIBYAN, ArabicDialect.SAUDI,
-            ArabicDialect.IRAQI, ArabicDialect.TUNISIAN,
-            ArabicDialect.MOROCCAN, ArabicDialect.ALGERIAN)
-        var countG = 0
+        val unsupported = setOf('گ', 'ڨ', 'چ', 'پ', 'ڤ')
+        var count = 0
         for (dialect in ArabicDialect.entries) for ((key, _) in seeds) {
             val row = NeuralLexicon162.get(dialect, key) ?: continue
-            assertFalse("$"+"dialect/$"+"key visible g", row.displayText.any { it == 'گ' || it == 'ڨ' })
-            if (row.speechText.any { it == 'گ' || it == 'ڨ' }) {
-                assertTrue("$"+"dialect/$"+"key unexpected g", dialect in allowedG)
-                countG++
-            }
+            assertTrue("$"+ "dialect/$"+"key contains OOV speech characters",
+                row.speechText.none { it in unsupported })
             assertFalse("$"+"dialect/$"+"key invalid shadda+sukun", "ّْ" in row.speechText)
+            count++
         }
-        assertTrue("Intentional g consonants must not be stripped", countG >= 79)
+        assertEquals(2399, count)
     }
 
     @Test fun allBuiltInCardLabelsMatchSpeechExceptDocumentedPhoneticSpellings() {
