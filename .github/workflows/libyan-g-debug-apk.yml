@@ -4,6 +4,9 @@ on:
     branches: [fix/libyan-g-pronunciation-20261116]
     paths:
       - '.github/workflows/libyan-g-debug-apk.yml'
+      - 'app/src/test/java/com/sawti/domain/model/NaturalPronunciationTest.kt'
+      - 'app/src/test/java/com/sawti/domain/model/NeuralSpeechNormalizerTest.kt'
+      - 'app/src/test/java/com/sawti/domain/model/NeuralOnlyV162Test.kt'
   workflow_dispatch:
 permissions:
   contents: read
