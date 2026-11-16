@@ -81,7 +81,7 @@
     },
     "animal.cow": {
       "file": "animal.cow.mp3",
-      "speechText": "بَگْرَة"
+      "speechText": "بَقْرَة"
     },
     "animal.dog": {
       "file": "animal.dog.mp3",
@@ -101,7 +101,7 @@
     },
     "animal.rabbit": {
       "file": "animal.rabbit.mp3",
-      "speechText": "گْنِيَّة"
+      "speechText": "قْنِيَّة"
     },
     "animal.rooster": {
       "file": "animal.rooster.mp3",
@@ -173,7 +173,7 @@
     },
     "body.neck": {
       "file": "body.neck.mp3",
-      "speechText": "رَگْبَة"
+      "speechText": "رَقْبَة"
     },
     "body.nose": {
       "file": "body.nose.mp3",
@@ -269,7 +269,7 @@
     },
     "clothing.socks": {
       "file": "clothing.socks.mp3",
-      "speechText": "تْگَاشِرْ"
+      "speechText": "تْقَاشِرْ"
     },
     "clothing.trousers": {
       "file": "clothing.trousers.mp3",
@@ -329,7 +329,7 @@
     },
     "dish.moroccan.skewers": {
       "file": "dish.moroccan.skewers.mp3",
-      "speechText": "گُطْبَانْ"
+      "speechText": "قُطْبَانْ"
     },
     "dish.moroccan.taktouka": {
       "file": "dish.moroccan.taktouka.mp3",
@@ -577,7 +577,7 @@
     },
     "food.pasta": {
       "file": "food.pasta.mp3",
-      "speechText": "مَگْرُونِيَّة"
+      "speechText": "مَقْرُونِيَّة"
     },
     "food.rice": {
       "file": "food.rice.mp3",
@@ -853,7 +853,7 @@
     },
     "home.water_bottle": {
       "file": "home.water_bottle.mp3",
-      "speechText": "گَرْعِة مَاءْ"
+      "speechText": "قَرْعِة مَاءْ"
     },
     "home.window": {
       "file": "home.window.mp3",
@@ -993,7 +993,7 @@
     },
     "vegetable.coriander": {
       "file": "vegetable.coriander.mp3",
-      "speechText": "گَزْبُورْ"
+      "speechText": "قَزْبُورْ"
     },
     "vegetable.corn": {
       "file": "vegetable.corn.mp3",
@@ -1049,7 +1049,7 @@
     },
     "vegetable.pumpkin": {
       "file": "vegetable.pumpkin.mp3",
-      "speechText": "گَرْعَة حَمْرَا"
+      "speechText": "قَرْعَة حَمْرَا"
     },
     "vegetable.radish": {
       "file": "vegetable.radish.mp3",

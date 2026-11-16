@@ -37,7 +37,7 @@
     },
     "action.read": {
       "file": "action.read.mp3",
-      "speechText": "نَگْرَا"
+      "speechText": "نَقْرَا"
     },
     "action.see": {
       "file": "action.see.mp3",
@@ -45,11 +45,11 @@
     },
     "action.sit": {
       "file": "action.sit.mp3",
-      "speechText": "نْگَعْمِزْ"
+      "speechText": "نْقَعْمِزْ"
     },
     "action.sleep": {
       "file": "action.sleep.mp3",
-      "speechText": "نُرْگُدْ"
+      "speechText": "نُرْقُدْ"
     },
     "action.speak": {
       "file": "action.speak.mp3",
@@ -57,7 +57,7 @@
     },
     "action.stand": {
       "file": "action.stand.mp3",
-      "speechText": "نُوگَفْ"
+      "speechText": "نُوقَفْ"
     },
     "action.walk": {
       "file": "action.walk.mp3",
@@ -73,7 +73,7 @@
     },
     "animal.cat": {
       "file": "animal.cat.mp3",
-      "speechText": "گَطُّوسَة"
+      "speechText": "قَطُّوسَة"
     },
     "animal.chicken": {
       "file": "animal.chicken.mp3",
@@ -81,7 +81,7 @@
     },
     "animal.cow": {
       "file": "animal.cow.mp3",
-      "speechText": "بَگْرَة"
+      "speechText": "بَقْرَة"
     },
     "animal.dog": {
       "file": "animal.dog.mp3",
@@ -157,7 +157,7 @@
     },
     "body.heart": {
       "file": "body.heart.mp3",
-      "speechText": "گَلْبْ"
+      "speechText": "قَلْبْ"
     },
     "body.knee": {
       "file": "body.knee.mp3",
@@ -173,7 +173,7 @@
     },
     "body.neck": {
       "file": "body.neck.mp3",
-      "speechText": "رَگْبَة"
+      "speechText": "رَقْبَة"
     },
     "body.nose": {
       "file": "body.nose.mp3",
@@ -209,7 +209,7 @@
     },
     "clothing.cap": {
       "file": "clothing.cap.mp3",
-      "speechText": "طَاگِيَّة"
+      "speechText": "طَاقِيَّة"
     },
     "clothing.coat": {
       "file": "clothing.coat.mp3",
@@ -285,7 +285,7 @@
     },
     "dish.arabic_coffee": {
       "file": "dish.arabic_coffee.mp3",
-      "speechText": "گَهْوَة عَرَبِيَّة"
+      "speechText": "قَهْوَة عَرَبِيَّة"
     },
     "dish.aysh_laban": {
       "file": "dish.aysh_laban.mp3",
@@ -317,7 +317,7 @@
     },
     "dish.maqroudh": {
       "file": "dish.maqroudh.mp3",
-      "speechText": "مَگْرُوضْ"
+      "speechText": "مَقْرُوضْ"
     },
     "dish.mbakbaka": {
       "file": "dish.mbakbaka.mp3",
@@ -337,7 +337,7 @@
     },
     "dish.pasta_masqiya": {
       "file": "dish.pasta_masqiya.mp3",
-      "speechText": "مَكْرُونَة مِسْگِيَّة"
+      "speechText": "مَكْرُونَة مِسْقِيَّة"
     },
     "dish.potato_stew": {
       "file": "dish.potato_stew.mp3",
@@ -441,7 +441,7 @@
     },
     "family.male_relative": {
       "file": "family.male_relative.mp3",
-      "speechText": "گَرِيبِي"
+      "speechText": "قَرِيبِي"
     },
     "family.maternal_aunt": {
       "file": "family.maternal_aunt.mp3",
@@ -561,7 +561,7 @@
     },
     "food.coffee": {
       "file": "food.coffee.mp3",
-      "speechText": "گَهْوَة"
+      "speechText": "قَهْوَة"
     },
     "food.eggs": {
       "file": "food.eggs.mp3",
@@ -681,7 +681,7 @@
     },
     "fruit.melon": {
       "file": "fruit.melon.mp3",
-      "speechText": "گَلْعَاوِي"
+      "speechText": "قَلْعَاوِي"
     },
     "fruit.orange": {
       "file": "fruit.orange.mp3",
@@ -921,7 +921,7 @@
     },
     "routine.evening_coffee": {
       "file": "routine.evening_coffee.mp3",
-      "speechText": "گَهْوِة الْعَشِيَّة"
+      "speechText": "قَهْوِة الْعَشِيَّة"
     },
     "routine.prayer": {
       "file": "routine.prayer.mp3",
@@ -1009,11 +1009,11 @@
     },
     "vegetable.cauliflower": {
       "file": "vegetable.cauliflower.mp3",
-      "speechText": "گَرْنَبِيطْ"
+      "speechText": "قَرْنَبِيطْ"
     },
     "vegetable.coriander": {
       "file": "vegetable.coriander.mp3",
-      "speechText": "گُصْبُرْ"
+      "speechText": "قُصْبُرْ"
     },
     "vegetable.corn": {
       "file": "vegetable.corn.mp3",
@@ -1069,7 +1069,7 @@
     },
     "vegetable.pumpkin": {
       "file": "vegetable.pumpkin.mp3",
-      "speechText": "گَرْعَة"
+      "speechText": "قَرْعَة"
     },
     "vegetable.radish": {
       "file": "vegetable.radish.mp3",

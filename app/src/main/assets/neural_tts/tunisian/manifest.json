@@ -45,11 +45,11 @@
     },
     "action.sit": {
       "file": "action.sit.mp3",
-      "speechText": "نُڨْعُدْ"
+      "speechText": "نُقْعُدْ"
     },
     "action.sleep": {
       "file": "action.sleep.mp3",
-      "speechText": "نُرْڨُدْ"
+      "speechText": "نُرْقُدْ"
     },
     "action.speak": {
       "file": "action.speak.mp3",
@@ -73,7 +73,7 @@
     },
     "animal.cat": {
       "file": "animal.cat.mp3",
-      "speechText": "ڨَطُّوسَة"
+      "speechText": "قَطُّوسَة"
     },
     "animal.chicken": {
       "file": "animal.chicken.mp3",
@@ -81,7 +81,7 @@
     },
     "animal.cow": {
       "file": "animal.cow.mp3",
-      "speechText": "بَڨْرَة"
+      "speechText": "بَقْرَة"
     },
     "animal.dog": {
       "file": "animal.dog.mp3",
@@ -173,7 +173,7 @@
     },
     "body.neck": {
       "file": "body.neck.mp3",
-      "speechText": "رَڨْبَة"
+      "speechText": "رَقْبَة"
     },
     "body.nose": {
       "file": "body.nose.mp3",
@@ -317,11 +317,11 @@
     },
     "dish.tunisian.maqroudh": {
       "file": "dish.tunisian.maqroudh.mp3",
-      "speechText": "مَڨْرُوضْ قَيْرَوَانِي"
+      "speechText": "مَقْرُوضْ قَيْرَوَانِي"
     },
     "dish.tunisian.merguez_omelette": {
       "file": "dish.tunisian.merguez_omelette.mp3",
-      "speechText": "عُجَّة بِالْمَرْڨَازْ"
+      "speechText": "عُجَّة بِالْمَرْقَازْ"
     },
     "dish.tunisian.molokhia": {
       "file": "dish.tunisian.molokhia.mp3",
@@ -329,11 +329,11 @@
     },
     "dish.tunisian.pasta": {
       "file": "dish.tunisian.pasta.mp3",
-      "speechText": "مَڨْرُونَة بِالصَّلْصَة"
+      "speechText": "مَقْرُونَة بِالصَّلْصَة"
     },
     "dish.tunisian.pea_stew": {
       "file": "dish.tunisian.pea_stew.mp3",
-      "speechText": "مَرْڨِة جِلْبَانَة"
+      "speechText": "مَرْقِة جِلْبَانَة"
     },
     "dish.tunisian.plate": {
       "file": "dish.tunisian.plate.mp3",
@@ -577,7 +577,7 @@
     },
     "food.pasta": {
       "file": "food.pasta.mp3",
-      "speechText": "مَڨْرُونَة"
+      "speechText": "مَقْرُونَة"
     },
     "food.rice": {
       "file": "food.rice.mp3",
@@ -665,7 +665,7 @@
     },
     "fruit.orange": {
       "file": "fruit.orange.mp3",
-      "speechText": "بُرْدْڨَانْ"
+      "speechText": "بُرْدْقَانْ"
     },
     "fruit.peach": {
       "file": "fruit.peach.mp3",
@@ -925,7 +925,7 @@
     },
     "routine.sleep": {
       "file": "routine.sleep.mp3",
-      "speechText": "رْڨَادْ"
+      "speechText": "رْقَادْ"
     },
     "routine.walk": {
       "file": "routine.walk.mp3",
@@ -1049,7 +1049,7 @@
     },
     "vegetable.pumpkin": {
       "file": "vegetable.pumpkin.mp3",
-      "speechText": "ڨْرَعْ"
+      "speechText": "قْرَعْ"
     },
     "vegetable.radish": {
       "file": "vegetable.radish.mp3",
@@ -1065,7 +1065,7 @@
     },
     "vegetable.zucchini": {
       "file": "vegetable.zucchini.mp3",
-      "speechText": "ڨْرَعْ أَخْضَرْ"
+      "speechText": "قْرَعْ أَخْضَرْ"
     }
   }
 }

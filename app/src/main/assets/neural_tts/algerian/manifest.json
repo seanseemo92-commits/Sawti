@@ -45,11 +45,11 @@
     },
     "action.sit": {
       "file": "action.sit.mp3",
-      "speechText": "نُڨْعُدْ"
+      "speechText": "نُقْعُدْ"
     },
     "action.sleep": {
       "file": "action.sleep.mp3",
-      "speechText": "نُرْڨُدْ"
+      "speechText": "نُرْقُدْ"
     },
     "action.speak": {
       "file": "action.speak.mp3",
@@ -73,7 +73,7 @@
     },
     "animal.cat": {
       "file": "animal.cat.mp3",
-      "speechText": "ڨَطَّة"
+      "speechText": "قَطَّة"
     },
     "animal.chicken": {
       "file": "animal.chicken.mp3",
@@ -81,7 +81,7 @@
     },
     "animal.cow": {
       "file": "animal.cow.mp3",
-      "speechText": "بَڨْرَة"
+      "speechText": "بَقْرَة"
     },
     "animal.dog": {
       "file": "animal.dog.mp3",
@@ -173,7 +173,7 @@
     },
     "body.neck": {
       "file": "body.neck.mp3",
-      "speechText": "رَڨْبَة"
+      "speechText": "رَقْبَة"
     },
     "body.nose": {
       "file": "body.nose.mp3",
@@ -269,7 +269,7 @@
     },
     "clothing.socks": {
       "file": "clothing.socks.mp3",
-      "speechText": "تْڨَاشِرْ"
+      "speechText": "تْقَاشِرْ"
     },
     "clothing.trousers": {
       "file": "clothing.trousers.mp3",
@@ -337,7 +337,7 @@
     },
     "dish.algerian.stuffed_artichoke": {
       "file": "dish.algerian.stuffed_artichoke.mp3",
-      "speechText": "ڨَرْنُونْ مْعَمَّرْ"
+      "speechText": "قَرْنُونْ مْعَمَّرْ"
     },
     "dish.algerian.sweet_tajine": {
       "file": "dish.algerian.sweet_tajine.mp3",
@@ -577,7 +577,7 @@
     },
     "food.pasta": {
       "file": "food.pasta.mp3",
-      "speechText": "مَڨْرُونْ"
+      "speechText": "مَقْرُونْ"
     },
     "food.rice": {
       "file": "food.rice.mp3",
@@ -853,7 +853,7 @@
     },
     "home.water_bottle": {
       "file": "home.water_bottle.mp3",
-      "speechText": "ڨَرْعِة مَاءْ"
+      "speechText": "قَرْعِة مَاءْ"
     },
     "home.window": {
       "file": "home.window.mp3",
@@ -925,7 +925,7 @@
     },
     "routine.sleep": {
       "file": "routine.sleep.mp3",
-      "speechText": "رْڨَادْ"
+      "speechText": "رْقَادْ"
     },
     "routine.walk": {
       "file": "routine.walk.mp3",
@@ -993,7 +993,7 @@
     },
     "vegetable.coriander": {
       "file": "vegetable.coriander.mp3",
-      "speechText": "ڨُزْبُرْ"
+      "speechText": "قُزْبُرْ"
     },
     "vegetable.corn": {
       "file": "vegetable.corn.mp3",
@@ -1049,7 +1049,7 @@
     },
     "vegetable.pumpkin": {
       "file": "vegetable.pumpkin.mp3",
-      "speechText": "ڨَرْعَة حَمْرَا"
+      "speechText": "قَرْعَة حَمْرَا"
     },
     "vegetable.radish": {
       "file": "vegetable.radish.mp3",
