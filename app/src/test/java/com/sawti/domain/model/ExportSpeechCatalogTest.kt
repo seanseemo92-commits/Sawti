@@ -36,9 +36,12 @@ class ExportSpeechCatalogTest {
             }
         }
         assertEquals(9, result.map { it.dialect }.distinct().size)
+        assertEquals(2399, result.size)
+        assertEquals(391, result.map { it.key }.toSet().size)
         assertEquals(result.size, result.map { it.dialect to it.key }.toSet().size)
         assertTrue(result.all { it.key.isNotBlank() && it.speech.isNotBlank() })
-        assertTrue("Habibi input must have no Arabic diacritics", result.all {
+        assertTrue("Habibi input has diacritics, tatweel or numeric digits", result.all {
+            !HabibiSpeechText.hasForbiddenMarksOrNumbers(it.speech) &&
             it.speech == HabibiSpeechText.prepare(it.speech)
         })
         val jsonData = result.joinToString(",\n", prefix = "{\n  \"version\": 1,\n  \"entries\": [\n", postfix = "\n  ]\n}\n") {

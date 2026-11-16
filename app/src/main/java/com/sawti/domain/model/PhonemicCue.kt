@@ -1,19 +1,13 @@
 package com.sawti.domain.model
 
-/**
- * A short, unvowelled prompt from the word's actual spelling.
- * No legacy manually synthesized vowels, shadda, sukun or consonant tricks.
- */
+/** Hint onsets are derived directly from the actual Arabic label, without vowels. */
 object PhonemicCue {
-    fun derive(speech: String): String {
-        val first = HabibiSpeechText.prepare(speech)
-            .trim().split(Regex("\\s+"), limit = 2).firstOrNull().orEmpty()
-        if (first.isEmpty()) return ""
-        return first.take(2) + "ـ..."
+    fun derive(text: String): String {
+        val firstWord = HabibiSpeechText.prepare(text)
+            .split(Regex("\\s+"), limit = 2).firstOrNull().orEmpty()
+        return if (firstWord.isEmpty()) "" else firstWord.take(2) + "..."
     }
 
-    /** Strip display decoration only; never introduce phonetic substitutions. */
-    fun forSpeech(cue: String): String =
-        HabibiSpeechText.prepare(cue).replace("ـ", "").replace(".", "")
-            .replace("…", "").trim()
+    fun forSpeech(cue: String): String = HabibiSpeechText.prepare(cue)
+        .replace("…", "").replace(".", "").trim()
 }
