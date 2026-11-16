@@ -11,3 +11,7 @@ The /ɡ/ feedback for words such as **نقعمز** (heard target: **نْگَعْ
 - Require a native speaker's confirmation for each recorded word and consistent /ɡ/ before promoting changes into neural assets. Verify manifests, APK and regression tests afterwards.
 
 Production `main` and `fix/audit-v161-199-confirmed-20261116` remain unchanged by the experiment.
+
+## First real-device listening feedback — 2026-11-16
+
+User reports candidate **#4** is **closest** to Libyan pronunciation for **نقعمز** (`action.sit`): Egyptian `ar-EG-SalmaNeural` with the voiced-`ج` approximation (`نْجَعْمِزْ`). This is comparative feedback, **not** approval of exact correctness and **not** validation for other words. Candidate #4 uses a different regional voice; do not globally switch Libyan voices or merge generated audio without checking it on-device. Keep label «نقعمز» and original v1.6.2 assets until an acceptable same-voice `/ɡ/` solution or explicit per-word review is complete.
