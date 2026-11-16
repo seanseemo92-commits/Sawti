@@ -76,7 +76,14 @@ class NeuralOnlyV162Test {
         assertEquals(21, variants.size)
         assertEquals(21, variants.map { it[0] }.toSet().size)
         for (fields in variants) {
-            val (key, display, source, target, voice, rate, pitch, status) = fields
+            val key = fields[0]
+            val display = fields[1]
+            val source = fields[2]
+            val target = fields[3]
+            val voice = fields[4]
+            val rate = fields[5]
+            val pitch = fields[6]
+            val status = fields[7]
             assertEquals("ar-EG-ShakirNeural", voice)
             assertEquals("-8%", rate)
             assertEquals("+12Hz", pitch)
