@@ -1,7 +1,7 @@
 name: Generate regional neural voices
 on:
   push:
-    branches: [main, fix/sawti-v161-neural-lexicon-20261115, fix/audit-v161-199-confirmed-20261116]
+    branches: [main, fix/sawti-v161-neural-lexicon-20261115, fix/audit-v161-199-confirmed-20261116, fix/libyan-g-pronunciation-20261116]
     paths:
       - 'app/src/main/java/com/sawti/domain/model/NeuralSpeechNormalizer.kt'
       - 'app/src/main/java/com/sawti/domain/model/DialectSpeechCatalog.kt'
@@ -16,6 +16,8 @@ on:
       - 'app/build.gradle.kts'
       - 'app/src/main/java/com/sawti/domain/model/RegionalDishesCatalog.kt'
       - 'scripts/generate_neural_voices.py'
+      - 'scripts/validate_neural_packs.py'
+      - 'scripts/libyan_shakir_approved_samples.csv'
       - '.github/workflows/generate-neural-voices.yml'
   workflow_dispatch:
     inputs:
@@ -66,16 +68,16 @@ jobs:
           ./gradlew --no-daemon :app:testDebugUnitTest --tests 'com.sawti.domain.model.ExportSpeechCatalogTest'
           test -s app/build/speech_catalog.json
       - name: Validate exact v1.6.2 source/export parity
-        if: ${{ github.ref == 'refs/heads/fix/audit-v161-199-confirmed-20261116' }}
+        if: ${{ github.ref == 'refs/heads/fix/audit-v161-199-confirmed-20261116' || github.ref == 'refs/heads/fix/libyan-g-pronunciation-20261116' }}
         run: python scripts/verify_neural_v162_catalog.py
       - name: Install Edge TTS
         run: python -m pip install 'edge-tts>=6.1,<9'
       - name: Generate selected dialect pack
         env:
-          DIALECTS: ${{ inputs.dialects || 'ALL' }}
+          DIALECTS: ${{ inputs.dialects || (github.ref == 'refs/heads/fix/libyan-g-pronunciation-20261116' && 'LIBYAN' || 'ALL') }}
           GENDER: ${{ inputs.voice_gender || 'female' }}
         run: |
-          python scripts/generate_neural_voices.py --dialects "$DIALECTS" --gender "$GENDER" --rate=-18%
+          python scripts/generate_neural_voices.py --dialects "$DIALECTS" --gender "$GENDER" --rate=-18% --concurrency 2 --attempts 10
           python scripts/validate_neural_packs.py
       - name: Upload voice pack
         uses: actions/upload-artifact@v4
@@ -96,7 +98,7 @@ jobs:
           git push origin HEAD:"${GITHUB_REF_NAME}"
 
       - name: Re-run full PR validation after committing regenerated assets
-        if: ${{ github.ref == 'refs/heads/fix/audit-v161-199-confirmed-20261116' }}
+        if: ${{ github.ref == 'refs/heads/fix/audit-v161-199-confirmed-20261116' || github.ref == 'refs/heads/fix/libyan-g-pronunciation-20261116' }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run build.yml --ref "${GITHUB_REF_NAME}" --field full_build=true
