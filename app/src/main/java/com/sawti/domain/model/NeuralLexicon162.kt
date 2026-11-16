@@ -328,8 +328,8 @@ internal object NeuralLexicon162 {
                 family.son_wife|مرت ولدي|مَرْت وِلْدِي
                 family.male_in_law|نسيبي|نَسِيبِي
                 family.female_in_law|نسيبتي|نَسِيبْتِي
-                family.male_relative|قريبي|قَرِيبِي
-                family.female_relative|قريبتي|قَرِيبْتِي
+                family.male_relative|قريبي|جَرِيبِي
+                family.female_relative|قريبتي|جَرِيبْتِي
                 request.water|نبي مية|نِبِّي إِمَّيَّهْ
                 request.tea|نبي شاهي|نِبِّي شَاهِي
                 request.rest|نبي نرتاح|نِبِّي نِرْتَاحْ
@@ -342,7 +342,7 @@ internal object NeuralLexicon162 {
                 dish.reshda_kaskas|رشدة كسكاس|رِشْدِة كِسْكَاسْ
                 dish.reshda_borma|رشدة برمة|رِشْدِة بُرْمَة
                 dish.mbakbaka|مكرونة مبكبكة|مَكْرُونَة مْبَكْبَكَة
-                dish.pasta_masqiya|مكرونة مسقية|مَكْرُونَة مِسْقِيَّة
+                dish.pasta_masqiya|مكرونة مسقية|مَكْرُونَة مِسْجِيَّة
                 dish.couscous_fish|كسكسي بالحوت|كُسْكُسِي بِالحُوتْ
                 dish.rice_blaw|رز بلاو|رُزّ بِلَاو
                 dish.libyan_soup|شربة ليبية|شَرْبَة لِيبِيَّة
@@ -350,9 +350,9 @@ internal object NeuralLexicon162 {
                 dish.osban|عصبان|عُصْبَانْ
                 dish.bourek|بوريك|بُورِيكْ
                 dish.khobz_tajin|خبزة طاجين|خُبْزِة طَاجِينْ
-                dish.maqroudh|مقروض|مَقْرُوضْ
+                dish.maqroudh|مقروض|مَجْرُوضْ
                 dish.mint_tea|شاهي بالنعناع|شَاهِي بِالنَّعْنَاعْ
-                dish.arabic_coffee|قهوة عربية|قَهْوَة عَرَبِيَّة
+                dish.arabic_coffee|قهوة عربية|جَهْوَة عَرَبِيَّة
                 dish.mbattan|مبطن|مْبَطَّنْ
                 dish.hraymi|حرايمي|حْرَايْمِي
                 dish.sfinz|سفنز|إِسْفِنْزْ
@@ -364,7 +364,7 @@ internal object NeuralLexicon162 {
                 routine.prayer_rug|سجادة|سَجَّادَة
                 routine.prayer_beads|سبحة|سِبْحَة
                 routine.quran|مصحف|مُصْحَفْ
-                routine.evening_coffee|قهوة العشية|قَهْوِة الْعَشِيَّة
+                routine.evening_coffee|قهوة العشية|جَهْوِة الْعَشِيَّة
                 routine.sleep|نوم|نُومْ
                 routine.rest|راحة|رَاحَة
                 routine.walk|مشي|مَشِي
@@ -379,25 +379,25 @@ internal object NeuralLexicon162 {
                 vegetable.zucchini|كوسة|كُوسَة
                 vegetable.lettuce|خس|خَسّ
                 vegetable.parsley|معدنوس|مَعْدَنُوسْ
-                vegetable.coriander|قصبر|قُصْبُرْ
+                vegetable.coriander|قصبر|جُصْبُرْ
                 vegetable.lemon|ليمون|لِيمُونْ
                 vegetable.peas|بازيلية|بَازِيلْيَا
                 vegetable.green_beans|فاصوليا|فَاصُولِيَا
                 vegetable.spinach|سبانخ|سَبَانِخْ
-                vegetable.cauliflower|قرنبيط|قَرْنَبِيطْ
+                vegetable.cauliflower|قرنبيط|جَرْنَبِيطْ
                 vegetable.broccoli|بروكلي|بُرُوكْلِي
                 vegetable.radish|فجل|فِجِلْ
-                vegetable.pumpkin|قرعة|قَرْعَة
+                vegetable.pumpkin|قرعة|جَرْعَة
                 vegetable.mint|نعناع|نَعْنَاعْ
                 vegetable.corn|ذرة|ذُرَة
                 fruit.apple|تفاح|تُفَّاحْ
                 fruit.banana|موز|مُوزْ
-                fruit.orange|برتقال|بُرْتُقَالْ
+                fruit.orange|برتقال|بُرْتُجَالْ
                 fruit.grapes|عنب|عِنَبْ
                 fruit.strawberry|فراولة|فَرَاوْلَة
                 fruit.mango|مانجو|مَانْجُو
                 fruit.watermelon|دلاع|دَلَّاعْ
-                fruit.melon|قلعاوي|قَلْعَاوِي
+                fruit.melon|قلعاوي|جَلْعَاوِي
                 fruit.peach|خوخ|خُوخْ
                 fruit.apricot|مشمش|مِشْمِشْ
                 fruit.pear|كمثرى|كُمِّثْرَى
@@ -426,7 +426,7 @@ internal object NeuralLexicon162 {
                 food.olives|زيتون|زِيتُونْ
                 food.oil|زيت|زِيتْ
                 food.tea|شاهي|شَاهِي
-                food.coffee|قهوة|قَهْوَة
+                food.coffee|قهوة|جَهْوَة
                 food.juice|عصير|عَصِيرْ
                 food.water|مية|إِمَّيَّهْ
                 food.honey|عسل|عَسَلْ
@@ -462,7 +462,7 @@ internal object NeuralLexicon162 {
                 home.pot|طنجرة|طَنْجْرَة
                 home.water_bottle|شيشة مية|شِيشَة إِمَّيَّهْ
                 clothing.tshirt|تيشرت|تِيشِرْتْ
-                clothing.shirt|قميص|قَمِيصْ
+                clothing.shirt|قميص|جَمِيصْ
                 clothing.jacket|جاكة|جَاكَة
                 clothing.shorts|شورت|شُورْتْ
                 clothing.blouse|سورية|سُورِيَّة
@@ -476,7 +476,7 @@ internal object NeuralLexicon162 {
                 clothing.socks|شخاشير|شْخَاشِيرْ
                 clothing.coat|كبوط|كَبُّوطْ
                 clothing.glasses|نظارة|نَظَّارَة
-                clothing.cap|طاقية|طَاقِيَّة
+                clothing.cap|طاقية|طَاجِيَّة
                 clothing.watch|ساعة يد|سَاعِة يَدّ
                 clothing.bag|شنطة|شَنْطَة
                 clothing.sandals|صندل|صَنْدَلْ
@@ -497,29 +497,29 @@ internal object NeuralLexicon162 {
                 body.abdomen|بطن|بَطْنْ
                 body.knee|ركبة|رُكْبَة
                 body.finger|صبع|صْبَعْ
-                body.neck|رقبة|رَقْبَة
+                body.neck|رقبة|رَجْبَة
                 body.chest|صدر|صَدْرْ
                 body.face|وجه|وَجِهْ
                 body.tooth|سنة|سِنَّة
-                body.heart|قلب|قَلْبْ
+                body.heart|قلب|جَلْبْ
                 body.shoulder|كتف|كِتْفْ
                 action.eat|ناكل|نَاكُلْ
                 action.drink|نشرب|نِشْرَبْ
-                action.sleep|نرقد|نُرْقُدْ
-                action.sit|نقعمز|نْقَعْمِزْ
+                action.sleep|نرقد|نُرْجُدْ
+                action.sit|نقعمز|نْجَعْمِزْ
                 action.walk|نمشي|نِمْشِي
-                action.stand|نوقف|نُوقَفْ
+                action.stand|نوقف|نُوجَفْ
                 action.wash|نغسل|نِغْسِلْ
                 action.speak|ندوي|نِدْوِي
                 action.hear|نسمع|نِسْمَعْ
                 action.open|نفتح|نِفْتَحْ
                 action.close|نسكر|نِسَكِّرْ
-                action.read|نقرا|نَقْرَا
+                action.read|نقرا|نَجْرَا
                 action.laugh|نضحك|نِضْحَكْ
                 action.see|نشوف|نِشُوفْ
                 action.dress|نلبس|نِلْبِسْ
                 action.pray|نصلي|نِصَلِّي
-                animal.cat|قطوسة|قَطُّوسَة
+                animal.cat|قطوسة|جَطُّوسَة
                 animal.dog|كلب|كَلْبْ
                 animal.sheep|خروف|خَرُوفْ
                 animal.horse|حصان|حْصَانْ
