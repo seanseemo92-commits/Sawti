@@ -6,6 +6,7 @@ plus 9 control terms are rendered using ten Arabic neural voices. Acoustic
 correctness cannot be inferred from file integrity alone.
 """
 import asyncio
+import argparse
 import csv
 import json
 import re
@@ -76,13 +77,15 @@ async def save_audio(text, voice, target, limiter):
                 await asyncio.sleep(min(12, 2 ** (trial + 1)))
 
 
-async def main():
+async def main(group):
     records = catalog()
-    limiter = asyncio.Semaphore(5)
+    limiter = asyncio.Semaphore(2)
     OUT.mkdir(parents=True, exist_ok=True)
     jobs = []
     index = []
-    for candidate, voice, spelling in VOICES:
+    selected_voices = [row for row in VOICES if row[0].startswith(group + "_")]
+    assert len(selected_voices) == 2, selected_voices
+    for candidate, voice, spelling in selected_voices:
         folder = OUT / candidate
         folder.mkdir(parents=True, exist_ok=True)
         for key in HARD_G_KEYS + CONTROL_KEYS:
@@ -109,7 +112,7 @@ async def main():
     for offset in range(0, len(jobs), 35):
         await asyncio.gather(*jobs[offset:offset + 35])
         print(f"Completed {min(offset + 35, len(jobs))}/{len(jobs)}", flush=True)
-    assert len(index) == 280
+    assert len(index) == 56
     with (OUT / "INDEX.csv").open("w", encoding="utf-8-sig", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(index[0]))
         w.writeheader()
@@ -125,9 +128,12 @@ async def main():
         "Do not replace Android assets with these samples without listening QA.\n",
         encoding="utf-8",
     )
-    print(json.dumps({"voices": len(VOICES), "hard_g": len(HARD_G_KEYS),
+    print(json.dumps({"voices": len(selected_voices), "hard_g": len(HARD_G_KEYS),
                       "controls": len(CONTROL_KEYS), "clips": len(index)}))
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--group", required=True, choices=["libya", "egypt", "iraq", "tunisia", "saudi"])
+    args = parser.parse_args()
+    asyncio.run(main(args.group))
