@@ -149,13 +149,13 @@ object TransportCatalog {
     fun sentencePrompt(semanticKey: String, dialect: ArabicDialect): String? {
         if (vehicles.none { it.semanticKey == semanticKey }) return null
         return when (dialect) {
-            ArabicDialect.STANDARD -> "أستخدم الـ..."
-            ArabicDialect.LIBYAN, ArabicDialect.TUNISIAN -> "نركب في الـ..."
-            ArabicDialect.SAUDI, ArabicDialect.IRAQI -> "أركب الـ..."
-            ArabicDialect.EGYPTIAN -> "بركب الـ..."
-            ArabicDialect.SYRIAN -> "بركب الـ..."
-            ArabicDialect.MOROCCAN -> "كنركب في الـ..."
-            ArabicDialect.ALGERIAN -> "نركب في الـ..."
+            ArabicDialect.STANDARD -> "أستخدم ال..."
+            ArabicDialect.LIBYAN, ArabicDialect.TUNISIAN -> "نركب في ال..."
+            ArabicDialect.SAUDI, ArabicDialect.IRAQI -> "أركب ال..."
+            ArabicDialect.EGYPTIAN -> "بركب ال..."
+            ArabicDialect.SYRIAN -> "بركب ال..."
+            ArabicDialect.MOROCCAN -> "كنركب في ال..."
+            ArabicDialect.ALGERIAN -> "نركب في ال..."
         }
     }
 }

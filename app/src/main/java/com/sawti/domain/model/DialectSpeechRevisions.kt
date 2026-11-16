@@ -14,12 +14,12 @@ internal object DialectSpeechRevisions {
         val sentence: Field? = null,
     )
     private fun standard(): Map<String, Patch> = mapOf(
-        "request.water" to Patch(sentence = Field("نشرب الـ...", "عند الطلب أقول: أريد ماء")),
-        "request.tea" to Patch(sentence = Field("نشرب الـ...", "عند الطلب أقول: أريد شايا")),
-        "request.rest" to Patch(sentence = Field("عندما أتعب أريد الـ...", "عند الطلب أقول: أريد أن أرتاح")),
-        "request.medicine" to Patch(sentence = Field("في الموعد آخذ الـ...", "عند الطلب أقول: أريد دوائي")),
-        "request.toilet" to Patch(sentence = Field("أذهب إلى الـ...", "عند الطلب أقول: أريد الذهاب إلى الحمام")),
-        "request.adjust_pillow" to Patch(sentence = Field("أريد تعديل الـ...", "عند الطلب أقول: عدل لي الوسادة")),
+        "request.water" to Patch(sentence = Field("نشرب ال...", "عند الطلب أقول: أريد ماء")),
+        "request.tea" to Patch(sentence = Field("نشرب ال...", "عند الطلب أقول: أريد شايا")),
+        "request.rest" to Patch(sentence = Field("عندما أتعب أريد ال...", "عند الطلب أقول: أريد أن أرتاح")),
+        "request.medicine" to Patch(sentence = Field("في الموعد آخذ ال...", "عند الطلب أقول: أريد دوائي")),
+        "request.toilet" to Patch(sentence = Field("أذهب إلى ال...", "عند الطلب أقول: أريد الذهاب إلى الحمام")),
+        "request.adjust_pillow" to Patch(sentence = Field("أريد تعديل ال...", "عند الطلب أقول: عدل لي الوسادة")),
         "request.headache" to Patch(sentence = Field("", "عندما أتألم أقول: ...")),
         "request.cold" to Patch(sentence = Field("", "في الشتاء أقول: ...")),
 
@@ -27,7 +27,7 @@ internal object DialectSpeechRevisions {
 
 
 
-        "home.oven" to Patch(sentence = Field("", "نخبز الخبز في الـ...")),
+        "home.oven" to Patch(sentence = Field("", "نخبز الخبز في ال...")),
 
 
         "clothing.high_heels" to Patch(display = Field("حذاء بكعب عال", "حذاء بكعب عال")),
@@ -84,12 +84,12 @@ internal object DialectSpeechRevisions {
         "family.brother_wife" to Patch(display = Field("زوجة أخي", "مرت خوي")),
         "family.daughter_husband" to Patch(display = Field("زوج ابنتي", "راجل بنتي")),
         "family.son_wife" to Patch(display = Field("زوجة ابني", "مرت ولدي")),
-        "request.water" to Patch(sentence = Field("نشرب الـ...", "عند الطلب أقول: نبي مية")),
-        "request.tea" to Patch(sentence = Field("نشرب الـ...", "عند الطلب أقول: نبي شاهي")),
-        "request.rest" to Patch(sentence = Field("عندما أتعب أريد الـ...", "عند الطلب أقول: نبي نرتاح")),
-        "request.medicine" to Patch(sentence = Field("في الموعد آخذ الـ...", "عند الطلب أقول: نبي دوايا")),
-        "request.toilet" to Patch(sentence = Field("أذهب إلى الـ...", "عند الطلب أقول: نبي الحمام")),
-        "request.adjust_pillow" to Patch(sentence = Field("أريد تعديل الـ...", "عند الطلب أقول: عدل لي المخدة")),
+        "request.water" to Patch(sentence = Field("نشرب ال...", "عند الطلب أقول: نبي مية")),
+        "request.tea" to Patch(sentence = Field("نشرب ال...", "عند الطلب أقول: نبي شاهي")),
+        "request.rest" to Patch(sentence = Field("عندما أتعب أريد ال...", "عند الطلب أقول: نبي نرتاح")),
+        "request.medicine" to Patch(sentence = Field("في الموعد آخذ ال...", "عند الطلب أقول: نبي دوايا")),
+        "request.toilet" to Patch(sentence = Field("أذهب إلى ال...", "عند الطلب أقول: نبي الحمام")),
+        "request.adjust_pillow" to Patch(sentence = Field("أريد تعديل ال...", "عند الطلب أقول: عدل لي المخدة")),
         "request.headache" to Patch(sentence = Field("", "عندما أتألم أقول: ...")),
         "request.cold" to Patch(sentence = Field("", "في الشتاء أقول: ...")),
 
@@ -101,7 +101,7 @@ internal object DialectSpeechRevisions {
         "food.rice" to Patch(display = Field("أرز", "رز")),
         "food.fish" to Patch(display = Field("حوت (سمك)", "حوت")),
         "home.blanket" to Patch(display = Field("ورغان / بطانية", "ورغان")),
-        "home.oven" to Patch(sentence = Field("", "نخبز الخبز في الـ...")),
+        "home.oven" to Patch(sentence = Field("", "نخبز الخبز في ال...")),
         "home.carpet" to Patch(display = Field("بساط / حواشي", "بساط")),
         "home.knife" to Patch(display = Field("موس (سكين)", "موس")),
         "clothing.robe" to Patch(display = Field("روب / قفطان", "روب")),
@@ -154,12 +154,12 @@ internal object DialectSpeechRevisions {
         "family.brother_wife" to Patch(display = Field("زوجة أخي", "مرت أخوي")),
         "family.daughter_husband" to Patch(display = Field("زوج ابنتي", "زوج بنتي")),
         "family.son_wife" to Patch(display = Field("زوجة ابني", "مرت ولدي")),
-        "request.water" to Patch(sentence = Field("نشرب الـ...", "عند الطلب أقول: أبغى ماي")),
-        "request.tea" to Patch(sentence = Field("نشرب الـ...", "عند الطلب أقول: أبغى شاي")),
-        "request.rest" to Patch(sentence = Field("عندما أتعب أريد الـ...", "عند الطلب أقول: أبغى أرتاح")),
-        "request.medicine" to Patch(sentence = Field("في الموعد آخذ الـ...", "عند الطلب أقول: أبغى دواي")),
-        "request.toilet" to Patch(sentence = Field("أذهب إلى الـ...", "عند الطلب أقول: أبغى أروح الحمام")),
-        "request.adjust_pillow" to Patch(sentence = Field("أريد تعديل الـ...", "عند الطلب أقول: عدل لي المخدة")),
+        "request.water" to Patch(sentence = Field("نشرب ال...", "عند الطلب أقول: أبغى ماي")),
+        "request.tea" to Patch(sentence = Field("نشرب ال...", "عند الطلب أقول: أبغى شاي")),
+        "request.rest" to Patch(sentence = Field("عندما أتعب أريد ال...", "عند الطلب أقول: أبغى أرتاح")),
+        "request.medicine" to Patch(sentence = Field("في الموعد آخذ ال...", "عند الطلب أقول: أبغى دواي")),
+        "request.toilet" to Patch(sentence = Field("أذهب إلى ال...", "عند الطلب أقول: أبغى أروح الحمام")),
+        "request.adjust_pillow" to Patch(sentence = Field("أريد تعديل ال...", "عند الطلب أقول: عدل لي المخدة")),
         "request.headache" to Patch(sentence = Field("", "عندما أتألم أقول: ...")),
         "request.cold" to Patch(sentence = Field("", "في الشتاء أقول: ...")),
         "dish.saudi.kabsa" to Patch(display = Field("كبسة لحم", "كبسة لحم")),
@@ -180,7 +180,7 @@ internal object DialectSpeechRevisions {
 
         "home.sofa" to Patch(display = Field("أريكة", "كنبة")),
 
-        "home.oven" to Patch(sentence = Field("", "نخبز الخبز في الـ...")),
+        "home.oven" to Patch(sentence = Field("", "نخبز الخبز في ال...")),
         "home.wardrobe" to Patch(display = Field("خزانة", "دولاب")),
         "home.pot" to Patch(display = Field("طنجرة", "قدر")),
 
@@ -244,12 +244,12 @@ internal object DialectSpeechRevisions {
         "family.brother_wife" to Patch(display = Field("زوجة أخي", "مرات أخويا")),
         "family.daughter_husband" to Patch(display = Field("زوج ابنتي", "جوز بنتي")),
         "family.son_wife" to Patch(display = Field("زوجة ابني", "مرات ابني")),
-        "request.water" to Patch(sentence = Field("نشرب الـ...", "عند الطلب أقول: عايز مية")),
-        "request.tea" to Patch(sentence = Field("نشرب الـ...", "عند الطلب أقول: ممكن شاي")),
-        "request.rest" to Patch(sentence = Field("عندما أتعب أريد الـ...", "عند الطلب أقول: ممكن أرتاح شوية")),
-        "request.medicine" to Patch(sentence = Field("في الموعد آخذ الـ...", "عند الطلب أقول: ممكن دوايا")),
-        "request.toilet" to Patch(sentence = Field("أذهب إلى الـ...", "عند الطلب أقول: ممكن أدخل الحمام")),
-        "request.adjust_pillow" to Patch(sentence = Field("أريد تعديل الـ...", "عند الطلب أقول: ظبطلي المخدة")),
+        "request.water" to Patch(sentence = Field("نشرب ال...", "عند الطلب أقول: عايز مية")),
+        "request.tea" to Patch(sentence = Field("نشرب ال...", "عند الطلب أقول: ممكن شاي")),
+        "request.rest" to Patch(sentence = Field("عندما أتعب أريد ال...", "عند الطلب أقول: ممكن أرتاح شوية")),
+        "request.medicine" to Patch(sentence = Field("في الموعد آخذ ال...", "عند الطلب أقول: ممكن دوايا")),
+        "request.toilet" to Patch(sentence = Field("أذهب إلى ال...", "عند الطلب أقول: ممكن أدخل الحمام")),
+        "request.adjust_pillow" to Patch(sentence = Field("أريد تعديل ال...", "عند الطلب أقول: ظبطلي المخدة")),
         "request.headache" to Patch(sentence = Field("", "عندما أتألم أقول: ...")),
         "request.cold" to Patch(sentence = Field("", "في الشتاء أقول: ...")),
         "dish.egyptian.molokhia" to Patch(display = Field("ملوخية بالتقلية", "ملوخية بالتقلية")),
@@ -275,7 +275,7 @@ internal object DialectSpeechRevisions {
         "home.sofa" to Patch(display = Field("أريكة", "كنبة")),
 
         "home.stove" to Patch(display = Field("موقد", "بوتاجاز")),
-        "home.oven" to Patch(sentence = Field("", "نخبز الخبز في الـ...")),
+        "home.oven" to Patch(sentence = Field("", "نخبز الخبز في ال...")),
         "home.wardrobe" to Patch(display = Field("خزانة", "دولاب")),
         "home.carpet" to Patch(display = Field("بساط", "سجادة")),
 
@@ -350,12 +350,12 @@ internal object DialectSpeechRevisions {
         "family.brother_wife" to Patch(display = Field("زوجة أخي", "مرت أخي")),
         "family.daughter_husband" to Patch(display = Field("زوج ابنتي", "جوز بنتي")),
         "family.son_wife" to Patch(display = Field("زوجة ابني", "مرت ابني")),
-        "request.water" to Patch(sentence = Field("نشرب الـ...", "عند الطلب أقول: بدي مي")),
-        "request.tea" to Patch(sentence = Field("نشرب الـ...", "عند الطلب أقول: بدي شاي")),
-        "request.rest" to Patch(sentence = Field("عندما أتعب أريد الـ...", "عند الطلب أقول: بدي ارتاح")),
-        "request.medicine" to Patch(sentence = Field("في الموعد آخذ الـ...", "عند الطلب أقول: بدي دواي")),
-        "request.toilet" to Patch(sentence = Field("أذهب إلى الـ...", "عند الطلب أقول: بدي روح عالحمام")),
-        "request.adjust_pillow" to Patch(display = Field("زبطلي المخدة", "زبط لي المخدة"), sentence = Field("أريد تعديل الـ...", "عند الطلب أقول: زبطلي المخدة")),
+        "request.water" to Patch(sentence = Field("نشرب ال...", "عند الطلب أقول: بدي مي")),
+        "request.tea" to Patch(sentence = Field("نشرب ال...", "عند الطلب أقول: بدي شاي")),
+        "request.rest" to Patch(sentence = Field("عندما أتعب أريد ال...", "عند الطلب أقول: بدي ارتاح")),
+        "request.medicine" to Patch(sentence = Field("في الموعد آخذ ال...", "عند الطلب أقول: بدي دواي")),
+        "request.toilet" to Patch(sentence = Field("أذهب إلى ال...", "عند الطلب أقول: بدي روح عالحمام")),
+        "request.adjust_pillow" to Patch(display = Field("زبطلي المخدة", "زبط لي المخدة"), sentence = Field("أريد تعديل ال...", "عند الطلب أقول: زبطلي المخدة")),
         "request.headache" to Patch(sentence = Field("", "عندما أتألم أقول: ...")),
         "request.cold" to Patch(sentence = Field("", "في الشتاء أقول: ...")),
         "dish.syrian.shakriya" to Patch(display = Field("شاكرية برز", "شاكرية برز")),
@@ -382,7 +382,7 @@ internal object DialectSpeechRevisions {
         "home.sofa" to Patch(display = Field("أريكة", "كنباية")),
 
         "home.stove" to Patch(display = Field("موقد", "غاز")),
-        "home.oven" to Patch(sentence = Field("", "نخبز الخبز في الـ...")),
+        "home.oven" to Patch(sentence = Field("", "نخبز الخبز في ال...")),
 
 
         "clothing.tshirt" to Patch(display = Field("قميص قصير الأكمام", "تيشيرت")),
@@ -447,12 +447,12 @@ internal object DialectSpeechRevisions {
         "family.brother_wife" to Patch(display = Field("زوجة أخي", "مرت أخوي")),
         "family.daughter_husband" to Patch(display = Field("زوج ابنتي", "زوج بنتي")),
         "family.son_wife" to Patch(display = Field("زوجة ابني", "مرت ابني")),
-        "request.water" to Patch(sentence = Field("نشرب الـ...", "عند الطلب أقول: أريد ماي")),
-        "request.tea" to Patch(sentence = Field("نشرب الـ...", "عند الطلب أقول: أريد جاي")),
-        "request.rest" to Patch(sentence = Field("عندما أتعب أريد الـ...", "عند الطلب أقول: أريد أرتاح")),
-        "request.medicine" to Patch(sentence = Field("في الموعد آخذ الـ...", "عند الطلب أقول: أريد دواي")),
-        "request.toilet" to Patch(sentence = Field("أذهب إلى الـ...", "عند الطلب أقول: أريد أروح للحمام")),
-        "request.adjust_pillow" to Patch(sentence = Field("أريد تعديل الـ...", "عند الطلب أقول: عدل لي المخدة")),
+        "request.water" to Patch(sentence = Field("نشرب ال...", "عند الطلب أقول: أريد ماي")),
+        "request.tea" to Patch(sentence = Field("نشرب ال...", "عند الطلب أقول: أريد جاي")),
+        "request.rest" to Patch(sentence = Field("عندما أتعب أريد ال...", "عند الطلب أقول: أريد أرتاح")),
+        "request.medicine" to Patch(sentence = Field("في الموعد آخذ ال...", "عند الطلب أقول: أريد دواي")),
+        "request.toilet" to Patch(sentence = Field("أذهب إلى ال...", "عند الطلب أقول: أريد أروح للحمام")),
+        "request.adjust_pillow" to Patch(sentence = Field("أريد تعديل ال...", "عند الطلب أقول: عدل لي المخدة")),
         "request.headache" to Patch(sentence = Field("", "عندما أتألم أقول: ...")),
         "request.cold" to Patch(sentence = Field("", "في الشتاء أقول: ...")),
         "dish.iraqi.dolma" to Patch(display = Field("دولمة عراقية", "دولمة عراقية")),
@@ -476,7 +476,7 @@ internal object DialectSpeechRevisions {
         "home.sofa" to Patch(display = Field("أريكة", "قنفة")),
 
         "home.stove" to Patch(display = Field("موقد", "طباخ")),
-        "home.oven" to Patch(sentence = Field("", "نخبز الخبز في الـ...")),
+        "home.oven" to Patch(sentence = Field("", "نخبز الخبز في ال...")),
         "home.wardrobe" to Patch(display = Field("خزانة", "كنتور")),
         "home.carpet" to Patch(display = Field("بساط", "زولية")),
 
@@ -546,12 +546,12 @@ internal object DialectSpeechRevisions {
         "family.brother_wife" to Patch(display = Field("زوجة أخي", "مرت خويا")),
         "family.daughter_husband" to Patch(display = Field("زوج ابنتي", "راجل بنتي")),
         "family.son_wife" to Patch(display = Field("زوجة ابني", "مرت ولدي")),
-        "request.water" to Patch(sentence = Field("نشرب الـ...", "عند الطلب أقول: نحب شوية ما")),
-        "request.tea" to Patch(sentence = Field("نشرب الـ...", "عند الطلب أقول: نحب تاي")),
-        "request.rest" to Patch(sentence = Field("عندما أتعب أريد الـ...", "عند الطلب أقول: نحب نرتاح")),
-        "request.medicine" to Patch(sentence = Field("في الموعد آخذ الـ...", "عند الطلب أقول: نحب دوايا")),
-        "request.toilet" to Patch(display = Field("نحب نمشي للتوالات", "نحب نمشي للتواليت"), sentence = Field("أذهب إلى الـ...", "عند الطلب أقول: نحب نمشي للتوالات")),
-        "request.adjust_pillow" to Patch(display = Field("صلحلي المخدة", "صلح لي المخدة"), sentence = Field("أريد تعديل الـ...", "عند الطلب أقول: صلحلي المخدة")),
+        "request.water" to Patch(sentence = Field("نشرب ال...", "عند الطلب أقول: نحب شوية ما")),
+        "request.tea" to Patch(sentence = Field("نشرب ال...", "عند الطلب أقول: نحب تاي")),
+        "request.rest" to Patch(sentence = Field("عندما أتعب أريد ال...", "عند الطلب أقول: نحب نرتاح")),
+        "request.medicine" to Patch(sentence = Field("في الموعد آخذ ال...", "عند الطلب أقول: نحب دوايا")),
+        "request.toilet" to Patch(display = Field("نحب نمشي للتوالات", "نحب نمشي للتواليت"), sentence = Field("أذهب إلى ال...", "عند الطلب أقول: نحب نمشي للتوالات")),
+        "request.adjust_pillow" to Patch(display = Field("صلحلي المخدة", "صلح لي المخدة"), sentence = Field("أريد تعديل ال...", "عند الطلب أقول: صلحلي المخدة")),
         "request.headache" to Patch(sentence = Field("", "عندما أتألم أقول: ...")),
         "request.cold" to Patch(sentence = Field("", "في الشتاء أقول: ...")),
         "dish.tunisian.molokhia" to Patch(display = Field("ملوخية تونسية", "ملوخية تونسية")),
@@ -580,7 +580,7 @@ internal object DialectSpeechRevisions {
 
 
         "home.stove" to Patch(display = Field("موقد", "غاز")),
-        "home.oven" to Patch(sentence = Field("", "نخبز الخبز في الـ...")),
+        "home.oven" to Patch(sentence = Field("", "نخبز الخبز في ال...")),
         "home.wardrobe" to Patch(display = Field("خزانة", "مريو")),
         "home.carpet" to Patch(display = Field("بساط", "زربية")),
 
@@ -655,12 +655,12 @@ internal object DialectSpeechRevisions {
         "family.brother_wife" to Patch(display = Field("زوجة أخي", "مرت خويا")),
         "family.daughter_husband" to Patch(display = Field("زوج ابنتي", "راجل بنتي")),
         "family.son_wife" to Patch(display = Field("زوجة ابني", "مرت ولدي")),
-        "request.water" to Patch(sentence = Field("نشرب الـ...", "عند الطلب أقول: بغيت الما")),
-        "request.tea" to Patch(sentence = Field("نشرب الـ...", "عند الطلب أقول: بغيت أتاي")),
-        "request.rest" to Patch(sentence = Field("عندما أتعب أريد الـ...", "عند الطلب أقول: بغيت نرتاح")),
-        "request.medicine" to Patch(sentence = Field("في الموعد آخذ الـ...", "عند الطلب أقول: بغيت الدوا ديالي")),
-        "request.toilet" to Patch(sentence = Field("أذهب إلى الـ...", "عند الطلب أقول: بغيت نمشي للحمام")),
-        "request.adjust_pillow" to Patch(sentence = Field("أريد تعديل الـ...", "عند الطلب أقول: صوب ليا المخدة")),
+        "request.water" to Patch(sentence = Field("نشرب ال...", "عند الطلب أقول: بغيت الما")),
+        "request.tea" to Patch(sentence = Field("نشرب ال...", "عند الطلب أقول: بغيت أتاي")),
+        "request.rest" to Patch(sentence = Field("عندما أتعب أريد ال...", "عند الطلب أقول: بغيت نرتاح")),
+        "request.medicine" to Patch(sentence = Field("في الموعد آخذ ال...", "عند الطلب أقول: بغيت الدوا ديالي")),
+        "request.toilet" to Patch(sentence = Field("أذهب إلى ال...", "عند الطلب أقول: بغيت نمشي للحمام")),
+        "request.adjust_pillow" to Patch(sentence = Field("أريد تعديل ال...", "عند الطلب أقول: صوب ليا المخدة")),
         "request.headache" to Patch(sentence = Field("", "عندما أتألم أقول: ...")),
         "request.cold" to Patch(sentence = Field("", "في الشتاء أقول: ...")),
 
@@ -695,7 +695,7 @@ internal object DialectSpeechRevisions {
 
 
 
-        "home.oven" to Patch(sentence = Field("", "نخبز الخبز في الـ...")),
+        "home.oven" to Patch(sentence = Field("", "نخبز الخبز في ال...")),
         "home.carpet" to Patch(display = Field("بساط", "زربية")),
 
 
@@ -772,12 +772,12 @@ internal object DialectSpeechRevisions {
         "family.brother_wife" to Patch(display = Field("زوجة أخي", "مرت خويا")),
         "family.daughter_husband" to Patch(display = Field("زوج ابنتي", "راجل بنتي")),
         "family.son_wife" to Patch(display = Field("زوجة ابني", "مرت ولدي")),
-        "request.water" to Patch(sentence = Field("نشرب الـ...", "عند الطلب أقول: نحب نشرب الما")),
-        "request.tea" to Patch(sentence = Field("نشرب الـ...", "عند الطلب أقول: نحب أتاي")),
-        "request.rest" to Patch(sentence = Field("عندما أتعب أريد الـ...", "عند الطلب أقول: نحب نرتاح")),
-        "request.medicine" to Patch(sentence = Field("في الموعد آخذ الـ...", "عند الطلب أقول: نحب دوايا")),
-        "request.toilet" to Patch(sentence = Field("أذهب إلى الـ...", "عند الطلب أقول: نحب نروح للتواليت")),
-        "request.adjust_pillow" to Patch(sentence = Field("أريد تعديل الـ...", "عند الطلب أقول: صلحلي المخدة")),
+        "request.water" to Patch(sentence = Field("نشرب ال...", "عند الطلب أقول: نحب نشرب الما")),
+        "request.tea" to Patch(sentence = Field("نشرب ال...", "عند الطلب أقول: نحب أتاي")),
+        "request.rest" to Patch(sentence = Field("عندما أتعب أريد ال...", "عند الطلب أقول: نحب نرتاح")),
+        "request.medicine" to Patch(sentence = Field("في الموعد آخذ ال...", "عند الطلب أقول: نحب دوايا")),
+        "request.toilet" to Patch(sentence = Field("أذهب إلى ال...", "عند الطلب أقول: نحب نروح للتواليت")),
+        "request.adjust_pillow" to Patch(sentence = Field("أريد تعديل ال...", "عند الطلب أقول: صلحلي المخدة")),
         "request.headache" to Patch(sentence = Field("", "عندما أتألم أقول: ...")),
         "request.cold" to Patch(sentence = Field("", "في الشتاء أقول: ...")),
         "dish.algerian.chakhchoukha" to Patch(display = Field("شخشوخة بسكرية", "شخشوخة بسكرية")),
@@ -805,7 +805,7 @@ internal object DialectSpeechRevisions {
 
 
 
-        "home.oven" to Patch(sentence = Field("", "نخبز الخبز في الـ...")),
+        "home.oven" to Patch(sentence = Field("", "نخبز الخبز في ال...")),
 
         "home.carpet" to Patch(display = Field("بساط", "زربية")),
 
