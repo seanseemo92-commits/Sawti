@@ -1,0 +1,54 @@
+name: Sawti quick Libyan G corrected debug APK
+on:
+  push:
+    branches: [fix/libyan-g-pronunciation-20261116]
+    paths:
+      - '.github/workflows/libyan-g-debug-apk.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  debug-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Validate and build corrected Shakir APK
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon :app:testDebugUnitTest :app:assembleDebug
+      - name: Validate exact audio bytes bundled in APK
+        run: |
+          python - <<'PY'
+          import json,zipfile
+          from pathlib import Path
+          f=Path('app/build/outputs/apk/debug/app-debug.apk')
+          assert f.exists() and f.stat().st_size > 40000000
+          with zipfile.ZipFile(f) as z:
+              files=z.namelist()
+              prefix='assets/neural_tts/libyan/'
+              clips=[name for name in files if name.startswith(prefix) and name.endswith('.mp3')]
+              assert len(clips)==271, len(clips)
+              manifest=json.loads(z.read(prefix+'manifest.json'))
+              assert manifest['voice']=='ar-EG-ShakirNeural'
+              assert manifest['rate']=='-8%' and manifest['pitch']=='+12Hz'
+              assert len(manifest['entries'])==271
+              assert manifest['entries']['animal.cow']['speechText']=='بُجْرَهْ'
+              assert manifest['entries']['action.sit']['speechText']=='نْجَعْمِزْ'
+              assert manifest['entries']['food.coffee']['speechText']=='جَهْوَة'
+              assert {k for k,v in manifest['entries'].items() if 'ق' in v['speechText']} == {'transport.train','transport.boat'}
+              assert all(len(z.read(x))>1024 for x in clips)
+          print('Verified 271 bundled Libyan Shakir clips and 21 hard-g text replacements.')
+          PY
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sawti-Shakir-Libyan-HardG-Corrected-Debug
+          path: app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 14
+          if-no-files-found: error
