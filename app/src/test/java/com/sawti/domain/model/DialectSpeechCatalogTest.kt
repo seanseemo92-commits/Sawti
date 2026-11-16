@@ -176,8 +176,11 @@ class DialectSpeechCatalogTest {
             val expected = requireNotNull(NeuralLexicon161.forms[key]?.get(dialect)) {
                 "Missing explicit regional form: $dialect/$key"
             }
-            assertEquals("$dialect/$key label", expected.displayText, speech.displayText)
-            assertEquals("$dialect/$key speech", expected.speechText, speech.speechText)
+            val audited = Audit161Confirmed.corrections[dialect to key]
+            assertEquals("$dialect/$key label",
+                audited?.displayText ?: expected.displayText, speech.displayText)
+            assertEquals("$dialect/$key speech",
+                audited?.speechText ?: expected.speechText, speech.speechText)
             assertEquals("$dialect/$key source", SpeechSource.EXPLICIT_DIALECT, speech.source)
         }
         for (dialect in listOf(ArabicDialect.LIBYAN, ArabicDialect.TUNISIAN,
@@ -196,7 +199,7 @@ class DialectSpeechCatalogTest {
                 "action.speak" to ("أحكي" to "أَحْكِي")),
             ArabicDialect.IRAQI to mapOf("action.sit" to ("أقعد" to "أَقْعُد"),
                 "action.read" to ("أقرا" to "أَقْرَا")),
-            ArabicDialect.MOROCCAN to mapOf("action.sit" to ("نجلس" to "نْجْلِس"),
+            ArabicDialect.MOROCCAN to mapOf("action.sit" to ("نجلس" to "نِجْلِس"),
                 "request.headache" to ("راسي كيوجعني" to "رَاسِي كَيُوجَعْنِي")),
             ArabicDialect.ALGERIAN to mapOf(
                 "request.toilet" to ("بغيت نروح للتواليت" to "بْغِيت نْرُوح لِلتْوَالِيت"))
@@ -224,9 +227,10 @@ class DialectSpeechCatalogTest {
             val seed = item(dish.semanticKey)
             val legacy = seed.copy(ttsPrompt = "أَرُزٌّ بِاللَّحْمْ")
             val form = DialectSpeechCatalog.resolve(legacy, ArabicDialect.STANDARD)
-            assertEquals(dish.semanticKey,
-                DialectSpeechCatalog.cleanSpeech(dish.displayText, dish.ttsPrompt,
-                    ArabicDialect.STANDARD), form.speechText)
+            val audited = Audit161Confirmed.corrections[ArabicDialect.STANDARD to dish.semanticKey]
+            val expected = audited?.speechText ?: DialectSpeechCatalog.cleanSpeech(
+                dish.displayText, dish.ttsPrompt, ArabicDialect.STANDARD)
+            assertEquals(dish.semanticKey, expected, form.speechText)
             assertEquals(dish.semanticKey, legacy, DialectCatalog.localize(legacy,
                 ArabicDialect.STANDARD).forEditing())
             val caregiver = legacy.copy(ttsPrompt = "صوتي الشخصي",

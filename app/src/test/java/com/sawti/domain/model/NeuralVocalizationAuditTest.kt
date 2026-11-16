@@ -37,7 +37,8 @@ class NeuralVocalizationAuditTest {
                 assertTrue("$dialect/${greeting.key}", candidate.speechText.orEmpty().any {
                     it in '\u064b'..'\u0652'
                 })
-                assertEquals(greeting.key, candidate.speechText,
+                val audited = Audit161Confirmed.corrections[dialect to greeting.key]
+                assertEquals(greeting.key, audited?.speechText ?: candidate.speechText,
                     form(greeting.key, dialect).speechText)
                 count++
             }
@@ -48,7 +49,7 @@ class NeuralVocalizationAuditTest {
     @Test fun divineNameConnectedVowelsAndLibyanPauseRemainIntact() {
         assertEquals("بَارَكَ اللَّهُ فِيك", form("greeting.bless", ArabicDialect.LIBYAN).speechText)
         assertEquals("بَارَكَ اللَّهُ فِيك", form("greeting.bless", ArabicDialect.STANDARD).speechText)
-        assertEquals("اللَّهُ يبَارِك فِيك", form("greeting.bless", ArabicDialect.SAUDI).speechText)
+        assertEquals("اللَّه يْبَارِك فِيك", form("greeting.bless", ArabicDialect.SAUDI).speechText)
         assertEquals("الحَمْدُ لِلَّه", form("greeting.fine", ArabicDialect.LIBYAN).speechText)
         assertEquals("فِي أَمَانِ اللَّه", form("greeting.safe", ArabicDialect.LIBYAN).speechText)
     }
@@ -63,16 +64,16 @@ class NeuralVocalizationAuditTest {
             "clothing.belt" to "سِبْتَة", "home.pillow" to "مَخَدَّة",
             "home.fan" to "مَرْوَحَة", "home.key" to "مِفْتَاح",
             "body.neck" to "رَقْبَة", "body.shoulder" to "كِتْف",
-            "animal.cow" to "بَقْرَة", "animal.chicken" to "دجَاجَة",
-            "food.chicken" to "دجَاج", "animal.camel" to "جمَل",
-            "animal.horse" to "حصَان", "dish.couscous_fish" to "كُسْكْسِي بِالحُوت",
+            "animal.cow" to "بَقْرَة", "animal.chicken" to "دْجَاجَة",
+            "food.chicken" to "دْجَاج", "animal.camel" to "جْمَل",
+            "animal.horse" to "حْصَان", "dish.couscous_fish" to "كُسْكُسِي بِالحُوت",
             "dish.libyan_soup" to "شَرْبَة لِيبِيَّة",
             "dish.aysh_laban" to "عِيش بِاللَّبَن",
         )
         for ((key, expected) in libyan)
             assertEquals(key, expected, form(key, ArabicDialect.LIBYAN).speechText)
         assertEquals("حْرَام", form("home.blanket", ArabicDialect.SYRIAN).speechText)
-        assertEquals("تشَاي بِالنَّعْنَاع",
+        assertEquals("تْشَاي بِالنَّعْنَاع",
             form("dish.mint_tea", ArabicDialect.IRAQI).speechText)
         assertEquals("قْنِيَّة", form("animal.rabbit", ArabicDialect.MOROCCAN).speechText)
     }

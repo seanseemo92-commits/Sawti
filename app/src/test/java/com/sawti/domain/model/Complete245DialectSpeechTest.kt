@@ -47,10 +47,13 @@ class Complete245DialectSpeechTest {
             // Historical rows remain as independent 245-case coverage; updated
             // v1.6.1 forms intentionally supersede their old expected spellings.
             val upgrade = NeuralLexicon161.forms[row.key]?.get(row.dialect)
-            val expectedDisplay = upgrade?.displayText ?: row.display
-            val expectedSpeech = upgrade?.speechText ?: row.speech
+            // The 199 confirmed v1.6.1 audit fixes supersede both older fixtures
+            // and the 245-row history; every other historical row is still checked.
+            val audited = Audit161Confirmed.corrections[row.dialect to row.key]
+            val expectedDisplay = audited?.displayText ?: upgrade?.displayText ?: row.display
+            val expectedSpeech = audited?.speechText ?: upgrade?.speechText ?: row.speech
             assertEquals("$context display", expectedDisplay, form.displayText)
-            val clean = DialectSpeechCatalog.cleanSpeech(expectedDisplay,
+            val clean = audited?.speechText ?: DialectSpeechCatalog.cleanSpeech(expectedDisplay,
                 requireNotNull(expectedSpeech), row.dialect)
             assertEquals("$context speech", clean, form.speechText)
             assertEquals("$context source", SpeechSource.EXPLICIT_DIALECT, form.source)
