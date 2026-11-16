@@ -33,7 +33,7 @@ class NaturalPronunciationTest {
             assertEquals(key, expected.speechText, current.speechText)
         }
         assertTrue(DialectSpeechCatalog.resolve(seed("action.sit"),
-            ArabicDialect.LIBYAN).speechText.startsWith("نْق"))
+            ArabicDialect.LIBYAN).speechText.startsWith("نْج"))
     }
 
     @Test fun explicitInitialAndIraqiAffricateSukunsSurviveNormalization() {
