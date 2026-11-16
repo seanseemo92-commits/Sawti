@@ -52,7 +52,7 @@ async def main():
         rows = [r for r in csv.DictReader(inp)
                 if r["dialect"] == "LIBYAN" and r["semantic_key"] == "animal.cow"]
     assert len(rows) == 1 and rows[0]["display"] == "بقرة"
-    assert rows[0]["neural_speech_text"] == "بَقْرَة"
+    assert rows[0]["neural_speech_text"] == "بُجْرَهْ", "Approved Libyan cow speech must remain unchanged"
     OUT.mkdir(parents=True, exist_ok=True)
     limiter = asyncio.Semaphore(2)
     await asyncio.gather(*(save(key, text, limiter) for key,text,_ in CANDIDATES))
