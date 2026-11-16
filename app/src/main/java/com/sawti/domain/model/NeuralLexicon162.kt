@@ -523,7 +523,7 @@ internal object NeuralLexicon162 {
                 animal.dog|كلب|كَلْبْ
                 animal.sheep|خروف|خَرُوفْ
                 animal.horse|حصان|حْصَانْ
-                animal.cow|بقرة|بَقْرَة
+                animal.cow|بقرة|بُجْرَهْ
                 animal.sparrow|عصفور|عُصْفُورْ
                 animal.pigeon|حمامة|حْمَامَة
                 animal.chicken|دجاجة|دْجَاجَة
