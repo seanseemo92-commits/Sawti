@@ -5,6 +5,7 @@ on:
     paths:
       - 'scripts/libyan_g_listening_trials.py'
       - 'scripts/libyan_teacher_voice_audition.py'
+      - 'scripts/libyan_cow_pronunciation_trials.py'
       - '.github/workflows/libyan-g-listening-trials.yml'
   pull_request:
     branches: [fix/audit-v161-199-confirmed-20261116]
@@ -59,5 +60,29 @@ jobs:
         with:
           name: sawti-teacher-voice-audition
           path: build/libyan-teacher-voice-audition/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Generate nine isolated Libyan cow pronunciation candidates
+        run: python scripts/libyan_cow_pronunciation_trials.py
+      - name: Verify nine cow pronunciation comparisons
+        run: |
+          python - <<'PY'
+          import csv
+          from pathlib import Path
+          p=Path('build/libyan-cow-pronunciation-trials')
+          files=list(p.glob('*.mp3'))
+          assert len(files)==9, len(files)
+          assert all(a.stat().st_size>1024 for a in files)
+          with (p/'INDEX.csv').open(encoding='utf-8-sig') as f:
+            rows=list(csv.DictReader(f))
+          assert len(rows)==9
+          assert all(r['voice']=='ar-EG-ShakirNeural' and r['rate']=='-8%' and r['pitch']=='+12Hz' for r in rows)
+          print('9 recordings present; correct pronunciation requires human review.')
+          PY
+      - name: Upload cow pronunciation MP3 samples
+        uses: actions/upload-artifact@v4
+        with:
+          name: sawti-shakir-cow-nine-pronunciation-trials
+          path: build/libyan-cow-pronunciation-trials/
           if-no-files-found: error
           retention-days: 14
