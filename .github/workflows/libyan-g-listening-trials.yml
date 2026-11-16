@@ -4,6 +4,7 @@ on:
     branches: [fix/libyan-g-pronunciation-20261116]
     paths:
       - 'scripts/libyan_g_listening_trials.py'
+      - 'scripts/libyan_teacher_voice_audition.py'
       - '.github/workflows/libyan-g-listening-trials.yml'
   pull_request:
     branches: [fix/audit-v161-199-confirmed-20261116]
@@ -38,5 +39,25 @@ jobs:
         with:
           name: sawti-libyan-hard-g-listening-trials
           path: build/libyan-g-listening-trials/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Generate warmth and educational-tone samples (separate from app)
+        run: python scripts/libyan_teacher_voice_audition.py
+      - name: Assert six educational-tone reels and 36 MP3 words
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          base = Path('build/libyan-teacher-voice-audition')
+          clips = list(base.rglob('*.mp3'))
+          assert len(clips) == 42, len(clips)
+          assert len(list(base.glob('DEMO_*.mp3'))) == 6
+          assert all(p.stat().st_size > 1024 for p in clips)
+          print('Audition ready; emotional delivery and pronunciation need native-speaker review.')
+          PY
+      - name: Upload six teacher voice demonstrations
+        uses: actions/upload-artifact@v4
+        with:
+          name: sawti-teacher-voice-audition
+          path: build/libyan-teacher-voice-audition/
           if-no-files-found: error
           retention-days: 14
