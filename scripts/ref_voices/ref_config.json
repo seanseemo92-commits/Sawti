@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "description": "Each dialect may supply a licensed four-to-eight-second female reference. Null pair falls back to Habibi's bundled assets/MSA.mp3 with its official matching transcript.",
+  "dialects": {
+    "STANDARD": {
+      "ref_audio": null,
+      "ref_text": null
+    },
+    "LIBYAN": {
+      "ref_audio": null,
+      "ref_text": null
+    },
+    "TUNISIAN": {
+      "ref_audio": null,
+      "ref_text": null
+    },
+    "ALGERIAN": {
+      "ref_audio": null,
+      "ref_text": null
+    },
+    "MOROCCAN": {
+      "ref_audio": null,
+      "ref_text": null
+    },
+    "EGYPTIAN": {
+      "ref_audio": null,
+      "ref_text": null
+    },
+    "SYRIAN": {
+      "ref_audio": null,
+      "ref_text": null
+    },
+    "IRAQI": {
+      "ref_audio": null,
+      "ref_text": null
+    },
+    "SAUDI": {
+      "ref_audio": null,
+      "ref_text": null
+    }
+  }
+}
