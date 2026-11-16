@@ -6,7 +6,7 @@ import java.io.File
 import org.junit.Assert.*
 import org.junit.Test
 
-/** Exports the fully resolved, exact speech strings used by the Android app. */
+/** Exports Habibi-ready text (unvowelized) from the exact Kotlin dialect catalog. */
 class ExportSpeechCatalogTest {
     data class Entry(val dialect: String, val key: String, val speech: String)
     private fun json(s: String) = buildString {
@@ -30,14 +30,17 @@ class ExportSpeechCatalogTest {
                 if (seed.categoryId == RegionalDishesCatalog.CATEGORY_ID &&
                     !RegionalDishesCatalog.visibleForDialect(seed.subgroup, dialect)) continue
                 val key = requireNotNull(seed.semanticKey)
-                val neural = DialectSpeechCatalog.resolveForNeural(seed, dialect)
-                require(neural.speechText.isNotBlank()) { "No neural speech for $dialect/$key" }
-                result += Entry(dialect.name, key, neural.speechText)
+                val habibi = DialectSpeechCatalog.resolveForHabibi(seed, dialect)
+                require(habibi.speechText.isNotBlank()) { "No Habibi speech for $dialect/$key" }
+                result += Entry(dialect.name, key, habibi.speechText)
             }
         }
         assertEquals(9, result.map { it.dialect }.distinct().size)
         assertEquals(result.size, result.map { it.dialect to it.key }.toSet().size)
         assertTrue(result.all { it.key.isNotBlank() && it.speech.isNotBlank() })
+        assertTrue("Habibi input must have no Arabic diacritics", result.all {
+            it.speech == HabibiSpeechText.prepare(it.speech)
+        })
         val jsonData = result.joinToString(",\n", prefix = "{\n  \"version\": 1,\n  \"entries\": [\n", postfix = "\n  ]\n}\n") {
             "    {\"dialect\":${json(it.dialect)},\"semanticKey\":${json(it.key)},\"speechText\":${json(it.speech)}}"
         }
