@@ -81,6 +81,29 @@ object DialectSpeechCatalog {
         return form.copy(speechText = clean, phonemicCue = cue)
     }
 
+    /**
+     * Habibi input is plain Arabic text selected by the same semantic/dialect
+     * dictionary. Bypass the legacy Microsoft-specific vowel/sukun cleanup;
+     * those rules must never influence Habibi audio generation.
+     */
+    fun resolveForHabibi(value: WordItem, dialect: ArabicDialect): SpeechForm {
+        val form = resolveUncorrected(value, dialect)
+        if (form.source == SpeechSource.USER ||
+            value.semanticKey?.substringBefore('.') !in builtinNamespaces) return form
+        return form.copy(speechText = HabibiSpeechText.prepare(form.speechText))
+    }
+
+    /** Canonical Habibi clip text for a non-customized built-in card. */
+    fun habibiTextFor(item: WordItem, dialect: ArabicDialect): String? {
+        if (item.semanticKey.isNullOrBlank() || item.categoryId.startsWith("custom_") ||
+            item.semanticKey.substringBefore('.') !in builtinNamespaces) return null
+        if (item.customTextFields and (CardDetails.LABEL or CardDetails.SPEECH) != 0)
+            return null
+        if (item.neuralDialect != null && item.neuralDialect != dialect) return null
+        return resolveForHabibi(item.forEditing(), dialect).speechText
+            .takeIf { it.isNotBlank() }
+    }
+
     /** Kept as an API alias for callers which export the voice catalog; no second pipeline. */
     fun resolveForNeural(value: WordItem, dialect: ArabicDialect): SpeechForm = resolve(value, dialect)
 
