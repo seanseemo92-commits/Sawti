@@ -74,11 +74,14 @@ object DialectSpeechCatalog {
         if (form.source == SpeechSource.USER ||
             value.semanticKey?.substringBefore('.') !in builtinNamespaces) return form
         val clean = cleanSpeech(form.displayText, form.speechText, dialect)
-        val reviewedCue = if (DialectSpeechRevisions.hasCompletedCandidate(
-                dialect, value.semanticKey.orEmpty()
-            )) PhonemicCue.derive(clean) else ""
-        val cue = reviewedCue.ifBlank { form.phonemicCue }
-        return form.copy(speechText = clean, phonemicCue = cue)
+        val final = Audit161Confirmed.apply(value, dialect, form.copy(speechText = clean))
+        // A cue must refer to the final speech, not an outdated catalog candidate.
+        // Keep any explicit caregiver override untouched.
+        val derived = PhonemicCue.derive(final.speechText)
+        val cue = if (value.customTextFields and CardDetails.CUE != 0) final.phonemicCue
+            else if (final.speechText != value.ttsPrompt || final.phonemicCue.isBlank() ||
+                final.phonemicCue != derived) derived else final.phonemicCue
+        return final.copy(phonemicCue = cue)
     }
 
     /** Kept as an API alias for callers which export the voice catalog; no second pipeline. */
@@ -122,8 +125,9 @@ object DialectSpeechCatalog {
                 else -> base
             }
             if (word.startsWith("إِ") && !visible.isNullOrEmpty() &&
-                visible.first() !in "اأإآٱ") word = word.removePrefix("إِ")
-            word = word.replace("تْش", "تش")
+                visible.first() !in "اأإآٱ" && !word.startsWith("إِسْفِنْز"))
+                word = word.removePrefix("إِ")
+            // تْش is a deliberate Iraqi /tʃ/ cluster: never remove its sukun.
             // Keep lexical clusters in خَالْتِي and similar regional words.
             if (word.startsWith("الْ")) word = word.replaceFirst("الْ", "ال")
             else if (word.startsWith("بِالْ")) word = word.replaceFirst("بِالْ", "بِال")
@@ -133,8 +137,10 @@ object DialectSpeechCatalog {
             // صْبَع is a deliberate Libyan lexical cluster, not a prosthetic sukun.
             // Explicit regional onset clusters (حْرَام، قْنِيَّة، دْجَاج)
             // are lexical, not synthetic prefixes; keep their initial sukun.
-            if (visible?.endsWith('ة') == true) word = word.replace(terminalTa, "ة")
-            word = word.removeSuffix("ْ")
+            // Fusha construct-state vowels (ةُ) are lexical inflection, not pause noise.
+            if (dialect != ArabicDialect.STANDARD && visible?.endsWith('ة') == true)
+                word = word.replace(terminalTa, "ة")
+            word = word.replace("ّْ", "ّ").removeSuffix("ْ")
             // Keep every deliberately specified medial vowel. In Arabic greetings
             // these vowels control liaison and the pronunciation of 'اللَّهُ'.
             word + punctuation

@@ -39,6 +39,18 @@ class NeuralSpeechNormalizerTest {
         }
     }
 
+    @Test fun auditedMeaningAndInflectionCasesAreExact() {
+        val cases = listOf(
+            Triple(ArabicDialect.SYRIAN, "family.husband", "جُوزِي"),
+            Triple(ArabicDialect.EGYPTIAN, "action.stand", "أَقُوم"),
+            Triple(ArabicDialect.IRAQI, "action.close", "أَسِدّ"),
+            Triple(ArabicDialect.ALGERIAN, "dish.algerian.douara", "دْوَارَة"),
+            Triple(ArabicDialect.STANDARD, "clothing.high_heels", "حِذَاءٌ بِكَعْبٍ عَالٍ"),
+        )
+        for ((dialect, key, expected) in cases)
+            assertEquals("$dialect/$key", expected, DialectSpeechCatalog.resolve(seed(key), dialect).speechText)
+    }
+
     @Test fun caregiverTextIsNeverAutomaticallyRewritten() {
         val original = seed("request.water").copy(ttsPrompt = "نَبِّيْ إِمِّيَّهْ",
             customTextFields = CardDetails.SPEECH)

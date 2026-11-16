@@ -146,11 +146,11 @@ class DisplaySpeechConsistencyTest {
 
     @Test fun LibyanWrittenCorrectionsHaveTheNaturalNeuralSpeechForms() {
         val expected = mapOf(
-            "family.son_wife" to ("مرت ولدي" to "مَرْت وَلْدِي"),
-            "dish.mbakbaka" to ("مكرونة مبكبكة" to "مَكَرُونَة مبَكْبَكَة"),
+            "family.son_wife" to ("مرت ولدي" to "مَرْت وِلْدِي"),
+            "dish.mbakbaka" to ("مكرونة مبكبكة" to "مَكَرُونَة مْبَكْبَكَة"),
             "vegetable.peas" to ("بازيلية" to "بَازِيلْيَة"),
             "dish.zmeeta" to ("زميطة" to "زُمِيطَة"),
-            "dish.sfinz" to ("سفنز" to "سفِنْز"),
+            "dish.sfinz" to ("سفنز" to "إِسْفِنْز"),
             "clothing.blouse" to ("سورية" to "سُورِيَّة"),
         )
         expected.forEach { (key, pair) ->
@@ -275,6 +275,32 @@ class DisplaySpeechConsistencyTest {
         }
         assertTrue("Misleading first-syllable hints:\\n" + problems.joinToString("\\n"),
             problems.isEmpty())
+    }
+
+    @Test fun all199ConfirmedAuditItemsMatchExactDisplayAndSpeech() {
+        assertEquals(199, Audit161Confirmed.corrections.size)
+        val failures = mutableListOf<String>()
+        for ((dialectKey, correction) in Audit161Confirmed.corrections) {
+            val (dialect, key) = dialectKey
+            val source = seeds[key] ?: error("Missing audit concept $key")
+            val form = DialectSpeechCatalog.resolve(source, dialect)
+            if (form.displayText != correction.displayText ||
+                form.speechText != correction.speechText) {
+                failures += "$dialect/$key: expected '${correction.displayText}' / '${correction.speechText}', got '${form.displayText}' / '${form.speechText}'"
+            }
+        }
+        assertTrue(failures.joinToString("\\n"), failures.isEmpty())
+    }
+
+    @Test fun builtinCuesAreNeverBlankOrDerivedFromStaleSpeech() {
+        val problems = mutableListOf<String>()
+        for (dialect in ArabicDialect.entries) for ((key, source) in seeds) {
+            val form = DialectSpeechCatalog.resolve(source, dialect)
+            if (form.phonemicCue.isBlank() ||
+                form.phonemicCue != PhonemicCue.derive(form.speechText) ||
+                "ّْ" in form.speechText) problems += "$dialect/$key: $form"
+        }
+        assertTrue(problems.joinToString("\\n"), problems.isEmpty())
     }
 
     @Test fun personalLabelAndSpeechOverridesAreNeverReplaced() {

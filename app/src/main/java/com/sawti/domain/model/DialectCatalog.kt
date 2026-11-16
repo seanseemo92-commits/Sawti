@@ -1208,7 +1208,8 @@ object DialectCatalog {
     fun text(semanticKey: String, dialect: ArabicDialect, fallback: String): String {
         val original = if (dialect == ArabicDialect.STANDARD) fallback
             else words[semanticKey]?.get(dialect)?.displayText ?: fallback
-        return DialectSpeechRevisions.overrideLabel(dialect, semanticKey, original)
+        return Audit161Confirmed.overrideLabel(dialect, semanticKey,
+            DialectSpeechRevisions.overrideLabel(dialect, semanticKey, original))
     }
 
     fun localize(value: WordItem, dialect: ArabicDialect): WordItem {
@@ -1230,7 +1231,8 @@ object DialectCatalog {
                 else regional?.sentencePrompt ?: TransportCatalog.sentencePrompt(key, dialect) ?: item.sentencePrompt,
             sourceDetails = CardDetails.from(item),
         )
-        val revised = DialectSpeechRevisions.applySentence(item, dialect, projected)
+        val revised = Audit161Confirmed.reconcileSentence(item, dialect,
+            DialectSpeechRevisions.applySentence(item, dialect, projected))
         val result = if (revised.copy(sourceDetails = null) == item) item.copy() else revised
         return result.also {
             it.neuralSpeechText = neuralSpeech

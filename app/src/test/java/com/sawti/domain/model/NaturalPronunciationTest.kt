@@ -32,6 +32,27 @@ class NaturalPronunciationTest {
             ArabicDialect.LIBYAN).speechText)
     }
 
+    @Test fun explicitInitialAndIraqiAffricateSukunsSurviveNormalization() {
+        val cases = mapOf(
+            ArabicDialect.LIBYAN to mapOf(
+                "animal.camel" to "جْمَل", "animal.chicken" to "دْجَاجَة",
+                "animal.horse" to "حْصَان", "food.chicken" to "دْجَاج",
+                "clothing.socks" to "شْخَاشِير",
+                "dish.mbakbaka" to "مَكَرُونَة مْبَكْبَكَة",
+                "dish.potato_stew" to "طْبِيخَة بَطَاطَا",
+                "dish.sfinz" to "إِسْفِنْز"),
+            ArabicDialect.IRAQI to mapOf(
+                "food.tea" to "تْشَاي", "food.fish" to "سِمَتْش",
+                "greeting.how_are_you" to "شْلُونَك؟"),
+            ArabicDialect.TUNISIAN to mapOf(
+                "greeting.how_are_you" to "شْنُوَّة أَحْوَالَك؟"),
+            ArabicDialect.ALGERIAN to mapOf("fruit.orange" to "تْشِينَة"),
+        )
+        for ((dialect, expected) in cases) for ((key, speech) in expected) {
+            assertEquals("$dialect/$key", speech, DialectSpeechCatalog.resolve(seed(key), dialect).speechText)
+        }
+    }
+
     @Test fun allDialectsPreserveRoomSourceAndPersonalTextAndMedia() {
         val source = seed("request.water").copy(audioPath = "/my/voice.m4a",
             photoPath = "/my/photo.jpg")
