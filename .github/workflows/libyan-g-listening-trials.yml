@@ -5,6 +5,8 @@ on:
     paths:
       - 'scripts/libyan_g_listening_trials.py'
       - '.github/workflows/libyan-g-listening-trials.yml'
+  pull_request:
+    branches: [fix/audit-v161-199-confirmed-20261116]
   workflow_dispatch:
 permissions:
   contents: read
