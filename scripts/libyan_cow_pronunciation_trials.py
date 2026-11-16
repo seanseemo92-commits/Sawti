@@ -18,15 +18,15 @@ RATE = "-8%"
 PITCH = "+12Hz"
 
 CANDIDATES = (
-    ("01_existing_bajra", "بَجْرَة", "النص الحالي في عينة شاكر 3"),
-    ("02_bajara", "بَجَرَة", "فتحة بعد الجيم بدلاً من السكون"),
-    ("03_bajrah", "بَجْرَهْ", "سكون بعد الجيم ونهاية هاء ساكنة"),
-    ("04_bajarah", "بَجَرَهْ", "فتحة بعد الجيم ونهاية هاء ساكنة"),
-    ("05_bajra_long_a", "بَجْرَا", "ألف في النهاية للمقارنة"),
-    ("06_bajra_no_ta", "بَجْرَ", "نهاية مفتوحة بدون تاء مربوطة"),
-    ("07_baqra_control", "بَقْرَة", "قاف عربية للمقارنة - ليست بالضرورة G"),
-    ("08_baqara_control", "بَقَرَة", "قاف وفتحة للمقارنة - ليست بالضرورة G"),
-    ("09_bakra_control", "بَكْرَة", "كاف للمقارنة - ليست G"),
+    ("01_bujrah", "بُجْرَهْ", "ضمة أول الكلمة، جيم ساكنة، هاء النهاية"),
+    ("02_bujra_ta", "بُجْرَة", "ضمة أول الكلمة، جيم ساكنة، تاء مربوطة"),
+    ("03_bujarah", "بُجَرَهْ", "ضمة أول الكلمة، جيم مفتوحة، هاء النهاية"),
+    ("04_bujara_ta", "بُجَرَة", "ضمة أول الكلمة، جيم مفتوحة، تاء مربوطة"),
+    ("05_bujra_long_a", "بُجْرَا", "ضمة أول الكلمة، ألف النهاية للمقارنة"),
+    ("06_bujra_no_ta", "بُجْرَ", "ضمة أول الكلمة، نهاية مفتوحة للمقارنة"),
+    ("07_buqrah_user_spelling", "بُقْرَه", "مطابقة لتشكيل المستخدم كتابياً؛ القاف قد لا تعطي G"),
+    ("08_buqra_ta_control", "بُقْرَة", "تاء مربوطة مع القاف للمقارنة"),
+    ("09_bukrah_control", "بُكْرَهْ", "كاف للمقارنة، ليست صوت G"),
 )
 
 async def save(variant, text, limiter):
@@ -64,10 +64,10 @@ async def main():
                                  voice=VOICE, rate=RATE,pitch=PITCH,
                                  validated_by_libyan_speaker="NO"))
     (OUT / "README.txt").write_text(
-        "SAWTI: nine isolated 'بقرة' pronunciation candidates.\n"
+        "SAWTI: nine isolated pronunciation candidates for user-corrected بُقْرَه (initial DAMMA).\n"
         "Same teacher voice ar-EG-ShakirNeural (rate -8%, pitch +12Hz).\n"
         "All are hypotheses, none automatically declared correct.\n"
-        "Some are intentionally bad controls (/q/, /k/, wrong ending).\n"
+        "Some are intentionally bad controls (/q/, /k/, alternate ending).\n"
         "Do not replace application audio or change displayed spelling until user approves.\n",
         encoding="utf-8",
     )
