@@ -1,0 +1,99 @@
+name: Approve Shakir bright for all Libyan offline neural clips
+on:
+  push:
+    branches: [fix/libyan-g-pronunciation-20261116]
+    paths:
+      - 'scripts/generate_neural_voices.py'
+      - 'scripts/validate_neural_packs.py'
+      - 'scripts/neural_v162_overrides.csv'
+      - 'app/src/main/java/com/sawti/domain/model/NeuralLexicon162.kt'
+      - 'scripts/libyan_shakir_approved_samples.csv'
+      - '.github/workflows/libyan-shakir-approved-voice.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: approved-libyan-shakir-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  libyan-271:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Export the authoritative 2,399 Kotlin neural speech rows
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon :app:testDebugUnitTest --tests 'com.sawti.domain.model.ExportSpeechCatalogTest'
+          test -s app/build/speech_catalog.json
+      - name: Confirm exact Kotlin and CSV pronunciation parity
+        run: python scripts/verify_neural_v162_catalog.py
+      - name: Verify approved Shakir profile and cow speech
+        run: |
+          python - <<'PY'
+          import csv
+          from scripts.generate_neural_voices import LIBYAN_TEACHER, speaker_profile
+          assert LIBYAN_TEACHER == {"voice":"ar-EG-ShakirNeural","rate":"-8%","pitch":"+12Hz"}
+          assert speaker_profile("LIBYAN","female","-18%") == ("ar-EG-ShakirNeural","-8%","+12Hz")
+          assert speaker_profile("LIBYAN","male","-18%") == ("ar-EG-ShakirNeural","-8%","+12Hz")
+          with open("scripts/neural_v162_overrides.csv",encoding="utf-8-sig") as f:
+              rows = list(csv.DictReader(f))
+          lib = [r for r in rows if r["dialect"] == "LIBYAN"]
+          assert len(lib) == 271
+          assert all(r["voice_id"] == "ar-EG-ShakirNeural" for r in lib)
+          assert [(r["display"],r["neural_speech_text"]) for r in lib if r["semantic_key"] == "animal.cow"] == [("بقرة","بُجْرَهْ")]
+          assert len([r for r in rows if r["dialect"] != "LIBYAN"]) == 2128
+          print("Shakir profile, 271 Libyan rows and approved cow speech verified.")
+          PY
+      - name: Install Edge neural TTS
+        run: python -m pip install 'edge-tts>=6.1,<9'
+      - name: Re-record exactly the Libyan voice assets
+        run: |
+          python scripts/generate_neural_voices.py --dialects LIBYAN --gender female --concurrency 2 --attempts 10
+          python scripts/validate_neural_packs.py
+      - name: Confirm Libyan manifest metadata and 271 MP3 files
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("app/src/main/assets/neural_tts")
+          j=json.loads((root/"libyan/manifest.json").read_text(encoding="utf-8"))
+          assert j["voice"]=="ar-EG-ShakirNeural" and j["rate"]=="-8%" and j["pitch"]=="+12Hz"
+          assert len(j["entries"])==271 and j["entries"]["animal.cow"]["speechText"]=="بُجْرَهْ"
+          assert len(list((root/"libyan").glob("*.mp3")))==271
+          assert all(p.stat().st_size>1024 for p in (root/"libyan").glob("*.mp3"))
+          for name in ["standard","egyptian","iraqi","saudi","syrian","tunisian","moroccan","algerian"]:
+              assert (root/name/"manifest.json").exists()
+          print("All 271 Libyan clips and eight other dialect manifests present.")
+          PY
+      - name: Upload 271 Libyan Shakir MP3s
+        uses: actions/upload-artifact@v4
+        with:
+          name: sawti-libyan-shakir-271-mp3
+          path: app/src/main/assets/neural_tts/libyan/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Commit Libyan audio files only (never main)
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app/src/main/assets/neural_tts/libyan/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'feat(audio): use approved bright Shakir for 271 Libyan offline clips'
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin HEAD:"${GITHUB_REF_NAME}"
+      - name: Dispatch full validation and APK build on this branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run build.yml --ref "${GITHUB_REF_NAME}" --field full_build=true
