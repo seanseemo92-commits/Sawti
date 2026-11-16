@@ -16,8 +16,10 @@ APACHE_SPECIALIZED = frozenset(("MSA", "ALG", "EGY", "MAR", "IRQ"))
 PROVIDER = "Habibi-TTS"
 MANIFEST_VERSION = 2
 EXPECTED_CLIPS = 2399
+EXPECTED_KEYS = 391
 SAFE_KEY = re.compile(r"^[a-z0-9][a-z0-9._-]*$")
-ARABIC_DIACRITICS = re.compile(r"[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED]")
+ARABIC_DIACRITICS = re.compile(r"[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640]")
+DIGITS = re.compile(r"[0-9\u0660-\u0669\u06F0-\u06F9]")
 
 
 def license_policy(dialect: str, requested: str = "auto"):
@@ -57,6 +59,10 @@ def load_catalog(path: Path):
             raise ValueError(f"Empty Habibi text {dialect}/{key}")
         if ARABIC_DIACRITICS.search(spoken):
             raise ValueError(f"Unexpected Arabic diacritics {dialect}/{key}")
+        if DIGITS.search(spoken):
+            raise ValueError(f"Write numeric digits as words: {dialect}/{key}")
+        if spoken != spoken.strip() or re.search(r"\\s{2,}", spoken):
+            raise ValueError(f"Unnormalized whitespace: {dialect}/{key}")
         if key in groups[dialect]:
             raise ValueError(f"Duplicate Habibi key {dialect}/{key}")
         groups[dialect][key] = spoken
@@ -64,4 +70,6 @@ def load_catalog(path: Path):
         raise ValueError("Each of the nine dialects must contain words")
     if sum(map(len, groups.values())) != EXPECTED_CLIPS:
         raise ValueError("Speech catalog cardinality changed; review before generating")
+    if len({key for group in groups.values() for key in group}) != EXPECTED_KEYS:
+        raise ValueError(f"Expected {EXPECTED_KEYS} distinct semantic keys")
     return groups
