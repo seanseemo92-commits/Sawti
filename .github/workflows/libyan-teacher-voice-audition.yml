@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install Edge TTS
-        run: python -m pip install 'edge-tts>=6.1,<9'
+        run: python -m pip install 'edge-tts>=6.1,<9' 'imageio-ffmpeg>=0.6,<1'
       - name: Generate independent voice audition samples
         run: python scripts/libyan_teacher_voice_audition.py
       - name: Check all 36 snippets and six demo files
