@@ -73,9 +73,10 @@ object DialectSpeechCatalog {
         val key = value.semanticKey
         if (isNeuralOnly(value) && key != null) {
             NeuralLexicon162.get(dialect, key)?.let { entry ->
+                val safeSpeech = NeuralSpeechNormalizer.normalize(entry.speechText)
                 val cue = if (value.customTextFields and CardDetails.CUE != 0)
-                    value.forEditing().phonemicCue else PhonemicCue.derive(entry.speechText)
-                return SpeechForm(entry.displayText, entry.speechText, cue,
+                    value.forEditing().phonemicCue else PhonemicCue.derive(safeSpeech)
+                return SpeechForm(entry.displayText, safeSpeech, cue,
                     SpeechSource.EXPLICIT_DIALECT)
             }
         }
@@ -111,12 +112,13 @@ object DialectSpeechCatalog {
         if (!isNeuralOnly(item)) return null
         if (item.neuralDialect != null && item.neuralDialect != dialect) return null
         return NeuralLexicon162.get(dialect, item.semanticKey!!)?.speechText
+            ?.let { NeuralSpeechNormalizer.normalize(it) }
     }
 
     // Historical compatibility helper only; never called for a v1.6.2 table row.
     internal fun cleanSpeech(display: String, spoken: String, dialect: ArabicDialect): String {
         if (spoken.isBlank()) return spoken
-        val sounds = spoken.trim().split(Regex("""\s+"""))
+        val sounds = NeuralSpeechNormalizer.normalize(spoken).trim().split(Regex("""\s+"""))
         val labels = display.trim().split(Regex("""\s+"""))
         val aligned = sounds.size == labels.size
         val marks = Regex("""[\u064B-\u065F\u0670]""")
