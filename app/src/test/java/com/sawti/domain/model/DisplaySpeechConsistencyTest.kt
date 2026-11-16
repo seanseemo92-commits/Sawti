@@ -3,6 +3,7 @@ package com.sawti.domain.model
 import com.sawti.data.db.WordSeed
 import com.sawti.data.db.toDomain
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
