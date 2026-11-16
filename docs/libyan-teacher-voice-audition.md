@@ -16,3 +16,7 @@ User listened to the six test reels and selected **#3 (“03_shakir_bright”)**
 ## Specific user phonetic correction — بُقْرَه (2026-11-16)
 
 The user explicitly corrected the **initial vowel** in the Libyan cow word to **ḍamma**: `بُقْرَه` (NOT `بَقْرَة`). This is an authoritative language-user spelling correction even while acoustic realization of /ɡ/ is still unresolved. The previous trial incorrectly began with fatḥa. Nine revised comparison clips now **all start with بُ**, and include the user's exact written form and candidate Egyptian-jeem phonetic surrogates. Do not infer that Egyptian ج always means /ɡ/. Preserve the chosen Shakir lively voice profile at `-8%`, `+12Hz`, with production assets unchanged until a correct-sounding clip is confirmed.
+
+## Listening result — animal.cow approved (2026-11-16)
+
+The user listened to the **damma-corrected** nine-candidate comparison and confirmed **sample #1** — `01_bujrah.mp3` — **correct** for Libyan «بُقْرَه». The approved synthesis is `ar-EG-ShakirNeural`, `rate=-8%`, `pitch=+12Hz`, **speech input `بُجْرَهْ`**. Preserve original displayed label «بقرة»; target pronunciation **بُقْرَه** and spoken TTS surrogate **بُجْرَهْ** serve different roles. Approved exactly one word, **not** an automatic ق→ج rule, and does not approve all other 270 words. The candidate is recorded in `scripts/libyan_shakir_approved_samples.csv`. Do not modify `main`, original PR #53 or production MP3 assets solely on this selection; use the approved audio/text as one verified item in a subsequent reviewed Libyan pack.
