@@ -460,8 +460,8 @@ object WordSeed {
         category.words.mapIndexed { index, word ->
             WordItemEntity(
                 categoryId = category.id, subgroup = word.subgroup,
-                displayText = word.display, ttsPrompt = word.tts,
-                phonemicCue = word.cue ?: PhonemicCue.derive(word.tts),
+                displayText = word.display, ttsPrompt = word.display,
+                phonemicCue = word.cue ?: PhonemicCue.derive(word.display),
                 sentencePrompt = SeedExtras.sentencePrompt(category.id, word.semanticKey),
                 emoji = word.emoji, sortOrder = index, semanticKey = word.semanticKey,
             )

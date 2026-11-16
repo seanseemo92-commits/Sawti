@@ -174,8 +174,8 @@ object GreetingsCatalog {
         greetings.indices.associate { index ->
             greetings[index].key to localized.mapValues { (_, expressions) ->
                 check(expressions.size == greetings.size) { "Incomplete greetings dialect catalog" }
-                val (display, vocalized) = expressions[index]
-                DialectForm(displayText = display, speechText = vocalized)
+                val (display, _) = expressions[index]
+                DialectForm(displayText = display, speechText = display)
             }
         }
 
