@@ -12,3 +12,7 @@ Important:
 ## User choice — 2026-11-16
 
 User listened to the six test reels and selected **#3 (“03_shakir_bright”)** as the satisfactory livelier/educational voice candidate: `ar-EG-ShakirNeural`, Edge TTS `rate="-8%"`, `pitch="+12Hz"`. Preserve the Libyan **display** text unchanged. The six-word listening choice establishes a preferred **delivery profile**, not proof that all 271 Libyan entries have native pronunciation or that every hard-/g/ word is correct. Keep pronunciation validation (including G vs J), timing, warmth, and within-word naturalness as explicit QA gates before replacing production MP3s or changing main. No app assets should be overwritten solely from this choice.
+
+## Specific user phonetic correction — بُقْرَه (2026-11-16)
+
+The user explicitly corrected the **initial vowel** in the Libyan cow word to **ḍamma**: `بُقْرَه` (NOT `بَقْرَة`). This is an authoritative language-user spelling correction even while acoustic realization of /ɡ/ is still unresolved. The previous trial incorrectly began with fatḥa. Nine revised comparison clips now **all start with بُ**, and include the user's exact written form and candidate Egyptian-jeem phonetic surrogates. Do not infer that Egyptian ج always means /ɡ/. Preserve the chosen Shakir lively voice profile at `-8%`, `+12Hz`, with production assets unchanged until a correct-sounding clip is confirmed.
