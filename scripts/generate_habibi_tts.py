@@ -198,6 +198,7 @@ def generate_one_dialect(args, dialect, grouped, model, vocoder, mel_type):
     matches = all(previous.get(k) == v for k, v in meta.items())
     completed = previous.get("entries", {}) if matches else {}
     result = {}
+    generated = 0
     for key, raw_text in sorted(grouped[dialect].items()):
         text = clean_for_habibi(raw_text)
         if text != raw_text:
@@ -208,6 +209,8 @@ def generate_one_dialect(args, dialect, grouped, model, vocoder, mel_type):
                     and old.get("speechText") == text and
                     target.is_file() and target.stat().st_size >= 1024 and
                     old.get("sha256") == file_sha256(target))
+        if not reusable and args.max_new > 0 and generated >= args.max_new:
+            continue
         if not reusable:
             set_seed()  # repeated per key for reproducibility independent of batch order
             visible_count = sum(1 for ch in text if ch.isalpha())
@@ -226,15 +229,16 @@ def generate_one_dialect(args, dialect, grouped, model, vocoder, mel_type):
                 device=args.device, dialect_id=dialect_id_map[tag],
             )
             mp3_output(wave, rate, target)
+            generated += 1
         result[key] = {
             "file": key + ".mp3", "speechText": text,
             "sha256": file_sha256(target),
         }
         # Persist progress atomically: --skip-existing works after interruption.
         atomic_json(manifest_path, {**meta, "entries": result})
-    if set(result) != set(grouped[dialect]):
+    if set(result) != set(grouped[dialect]) and args.max_new == 0:
         raise RuntimeError(f"Missing output from {dialect} voice pack")
-    print(f"Done: {dialect}/{tag} with {len(result)} clips.")
+    print(f"Batch: {dialect}/{tag} newly generated={generated}, verified={len(result)} of {len(grouped[dialect])}")
 
 
 def main():
@@ -242,6 +246,8 @@ def main():
     parser.add_argument("--dialect", default="ALL",
                         choices=["ALL", *DIALECT_IDS.keys()])
     parser.add_argument("--skip-existing", action="store_true")
+    parser.add_argument("--max-new", type=int, default=0,
+                        help="Maximum new clips per selected dialect per run; zero means ALL")
     parser.add_argument("--device", choices=["cuda", "cpu"], default="cpu")
     parser.add_argument("--catalog", type=Path, default=Path("app/build/speech_catalog.json"))
     parser.add_argument("--output", type=Path,
@@ -255,6 +261,8 @@ def main():
     # though the Habibi-TTS source code is MIT licensed.
     if not args.ack_noncommercial:
         parser.error("Unified weights are CC-BY-NC-SA-4.0; explicit authorization required")
+    if args.max_new < 0:
+        parser.error("--max-new must be >= 0")
     grouped = load_catalog(args.catalog)
     if sum(map(len, grouped.values())) != EXPECTED_CLIPS:
         raise RuntimeError("The exact 2399-card corpus must pass first")
