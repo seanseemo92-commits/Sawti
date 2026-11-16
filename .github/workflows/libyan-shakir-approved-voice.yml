@@ -1,14 +1,5 @@
 name: Approve Shakir bright for all Libyan offline neural clips
 on:
-  push:
-    branches: [fix/libyan-g-pronunciation-20261116]
-    paths:
-      - 'scripts/generate_neural_voices.py'
-      - 'scripts/validate_neural_packs.py'
-      - 'scripts/neural_v162_overrides.csv'
-      - 'app/src/main/java/com/sawti/domain/model/NeuralLexicon162.kt'
-      - 'scripts/libyan_shakir_approved_samples.csv'
-      - '.github/workflows/libyan-shakir-approved-voice.yml'
   workflow_dispatch:
 permissions:
   contents: write
