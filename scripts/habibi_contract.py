@@ -61,7 +61,7 @@ def load_catalog(path: Path):
             raise ValueError(f"Unexpected Arabic diacritics {dialect}/{key}")
         if DIGITS.search(spoken):
             raise ValueError(f"Write numeric digits as words: {dialect}/{key}")
-        if spoken != spoken.strip() or re.search(r"\\s{2,}", spoken):
+        if spoken != spoken.strip() or re.search(r"\s{2,}", spoken):
             raise ValueError(f"Unnormalized whitespace: {dialect}/{key}")
         if key in groups[dialect]:
             raise ValueError(f"Duplicate Habibi key {dialect}/{key}")
