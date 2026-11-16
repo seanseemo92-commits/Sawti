@@ -1,13 +1,15 @@
 name: Generate regional neural voices
 on:
   push:
-    branches: [main, fix/sawti-v161-neural-lexicon-20261115]
+    branches: [main, fix/sawti-v161-neural-lexicon-20261115, fix/audit-v161-199-confirmed-20261116]
     paths:
       - 'app/src/main/java/com/sawti/domain/model/NeuralSpeechNormalizer.kt'
       - 'app/src/main/java/com/sawti/domain/model/DialectSpeechCatalog.kt'
       - 'app/src/main/java/com/sawti/domain/model/DialectCatalog.kt'
       - 'app/src/main/java/com/sawti/domain/model/DialectSpeechRevisions.kt'
       - 'app/src/main/java/com/sawti/domain/model/NeuralLexicon161.kt'
+      - 'app/src/main/java/com/sawti/domain/model/NeuralLexicon162.kt'
+      - 'scripts/neural_v162_overrides.csv'
       - 'app/src/main/java/com/sawti/domain/model/GreetingsCatalog.kt'
       - 'app/src/main/java/com/sawti/domain/model/TransportCatalog.kt'
       - 'app/src/main/java/com/sawti/data/db/WordSeed.kt'
@@ -36,6 +38,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: neural-voice-pack-${{ github.ref }}
@@ -62,6 +65,9 @@ jobs:
           chmod +x gradlew
           ./gradlew --no-daemon :app:testDebugUnitTest --tests 'com.sawti.domain.model.ExportSpeechCatalogTest'
           test -s app/build/speech_catalog.json
+      - name: Validate exact v1.6.2 source/export parity
+        if: ${{ github.ref == 'refs/heads/fix/audit-v161-199-confirmed-20261116' }}
+        run: python scripts/verify_neural_v162_catalog.py
       - name: Install Edge TTS
         run: python -m pip install 'edge-tts>=6.1,<9'
       - name: Generate selected dialect pack
@@ -69,7 +75,8 @@ jobs:
           DIALECTS: ${{ inputs.dialects || 'ALL' }}
           GENDER: ${{ inputs.voice_gender || 'female' }}
         run: |
-          python scripts/generate_neural_voices.py --dialects "$DIALECTS" --gender "$GENDER" --force --rate=-18%
+          python scripts/generate_neural_voices.py --dialects "$DIALECTS" --gender "$GENDER" --rate=-18%
+          python scripts/validate_neural_packs.py
       - name: Upload voice pack
         uses: actions/upload-artifact@v4
         with:
@@ -84,6 +91,12 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add app/src/main/assets/neural_tts/
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m 'feat(audio): regenerate all nine v1.6.1 neural voice packs'
+          git commit -m 'feat(audio): regenerate only changed neural voice clips'
           git pull --rebase origin "${GITHUB_REF_NAME}"
           git push origin HEAD:"${GITHUB_REF_NAME}"
+
+      - name: Re-run full PR validation after committing regenerated assets
+        if: ${{ github.ref == 'refs/heads/fix/audit-v161-199-confirmed-20261116' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run build.yml --ref "${GITHUB_REF_NAME}" --field full_build=true

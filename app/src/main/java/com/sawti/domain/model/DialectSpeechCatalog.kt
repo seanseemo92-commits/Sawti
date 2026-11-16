@@ -65,11 +65,21 @@ object DialectSpeechCatalog {
     }
 
     /**
-     * One and only catalog projection for display, Android fallback and neural speech.
-     * Never rewrite caregiver-supplied text. Published assets are keyed by concept/dialect,
-     * rather than a fragile string comparison with this human-readable speech form.
+     * The v1.6.2 table is authoritative for built-in display and neural speech.
+     * Caregiver edits and non-table legacy concepts remain protected.
      */
     fun resolve(value: WordItem, dialect: ArabicDialect): SpeechForm {
+        // v1.6.2 built-in entries never pass through legacy diacritic cleanup.
+        val key = value.semanticKey
+        if (isNeuralOnly(value) && key != null) {
+            NeuralLexicon162.get(dialect, key)?.let { entry ->
+                val cue = if (value.customTextFields and CardDetails.CUE != 0)
+                    value.forEditing().phonemicCue else PhonemicCue.derive(entry.speechText)
+                return SpeechForm(entry.displayText, entry.speechText, cue,
+                    SpeechSource.EXPLICIT_DIALECT)
+            }
+        }
+        // Preserve personal edits and unlisted legacy concepts.
         val form = resolveUncorrected(value, dialect)
         if (form.source == SpeechSource.USER ||
             value.semanticKey?.substringBefore('.') !in builtinNamespaces) return form
@@ -91,19 +101,19 @@ object DialectSpeechCatalog {
      * Eligibility lives next to the single projection, not in a competing playback policy.
      * Users' personal labels/speech always use their recording or Android TTS.
      */
+    /** Built-in identity is independent of whether an MP3 is available. */
+    fun isNeuralOnly(item: WordItem): Boolean =
+        !item.semanticKey.isNullOrBlank() &&
+            !item.categoryId.startsWith("custom_") &&
+            item.customTextFields and (CardDetails.LABEL or CardDetails.SPEECH) == 0
+
     fun neuralTextFor(item: WordItem, dialect: ArabicDialect): String? {
-        if (item.semanticKey.isNullOrBlank() || item.categoryId.startsWith("custom_") ||
-            item.semanticKey.substringBefore('.') !in builtinNamespaces)
-            return null
-        if (item.customTextFields and (CardDetails.LABEL or CardDetails.SPEECH) != 0)
-            return null
+        if (!isNeuralOnly(item)) return null
         if (item.neuralDialect != null && item.neuralDialect != dialect) return null
-        val form = resolve(item.forEditing(), dialect)
-        return form.speechText.takeIf { form.source != SpeechSource.USER && it.isNotBlank() }
+        return NeuralLexicon162.get(dialect, item.semanticKey!!)?.speechText
     }
 
-    // Lexical diacritics stay intact; remove only pronunciation aids from built-in phrases.
-    // This function is deliberately shared by export and Android fallback.
+    // Historical compatibility helper only; never called for a v1.6.2 table row.
     internal fun cleanSpeech(display: String, spoken: String, dialect: ArabicDialect): String {
         if (spoken.isBlank()) return spoken
         val sounds = spoken.trim().split(Regex("""\s+"""))

@@ -65,10 +65,11 @@ class NeuralAudioResolver(context: Context) {
         val key = semanticKey?.takeIf(::safeKey) ?: return null
         if (speechText.isBlank()) return null
         val folder = dialect.name.lowercase(Locale.ROOT)
-        val embedded = bundledManifest(folder)[key]
+        // Match every code point; old manifests must not replay stale audio.
+        val embedded = bundledManifest(folder)[key]?.takeIf { it.speechText == speechText }
         // A pack downloaded for an earlier version must never shadow a corrected
         // voice shipped in this APK. Compare pack-to-pack, not user text-to-manifest.
-        localManifest(folder)[key]?.let {
+        localManifest(folder)[key]?.takeIf { it.speechText == speechText }?.let {
             if (embedded == null || embedded.speechText == it.speechText) {
                 val file = File(File(root, folder), it.file)
                 if (file.isFile && file.length() >= 64L) return NeuralClip.Downloaded(file)

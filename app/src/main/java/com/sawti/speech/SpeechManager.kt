@@ -248,7 +248,9 @@ class SpeechManager(context: Context, private val focus: AudioFocusController) :
             createEngine()
         }
         if (tts == null) { onCanceled(); return }
-        val action = { speakNow(text, onStart, onDone, onCanceled) }
+        // Sanitize Android-only dynamic TTS; bundled neural strings stay verbatim.
+        val androidText = text.replace('گ', 'ق').replace('ڨ', 'ق').replace('چ', 'ج')
+        val action = { speakNow(androidText, onStart, onDone, onCanceled) }
         if (ready) action() else {
             val prior = pendingCancel
             pending = action

@@ -1,0 +1,2400 @@
+dialect,category,semantic_key,voice_id,display,neural_speech_text
+STANDARD,family,family.father,ar-AE-FatimaNeural,أبي,أَبِي
+STANDARD,family,family.mother,ar-AE-FatimaNeural,أمي,أُمِّي
+STANDARD,family,family.husband,ar-AE-FatimaNeural,زوجي,زَوْجِي
+STANDARD,family,family.wife,ar-AE-FatimaNeural,زوجتي,زَوْجَتِي
+STANDARD,family,family.son,ar-AE-FatimaNeural,ابني,اِبْنِي
+STANDARD,family,family.daughter,ar-AE-FatimaNeural,ابنتي,اِبْنَتِي
+STANDARD,family,family.brother,ar-AE-FatimaNeural,أخي,أَخِي
+STANDARD,family,family.sister,ar-AE-FatimaNeural,أختي,أُخْتِي
+STANDARD,family,family.paternal_uncle,ar-AE-FatimaNeural,عمي,عَمِّي
+STANDARD,family,family.paternal_aunt,ar-AE-FatimaNeural,عمتي,عَمَّتِي
+STANDARD,family,family.maternal_uncle,ar-AE-FatimaNeural,خالي,خَالِي
+STANDARD,family,family.maternal_aunt,ar-AE-FatimaNeural,خالتي,خَالَتِي
+STANDARD,family,family.grandfather,ar-AE-FatimaNeural,جدي,جَدِّي
+STANDARD,family,family.grandmother,ar-AE-FatimaNeural,جدتي,جَدَّتِي
+STANDARD,family,family.grandson,ar-AE-FatimaNeural,حفيدي,حَفِيدِي
+STANDARD,family,family.granddaughter,ar-AE-FatimaNeural,حفيدتي,حَفِيدَتِي
+STANDARD,family,family.paternal_uncle_son,ar-AE-FatimaNeural,ابن عمي,اِبْنُ عَمِّي
+STANDARD,family,family.paternal_uncle_daughter,ar-AE-FatimaNeural,بنت عمي,بِنْتُ عَمِّي
+STANDARD,family,family.paternal_aunt_son,ar-AE-FatimaNeural,ابن عمتي,اِبْنُ عَمَّتِي
+STANDARD,family,family.paternal_aunt_daughter,ar-AE-FatimaNeural,بنت عمتي,بِنْتُ عَمَّتِي
+STANDARD,family,family.maternal_uncle_son,ar-AE-FatimaNeural,ابن خالي,اِبْنُ خَالِي
+STANDARD,family,family.maternal_uncle_daughter,ar-AE-FatimaNeural,بنت خالي,بِنْتُ خَالِي
+STANDARD,family,family.maternal_aunt_son,ar-AE-FatimaNeural,ابن خالتي,اِبْنُ خَالَتِي
+STANDARD,family,family.maternal_aunt_daughter,ar-AE-FatimaNeural,بنت خالتي,بِنْتُ خَالَتِي
+STANDARD,family,family.brother_son,ar-AE-FatimaNeural,ابن أخي,اِبْنُ أَخِي
+STANDARD,family,family.brother_daughter,ar-AE-FatimaNeural,بنت أخي,بِنْتُ أَخِي
+STANDARD,family,family.sister_son,ar-AE-FatimaNeural,ابن أختي,اِبْنُ أُخْتِي
+STANDARD,family,family.sister_daughter,ar-AE-FatimaNeural,بنت أختي,بِنْتُ أُخْتِي
+STANDARD,family,family.husband_father,ar-AE-FatimaNeural,أبو زوجي,أَبُو زَوْجِي
+STANDARD,family,family.husband_mother,ar-AE-FatimaNeural,أم زوجي,أُمُّ زَوْجِي
+STANDARD,family,family.wife_father,ar-AE-FatimaNeural,أبو زوجتي,أَبُو زَوْجَتِي
+STANDARD,family,family.wife_mother,ar-AE-FatimaNeural,أم زوجتي,أُمُّ زَوْجَتِي
+STANDARD,family,family.husband_brother,ar-AE-FatimaNeural,أخو زوجي,أَخُو زَوْجِي
+STANDARD,family,family.husband_sister,ar-AE-FatimaNeural,أخت زوجي,أُخْتُ زَوْجِي
+STANDARD,family,family.wife_brother,ar-AE-FatimaNeural,أخو زوجتي,أَخُو زَوْجَتِي
+STANDARD,family,family.wife_sister,ar-AE-FatimaNeural,أخت زوجتي,أُخْتُ زَوْجَتِي
+STANDARD,family,family.sister_husband,ar-AE-FatimaNeural,زوج أختي,زَوْجُ أُخْتِي
+STANDARD,family,family.brother_wife,ar-AE-FatimaNeural,زوجة أخي,زَوْجَةُ أَخِي
+STANDARD,family,family.daughter_husband,ar-AE-FatimaNeural,زوج ابنتي,زَوْجُ ابْنَتِي
+STANDARD,family,family.son_wife,ar-AE-FatimaNeural,زوجة ابني,زَوْجَةُ ابْنِي
+STANDARD,family,family.male_in_law,ar-AE-FatimaNeural,نسيبي,نَسِيبِي
+STANDARD,family,family.female_in_law,ar-AE-FatimaNeural,نسيبتي,نَسِيبَتِي
+STANDARD,family,family.male_relative,ar-AE-FatimaNeural,قريبي,قَرِيبِي
+STANDARD,family,family.female_relative,ar-AE-FatimaNeural,قريبتي,قَرِيبَتِي
+STANDARD,request,request.water,ar-AE-FatimaNeural,أريد ماءً,أُرِيدُ مَاءً
+STANDARD,request,request.tea,ar-AE-FatimaNeural,أريد شايًا,أُرِيدُ شَايًا
+STANDARD,request,request.rest,ar-AE-FatimaNeural,أريد أن أرتاح,أُرِيدُ أَنْ أَرْتَاحَ
+STANDARD,request,request.medicine,ar-AE-FatimaNeural,أريد دوائي,أُرِيدُ دَوَائِي
+STANDARD,request,request.toilet,ar-AE-FatimaNeural,أريد الذهاب إلى الحمام,أُرِيدُ الذَّهَابَ إِلَى الْحَمَّامِ
+STANDARD,request,request.adjust_pillow,ar-AE-FatimaNeural,عدّل لي الوسادة,عَدِّلْ لِيَ الْوِسَادَةَ
+STANDARD,request,request.headache,ar-AE-FatimaNeural,رأسي يؤلمني,رَأْسِي يُؤْلِمُنِي
+STANDARD,request,request.cold,ar-AE-FatimaNeural,أشعر بالبرد,أَشْعُرُ بِالْبَرْدِ
+STANDARD,dish,dish.arabic.rice_meat,ar-AE-FatimaNeural,أرز باللحم,أَرُزٌّ بِاللَّحْمِ
+STANDARD,dish,dish.arabic.grilled_chicken,ar-AE-FatimaNeural,دجاج مشوي,دَجَاج مَشْوِيّ
+STANDARD,dish,dish.arabic.lentil_soup,ar-AE-FatimaNeural,حساء العدس,حَسَاءُ الْعَدَسِ
+STANDARD,dish,dish.arabic.vegetable_stew,ar-AE-FatimaNeural,يخنة خضار,يَخْنَةُ خُضَار
+STANDARD,dish,dish.arabic.mixed_grill,ar-AE-FatimaNeural,مشويات مشكلة,مَشْوِيَّاتٌ مُشَكَّلَةٌ
+STANDARD,dish,dish.arabic.green_salad,ar-AE-FatimaNeural,سلطة خضراء,سَلَطَةٌ خَضْرَاءُ
+STANDARD,dish,dish.arabic.cooked_fish,ar-AE-FatimaNeural,سمك مطهو,سَمَك مَطْهُوّ
+STANDARD,dish,dish.arabic.baked_pastries,ar-AE-FatimaNeural,فطائر مخبوزة,فَطَائِرُ مَخْبُوزَةٌ
+STANDARD,dish,dish.arabic.vegetable_soup,ar-AE-FatimaNeural,حساء خضار,حَسَاءُ خُضَارٍ
+STANDARD,dish,dish.arabic.boiled_meat,ar-AE-FatimaNeural,لحم مسلوق,لَحْمٌ مَسْلُوقٌ
+STANDARD,dish,dish.arabic.baked_bread,ar-AE-FatimaNeural,خبز مخبوز,خُبْز مَخْبُوز
+STANDARD,dish,dish.arabic.fruits_legumes,ar-AE-FatimaNeural,ثمار وبقوليات,ثِمَار وَبُقُولِيَّات
+STANDARD,dish,dish.arabic.boiled_eggs,ar-AE-FatimaNeural,بيض مسلوق,بَيْضٌ مَسْلُوقٌ
+STANDARD,dish,dish.arabic.dates_milk,ar-AE-FatimaNeural,تمر وحليب,تَمْرٌ وَحَلِيبٌ
+STANDARD,dish,dish.arabic.arabic_dessert,ar-AE-FatimaNeural,حلوى عربية,حَلْوَى عَرَبِيَّةٌ
+STANDARD,routine,routine.call_to_prayer,ar-AE-FatimaNeural,أذان,أَذَانٌ
+STANDARD,routine,routine.ablution,ar-AE-FatimaNeural,وضوء,وُضُوءٌ
+STANDARD,routine,routine.prayer,ar-AE-FatimaNeural,صلاة,صَلَاةٌ
+STANDARD,routine,routine.prayer_rug,ar-AE-FatimaNeural,سجادة صلاة,سَجَّادَةُ صَلَاة
+STANDARD,routine,routine.prayer_beads,ar-AE-FatimaNeural,مسبحة,مِسْبَحَةٌ
+STANDARD,routine,routine.quran,ar-AE-FatimaNeural,مصحف,مُصْحَفٌ
+STANDARD,routine,routine.evening_coffee,ar-AE-FatimaNeural,قهوة المساء,قَهْوَةُ المَسَاء
+STANDARD,routine,routine.sleep,ar-AE-FatimaNeural,نوم,نَوْمٌ
+STANDARD,routine,routine.rest,ar-AE-FatimaNeural,راحة,رَاحَةٌ
+STANDARD,routine,routine.walk,ar-AE-FatimaNeural,مشي,مَشْيٌ
+STANDARD,vegetable,vegetable.tomato,ar-AE-FatimaNeural,طماطم,طَمَاطِمُ
+STANDARD,vegetable,vegetable.potato,ar-AE-FatimaNeural,بطاطس,بَطَاطِسُ
+STANDARD,vegetable,vegetable.onion,ar-AE-FatimaNeural,بصل,بَصَلٌ
+STANDARD,vegetable,vegetable.garlic,ar-AE-FatimaNeural,ثوم,ثُومٌ
+STANDARD,vegetable,vegetable.carrot,ar-AE-FatimaNeural,جزر,جَزَرٌ
+STANDARD,vegetable,vegetable.cucumber,ar-AE-FatimaNeural,خيار,خِيَارٌ
+STANDARD,vegetable,vegetable.pepper,ar-AE-FatimaNeural,فلفل,فُلْفُلٌ
+STANDARD,vegetable,vegetable.eggplant,ar-AE-FatimaNeural,باذنجان,بَاذِنْجَانٌ
+STANDARD,vegetable,vegetable.zucchini,ar-AE-FatimaNeural,كوسة,كُوسَةٌ
+STANDARD,vegetable,vegetable.lettuce,ar-AE-FatimaNeural,خس,خَسٌّ
+STANDARD,vegetable,vegetable.parsley,ar-AE-FatimaNeural,بقدونس,بَقْدُونِسٌ
+STANDARD,vegetable,vegetable.coriander,ar-AE-FatimaNeural,كزبرة,كُزْبُرَةٌ
+STANDARD,vegetable,vegetable.lemon,ar-AE-FatimaNeural,ليمون,لَيْمُون
+STANDARD,vegetable,vegetable.peas,ar-AE-FatimaNeural,بازلاء,بَازِلَّاءُ
+STANDARD,vegetable,vegetable.green_beans,ar-AE-FatimaNeural,فاصوليا خضراء,فَاصُولِيَا خَضْرَاءُ
+STANDARD,vegetable,vegetable.spinach,ar-AE-FatimaNeural,سبانخ,سَبَانِخُ
+STANDARD,vegetable,vegetable.cauliflower,ar-AE-FatimaNeural,قرنبيط,قَرْنَبِيط
+STANDARD,vegetable,vegetable.broccoli,ar-AE-FatimaNeural,بروكلي,بُرُوكْلِي
+STANDARD,vegetable,vegetable.radish,ar-AE-FatimaNeural,فجل,فُجْلٌ
+STANDARD,vegetable,vegetable.pumpkin,ar-AE-FatimaNeural,يقطين,يَقْطِينٌ
+STANDARD,vegetable,vegetable.mint,ar-AE-FatimaNeural,نعناع,نَعْنَاعٌ
+STANDARD,vegetable,vegetable.corn,ar-AE-FatimaNeural,ذرة,ذُرَةٌ
+STANDARD,fruit,fruit.apple,ar-AE-FatimaNeural,تفاح,تُفَّاحٌ
+STANDARD,fruit,fruit.banana,ar-AE-FatimaNeural,موز,مَوْزٌ
+STANDARD,fruit,fruit.orange,ar-AE-FatimaNeural,برتقال,بُرْتُقَالٌ
+STANDARD,fruit,fruit.grapes,ar-AE-FatimaNeural,عنب,عِنَبٌ
+STANDARD,fruit,fruit.strawberry,ar-AE-FatimaNeural,فراولة,فَرَاوِلَةٌ
+STANDARD,fruit,fruit.mango,ar-AE-FatimaNeural,مانجو,مَانْجُو
+STANDARD,fruit,fruit.watermelon,ar-AE-FatimaNeural,بطيخ,بِطِّيخٌ
+STANDARD,fruit,fruit.melon,ar-AE-FatimaNeural,شمام,شَمَّامٌ
+STANDARD,fruit,fruit.peach,ar-AE-FatimaNeural,خوخ,خَوْخٌ
+STANDARD,fruit,fruit.apricot,ar-AE-FatimaNeural,مشمش,مِشْمِشٌ
+STANDARD,fruit,fruit.pear,ar-AE-FatimaNeural,كمثرى,كُمَّثْرَى
+STANDARD,fruit,fruit.pomegranate,ar-AE-FatimaNeural,رمان,رُمَّانٌ
+STANDARD,fruit,fruit.figs,ar-AE-FatimaNeural,تين,تِينٌ
+STANDARD,fruit,fruit.dates,ar-AE-FatimaNeural,تمر,تَمْرٌ
+STANDARD,fruit,fruit.pineapple,ar-AE-FatimaNeural,أناناس,أَنَانَاسُ
+STANDARD,fruit,fruit.kiwi,ar-AE-FatimaNeural,كيوي,كِيوِي
+STANDARD,fruit,fruit.cherry,ar-AE-FatimaNeural,كرز,كَرَزٌ
+STANDARD,fruit,fruit.berries,ar-AE-FatimaNeural,توت,تُوتٌ
+STANDARD,fruit,fruit.mandarin,ar-AE-FatimaNeural,يوسفي,يُوسُفِيٌّ
+STANDARD,fruit,fruit.avocado,ar-AE-FatimaNeural,أفوكادو,أَفُوكَادُو
+STANDARD,fruit,fruit.coconut,ar-AE-FatimaNeural,جوز الهند,جَوْزُ الْهِنْدِ
+STANDARD,food,food.bread,ar-AE-FatimaNeural,خبز,خُبْزٌ
+STANDARD,food,food.milk,ar-AE-FatimaNeural,حليب,حَلِيبٌ
+STANDARD,food,food.eggs,ar-AE-FatimaNeural,بيض,بَيْضٌ
+STANDARD,food,food.cheese,ar-AE-FatimaNeural,جبن,جُبْنٌ
+STANDARD,food,food.yogurt,ar-AE-FatimaNeural,زبادي,زَبَادِي
+STANDARD,food,food.butter,ar-AE-FatimaNeural,زبدة,زُبْدَةٌ
+STANDARD,food,food.rice,ar-AE-FatimaNeural,أرز,أَرُزٌّ
+STANDARD,food,food.pasta,ar-AE-FatimaNeural,معكرونة,مَعْكَرُونَةٌ
+STANDARD,food,food.soup,ar-AE-FatimaNeural,حساء,حَسَاءٌ
+STANDARD,food,food.meat,ar-AE-FatimaNeural,لحم,لَحْمٌ
+STANDARD,food,food.chicken,ar-AE-FatimaNeural,دجاج,دَجَاجٌ
+STANDARD,food,food.fish,ar-AE-FatimaNeural,سمك,سَمَكٌ
+STANDARD,food,food.olives,ar-AE-FatimaNeural,زيتون,زَيْتُونٌ
+STANDARD,food,food.oil,ar-AE-FatimaNeural,زيت,زَيْتٌ
+STANDARD,food,food.tea,ar-AE-FatimaNeural,شاي,شَايٌ
+STANDARD,food,food.coffee,ar-AE-FatimaNeural,قهوة,قَهْوَةٌ
+STANDARD,food,food.juice,ar-AE-FatimaNeural,عصير,عَصِيرٌ
+STANDARD,food,food.water,ar-AE-FatimaNeural,ماء,مَاءٌ
+STANDARD,food,food.honey,ar-AE-FatimaNeural,عسل,عَسَلٌ
+STANDARD,food,food.biscuit,ar-AE-FatimaNeural,بسكويت,بَسْكَوِيت
+STANDARD,food,food.salt,ar-AE-FatimaNeural,ملح,مِلْحٌ
+STANDARD,food,food.sugar,ar-AE-FatimaNeural,سكر,سُكَّرٌ
+STANDARD,home,home.bed,ar-AE-FatimaNeural,سرير,سَرِيرٌ
+STANDARD,home,home.pillow,ar-AE-FatimaNeural,وسادة,وِسَادَةٌ
+STANDARD,home,home.blanket,ar-AE-FatimaNeural,بطانية,بَطَّانِيَّةٌ
+STANDARD,home,home.table,ar-AE-FatimaNeural,طاولة,طَاوِلَةٌ
+STANDARD,home,home.chair,ar-AE-FatimaNeural,كرسي,كُرْسِيٌّ
+STANDARD,home,home.sofa,ar-AE-FatimaNeural,أريكة,أَرِيكَةٌ
+STANDARD,home,home.door,ar-AE-FatimaNeural,باب,بَابٌ
+STANDARD,home,home.window,ar-AE-FatimaNeural,نافذة,نَافِذَةٌ
+STANDARD,home,home.television,ar-AE-FatimaNeural,تلفزيون,تِلْفِزْيُونٌ
+STANDARD,home,home.fridge,ar-AE-FatimaNeural,ثلاجة,ثَلَّاجَةٌ
+STANDARD,home,home.washing_machine,ar-AE-FatimaNeural,غسالة,غَسَّالَةٌ
+STANDARD,home,home.stove,ar-AE-FatimaNeural,موقد,مَوْقِدٌ
+STANDARD,home,home.oven,ar-AE-FatimaNeural,فرن,فُرْنٌ
+STANDARD,home,home.air_conditioner,ar-AE-FatimaNeural,مكيف,مُكَيِّفٌ
+STANDARD,home,home.fan,ar-AE-FatimaNeural,مروحة,مِرْوَحَةٌ
+STANDARD,home,home.wardrobe,ar-AE-FatimaNeural,خزانة,خِزَانَةٌ
+STANDARD,home,home.key,ar-AE-FatimaNeural,مفتاح,مِفْتَاحٌ
+STANDARD,home,home.clock,ar-AE-FatimaNeural,ساعة,سَاعَةٌ
+STANDARD,home,home.carpet,ar-AE-FatimaNeural,بساط,بِسَاطٌ
+STANDARD,home,home.kitchen,ar-AE-FatimaNeural,مطبخ,مَطْبَخٌ
+STANDARD,home,home.cup,ar-AE-FatimaNeural,كوب,كُوبٌ
+STANDARD,home,home.tray,ar-AE-FatimaNeural,صينية,صِينِيَّةٌ
+STANDARD,home,home.spoon,ar-AE-FatimaNeural,ملعقة,مِلْعَقَةٌ
+STANDARD,home,home.fork,ar-AE-FatimaNeural,شوكة,شَوْكَةٌ
+STANDARD,home,home.knife,ar-AE-FatimaNeural,سكين,سِكِّينٌ
+STANDARD,home,home.teapot,ar-AE-FatimaNeural,إبريق شاي,إِبْرِيقُ شَاي
+STANDARD,home,home.pot,ar-AE-FatimaNeural,طنجرة,طَنْجَرَةٌ
+STANDARD,home,home.water_bottle,ar-AE-FatimaNeural,قارورة ماء,قَارُورَةُ مَاء
+STANDARD,clothing,clothing.tshirt,ar-AE-FatimaNeural,قميص قصير الأكمام,قَمِيصٌ قَصِيرُ الأَكْمَام
+STANDARD,clothing,clothing.shirt,ar-AE-FatimaNeural,قميص,قَمِيصٌ
+STANDARD,clothing,clothing.jacket,ar-AE-FatimaNeural,سترة,سُتْرَةٌ
+STANDARD,clothing,clothing.shorts,ar-AE-FatimaNeural,سروال قصير,سِرْوَالٌ قَصِيرٌ
+STANDARD,clothing,clothing.blouse,ar-AE-FatimaNeural,بلوزة,بُلُوزَةٌ
+STANDARD,clothing,clothing.trousers,ar-AE-FatimaNeural,سروال,سِرْوَالٌ
+STANDARD,clothing,clothing.dress,ar-AE-FatimaNeural,فستان,فُسْتَانٌ
+STANDARD,clothing,clothing.robe,ar-AE-FatimaNeural,رداء,رِدَاءٌ
+STANDARD,clothing,clothing.abaya,ar-AE-FatimaNeural,عباءة,عَبَاءَةٌ
+STANDARD,clothing,clothing.hijab,ar-AE-FatimaNeural,حجاب,حِجَابٌ
+STANDARD,clothing,clothing.scarf,ar-AE-FatimaNeural,وشاح,وِشَاحٌ
+STANDARD,clothing,clothing.shoes,ar-AE-FatimaNeural,حذاء,حِذَاءٌ
+STANDARD,clothing,clothing.socks,ar-AE-FatimaNeural,جوارب,جَوَارِبُ
+STANDARD,clothing,clothing.coat,ar-AE-FatimaNeural,معطف,مِعْطَفٌ
+STANDARD,clothing,clothing.glasses,ar-AE-FatimaNeural,نظارات,نَظَّارَاتٌ
+STANDARD,clothing,clothing.cap,ar-AE-FatimaNeural,قبعة,قُبَّعَةٌ
+STANDARD,clothing,clothing.watch,ar-AE-FatimaNeural,ساعة يد,سَاعَةُ يَد
+STANDARD,clothing,clothing.bag,ar-AE-FatimaNeural,حقيبة,حَقِيبَةٌ
+STANDARD,clothing,clothing.sandals,ar-AE-FatimaNeural,صندل,صَنْدَلٌ
+STANDARD,clothing,clothing.high_heels,ar-AE-FatimaNeural,حذاء بكعب عالٍ,حِذَاءٌ بِكَعْبٍ عَالٍ
+STANDARD,clothing,clothing.pajamas,ar-AE-FatimaNeural,ملابس النوم,مَلَابِسُ النَّوْم
+STANDARD,clothing,clothing.belt,ar-AE-FatimaNeural,حزام,حِزَامٌ
+STANDARD,clothing,clothing.ring,ar-AE-FatimaNeural,خاتم,خَاتَمٌ
+STANDARD,body,body.eye,ar-AE-FatimaNeural,عين,عَيْنٌ
+STANDARD,body,body.nose,ar-AE-FatimaNeural,أنف,أَنْفٌ
+STANDARD,body,body.mouth,ar-AE-FatimaNeural,فم,فَمٌ
+STANDARD,body,body.tongue,ar-AE-FatimaNeural,لسان,لِسَانٌ
+STANDARD,body,body.ear,ar-AE-FatimaNeural,أذن,أُذُنٌ
+STANDARD,body,body.hand,ar-AE-FatimaNeural,يد,يَدٌ
+STANDARD,body,body.leg,ar-AE-FatimaNeural,ساق,سَاقٌ
+STANDARD,body,body.head,ar-AE-FatimaNeural,رأس,رَأْسٌ
+STANDARD,body,body.hair,ar-AE-FatimaNeural,شعر,شَعْرٌ
+STANDARD,body,body.back,ar-AE-FatimaNeural,ظهر,ظَهْرٌ
+STANDARD,body,body.abdomen,ar-AE-FatimaNeural,بطن,بَطْنٌ
+STANDARD,body,body.knee,ar-AE-FatimaNeural,ركبة,رُكْبَةٌ
+STANDARD,body,body.finger,ar-AE-FatimaNeural,إصبع,إِصْبَعٌ
+STANDARD,body,body.neck,ar-AE-FatimaNeural,رقبة,رَقَبَةٌ
+STANDARD,body,body.chest,ar-AE-FatimaNeural,صدر,صَدْرٌ
+STANDARD,body,body.face,ar-AE-FatimaNeural,وجه,وَجْهٌ
+STANDARD,body,body.tooth,ar-AE-FatimaNeural,سن,سِنٌّ
+STANDARD,body,body.heart,ar-AE-FatimaNeural,قلب,قَلْبٌ
+STANDARD,body,body.shoulder,ar-AE-FatimaNeural,كتف,كَتِفٌ
+STANDARD,action,action.eat,ar-AE-FatimaNeural,آكل,آكُلُ
+STANDARD,action,action.drink,ar-AE-FatimaNeural,أشرب,أَشْرَبُ
+STANDARD,action,action.sleep,ar-AE-FatimaNeural,أنام,أَنَامُ
+STANDARD,action,action.sit,ar-AE-FatimaNeural,أجلس,أَجْلِسُ
+STANDARD,action,action.walk,ar-AE-FatimaNeural,أمشي,أَمْشِي
+STANDARD,action,action.stand,ar-AE-FatimaNeural,أقف,أَقِفُ
+STANDARD,action,action.wash,ar-AE-FatimaNeural,أغسل,أَغْسِلُ
+STANDARD,action,action.speak,ar-AE-FatimaNeural,أتكلم,أَتَكَلَّمُ
+STANDARD,action,action.hear,ar-AE-FatimaNeural,أسمع,أَسْمَعُ
+STANDARD,action,action.open,ar-AE-FatimaNeural,أفتح,أَفْتَحُ
+STANDARD,action,action.close,ar-AE-FatimaNeural,أغلق,أُغْلِقُ
+STANDARD,action,action.read,ar-AE-FatimaNeural,أقرأ,أَقْرَأُ
+STANDARD,action,action.laugh,ar-AE-FatimaNeural,أضحك,أَضْحَكُ
+STANDARD,action,action.see,ar-AE-FatimaNeural,أرى,أَرَى
+STANDARD,action,action.dress,ar-AE-FatimaNeural,ألبس,أَلْبَسُ
+STANDARD,action,action.pray,ar-AE-FatimaNeural,أصلّي,أُصَلِّي
+STANDARD,animal,animal.cat,ar-AE-FatimaNeural,قطة,قِطَّةٌ
+STANDARD,animal,animal.dog,ar-AE-FatimaNeural,كلب,كَلْبٌ
+STANDARD,animal,animal.sheep,ar-AE-FatimaNeural,خروف,خَرُوفٌ
+STANDARD,animal,animal.horse,ar-AE-FatimaNeural,حصان,حِصَانٌ
+STANDARD,animal,animal.cow,ar-AE-FatimaNeural,بقرة,بَقَرَةٌ
+STANDARD,animal,animal.sparrow,ar-AE-FatimaNeural,عصفور,عُصْفُورٌ
+STANDARD,animal,animal.pigeon,ar-AE-FatimaNeural,حمامة,حَمَامَةٌ
+STANDARD,animal,animal.chicken,ar-AE-FatimaNeural,دجاجة,دَجَاجَةٌ
+STANDARD,animal,animal.duck,ar-AE-FatimaNeural,بطة,بَطَّةٌ
+STANDARD,animal,animal.camel,ar-AE-FatimaNeural,جمل,جَمَلٌ
+STANDARD,animal,animal.rooster,ar-AE-FatimaNeural,ديك,دِيكٌ
+STANDARD,animal,animal.rabbit,ar-AE-FatimaNeural,أرنب,أَرْنَبٌ
+STANDARD,transport,transport.car,ar-AE-FatimaNeural,سيارة,سَيَّارَةٌ
+STANDARD,transport,transport.taxi,ar-AE-FatimaNeural,سيارة أجرة,سَيَّارَةُ أُجْرَة
+STANDARD,transport,transport.bus,ar-AE-FatimaNeural,حافلة,حَافِلَةٌ
+STANDARD,transport,transport.minibus,ar-AE-FatimaNeural,حافلة صغيرة,حَافِلَةٌ صَغِيرَةٌ
+STANDARD,transport,transport.bicycle,ar-AE-FatimaNeural,دراجة هوائية,دَرَّاجَةٌ هَوَائِيَّةٌ
+STANDARD,transport,transport.motorcycle,ar-AE-FatimaNeural,دراجة نارية,دَرَّاجَةٌ نَارِيَّةٌ
+STANDARD,transport,transport.train,ar-AE-FatimaNeural,قطار,قِطَارٌ
+STANDARD,transport,transport.airplane,ar-AE-FatimaNeural,طائرة,طَائِرَةٌ
+STANDARD,transport,transport.helicopter,ar-AE-FatimaNeural,مروحية,مِرْوَحِيَّةٌ
+STANDARD,transport,transport.ship,ar-AE-FatimaNeural,سفينة,سَفِينَةٌ
+STANDARD,transport,transport.boat,ar-AE-FatimaNeural,قارب,قَارِبٌ
+STANDARD,transport,transport.truck,ar-AE-FatimaNeural,شاحنة,شَاحِنَةٌ
+STANDARD,greeting,greeting.salam,ar-AE-FatimaNeural,السلام عليكم,السَّلَامُ عَلَيْكُمْ
+STANDARD,greeting,greeting.reply,ar-AE-FatimaNeural,وعليكم السلام,وَعَلَيْكُمُ السَّلَامُ
+STANDARD,greeting,greeting.hello,ar-AE-FatimaNeural,مرحبًا,مَرْحَبًا
+STANDARD,greeting,greeting.welcome,ar-AE-FatimaNeural,أهلًا وسهلًا,أَهْلًا وَسَهْلًا
+STANDARD,greeting,greeting.how_are_you,ar-AE-FatimaNeural,كيف حالك؟,كَيْفَ حَالُكَ؟
+STANDARD,greeting,greeting.fine,ar-AE-FatimaNeural,الحمد لله,الْحَمْدُ لِلَّهِ
+STANDARD,greeting,greeting.good_morning,ar-AE-FatimaNeural,صباح الخير,صَبَاحُ الْخَيْرِ
+STANDARD,greeting,greeting.good_evening,ar-AE-FatimaNeural,مساء الخير,مَسَاءُ الْخَيْرِ
+STANDARD,greeting,greeting.brighten,ar-AE-FatimaNeural,نورت,نَوَّرْتَ
+STANDARD,greeting,greeting.good_health,ar-AE-FatimaNeural,يعطيك العافية,يُعْطِيكَ الْعَافِيَةَ
+STANDARD,greeting,greeting.goodbye,ar-AE-FatimaNeural,مع السلامة,مَعَ السَّلَامَةِ
+STANDARD,greeting,greeting.safe,ar-AE-FatimaNeural,في أمان الله,فِي أَمَانِ اللَّهِ
+STANDARD,greeting,greeting.thanks,ar-AE-FatimaNeural,شكرًا لك,شُكْرًا لَكَ
+STANDARD,greeting,greeting.bless,ar-AE-FatimaNeural,بارك الله فيك,بَارَكَ اللَّهُ فِيكَ
+LIBYAN,family,family.father,ar-LY-ImanNeural,بوي,بُويْ
+LIBYAN,family,family.mother,ar-LY-ImanNeural,أمي,أُمِّي
+LIBYAN,family,family.husband,ar-LY-ImanNeural,راجلي,رَاجْلِي
+LIBYAN,family,family.wife,ar-LY-ImanNeural,مرتي,مَرْتِي
+LIBYAN,family,family.son,ar-LY-ImanNeural,ولدي,وِلْدِي
+LIBYAN,family,family.daughter,ar-LY-ImanNeural,بنتي,بِنْتِي
+LIBYAN,family,family.brother,ar-LY-ImanNeural,خوي,خُويْ
+LIBYAN,family,family.sister,ar-LY-ImanNeural,أختي,أُخْتِي
+LIBYAN,family,family.paternal_uncle,ar-LY-ImanNeural,عمي,عَمِّي
+LIBYAN,family,family.paternal_aunt,ar-LY-ImanNeural,عمتي,عَمْتِي
+LIBYAN,family,family.maternal_uncle,ar-LY-ImanNeural,خالي,خَالِي
+LIBYAN,family,family.maternal_aunt,ar-LY-ImanNeural,خالتي,خَالْتِي
+LIBYAN,family,family.grandfather,ar-LY-ImanNeural,جدي,جِدِّي
+LIBYAN,family,family.grandmother,ar-LY-ImanNeural,حناي,حَنَّايْ
+LIBYAN,family,family.grandson,ar-LY-ImanNeural,حفيدي,حَفِيدِي
+LIBYAN,family,family.granddaughter,ar-LY-ImanNeural,حفيدتي,حَفِيدْتِي
+LIBYAN,family,family.paternal_uncle_son,ar-LY-ImanNeural,ولد عمي,وِلْدْ عَمِّي
+LIBYAN,family,family.paternal_uncle_daughter,ar-LY-ImanNeural,بنت عمي,بِنْتْ عَمِّي
+LIBYAN,family,family.paternal_aunt_son,ar-LY-ImanNeural,ولد عمتي,وِلْدْ عَمْتِي
+LIBYAN,family,family.paternal_aunt_daughter,ar-LY-ImanNeural,بنت عمتي,بِنْتْ عَمْتِي
+LIBYAN,family,family.maternal_uncle_son,ar-LY-ImanNeural,ولد خالي,وِلْدْ خَالِي
+LIBYAN,family,family.maternal_uncle_daughter,ar-LY-ImanNeural,بنت خالي,بِنْتْ خَالِي
+LIBYAN,family,family.maternal_aunt_son,ar-LY-ImanNeural,ولد خالتي,وِلْدْ خَالْتِي
+LIBYAN,family,family.maternal_aunt_daughter,ar-LY-ImanNeural,بنت خالتي,بِنْتْ خَالْتِي
+LIBYAN,family,family.brother_son,ar-LY-ImanNeural,ولد خوي,وِلْدْ خُويْ
+LIBYAN,family,family.brother_daughter,ar-LY-ImanNeural,بنت خوي,بِنْتْ خُويْ
+LIBYAN,family,family.sister_son,ar-LY-ImanNeural,ولد أختي,وِلْدْ أُخْتِي
+LIBYAN,family,family.sister_daughter,ar-LY-ImanNeural,بنت أختي,بِنْتْ أُخْتِي
+LIBYAN,family,family.husband_father,ar-LY-ImanNeural,بو راجلي,بُو رَاجْلِي
+LIBYAN,family,family.husband_mother,ar-LY-ImanNeural,أم راجلي,أُمْ رَاجْلِي
+LIBYAN,family,family.wife_father,ar-LY-ImanNeural,بو مرتي,بُو مَرْتِي
+LIBYAN,family,family.wife_mother,ar-LY-ImanNeural,أم مرتي,أُمْ مَرْتِي
+LIBYAN,family,family.husband_brother,ar-LY-ImanNeural,خو راجلي,خُو رَاجْلِي
+LIBYAN,family,family.husband_sister,ar-LY-ImanNeural,أخت راجلي,أُخْتْ رَاجْلِي
+LIBYAN,family,family.wife_brother,ar-LY-ImanNeural,خو مرتي,خُو مَرْتِي
+LIBYAN,family,family.wife_sister,ar-LY-ImanNeural,أخت مرتي,أُخْتْ مَرْتِي
+LIBYAN,family,family.sister_husband,ar-LY-ImanNeural,راجل أختي,رَاجِلْ أُخْتِي
+LIBYAN,family,family.brother_wife,ar-LY-ImanNeural,مرت خوي,مَرْتْ خُويْ
+LIBYAN,family,family.daughter_husband,ar-LY-ImanNeural,راجل بنتي,رَاجِلْ بِنْتِي
+LIBYAN,family,family.son_wife,ar-LY-ImanNeural,مرت ولدي,مَرْت وِلْدِي
+LIBYAN,family,family.male_in_law,ar-LY-ImanNeural,نسيبي,نَسِيبِي
+LIBYAN,family,family.female_in_law,ar-LY-ImanNeural,نسيبتي,نَسِيبْتِي
+LIBYAN,family,family.male_relative,ar-LY-ImanNeural,قريبي,گَرِيبِي
+LIBYAN,family,family.female_relative,ar-LY-ImanNeural,قريبتي,قَرِيبْتِي
+LIBYAN,request,request.water,ar-LY-ImanNeural,نبي مية,نِبِّي إِمَّيَّهْ
+LIBYAN,request,request.tea,ar-LY-ImanNeural,نبي شاهي,نِبِّي شَاهِي
+LIBYAN,request,request.rest,ar-LY-ImanNeural,نبي نرتاح,نِبِّي نِرْتَاحْ
+LIBYAN,request,request.medicine,ar-LY-ImanNeural,نبي دوايا,نِبِّي دْوَايَا
+LIBYAN,request,request.toilet,ar-LY-ImanNeural,نبي الحمام,نِبِّي الْحَمَّامْ
+LIBYAN,request,request.adjust_pillow,ar-LY-ImanNeural,عدّل لي المخدة,عَدِّلْ لِي الْمِخَدَّة
+LIBYAN,request,request.headache,ar-LY-ImanNeural,راسي يوجع فيا,رَاسِي يُوجَعْ فِيَّا
+LIBYAN,request,request.cold,ar-LY-ImanNeural,نحس بالبرد,نِحِسّ بِالْبَرْدْ
+LIBYAN,dish,dish.bazin,ar-LY-ImanNeural,بازين,بَازِينْ
+LIBYAN,dish,dish.reshda_kaskas,ar-LY-ImanNeural,رشدة كسكاس,رِشْدِة كِسْكَاسْ
+LIBYAN,dish,dish.reshda_borma,ar-LY-ImanNeural,رشدة برمة,رِشْدِة بُرْمَة
+LIBYAN,dish,dish.mbakbaka,ar-LY-ImanNeural,مكرونة مبكبكة,مَكْرُونَة مْبَكْبَكَة
+LIBYAN,dish,dish.pasta_masqiya,ar-LY-ImanNeural,مكرونة مسقية,مَكْرُونَة مِسْگِيَّة
+LIBYAN,dish,dish.couscous_fish,ar-LY-ImanNeural,كسكسي بالحوت,كُسْكُسِي بِالحُوتْ
+LIBYAN,dish,dish.rice_blaw,ar-LY-ImanNeural,رز بلاو,رُزّ بِلَاو
+LIBYAN,dish,dish.libyan_soup,ar-LY-ImanNeural,شربة ليبية,شَرْبَة لِيبِيَّة
+LIBYAN,dish,dish.potato_stew,ar-LY-ImanNeural,طبيخة بطاطا,طْبِيخَة بَطَاطَا
+LIBYAN,dish,dish.osban,ar-LY-ImanNeural,عصبان,عُصْبَانْ
+LIBYAN,dish,dish.bourek,ar-LY-ImanNeural,بوريك,بُورِيكْ
+LIBYAN,dish,dish.khobz_tajin,ar-LY-ImanNeural,خبزة طاجين,خُبْزِة طَاجِينْ
+LIBYAN,dish,dish.maqroudh,ar-LY-ImanNeural,مقروض,مَگْرُوضْ
+LIBYAN,dish,dish.mint_tea,ar-LY-ImanNeural,شاهي بالنعناع,شَاهِي بِالنَّعْنَاعْ
+LIBYAN,dish,dish.arabic_coffee,ar-LY-ImanNeural,قهوة عربية,گَهْوَة عَرَبِيَّة
+LIBYAN,dish,dish.mbattan,ar-LY-ImanNeural,مبطن,مْبَطَّنْ
+LIBYAN,dish,dish.hraymi,ar-LY-ImanNeural,حرايمي,حْرَايْمِي
+LIBYAN,dish,dish.sfinz,ar-LY-ImanNeural,سفنز,إِسْفِنْزْ
+LIBYAN,dish,dish.zmeeta,ar-LY-ImanNeural,زميطة,زُمِيطَة
+LIBYAN,dish,dish.aysh_laban,ar-LY-ImanNeural,عيش باللبن,عِيشْ بِاللَّبَنْ
+LIBYAN,routine,routine.call_to_prayer,ar-LY-ImanNeural,أذان,أَذَانْ
+LIBYAN,routine,routine.ablution,ar-LY-ImanNeural,وضوء,وُضُوءْ
+LIBYAN,routine,routine.prayer,ar-LY-ImanNeural,صلاة,صَلَاة
+LIBYAN,routine,routine.prayer_rug,ar-LY-ImanNeural,سجادة,سَجَّادَة
+LIBYAN,routine,routine.prayer_beads,ar-LY-ImanNeural,سبحة,سِبْحَة
+LIBYAN,routine,routine.quran,ar-LY-ImanNeural,مصحف,مُصْحَفْ
+LIBYAN,routine,routine.evening_coffee,ar-LY-ImanNeural,قهوة العشية,گَهْوِة الْعَشِيَّة
+LIBYAN,routine,routine.sleep,ar-LY-ImanNeural,نوم,نُومْ
+LIBYAN,routine,routine.rest,ar-LY-ImanNeural,راحة,رَاحَة
+LIBYAN,routine,routine.walk,ar-LY-ImanNeural,مشي,مَشِي
+LIBYAN,vegetable,vegetable.tomato,ar-LY-ImanNeural,طماطم,طَمَاطِمْ
+LIBYAN,vegetable,vegetable.potato,ar-LY-ImanNeural,بطاطا,بَطَاطَا
+LIBYAN,vegetable,vegetable.onion,ar-LY-ImanNeural,بصل,بَصَلْ
+LIBYAN,vegetable,vegetable.garlic,ar-LY-ImanNeural,ثوم,تُومْ
+LIBYAN,vegetable,vegetable.carrot,ar-LY-ImanNeural,جزر,جَزَرْ
+LIBYAN,vegetable,vegetable.cucumber,ar-LY-ImanNeural,خيار,خِيَارْ
+LIBYAN,vegetable,vegetable.pepper,ar-LY-ImanNeural,فلفل,فِلْفِلْ
+LIBYAN,vegetable,vegetable.eggplant,ar-LY-ImanNeural,باذنجان,بَاذِنْجَانْ
+LIBYAN,vegetable,vegetable.zucchini,ar-LY-ImanNeural,كوسة,كُوسَة
+LIBYAN,vegetable,vegetable.lettuce,ar-LY-ImanNeural,خس,خَسّ
+LIBYAN,vegetable,vegetable.parsley,ar-LY-ImanNeural,معدنوس,مَعْدَنُوسْ
+LIBYAN,vegetable,vegetable.coriander,ar-LY-ImanNeural,قصبر,گُصْبُرْ
+LIBYAN,vegetable,vegetable.lemon,ar-LY-ImanNeural,ليمون,لِيمُونْ
+LIBYAN,vegetable,vegetable.peas,ar-LY-ImanNeural,بازيلية,بَازِيلْيَا
+LIBYAN,vegetable,vegetable.green_beans,ar-LY-ImanNeural,فاصوليا,فَاصُولِيَا
+LIBYAN,vegetable,vegetable.spinach,ar-LY-ImanNeural,سبانخ,سَبَانِخْ
+LIBYAN,vegetable,vegetable.cauliflower,ar-LY-ImanNeural,قرنبيط,گَرْنَبِيطْ
+LIBYAN,vegetable,vegetable.broccoli,ar-LY-ImanNeural,بروكلي,بُرُوكْلِي
+LIBYAN,vegetable,vegetable.radish,ar-LY-ImanNeural,فجل,فِجِلْ
+LIBYAN,vegetable,vegetable.pumpkin,ar-LY-ImanNeural,قرعة,گَرْعَة
+LIBYAN,vegetable,vegetable.mint,ar-LY-ImanNeural,نعناع,نَعْنَاعْ
+LIBYAN,vegetable,vegetable.corn,ar-LY-ImanNeural,ذرة,ذُرَة
+LIBYAN,fruit,fruit.apple,ar-LY-ImanNeural,تفاح,تُفَّاحْ
+LIBYAN,fruit,fruit.banana,ar-LY-ImanNeural,موز,مُوزْ
+LIBYAN,fruit,fruit.orange,ar-LY-ImanNeural,برتقال,بُرْتُقَالْ
+LIBYAN,fruit,fruit.grapes,ar-LY-ImanNeural,عنب,عِنَبْ
+LIBYAN,fruit,fruit.strawberry,ar-LY-ImanNeural,فراولة,فَرَاوْلَة
+LIBYAN,fruit,fruit.mango,ar-LY-ImanNeural,مانجو,مَانْجُو
+LIBYAN,fruit,fruit.watermelon,ar-LY-ImanNeural,دلاع,دَلَّاعْ
+LIBYAN,fruit,fruit.melon,ar-LY-ImanNeural,قلعاوي,گَلْعَاوِي
+LIBYAN,fruit,fruit.peach,ar-LY-ImanNeural,خوخ,خُوخْ
+LIBYAN,fruit,fruit.apricot,ar-LY-ImanNeural,مشمش,مِشْمِشْ
+LIBYAN,fruit,fruit.pear,ar-LY-ImanNeural,كمثرى,كُمِّثْرَى
+LIBYAN,fruit,fruit.pomegranate,ar-LY-ImanNeural,رمان,رُمَّانْ
+LIBYAN,fruit,fruit.figs,ar-LY-ImanNeural,كرموس,كَرْمُوسْ
+LIBYAN,fruit,fruit.dates,ar-LY-ImanNeural,تمر,تَمْرْ
+LIBYAN,fruit,fruit.pineapple,ar-LY-ImanNeural,أناناس,أَنَانَاسْ
+LIBYAN,fruit,fruit.kiwi,ar-LY-ImanNeural,كيوي,كِيوِي
+LIBYAN,fruit,fruit.cherry,ar-LY-ImanNeural,كرز,كَرَزْ
+LIBYAN,fruit,fruit.berries,ar-LY-ImanNeural,توت,تُوتْ
+LIBYAN,fruit,fruit.mandarin,ar-LY-ImanNeural,مندرين,مَنْدَرِينْ
+LIBYAN,fruit,fruit.avocado,ar-LY-ImanNeural,أفوكادو,أَفُوكَادُو
+LIBYAN,fruit,fruit.coconut,ar-LY-ImanNeural,جوز الهند,جُوزْ الْهِنْدْ
+LIBYAN,food,food.bread,ar-LY-ImanNeural,خبزة,خُبْزَة
+LIBYAN,food,food.milk,ar-LY-ImanNeural,حليب,حَلِيبْ
+LIBYAN,food,food.eggs,ar-LY-ImanNeural,بيض,بِيضْ
+LIBYAN,food,food.cheese,ar-LY-ImanNeural,جبنة,جِبْنَة
+LIBYAN,food,food.yogurt,ar-LY-ImanNeural,زبادي,زَبَادِي
+LIBYAN,food,food.butter,ar-LY-ImanNeural,زبدة,زُبْدَة
+LIBYAN,food,food.rice,ar-LY-ImanNeural,رز,رُزّ
+LIBYAN,food,food.pasta,ar-LY-ImanNeural,مكرونة,مَكْرُونَة
+LIBYAN,food,food.soup,ar-LY-ImanNeural,شوربة,شُورْبَة
+LIBYAN,food,food.meat,ar-LY-ImanNeural,لحم,لَحْمْ
+LIBYAN,food,food.chicken,ar-LY-ImanNeural,دجاج,دْجَاجْ
+LIBYAN,food,food.fish,ar-LY-ImanNeural,حوت,حُوتْ
+LIBYAN,food,food.olives,ar-LY-ImanNeural,زيتون,زِيتُونْ
+LIBYAN,food,food.oil,ar-LY-ImanNeural,زيت,زِيتْ
+LIBYAN,food,food.tea,ar-LY-ImanNeural,شاهي,شَاهِي
+LIBYAN,food,food.coffee,ar-LY-ImanNeural,قهوة,گَهْوَة
+LIBYAN,food,food.juice,ar-LY-ImanNeural,عصير,عَصِيرْ
+LIBYAN,food,food.water,ar-LY-ImanNeural,مية,إِمَّيَّهْ
+LIBYAN,food,food.honey,ar-LY-ImanNeural,عسل,عَسَلْ
+LIBYAN,food,food.biscuit,ar-LY-ImanNeural,بسكويت,بَسْكَوِيتْ
+LIBYAN,food,food.salt,ar-LY-ImanNeural,ملح,مِلْحْ
+LIBYAN,food,food.sugar,ar-LY-ImanNeural,سكر,سُكَّرْ
+LIBYAN,home,home.bed,ar-LY-ImanNeural,سرير,سَرِيرْ
+LIBYAN,home,home.pillow,ar-LY-ImanNeural,مخدة,مِخَدَّة
+LIBYAN,home,home.blanket,ar-LY-ImanNeural,ورغان,وِرْغَانْ
+LIBYAN,home,home.table,ar-LY-ImanNeural,طاولة,طَاوِلَة
+LIBYAN,home,home.chair,ar-LY-ImanNeural,كرسي,كُرْسِي
+LIBYAN,home,home.sofa,ar-LY-ImanNeural,صالون,صَالُونْ
+LIBYAN,home,home.door,ar-LY-ImanNeural,باب,بَابْ
+LIBYAN,home,home.window,ar-LY-ImanNeural,روشن,رُوشِنْ
+LIBYAN,home,home.television,ar-LY-ImanNeural,تلفزيون,تِلِفِزْيُونْ
+LIBYAN,home,home.fridge,ar-LY-ImanNeural,ثلاجة,ثَلَّاجَة
+LIBYAN,home,home.washing_machine,ar-LY-ImanNeural,غسالة,غَسَّالَة
+LIBYAN,home,home.stove,ar-LY-ImanNeural,غاز,غَازْ
+LIBYAN,home,home.oven,ar-LY-ImanNeural,كوشة,كُوشَة
+LIBYAN,home,home.air_conditioner,ar-LY-ImanNeural,مكيف,مُكَيِّفْ
+LIBYAN,home,home.fan,ar-LY-ImanNeural,مروحة,مَرْوَحَة
+LIBYAN,home,home.wardrobe,ar-LY-ImanNeural,دولاب,دُولَابْ
+LIBYAN,home,home.key,ar-LY-ImanNeural,مفتاح,مِفْتَاحْ
+LIBYAN,home,home.clock,ar-LY-ImanNeural,ساعة,سَاعَة
+LIBYAN,home,home.carpet,ar-LY-ImanNeural,بساط,بِسَاطْ
+LIBYAN,home,home.kitchen,ar-LY-ImanNeural,كوجينة,كُوجِينَة
+LIBYAN,home,home.cup,ar-LY-ImanNeural,طاسة,طَاسَة
+LIBYAN,home,home.tray,ar-LY-ImanNeural,صونية,صُونِيَّة
+LIBYAN,home,home.spoon,ar-LY-ImanNeural,كاشيك,كَاشِيكْ
+LIBYAN,home,home.fork,ar-LY-ImanNeural,شوكة,شُوكَة
+LIBYAN,home,home.knife,ar-LY-ImanNeural,موس,مُوسْ
+LIBYAN,home,home.teapot,ar-LY-ImanNeural,براد,بَرَّادْ
+LIBYAN,home,home.pot,ar-LY-ImanNeural,طنجرة,طَنْجْرَة
+LIBYAN,home,home.water_bottle,ar-LY-ImanNeural,شيشة مية,شِيشَة إِمَّيَّهْ
+LIBYAN,clothing,clothing.tshirt,ar-LY-ImanNeural,تيشرت,تِيشِرْتْ
+LIBYAN,clothing,clothing.shirt,ar-LY-ImanNeural,قميص,قَمِيصْ
+LIBYAN,clothing,clothing.jacket,ar-LY-ImanNeural,جاكة,جَاكَة
+LIBYAN,clothing,clothing.shorts,ar-LY-ImanNeural,شورت,شُورْتْ
+LIBYAN,clothing,clothing.blouse,ar-LY-ImanNeural,سورية,سُورِيَّة
+LIBYAN,clothing,clothing.trousers,ar-LY-ImanNeural,سروال,سِرْوَالْ
+LIBYAN,clothing,clothing.dress,ar-LY-ImanNeural,فستان,فُسْتَانْ
+LIBYAN,clothing,clothing.robe,ar-LY-ImanNeural,روب,رُوبْ
+LIBYAN,clothing,clothing.abaya,ar-LY-ImanNeural,عباية,عَبَايَة
+LIBYAN,clothing,clothing.hijab,ar-LY-ImanNeural,حجاب,حِجَابْ
+LIBYAN,clothing,clothing.scarf,ar-LY-ImanNeural,وشاح,وِشَاحْ
+LIBYAN,clothing,clothing.shoes,ar-LY-ImanNeural,كندرة,كَنْدْرَة
+LIBYAN,clothing,clothing.socks,ar-LY-ImanNeural,شخاشير,شْخَاشِيرْ
+LIBYAN,clothing,clothing.coat,ar-LY-ImanNeural,كبوط,كَبُّوطْ
+LIBYAN,clothing,clothing.glasses,ar-LY-ImanNeural,نظارة,نَظَّارَة
+LIBYAN,clothing,clothing.cap,ar-LY-ImanNeural,طاقية,طَاگِيَّة
+LIBYAN,clothing,clothing.watch,ar-LY-ImanNeural,ساعة يد,سَاعِة يَدّ
+LIBYAN,clothing,clothing.bag,ar-LY-ImanNeural,شنطة,شَنْطَة
+LIBYAN,clothing,clothing.sandals,ar-LY-ImanNeural,صندل,صَنْدَلْ
+LIBYAN,clothing,clothing.high_heels,ar-LY-ImanNeural,كندرة كعب,كَنْدْرِة كَعَبْ
+LIBYAN,clothing,clothing.pajamas,ar-LY-ImanNeural,بيجامة,بِيجَامَة
+LIBYAN,clothing,clothing.belt,ar-LY-ImanNeural,سبتة,سِبْتَة
+LIBYAN,clothing,clothing.ring,ar-LY-ImanNeural,خاتم,خَاتَمْ
+LIBYAN,body,body.eye,ar-LY-ImanNeural,عين,عِينْ
+LIBYAN,body,body.nose,ar-LY-ImanNeural,خشم,خَشِمْ
+LIBYAN,body,body.mouth,ar-LY-ImanNeural,فم,فَمْ
+LIBYAN,body,body.tongue,ar-LY-ImanNeural,لسان,لِسَانْ
+LIBYAN,body,body.ear,ar-LY-ImanNeural,وذن,وِذِنْ
+LIBYAN,body,body.hand,ar-LY-ImanNeural,يد,يَدْ
+LIBYAN,body,body.leg,ar-LY-ImanNeural,رجل,رِجِلْ
+LIBYAN,body,body.head,ar-LY-ImanNeural,راس,رَاسْ
+LIBYAN,body,body.hair,ar-LY-ImanNeural,شعر,شَعْرْ
+LIBYAN,body,body.back,ar-LY-ImanNeural,ظهر,ظَهْرْ
+LIBYAN,body,body.abdomen,ar-LY-ImanNeural,بطن,بَطْنْ
+LIBYAN,body,body.knee,ar-LY-ImanNeural,ركبة,رُكْبَة
+LIBYAN,body,body.finger,ar-LY-ImanNeural,صبع,صْبَعْ
+LIBYAN,body,body.neck,ar-LY-ImanNeural,رقبة,رَگْبَة
+LIBYAN,body,body.chest,ar-LY-ImanNeural,صدر,صَدْرْ
+LIBYAN,body,body.face,ar-LY-ImanNeural,وجه,وَجِهْ
+LIBYAN,body,body.tooth,ar-LY-ImanNeural,سنة,سِنَّة
+LIBYAN,body,body.heart,ar-LY-ImanNeural,قلب,گَلْبْ
+LIBYAN,body,body.shoulder,ar-LY-ImanNeural,كتف,كِتْفْ
+LIBYAN,action,action.eat,ar-LY-ImanNeural,ناكل,نَاكُلْ
+LIBYAN,action,action.drink,ar-LY-ImanNeural,نشرب,نِشْرَبْ
+LIBYAN,action,action.sleep,ar-LY-ImanNeural,نرقد,نُرْگُدْ
+LIBYAN,action,action.sit,ar-LY-ImanNeural,نقعمز,نْگَعْمِزْ
+LIBYAN,action,action.walk,ar-LY-ImanNeural,نمشي,نِمْشِي
+LIBYAN,action,action.stand,ar-LY-ImanNeural,نوقف,نُوگَفْ
+LIBYAN,action,action.wash,ar-LY-ImanNeural,نغسل,نِغْسِلْ
+LIBYAN,action,action.speak,ar-LY-ImanNeural,ندوي,نِدْوِي
+LIBYAN,action,action.hear,ar-LY-ImanNeural,نسمع,نِسْمَعْ
+LIBYAN,action,action.open,ar-LY-ImanNeural,نفتح,نِفْتَحْ
+LIBYAN,action,action.close,ar-LY-ImanNeural,نسكر,نِسَكِّرْ
+LIBYAN,action,action.read,ar-LY-ImanNeural,نقرا,نَگْرَا
+LIBYAN,action,action.laugh,ar-LY-ImanNeural,نضحك,نِضْحَكْ
+LIBYAN,action,action.see,ar-LY-ImanNeural,نشوف,نِشُوفْ
+LIBYAN,action,action.dress,ar-LY-ImanNeural,نلبس,نِلْبِسْ
+LIBYAN,action,action.pray,ar-LY-ImanNeural,نصلي,نِصَلِّي
+LIBYAN,animal,animal.cat,ar-LY-ImanNeural,قطوسة,گَطُّوسَة
+LIBYAN,animal,animal.dog,ar-LY-ImanNeural,كلب,كَلْبْ
+LIBYAN,animal,animal.sheep,ar-LY-ImanNeural,خروف,خَرُوفْ
+LIBYAN,animal,animal.horse,ar-LY-ImanNeural,حصان,حْصَانْ
+LIBYAN,animal,animal.cow,ar-LY-ImanNeural,بقرة,بَگْرَة
+LIBYAN,animal,animal.sparrow,ar-LY-ImanNeural,عصفور,عُصْفُورْ
+LIBYAN,animal,animal.pigeon,ar-LY-ImanNeural,حمامة,حْمَامَة
+LIBYAN,animal,animal.chicken,ar-LY-ImanNeural,دجاجة,دْجَاجَة
+LIBYAN,animal,animal.duck,ar-LY-ImanNeural,بطة,بَطَّة
+LIBYAN,animal,animal.camel,ar-LY-ImanNeural,جمل,جْمَلْ
+LIBYAN,animal,animal.rooster,ar-LY-ImanNeural,ديك,دِيكْ
+LIBYAN,animal,animal.rabbit,ar-LY-ImanNeural,أرنب,أَرْنَبْ
+LIBYAN,transport,transport.car,ar-LY-ImanNeural,سيارة,سَيَّارَة
+LIBYAN,transport,transport.taxi,ar-LY-ImanNeural,تاكسي,تَاكْسِي
+LIBYAN,transport,transport.bus,ar-LY-ImanNeural,باص,بَاصْ
+LIBYAN,transport,transport.minibus,ar-LY-ImanNeural,ميكروباص,مِيكْرُوبَاصْ
+LIBYAN,transport,transport.bicycle,ar-LY-ImanNeural,دراجة,دَرَّاجَة
+LIBYAN,transport,transport.motorcycle,ar-LY-ImanNeural,دراجة نارية,دَرَّاجَة نَارِيَّة
+LIBYAN,transport,transport.train,ar-LY-ImanNeural,قطار,قِطَارْ
+LIBYAN,transport,transport.airplane,ar-LY-ImanNeural,طيارة,طَيَّارَة
+LIBYAN,transport,transport.helicopter,ar-LY-ImanNeural,هليكوبتر,هِلِيكُوبْتَرْ
+LIBYAN,transport,transport.ship,ar-LY-ImanNeural,باخرة,بَاخِرَة
+LIBYAN,transport,transport.boat,ar-LY-ImanNeural,قارب,قَارِبْ
+LIBYAN,transport,transport.truck,ar-LY-ImanNeural,شاحنة,شَاحِنَة
+LIBYAN,greeting,greeting.salam,ar-LY-ImanNeural,السلام عليكم,السَّلَامُ عَلَيْكُمْ
+LIBYAN,greeting,greeting.reply,ar-LY-ImanNeural,وعليكم السلام,وَعَلَيْكُمُ السَّلَامْ
+LIBYAN,greeting,greeting.hello,ar-LY-ImanNeural,هلا بيك,هَلَا بِيكْ
+LIBYAN,greeting,greeting.welcome,ar-LY-ImanNeural,أهلا وسهلا,أَهْلًا وَسَهْلًا
+LIBYAN,greeting,greeting.how_are_you,ar-LY-ImanNeural,شن حالك؟,شِنْ حَالَكْ؟
+LIBYAN,greeting,greeting.fine,ar-LY-ImanNeural,الحمد لله,الْحَمْدُ لِلَّهْ
+LIBYAN,greeting,greeting.good_morning,ar-LY-ImanNeural,صباح الخير,صَبَاحْ الْخِيرْ
+LIBYAN,greeting,greeting.good_evening,ar-LY-ImanNeural,مسا الخير,مَسَا الْخِيرْ
+LIBYAN,greeting,greeting.brighten,ar-LY-ImanNeural,نورت,نَوَّرْتْ
+LIBYAN,greeting,greeting.good_health,ar-LY-ImanNeural,يعطيك الصحة,يَعْطِيكْ الصَّحَّة
+LIBYAN,greeting,greeting.goodbye,ar-LY-ImanNeural,مع السلامة,مَعَ السَّلَامَة
+LIBYAN,greeting,greeting.safe,ar-LY-ImanNeural,في أمان الله,فِي أَمَانِ اللَّهْ
+LIBYAN,greeting,greeting.thanks,ar-LY-ImanNeural,شكراً ليك,شُكْرًا لِيكْ
+LIBYAN,greeting,greeting.bless,ar-LY-ImanNeural,بارك الله فيك,بَارَكَ اللَّهُ فِيكْ
+SAUDI,family,family.father,ar-SA-ZariyahNeural,أبوي,أَبُويْ
+SAUDI,family,family.mother,ar-SA-ZariyahNeural,أمي,أُمِّي
+SAUDI,family,family.husband,ar-SA-ZariyahNeural,زوجي,زَوْجِي
+SAUDI,family,family.wife,ar-SA-ZariyahNeural,زوجتي,زَوْجِتِي
+SAUDI,family,family.son,ar-SA-ZariyahNeural,ولدي,وَلَدِي
+SAUDI,family,family.daughter,ar-SA-ZariyahNeural,بنتي,بِنْتِي
+SAUDI,family,family.brother,ar-SA-ZariyahNeural,أخوي,أَخُويْ
+SAUDI,family,family.sister,ar-SA-ZariyahNeural,أختي,أُخْتِي
+SAUDI,family,family.paternal_uncle,ar-SA-ZariyahNeural,عمي,عَمِّي
+SAUDI,family,family.paternal_aunt,ar-SA-ZariyahNeural,عمتي,عَمَّتِي
+SAUDI,family,family.maternal_uncle,ar-SA-ZariyahNeural,خالي,خَالِي
+SAUDI,family,family.maternal_aunt,ar-SA-ZariyahNeural,خالتي,خَالَتِي
+SAUDI,family,family.grandfather,ar-SA-ZariyahNeural,جدي,جَدِّي
+SAUDI,family,family.grandmother,ar-SA-ZariyahNeural,جدتي,جَدَّتِي
+SAUDI,family,family.grandson,ar-SA-ZariyahNeural,حفيدي,حَفِيدِي
+SAUDI,family,family.granddaughter,ar-SA-ZariyahNeural,حفيدتي,حَفِيدْتِي
+SAUDI,family,family.paternal_uncle_son,ar-SA-ZariyahNeural,ولد عمي,وَلَدْ عَمِّي
+SAUDI,family,family.paternal_uncle_daughter,ar-SA-ZariyahNeural,بنت عمي,بِنْتْ عَمِّي
+SAUDI,family,family.paternal_aunt_son,ar-SA-ZariyahNeural,ولد عمتي,وَلَدْ عَمَّتِي
+SAUDI,family,family.paternal_aunt_daughter,ar-SA-ZariyahNeural,بنت عمتي,بِنْتْ عَمَّتِي
+SAUDI,family,family.maternal_uncle_son,ar-SA-ZariyahNeural,ولد خالي,وَلَدْ خَالِي
+SAUDI,family,family.maternal_uncle_daughter,ar-SA-ZariyahNeural,بنت خالي,بِنْتْ خَالِي
+SAUDI,family,family.maternal_aunt_son,ar-SA-ZariyahNeural,ولد خالتي,وَلَدْ خَالَتِي
+SAUDI,family,family.maternal_aunt_daughter,ar-SA-ZariyahNeural,بنت خالتي,بِنْتْ خَالَتِي
+SAUDI,family,family.brother_son,ar-SA-ZariyahNeural,ولد أخوي,وَلَدْ أَخُويْ
+SAUDI,family,family.brother_daughter,ar-SA-ZariyahNeural,بنت أخوي,بِنْتْ أَخُويْ
+SAUDI,family,family.sister_son,ar-SA-ZariyahNeural,ولد أختي,وَلَدْ أُخْتِي
+SAUDI,family,family.sister_daughter,ar-SA-ZariyahNeural,بنت أختي,بِنْتْ أُخْتِي
+SAUDI,family,family.husband_father,ar-SA-ZariyahNeural,أبو زوجي,أَبُو زَوْجِي
+SAUDI,family,family.husband_mother,ar-SA-ZariyahNeural,أم زوجي,أُمْ زَوْجِي
+SAUDI,family,family.wife_father,ar-SA-ZariyahNeural,أبو زوجتي,أَبُو زَوْجَتِي
+SAUDI,family,family.wife_mother,ar-SA-ZariyahNeural,أم زوجتي,أُمْ زَوْجَتِي
+SAUDI,family,family.husband_brother,ar-SA-ZariyahNeural,أخو زوجي,أَخُو زَوْجِي
+SAUDI,family,family.husband_sister,ar-SA-ZariyahNeural,أخت زوجي,أُخْتْ زَوْجِي
+SAUDI,family,family.wife_brother,ar-SA-ZariyahNeural,أخو زوجتي,أَخُو زَوْجَتِي
+SAUDI,family,family.wife_sister,ar-SA-ZariyahNeural,أخت زوجتي,أُخْتْ زَوْجَتِي
+SAUDI,family,family.sister_husband,ar-SA-ZariyahNeural,زوج أختي,زَوْجْ أُخْتِي
+SAUDI,family,family.brother_wife,ar-SA-ZariyahNeural,زوجة أخوي,زَوْجِة أَخُويْ
+SAUDI,family,family.daughter_husband,ar-SA-ZariyahNeural,زوج بنتي,زَوْجْ بِنْتِي
+SAUDI,family,family.son_wife,ar-SA-ZariyahNeural,زوجة ولدي,زَوْجِة وَلَدِي
+SAUDI,family,family.male_in_law,ar-SA-ZariyahNeural,نسيبي,نَسِيبِي
+SAUDI,family,family.female_in_law,ar-SA-ZariyahNeural,نسيبتي,نَسِيبْتِي
+SAUDI,family,family.male_relative,ar-SA-ZariyahNeural,قريبي,گَرِيبِي
+SAUDI,family,family.female_relative,ar-SA-ZariyahNeural,قريبتي,قَرِيبْتِي
+SAUDI,request,request.water,ar-SA-ZariyahNeural,أبغى ماي,أَبْغَى مَايْ
+SAUDI,request,request.tea,ar-SA-ZariyahNeural,أبغى شاي,أَبْغَى شَايْ
+SAUDI,request,request.rest,ar-SA-ZariyahNeural,أبغى أرتاح,أَبْغَى أَرْتَاحْ
+SAUDI,request,request.medicine,ar-SA-ZariyahNeural,أبغى دواي,أَبْغَى دَوَايْ
+SAUDI,request,request.toilet,ar-SA-ZariyahNeural,أبغى أروح الحمام,أَبْغَى أَرُوحْ الْحَمَّامْ
+SAUDI,request,request.adjust_pillow,ar-SA-ZariyahNeural,عدّل لي المخدة,عَدِّلْ لِي الْمِخَدَّة
+SAUDI,request,request.headache,ar-SA-ZariyahNeural,راسي يعورني,رَاسِي يْعَوِّرْنِي
+SAUDI,request,request.cold,ar-SA-ZariyahNeural,أحس بالبرد,أَحِسْ بِالْبَرْدْ
+SAUDI,dish,dish.saudi.kabsa,ar-SA-ZariyahNeural,كبسة لحم,كَبْسِة لَحَمْ
+SAUDI,dish,dish.saudi.mandi,ar-SA-ZariyahNeural,مندي,مَنْدِي
+SAUDI,dish,dish.saudi.jareesh,ar-SA-ZariyahNeural,جريش,جِرِيشْ
+SAUDI,dish,dish.saudi.qursan,ar-SA-ZariyahNeural,قرصان,گُرْصَانْ
+SAUDI,dish,dish.saudi.saleeg,ar-SA-ZariyahNeural,سليق طائفي,سَلِيگْ طَايْفِي
+SAUDI,dish,dish.saudi.haneeth,ar-SA-ZariyahNeural,حنيذ,حَنِيذْ
+SAUDI,dish,dish.saudi.matazeez,ar-SA-ZariyahNeural,مطازيز,مَطَازِيزْ
+SAUDI,dish,dish.saudi.marqooq,ar-SA-ZariyahNeural,مرقوق,مَرْگُوگْ
+SAUDI,dish,dish.saudi.madhbi,ar-SA-ZariyahNeural,مظبي دجاج,مَظْبِي دَجَاجْ
+SAUDI,dish,dish.saudi.bukhari,ar-SA-ZariyahNeural,رز بخاري,رُزّ بُخَارِي
+SAUDI,dish,dish.saudi.madfoon,ar-SA-ZariyahNeural,مدفون,مَدْفُونْ
+SAUDI,dish,dish.saudi.liver,ar-SA-ZariyahNeural,كبدة حاشي,كِبْدِة حَاشِي
+SAUDI,dish,dish.saudi.masoub,ar-SA-ZariyahNeural,معصوب,مَعْصُوبْ
+SAUDI,dish,dish.saudi.hanini,ar-SA-ZariyahNeural,حنيني,حَنِينِي
+SAUDI,dish,dish.saudi.luqaimat,ar-SA-ZariyahNeural,لقيمات,لْگَيْمَاتْ
+SAUDI,routine,routine.call_to_prayer,ar-SA-ZariyahNeural,أذان,أَذَانْ
+SAUDI,routine,routine.ablution,ar-SA-ZariyahNeural,وضوء,وُضُوءْ
+SAUDI,routine,routine.prayer,ar-SA-ZariyahNeural,صلاة,صَلَاة
+SAUDI,routine,routine.prayer_rug,ar-SA-ZariyahNeural,سجادة صلاة,سَجَّادِة صَلَاة
+SAUDI,routine,routine.prayer_beads,ar-SA-ZariyahNeural,مسبحة,مِسْبَحَة
+SAUDI,routine,routine.quran,ar-SA-ZariyahNeural,مصحف,مُصْحَفْ
+SAUDI,routine,routine.evening_coffee,ar-SA-ZariyahNeural,قهوة العصر,گَهْوِة الْعَصْرْ
+SAUDI,routine,routine.sleep,ar-SA-ZariyahNeural,نوم,نُومْ
+SAUDI,routine,routine.rest,ar-SA-ZariyahNeural,راحة,رَاحَة
+SAUDI,routine,routine.walk,ar-SA-ZariyahNeural,مشي,مَشِي
+SAUDI,vegetable,vegetable.tomato,ar-SA-ZariyahNeural,طماطم,طَمَاطِمْ
+SAUDI,vegetable,vegetable.potato,ar-SA-ZariyahNeural,بطاطس,بَطَاطِسْ
+SAUDI,vegetable,vegetable.onion,ar-SA-ZariyahNeural,بصل,بَصَلْ
+SAUDI,vegetable,vegetable.garlic,ar-SA-ZariyahNeural,ثوم,ثُومْ
+SAUDI,vegetable,vegetable.carrot,ar-SA-ZariyahNeural,جزر,جَزَرْ
+SAUDI,vegetable,vegetable.cucumber,ar-SA-ZariyahNeural,خيار,خِيَارْ
+SAUDI,vegetable,vegetable.pepper,ar-SA-ZariyahNeural,فلفل,فِلْفِلْ
+SAUDI,vegetable,vegetable.eggplant,ar-SA-ZariyahNeural,باذنجان,بَاذِنْجَانْ
+SAUDI,vegetable,vegetable.zucchini,ar-SA-ZariyahNeural,كوسة,كُوسَة
+SAUDI,vegetable,vegetable.lettuce,ar-SA-ZariyahNeural,خس,خَسّ
+SAUDI,vegetable,vegetable.parsley,ar-SA-ZariyahNeural,بقدونس,بَقْدُونِسْ
+SAUDI,vegetable,vegetable.coriander,ar-SA-ZariyahNeural,كزبرة,كُزْبَرَة
+SAUDI,vegetable,vegetable.lemon,ar-SA-ZariyahNeural,ليمون,لِيمُونْ
+SAUDI,vegetable,vegetable.peas,ar-SA-ZariyahNeural,بازلا,بَازِلَّا
+SAUDI,vegetable,vegetable.green_beans,ar-SA-ZariyahNeural,فاصوليا خضرا,فَاصُولْيَا خَضْرَا
+SAUDI,vegetable,vegetable.spinach,ar-SA-ZariyahNeural,سبانخ,سَبَانِخْ
+SAUDI,vegetable,vegetable.cauliflower,ar-SA-ZariyahNeural,زهرة,زَهْرَة
+SAUDI,vegetable,vegetable.broccoli,ar-SA-ZariyahNeural,بروكلي,بُرُوكْلِي
+SAUDI,vegetable,vegetable.radish,ar-SA-ZariyahNeural,فجل,فِجِلْ
+SAUDI,vegetable,vegetable.pumpkin,ar-SA-ZariyahNeural,قرع,قَرَعْ
+SAUDI,vegetable,vegetable.mint,ar-SA-ZariyahNeural,نعناع,نَعْنَاعْ
+SAUDI,vegetable,vegetable.corn,ar-SA-ZariyahNeural,ذرة,ذُرَة
+SAUDI,fruit,fruit.apple,ar-SA-ZariyahNeural,تفاح,تُفَّاحْ
+SAUDI,fruit,fruit.banana,ar-SA-ZariyahNeural,موز,مُوزْ
+SAUDI,fruit,fruit.orange,ar-SA-ZariyahNeural,برتقال,بُرْتُقَالْ
+SAUDI,fruit,fruit.grapes,ar-SA-ZariyahNeural,عنب,عِنَبْ
+SAUDI,fruit,fruit.strawberry,ar-SA-ZariyahNeural,فراولة,فَرَاوْلَة
+SAUDI,fruit,fruit.mango,ar-SA-ZariyahNeural,مانجو,مَانْجُو
+SAUDI,fruit,fruit.watermelon,ar-SA-ZariyahNeural,حبحب,حَبْحَبْ
+SAUDI,fruit,fruit.melon,ar-SA-ZariyahNeural,شمام,شَمَّامْ
+SAUDI,fruit,fruit.peach,ar-SA-ZariyahNeural,خوخ,خُوخْ
+SAUDI,fruit,fruit.apricot,ar-SA-ZariyahNeural,مشمش,مِشْمِشْ
+SAUDI,fruit,fruit.pear,ar-SA-ZariyahNeural,كمثرى,كُمَّثْرَى
+SAUDI,fruit,fruit.pomegranate,ar-SA-ZariyahNeural,رمان,رُمَّانْ
+SAUDI,fruit,fruit.figs,ar-SA-ZariyahNeural,تين,تِينْ
+SAUDI,fruit,fruit.dates,ar-SA-ZariyahNeural,تمر,تَمْرْ
+SAUDI,fruit,fruit.pineapple,ar-SA-ZariyahNeural,أناناس,أَنَانَاسْ
+SAUDI,fruit,fruit.kiwi,ar-SA-ZariyahNeural,كيوي,كِيوِي
+SAUDI,fruit,fruit.cherry,ar-SA-ZariyahNeural,كرز,كَرَزْ
+SAUDI,fruit,fruit.berries,ar-SA-ZariyahNeural,توت,تُوتْ
+SAUDI,fruit,fruit.mandarin,ar-SA-ZariyahNeural,يوسفي,يُوسُفِي
+SAUDI,fruit,fruit.avocado,ar-SA-ZariyahNeural,أفوكادو,أَفُوكَادُو
+SAUDI,fruit,fruit.coconut,ar-SA-ZariyahNeural,جوز الهند,جُوزْ الْهِنْدْ
+SAUDI,food,food.bread,ar-SA-ZariyahNeural,خبز,خُبْزْ
+SAUDI,food,food.milk,ar-SA-ZariyahNeural,حليب,حَلِيبْ
+SAUDI,food,food.eggs,ar-SA-ZariyahNeural,بيض,بِيضْ
+SAUDI,food,food.cheese,ar-SA-ZariyahNeural,جبن,جُبْنْ
+SAUDI,food,food.yogurt,ar-SA-ZariyahNeural,زبادي,زَبَادِي
+SAUDI,food,food.butter,ar-SA-ZariyahNeural,زبدة,زُبْدَة
+SAUDI,food,food.rice,ar-SA-ZariyahNeural,رز,رُزّ
+SAUDI,food,food.pasta,ar-SA-ZariyahNeural,مكرونة,مَكَرُونَة
+SAUDI,food,food.soup,ar-SA-ZariyahNeural,شوربة,شُورْبَة
+SAUDI,food,food.meat,ar-SA-ZariyahNeural,لحم,لَحْمْ
+SAUDI,food,food.chicken,ar-SA-ZariyahNeural,دجاج,دَجَاجْ
+SAUDI,food,food.fish,ar-SA-ZariyahNeural,سمك,سِمَكْ
+SAUDI,food,food.olives,ar-SA-ZariyahNeural,زيتون,زِيتُونْ
+SAUDI,food,food.oil,ar-SA-ZariyahNeural,زيت,زِيتْ
+SAUDI,food,food.tea,ar-SA-ZariyahNeural,شاهي,شَاهِي
+SAUDI,food,food.coffee,ar-SA-ZariyahNeural,قهوة,گَهْوَة
+SAUDI,food,food.juice,ar-SA-ZariyahNeural,عصير,عَصِيرْ
+SAUDI,food,food.water,ar-SA-ZariyahNeural,ماي,مَايْ
+SAUDI,food,food.honey,ar-SA-ZariyahNeural,عسل,عَسَلْ
+SAUDI,food,food.biscuit,ar-SA-ZariyahNeural,بسكويت,بَسْكَوِيتْ
+SAUDI,food,food.salt,ar-SA-ZariyahNeural,ملح,مِلْحْ
+SAUDI,food,food.sugar,ar-SA-ZariyahNeural,سكر,سُكَّرْ
+SAUDI,home,home.bed,ar-SA-ZariyahNeural,سرير,سَرِيرْ
+SAUDI,home,home.pillow,ar-SA-ZariyahNeural,مخدة,مَخَدَّة
+SAUDI,home,home.blanket,ar-SA-ZariyahNeural,بطانية,بَطَّانِيَّة
+SAUDI,home,home.table,ar-SA-ZariyahNeural,طاولة,طَاوِلَة
+SAUDI,home,home.chair,ar-SA-ZariyahNeural,كرسي,كُرْسِي
+SAUDI,home,home.sofa,ar-SA-ZariyahNeural,كنب,كَنَبْ
+SAUDI,home,home.door,ar-SA-ZariyahNeural,باب,بَابْ
+SAUDI,home,home.window,ar-SA-ZariyahNeural,شباك,شُبَّاكْ
+SAUDI,home,home.television,ar-SA-ZariyahNeural,تلفزيون,تِلِفِزْيُونْ
+SAUDI,home,home.fridge,ar-SA-ZariyahNeural,ثلاجة,ثَلَّاجَة
+SAUDI,home,home.washing_machine,ar-SA-ZariyahNeural,غسالة,غَسَّالَة
+SAUDI,home,home.stove,ar-SA-ZariyahNeural,فرن غاز,فُرْنْ غَازْ
+SAUDI,home,home.oven,ar-SA-ZariyahNeural,فرن,فُرْنْ
+SAUDI,home,home.air_conditioner,ar-SA-ZariyahNeural,مكيف,مُكَيِّفْ
+SAUDI,home,home.fan,ar-SA-ZariyahNeural,مروحة,مَرْوَحَة
+SAUDI,home,home.wardrobe,ar-SA-ZariyahNeural,دولاب,دُولَابْ
+SAUDI,home,home.key,ar-SA-ZariyahNeural,مفتاح,مِفْتَاحْ
+SAUDI,home,home.clock,ar-SA-ZariyahNeural,ساعة,سَاعَة
+SAUDI,home,home.carpet,ar-SA-ZariyahNeural,بساط,بِسَاطْ
+SAUDI,home,home.kitchen,ar-SA-ZariyahNeural,مطبخ,مَطْبَخْ
+SAUDI,home,home.cup,ar-SA-ZariyahNeural,كوب,كُوبْ
+SAUDI,home,home.tray,ar-SA-ZariyahNeural,صينية,صِينِيَّة
+SAUDI,home,home.spoon,ar-SA-ZariyahNeural,ملعقة,مِلْعَقَة
+SAUDI,home,home.fork,ar-SA-ZariyahNeural,شوكة,شُوكَة
+SAUDI,home,home.knife,ar-SA-ZariyahNeural,سكين,سِكِّينْ
+SAUDI,home,home.teapot,ar-SA-ZariyahNeural,إبريق شاي,إِبْرِيقْ شَايْ
+SAUDI,home,home.pot,ar-SA-ZariyahNeural,قدر,گِدْرْ
+SAUDI,home,home.water_bottle,ar-SA-ZariyahNeural,قارورة موية,قَارُورِة مُويَة
+SAUDI,clothing,clothing.tshirt,ar-SA-ZariyahNeural,تيشيرت,تِيشِيرْتْ
+SAUDI,clothing,clothing.shirt,ar-SA-ZariyahNeural,قميص,قَمِيصْ
+SAUDI,clothing,clothing.jacket,ar-SA-ZariyahNeural,جاكيت,جَاكِيتْ
+SAUDI,clothing,clothing.shorts,ar-SA-ZariyahNeural,شورت,شُورْتْ
+SAUDI,clothing,clothing.blouse,ar-SA-ZariyahNeural,بلوزة,بْلُوزَة
+SAUDI,clothing,clothing.trousers,ar-SA-ZariyahNeural,بنطلون,بَنْطَلُونْ
+SAUDI,clothing,clothing.dress,ar-SA-ZariyahNeural,فستان,فُسْتَانْ
+SAUDI,clothing,clothing.robe,ar-SA-ZariyahNeural,روب,رُوبْ
+SAUDI,clothing,clothing.abaya,ar-SA-ZariyahNeural,عباية,عَبَايَة
+SAUDI,clothing,clothing.hijab,ar-SA-ZariyahNeural,حجاب,حِجَابْ
+SAUDI,clothing,clothing.scarf,ar-SA-ZariyahNeural,وشاح,وِشَاحْ
+SAUDI,clothing,clothing.shoes,ar-SA-ZariyahNeural,جزمة,جَزْمَة
+SAUDI,clothing,clothing.socks,ar-SA-ZariyahNeural,دلاغات,دِلَاغَاتْ
+SAUDI,clothing,clothing.coat,ar-SA-ZariyahNeural,معطف,مِعْطَفْ
+SAUDI,clothing,clothing.glasses,ar-SA-ZariyahNeural,نظارة,نَظَّارَة
+SAUDI,clothing,clothing.cap,ar-SA-ZariyahNeural,طاقية,طَاقِيَّة
+SAUDI,clothing,clothing.watch,ar-SA-ZariyahNeural,ساعة يد,سَاعِة يَدّ
+SAUDI,clothing,clothing.bag,ar-SA-ZariyahNeural,شنطة,شَنْطَة
+SAUDI,clothing,clothing.sandals,ar-SA-ZariyahNeural,صندل,صَنْدَلْ
+SAUDI,clothing,clothing.high_heels,ar-SA-ZariyahNeural,جزمة كعب,جَزْمِة كَعَبْ
+SAUDI,clothing,clothing.pajamas,ar-SA-ZariyahNeural,بيجامة,بِيجَامَة
+SAUDI,clothing,clothing.belt,ar-SA-ZariyahNeural,حزام,حِزَامْ
+SAUDI,clothing,clothing.ring,ar-SA-ZariyahNeural,خاتم,خَاتَمْ
+SAUDI,body,body.eye,ar-SA-ZariyahNeural,عين,عِينْ
+SAUDI,body,body.nose,ar-SA-ZariyahNeural,خشم,خَشِمْ
+SAUDI,body,body.mouth,ar-SA-ZariyahNeural,فم,فَمْ
+SAUDI,body,body.tongue,ar-SA-ZariyahNeural,لسان,لِسَانْ
+SAUDI,body,body.ear,ar-SA-ZariyahNeural,إذن,إِذْنْ
+SAUDI,body,body.hand,ar-SA-ZariyahNeural,يد,يَدْ
+SAUDI,body,body.leg,ar-SA-ZariyahNeural,رجل,رِجِلْ
+SAUDI,body,body.head,ar-SA-ZariyahNeural,راس,رَاسْ
+SAUDI,body,body.hair,ar-SA-ZariyahNeural,شعر,شَعْرْ
+SAUDI,body,body.back,ar-SA-ZariyahNeural,ظهر,ظَهْرْ
+SAUDI,body,body.abdomen,ar-SA-ZariyahNeural,بطن,بَطْنْ
+SAUDI,body,body.knee,ar-SA-ZariyahNeural,ركبة,رُكْبَة
+SAUDI,body,body.finger,ar-SA-ZariyahNeural,إصبع,إِصْبَعْ
+SAUDI,body,body.neck,ar-SA-ZariyahNeural,رقبة,رْگَبَة
+SAUDI,body,body.chest,ar-SA-ZariyahNeural,صدر,صَدْرْ
+SAUDI,body,body.face,ar-SA-ZariyahNeural,وجه,وَجْهْ
+SAUDI,body,body.tooth,ar-SA-ZariyahNeural,سن,سِنّ
+SAUDI,body,body.heart,ar-SA-ZariyahNeural,قلب,قَلْبْ
+SAUDI,body,body.shoulder,ar-SA-ZariyahNeural,كتف,كِتْفْ
+SAUDI,action,action.eat,ar-SA-ZariyahNeural,آكل,آكُلْ
+SAUDI,action,action.drink,ar-SA-ZariyahNeural,أشرب,أَشْرَبْ
+SAUDI,action,action.sleep,ar-SA-ZariyahNeural,أنام,أَنَامْ
+SAUDI,action,action.sit,ar-SA-ZariyahNeural,أجلس,أَجْلِسْ
+SAUDI,action,action.walk,ar-SA-ZariyahNeural,أمشي,أَمْشِي
+SAUDI,action,action.stand,ar-SA-ZariyahNeural,أقوم,أَگُومْ
+SAUDI,action,action.wash,ar-SA-ZariyahNeural,أغسل,أَغْسِلْ
+SAUDI,action,action.speak,ar-SA-ZariyahNeural,أتكلم,أَتَكَلَّمْ
+SAUDI,action,action.hear,ar-SA-ZariyahNeural,أسمع,أَسْمَعْ
+SAUDI,action,action.open,ar-SA-ZariyahNeural,أفتح,أَفْتَحْ
+SAUDI,action,action.close,ar-SA-ZariyahNeural,أسكر,أَسَكِّرْ
+SAUDI,action,action.read,ar-SA-ZariyahNeural,أقرا,أَگْرَا
+SAUDI,action,action.laugh,ar-SA-ZariyahNeural,أضحك,أَضْحَكْ
+SAUDI,action,action.see,ar-SA-ZariyahNeural,أشوف,أَشُوفْ
+SAUDI,action,action.dress,ar-SA-ZariyahNeural,ألبس,أَلْبَسْ
+SAUDI,action,action.pray,ar-SA-ZariyahNeural,أصلّي,أَصَلِّي
+SAUDI,animal,animal.cat,ar-SA-ZariyahNeural,بسة,بِسَّة
+SAUDI,animal,animal.dog,ar-SA-ZariyahNeural,كلب,كَلْبْ
+SAUDI,animal,animal.sheep,ar-SA-ZariyahNeural,خروف,خَرُوفْ
+SAUDI,animal,animal.horse,ar-SA-ZariyahNeural,حصان,حِصَانْ
+SAUDI,animal,animal.cow,ar-SA-ZariyahNeural,بقرة,بَگْرَة
+SAUDI,animal,animal.sparrow,ar-SA-ZariyahNeural,عصفور,عُصْفُورْ
+SAUDI,animal,animal.pigeon,ar-SA-ZariyahNeural,حمامة,حَمَامَة
+SAUDI,animal,animal.chicken,ar-SA-ZariyahNeural,دجاجة,دَجَاجَة
+SAUDI,animal,animal.duck,ar-SA-ZariyahNeural,بطة,بَطَّة
+SAUDI,animal,animal.camel,ar-SA-ZariyahNeural,جمل,جَمَلْ
+SAUDI,animal,animal.rooster,ar-SA-ZariyahNeural,ديك,دِيكْ
+SAUDI,animal,animal.rabbit,ar-SA-ZariyahNeural,أرنب,أَرْنَبْ
+SAUDI,transport,transport.car,ar-SA-ZariyahNeural,سيارة,سَيَّارَة
+SAUDI,transport,transport.taxi,ar-SA-ZariyahNeural,تاكسي,تَاكْسِي
+SAUDI,transport,transport.bus,ar-SA-ZariyahNeural,باص,بَاصْ
+SAUDI,transport,transport.minibus,ar-SA-ZariyahNeural,باص صغير,بَاصْ صْغِيرْ
+SAUDI,transport,transport.bicycle,ar-SA-ZariyahNeural,سيكل,سَيْكَلْ
+SAUDI,transport,transport.motorcycle,ar-SA-ZariyahNeural,دباب,دَبَّابْ
+SAUDI,transport,transport.train,ar-SA-ZariyahNeural,قطار,قِطَارْ
+SAUDI,transport,transport.airplane,ar-SA-ZariyahNeural,طيارة,طَيَّارَة
+SAUDI,transport,transport.helicopter,ar-SA-ZariyahNeural,هليكوبتر,هِلِيكُوبْتَرْ
+SAUDI,transport,transport.ship,ar-SA-ZariyahNeural,سفينة,سَفِينَة
+SAUDI,transport,transport.boat,ar-SA-ZariyahNeural,قارب,قَارِبْ
+SAUDI,transport,transport.truck,ar-SA-ZariyahNeural,شاحنة,شَاحِنَة
+SAUDI,greeting,greeting.salam,ar-SA-ZariyahNeural,السلام عليكم,السَّلَامُ عَلَيْكُمْ
+SAUDI,greeting,greeting.reply,ar-SA-ZariyahNeural,وعليكم السلام,وَعَلَيْكُمُ السَّلَامْ
+SAUDI,greeting,greeting.hello,ar-SA-ZariyahNeural,هلا,هَلَا
+SAUDI,greeting,greeting.welcome,ar-SA-ZariyahNeural,حيّاك الله,حَيَّاكْ اللَّهْ
+SAUDI,greeting,greeting.how_are_you,ar-SA-ZariyahNeural,كيف حالك؟,كِيفْ حَالَكْ؟
+SAUDI,greeting,greeting.fine,ar-SA-ZariyahNeural,الحمد لله,الْحَمْدُ لِلَّهْ
+SAUDI,greeting,greeting.good_morning,ar-SA-ZariyahNeural,صباح الخير,صَبَاحْ الْخِيرْ
+SAUDI,greeting,greeting.good_evening,ar-SA-ZariyahNeural,مسا الخير,مَسَا الْخِيرْ
+SAUDI,greeting,greeting.brighten,ar-SA-ZariyahNeural,نورت,نَوَّرْتْ
+SAUDI,greeting,greeting.good_health,ar-SA-ZariyahNeural,يعطيك العافية,يَعْطِيكْ الْعَافْيَة
+SAUDI,greeting,greeting.goodbye,ar-SA-ZariyahNeural,مع السلامة,مَعَ السَّلَامَة
+SAUDI,greeting,greeting.safe,ar-SA-ZariyahNeural,في أمان الله,فِي أَمَانِ اللَّهْ
+SAUDI,greeting,greeting.thanks,ar-SA-ZariyahNeural,شكراً لك,شُكْرًا لَكْ
+SAUDI,greeting,greeting.bless,ar-SA-ZariyahNeural,الله يبارك فيك,اللَّه يْبَارِك فِيكْ
+EGYPTIAN,family,family.father,ar-EG-SalmaNeural,أبويا,أَبويا
+EGYPTIAN,family,family.mother,ar-EG-SalmaNeural,أمي,أُمِّي
+EGYPTIAN,family,family.husband,ar-EG-SalmaNeural,جوزي,جُوزي
+EGYPTIAN,family,family.wife,ar-EG-SalmaNeural,مراتي,مِراتي
+EGYPTIAN,family,family.son,ar-EG-SalmaNeural,ابني,اِبْني
+EGYPTIAN,family,family.daughter,ar-EG-SalmaNeural,بنتي,بِنْتي
+EGYPTIAN,family,family.brother,ar-EG-SalmaNeural,أخويا,أَخويا
+EGYPTIAN,family,family.sister,ar-EG-SalmaNeural,أختي,أُخْتي
+EGYPTIAN,family,family.paternal_uncle,ar-EG-SalmaNeural,عمي,عَمِّي
+EGYPTIAN,family,family.paternal_aunt,ar-EG-SalmaNeural,عمتي,عَمِّتِي
+EGYPTIAN,family,family.maternal_uncle,ar-EG-SalmaNeural,خالي,خَالي
+EGYPTIAN,family,family.maternal_aunt,ar-EG-SalmaNeural,خالتي,خَالْتِي
+EGYPTIAN,family,family.grandfather,ar-EG-SalmaNeural,جدي,جَدِّي
+EGYPTIAN,family,family.grandmother,ar-EG-SalmaNeural,جدتي,جَدَّتي
+EGYPTIAN,family,family.grandson,ar-EG-SalmaNeural,حفيدي,حَفيدي
+EGYPTIAN,family,family.granddaughter,ar-EG-SalmaNeural,حفيدتي,حَفِيدْتِي
+EGYPTIAN,family,family.paternal_uncle_son,ar-EG-SalmaNeural,ابن عمي,اِبْنْ عَمِّي
+EGYPTIAN,family,family.paternal_uncle_daughter,ar-EG-SalmaNeural,بنت عمي,بِنْتْ عَمِّي
+EGYPTIAN,family,family.paternal_aunt_son,ar-EG-SalmaNeural,ابن عمتي,اِبْنْ عَمِّتي
+EGYPTIAN,family,family.paternal_aunt_daughter,ar-EG-SalmaNeural,بنت عمتي,بِنْتْ عَمِّتي
+EGYPTIAN,family,family.maternal_uncle_son,ar-EG-SalmaNeural,ابن خالي,اِبْنْ خَالي
+EGYPTIAN,family,family.maternal_uncle_daughter,ar-EG-SalmaNeural,بنت خالي,بِنْتْ خَالي
+EGYPTIAN,family,family.maternal_aunt_son,ar-EG-SalmaNeural,ابن خالتي,اِبْنْ خَالْتي
+EGYPTIAN,family,family.maternal_aunt_daughter,ar-EG-SalmaNeural,بنت خالتي,بِنْتْ خَالْتي
+EGYPTIAN,family,family.brother_son,ar-EG-SalmaNeural,ابن أخويا,اِبْنْ أَخويا
+EGYPTIAN,family,family.brother_daughter,ar-EG-SalmaNeural,بنت أخويا,بِنْتْ أَخويا
+EGYPTIAN,family,family.sister_son,ar-EG-SalmaNeural,ابن أختي,اِبْنْ أُخْتي
+EGYPTIAN,family,family.sister_daughter,ar-EG-SalmaNeural,بنت أختي,بِنْتْ أُخْتي
+EGYPTIAN,family,family.husband_father,ar-EG-SalmaNeural,أبو جوزي,أَبو جُوزي
+EGYPTIAN,family,family.husband_mother,ar-EG-SalmaNeural,أم جوزي,أُمْ جُوزي
+EGYPTIAN,family,family.wife_father,ar-EG-SalmaNeural,أبو مراتي,أَبو مِراتي
+EGYPTIAN,family,family.wife_mother,ar-EG-SalmaNeural,أم مراتي,أُمْ مِراتي
+EGYPTIAN,family,family.husband_brother,ar-EG-SalmaNeural,أخو جوزي,أَخو جُوزي
+EGYPTIAN,family,family.husband_sister,ar-EG-SalmaNeural,أخت جوزي,أُخْتْ جُوزي
+EGYPTIAN,family,family.wife_brother,ar-EG-SalmaNeural,أخو مراتي,أَخو مِراتي
+EGYPTIAN,family,family.wife_sister,ar-EG-SalmaNeural,أخت مراتي,أُخْتْ مِراتي
+EGYPTIAN,family,family.sister_husband,ar-EG-SalmaNeural,جوز أختي,جُوزْ أُخْتي
+EGYPTIAN,family,family.brother_wife,ar-EG-SalmaNeural,مرات أخويا,مِراتْ أَخويا
+EGYPTIAN,family,family.daughter_husband,ar-EG-SalmaNeural,جوز بنتي,جُوزْ بِنْتي
+EGYPTIAN,family,family.son_wife,ar-EG-SalmaNeural,مرات ابني,مِراتْ اِبْني
+EGYPTIAN,family,family.male_in_law,ar-EG-SalmaNeural,نسيبي,نَسيبي
+EGYPTIAN,family,family.female_in_law,ar-EG-SalmaNeural,نسيبتي,نَسِيبْتِي
+EGYPTIAN,family,family.male_relative,ar-EG-SalmaNeural,قريبي,قَريبي
+EGYPTIAN,family,family.female_relative,ar-EG-SalmaNeural,قريبتي,قَرِيبْتِي
+EGYPTIAN,request,request.water,ar-EG-SalmaNeural,عايز مية,عَايِزْ مَيَّة
+EGYPTIAN,request,request.tea,ar-EG-SalmaNeural,ممكن شاي,مُمْكِنْ شَايْ
+EGYPTIAN,request,request.rest,ar-EG-SalmaNeural,ممكن أرتاح شوية,مُمْكِنْ أَرْتاحْ شْوَيَّة
+EGYPTIAN,request,request.medicine,ar-EG-SalmaNeural,ممكن دوايا,مُمْكِنْ دَوايا
+EGYPTIAN,request,request.toilet,ar-EG-SalmaNeural,ممكن أدخل الحمام,مُمْكِنْ أَدْخُلْ الْحَمَّامْ
+EGYPTIAN,request,request.adjust_pillow,ar-EG-SalmaNeural,ظبطلي المخدة,ظَبَّطْلي الْمَخَدَّة
+EGYPTIAN,request,request.headache,ar-EG-SalmaNeural,دماغي بتوجعني,دِمَاغِي بِتُوجَعْنِي
+EGYPTIAN,request,request.cold,ar-EG-SalmaNeural,أنا سقعان,أَنا سَقْعانْ
+EGYPTIAN,dish,dish.egyptian.koshari,ar-EG-SalmaNeural,كشري,كُشَري
+EGYPTIAN,dish,dish.egyptian.molokhia,ar-EG-SalmaNeural,ملوخية بالتقلية,مُلوخِيَّة بِالتَّقْلِيَة
+EGYPTIAN,dish,dish.egyptian.hawawshi,ar-EG-SalmaNeural,حواوشي,حَواوْشي
+EGYPTIAN,dish,dish.egyptian.ful,ar-EG-SalmaNeural,فول مدمس,فُولْ مِدَمِّسْ
+EGYPTIAN,dish,dish.egyptian.taamiya,ar-EG-SalmaNeural,طعمية,طَعْمِيَّة
+EGYPTIAN,dish,dish.egyptian.stuffed_pigeon,ar-EG-SalmaNeural,حمام محشي,حَمامْ مَحْشي
+EGYPTIAN,dish,dish.egyptian.fattah,ar-EG-SalmaNeural,فتة بالخل والتوم,فَتَّة بِالْخَلّ وَالتُّومْ
+EGYPTIAN,dish,dish.egyptian.potato_tray,ar-EG-SalmaNeural,صينية بطاطس,صِينِيِّة بَطاطِسْ
+EGYPTIAN,dish,dish.egyptian.kebab_hawawshi,ar-EG-SalmaNeural,كباب وحواوشي,كَبابْ وَحَواوْشي
+EGYPTIAN,dish,dish.egyptian.mahshi,ar-EG-SalmaNeural,محشي مشكل,مَحْشِي مِشَكِّلْ
+EGYPTIAN,dish,dish.egyptian.moussaka,ar-EG-SalmaNeural,مسقعة بلدي,مِسَقَّعَة بَلَدِي
+EGYPTIAN,dish,dish.egyptian.trotters_fattah,ar-EG-SalmaNeural,كوارع وفتة,كَوارِعْ وَفَتَّة
+EGYPTIAN,dish,dish.egyptian.meat_ruqaq,ar-EG-SalmaNeural,رقاق باللحمة,رُقاقْ بِاللَّحْمَة
+EGYPTIAN,dish,dish.egyptian.bird_tongue_soup,ar-EG-SalmaNeural,شربة لسان عصفور,شُورْبِة لِسَانْ عَصْفُورْ
+EGYPTIAN,dish,dish.egyptian.umm_ali,ar-EG-SalmaNeural,أم علي,أُمّ عَلي
+EGYPTIAN,routine,routine.call_to_prayer,ar-EG-SalmaNeural,أذان,أَذانْ
+EGYPTIAN,routine,routine.ablution,ar-EG-SalmaNeural,وضوء,وُضوءْ
+EGYPTIAN,routine,routine.prayer,ar-EG-SalmaNeural,صلاة,صَلاة
+EGYPTIAN,routine,routine.prayer_rug,ar-EG-SalmaNeural,سجادة صلاة,سِجَّادِة صَلَاة
+EGYPTIAN,routine,routine.prayer_beads,ar-EG-SalmaNeural,مسبحة,مِسْبَحَة
+EGYPTIAN,routine,routine.quran,ar-EG-SalmaNeural,مصحف,مُصْحَفْ
+EGYPTIAN,routine,routine.evening_coffee,ar-EG-SalmaNeural,قهوة المسا,قَهْوِة الْمَسَا
+EGYPTIAN,routine,routine.sleep,ar-EG-SalmaNeural,نوم,نُومْ
+EGYPTIAN,routine,routine.rest,ar-EG-SalmaNeural,راحة,رَاحَة
+EGYPTIAN,routine,routine.walk,ar-EG-SalmaNeural,مشي,مَشِي
+EGYPTIAN,vegetable,vegetable.tomato,ar-EG-SalmaNeural,طماطم,طَماطِمْ
+EGYPTIAN,vegetable,vegetable.potato,ar-EG-SalmaNeural,بطاطس,بَطاطِسْ
+EGYPTIAN,vegetable,vegetable.onion,ar-EG-SalmaNeural,بصل,بَصَلْ
+EGYPTIAN,vegetable,vegetable.garlic,ar-EG-SalmaNeural,توم,تُومْ
+EGYPTIAN,vegetable,vegetable.carrot,ar-EG-SalmaNeural,جزر,جَزَرْ
+EGYPTIAN,vegetable,vegetable.cucumber,ar-EG-SalmaNeural,خيار,خِيارْ
+EGYPTIAN,vegetable,vegetable.pepper,ar-EG-SalmaNeural,فلفل,فِلْفِلْ
+EGYPTIAN,vegetable,vegetable.eggplant,ar-EG-SalmaNeural,بتنجان,بِتِنْجانْ
+EGYPTIAN,vegetable,vegetable.zucchini,ar-EG-SalmaNeural,كوسة,كُوسَة
+EGYPTIAN,vegetable,vegetable.lettuce,ar-EG-SalmaNeural,خس,خَسّ
+EGYPTIAN,vegetable,vegetable.parsley,ar-EG-SalmaNeural,بقدونس,بَقْدونِسْ
+EGYPTIAN,vegetable,vegetable.coriander,ar-EG-SalmaNeural,كزبرة,كُزْبَرَة
+EGYPTIAN,vegetable,vegetable.lemon,ar-EG-SalmaNeural,لمون,لَمونْ
+EGYPTIAN,vegetable,vegetable.peas,ar-EG-SalmaNeural,بسلة,بِسِلَّة
+EGYPTIAN,vegetable,vegetable.green_beans,ar-EG-SalmaNeural,فاصوليا خضرا,فَاصولْيا خَضْرا
+EGYPTIAN,vegetable,vegetable.spinach,ar-EG-SalmaNeural,سبانخ,سَبانِخْ
+EGYPTIAN,vegetable,vegetable.cauliflower,ar-EG-SalmaNeural,قرنبيط,قَرْنَبيطْ
+EGYPTIAN,vegetable,vegetable.broccoli,ar-EG-SalmaNeural,بروكلي,بُروكْلي
+EGYPTIAN,vegetable,vegetable.radish,ar-EG-SalmaNeural,فجل,فِجِلْ
+EGYPTIAN,vegetable,vegetable.pumpkin,ar-EG-SalmaNeural,قرع,قَرَعْ
+EGYPTIAN,vegetable,vegetable.mint,ar-EG-SalmaNeural,نعناع,نَعْناعْ
+EGYPTIAN,vegetable,vegetable.corn,ar-EG-SalmaNeural,ذرة,ذُرَّة
+EGYPTIAN,fruit,fruit.apple,ar-EG-SalmaNeural,تفاح,تُفَّاحْ
+EGYPTIAN,fruit,fruit.banana,ar-EG-SalmaNeural,موز,مُوزْ
+EGYPTIAN,fruit,fruit.orange,ar-EG-SalmaNeural,برتقان,بُرْتُقانْ
+EGYPTIAN,fruit,fruit.grapes,ar-EG-SalmaNeural,عنب,عِنَبْ
+EGYPTIAN,fruit,fruit.strawberry,ar-EG-SalmaNeural,فراولة,فَراوْلَة
+EGYPTIAN,fruit,fruit.mango,ar-EG-SalmaNeural,مانجو,مَانْجو
+EGYPTIAN,fruit,fruit.watermelon,ar-EG-SalmaNeural,بطيخ,بَطِّيخْ
+EGYPTIAN,fruit,fruit.melon,ar-EG-SalmaNeural,شمام,شَمَّامْ
+EGYPTIAN,fruit,fruit.peach,ar-EG-SalmaNeural,خوخ,خُوخْ
+EGYPTIAN,fruit,fruit.apricot,ar-EG-SalmaNeural,مشمش,مِشْمِشْ
+EGYPTIAN,fruit,fruit.pear,ar-EG-SalmaNeural,كمثرى,كُمِّتْرَى
+EGYPTIAN,fruit,fruit.pomegranate,ar-EG-SalmaNeural,رمان,رُمَّانْ
+EGYPTIAN,fruit,fruit.figs,ar-EG-SalmaNeural,تين,تِينْ
+EGYPTIAN,fruit,fruit.dates,ar-EG-SalmaNeural,تمر,تَمْرْ
+EGYPTIAN,fruit,fruit.pineapple,ar-EG-SalmaNeural,أناناس,أَناناسْ
+EGYPTIAN,fruit,fruit.kiwi,ar-EG-SalmaNeural,كيوي,كِيويْ
+EGYPTIAN,fruit,fruit.cherry,ar-EG-SalmaNeural,كرز,كَرَزْ
+EGYPTIAN,fruit,fruit.berries,ar-EG-SalmaNeural,توت,تُوتْ
+EGYPTIAN,fruit,fruit.mandarin,ar-EG-SalmaNeural,يوسفي,يُوسَفي
+EGYPTIAN,fruit,fruit.avocado,ar-EG-SalmaNeural,أفوكادو,أَفوكادو
+EGYPTIAN,fruit,fruit.coconut,ar-EG-SalmaNeural,جوز الهند,جُوزْ الْهِنْدْ
+EGYPTIAN,food,food.bread,ar-EG-SalmaNeural,عيش,عِيشْ
+EGYPTIAN,food,food.milk,ar-EG-SalmaNeural,لبن,لَبَنْ
+EGYPTIAN,food,food.eggs,ar-EG-SalmaNeural,بيض,بِيضْ
+EGYPTIAN,food,food.cheese,ar-EG-SalmaNeural,جبنة,جِبْنَة
+EGYPTIAN,food,food.yogurt,ar-EG-SalmaNeural,زبادي,زَبادي
+EGYPTIAN,food,food.butter,ar-EG-SalmaNeural,زبدة,زُبْدَة
+EGYPTIAN,food,food.rice,ar-EG-SalmaNeural,رز,رُزّ
+EGYPTIAN,food,food.pasta,ar-EG-SalmaNeural,مكرونة,مَكَرونَة
+EGYPTIAN,food,food.soup,ar-EG-SalmaNeural,شوربة,شُورْبَة
+EGYPTIAN,food,food.meat,ar-EG-SalmaNeural,لحم,لَحْمْ
+EGYPTIAN,food,food.chicken,ar-EG-SalmaNeural,فراخ,فِراخْ
+EGYPTIAN,food,food.fish,ar-EG-SalmaNeural,سمك,سَمَكْ
+EGYPTIAN,food,food.olives,ar-EG-SalmaNeural,زيتون,زِيتونْ
+EGYPTIAN,food,food.oil,ar-EG-SalmaNeural,زيت,زِيتْ
+EGYPTIAN,food,food.tea,ar-EG-SalmaNeural,شاي,شَايْ
+EGYPTIAN,food,food.coffee,ar-EG-SalmaNeural,قهوة,قَهْوَة
+EGYPTIAN,food,food.juice,ar-EG-SalmaNeural,عصير,عَصيرْ
+EGYPTIAN,food,food.water,ar-EG-SalmaNeural,مية,مَيَّة
+EGYPTIAN,food,food.honey,ar-EG-SalmaNeural,عسل,عَسَلْ
+EGYPTIAN,food,food.biscuit,ar-EG-SalmaNeural,بسكويت,بَسْكَوِيتْ
+EGYPTIAN,food,food.salt,ar-EG-SalmaNeural,ملح,مِلْحْ
+EGYPTIAN,food,food.sugar,ar-EG-SalmaNeural,سكر,سُكَّرْ
+EGYPTIAN,home,home.bed,ar-EG-SalmaNeural,سرير,سَريرْ
+EGYPTIAN,home,home.pillow,ar-EG-SalmaNeural,مخدة,مَخَدَّة
+EGYPTIAN,home,home.blanket,ar-EG-SalmaNeural,بطانية,بَطَّانِيَّة
+EGYPTIAN,home,home.table,ar-EG-SalmaNeural,طاولة,طَاوِلَة
+EGYPTIAN,home,home.chair,ar-EG-SalmaNeural,كرسي,كُرْسي
+EGYPTIAN,home,home.sofa,ar-EG-SalmaNeural,كنبة,كَنَبَة
+EGYPTIAN,home,home.door,ar-EG-SalmaNeural,باب,بَابْ
+EGYPTIAN,home,home.window,ar-EG-SalmaNeural,شباك,شُبَّاكْ
+EGYPTIAN,home,home.television,ar-EG-SalmaNeural,تلفزيون,تِلِفِزْيونْ
+EGYPTIAN,home,home.fridge,ar-EG-SalmaNeural,ثلاجة,ثَلَّاجَة
+EGYPTIAN,home,home.washing_machine,ar-EG-SalmaNeural,غسالة,غَسَّالَة
+EGYPTIAN,home,home.stove,ar-EG-SalmaNeural,بوتاجاز,بُوتاجازْ
+EGYPTIAN,home,home.oven,ar-EG-SalmaNeural,فرن,فُرْنْ
+EGYPTIAN,home,home.air_conditioner,ar-EG-SalmaNeural,مكيف,مُكَيِّفْ
+EGYPTIAN,home,home.fan,ar-EG-SalmaNeural,مروحة,مَرْوَحَة
+EGYPTIAN,home,home.wardrobe,ar-EG-SalmaNeural,دولاب,دُولابْ
+EGYPTIAN,home,home.key,ar-EG-SalmaNeural,مفتاح,مِفْتاحْ
+EGYPTIAN,home,home.clock,ar-EG-SalmaNeural,ساعة,سَاعَة
+EGYPTIAN,home,home.carpet,ar-EG-SalmaNeural,سجادة,سِجَّادَة
+EGYPTIAN,home,home.kitchen,ar-EG-SalmaNeural,مطبخ,مَطْبَخْ
+EGYPTIAN,home,home.cup,ar-EG-SalmaNeural,كوباية,كُوبَّايَة
+EGYPTIAN,home,home.tray,ar-EG-SalmaNeural,صينية,صِينِيَّة
+EGYPTIAN,home,home.spoon,ar-EG-SalmaNeural,معلقة,مَعْلَقَة
+EGYPTIAN,home,home.fork,ar-EG-SalmaNeural,شوكة,شُوكَة
+EGYPTIAN,home,home.knife,ar-EG-SalmaNeural,سكينة,سِكِّينَة
+EGYPTIAN,home,home.teapot,ar-EG-SalmaNeural,براد,بَرَّادْ
+EGYPTIAN,home,home.pot,ar-EG-SalmaNeural,حلة,حَلَّة
+EGYPTIAN,home,home.water_bottle,ar-EG-SalmaNeural,إزازة مية,إِزَازِة مَيَّة
+EGYPTIAN,clothing,clothing.tshirt,ar-EG-SalmaNeural,تيشيرت,تِيشيرْتْ
+EGYPTIAN,clothing,clothing.shirt,ar-EG-SalmaNeural,قميص,قَميصْ
+EGYPTIAN,clothing,clothing.jacket,ar-EG-SalmaNeural,جاكيت,جَاكيتْ
+EGYPTIAN,clothing,clothing.shorts,ar-EG-SalmaNeural,شورت,شُورْتْ
+EGYPTIAN,clothing,clothing.blouse,ar-EG-SalmaNeural,بلوزة,بْلوزَة
+EGYPTIAN,clothing,clothing.trousers,ar-EG-SalmaNeural,بنطلون,بَنْطَلونْ
+EGYPTIAN,clothing,clothing.dress,ar-EG-SalmaNeural,فستان,فُسْتانْ
+EGYPTIAN,clothing,clothing.robe,ar-EG-SalmaNeural,روب,رُوبْ
+EGYPTIAN,clothing,clothing.abaya,ar-EG-SalmaNeural,عباية,عَبايَة
+EGYPTIAN,clothing,clothing.hijab,ar-EG-SalmaNeural,حجاب,حِجابْ
+EGYPTIAN,clothing,clothing.scarf,ar-EG-SalmaNeural,وشاح,وِشاحْ
+EGYPTIAN,clothing,clothing.shoes,ar-EG-SalmaNeural,جزمة,جَزْمَة
+EGYPTIAN,clothing,clothing.socks,ar-EG-SalmaNeural,شرابات,شَراباتْ
+EGYPTIAN,clothing,clothing.coat,ar-EG-SalmaNeural,بالطو,بَالْطو
+EGYPTIAN,clothing,clothing.glasses,ar-EG-SalmaNeural,نضارة,نَضَّارَة
+EGYPTIAN,clothing,clothing.cap,ar-EG-SalmaNeural,كاب,كَابْ
+EGYPTIAN,clothing,clothing.watch,ar-EG-SalmaNeural,ساعة يد,سَاعِة يَدّ
+EGYPTIAN,clothing,clothing.bag,ar-EG-SalmaNeural,شنطة,شَنْطَة
+EGYPTIAN,clothing,clothing.sandals,ar-EG-SalmaNeural,صندل,صَنْدَلْ
+EGYPTIAN,clothing,clothing.high_heels,ar-EG-SalmaNeural,جزمة بكعب,جَزْمَة بِكَعْبْ
+EGYPTIAN,clothing,clothing.pajamas,ar-EG-SalmaNeural,بيجامة,بِيجامَة
+EGYPTIAN,clothing,clothing.belt,ar-EG-SalmaNeural,حزام,حِزامْ
+EGYPTIAN,clothing,clothing.ring,ar-EG-SalmaNeural,خاتم,خَاتَمْ
+EGYPTIAN,body,body.eye,ar-EG-SalmaNeural,عين,عِينْ
+EGYPTIAN,body,body.nose,ar-EG-SalmaNeural,مناخير,مَناخيرْ
+EGYPTIAN,body,body.mouth,ar-EG-SalmaNeural,بق,بُقّ
+EGYPTIAN,body,body.tongue,ar-EG-SalmaNeural,لسان,لِسانْ
+EGYPTIAN,body,body.ear,ar-EG-SalmaNeural,ودن,وِدْنْ
+EGYPTIAN,body,body.hand,ar-EG-SalmaNeural,يد,يَدْ
+EGYPTIAN,body,body.leg,ar-EG-SalmaNeural,رجل,رِجْلْ
+EGYPTIAN,body,body.head,ar-EG-SalmaNeural,راس,رَاسْ
+EGYPTIAN,body,body.hair,ar-EG-SalmaNeural,شعر,شَعْرْ
+EGYPTIAN,body,body.back,ar-EG-SalmaNeural,ظهر,ظَهْرْ
+EGYPTIAN,body,body.abdomen,ar-EG-SalmaNeural,بطن,بَطْنْ
+EGYPTIAN,body,body.knee,ar-EG-SalmaNeural,ركبة,رُكْبَة
+EGYPTIAN,body,body.finger,ar-EG-SalmaNeural,صباع,صُباعْ
+EGYPTIAN,body,body.neck,ar-EG-SalmaNeural,رقبة,رَقْبَة
+EGYPTIAN,body,body.chest,ar-EG-SalmaNeural,صدر,صَدْرْ
+EGYPTIAN,body,body.face,ar-EG-SalmaNeural,وش,وِشّ
+EGYPTIAN,body,body.tooth,ar-EG-SalmaNeural,سنة,سِنَّة
+EGYPTIAN,body,body.heart,ar-EG-SalmaNeural,قلب,قَلْبْ
+EGYPTIAN,body,body.shoulder,ar-EG-SalmaNeural,كتف,كِتْفْ
+EGYPTIAN,action,action.eat,ar-EG-SalmaNeural,آكل,آكُلْ
+EGYPTIAN,action,action.drink,ar-EG-SalmaNeural,أشرب,أَشْرَبْ
+EGYPTIAN,action,action.sleep,ar-EG-SalmaNeural,أنام,أَنامْ
+EGYPTIAN,action,action.sit,ar-EG-SalmaNeural,أقعد,أَقْعُدْ
+EGYPTIAN,action,action.walk,ar-EG-SalmaNeural,أمشي,أَمْشي
+EGYPTIAN,action,action.stand,ar-EG-SalmaNeural,أقوم,أَقُومْ
+EGYPTIAN,action,action.wash,ar-EG-SalmaNeural,أغسل,أَغْسِلْ
+EGYPTIAN,action,action.speak,ar-EG-SalmaNeural,أتكلم,أَتْكَلِّمْ
+EGYPTIAN,action,action.hear,ar-EG-SalmaNeural,أسمع,أَسْمَعْ
+EGYPTIAN,action,action.open,ar-EG-SalmaNeural,أفتح,أَفْتَحْ
+EGYPTIAN,action,action.close,ar-EG-SalmaNeural,أقفل,أَقْفِلْ
+EGYPTIAN,action,action.read,ar-EG-SalmaNeural,أقرا,أَقْرا
+EGYPTIAN,action,action.laugh,ar-EG-SalmaNeural,أضحك,أَضْحَكْ
+EGYPTIAN,action,action.see,ar-EG-SalmaNeural,أشوف,أَشوفْ
+EGYPTIAN,action,action.dress,ar-EG-SalmaNeural,ألبس,أَلْبِسْ
+EGYPTIAN,action,action.pray,ar-EG-SalmaNeural,أصلّي,أَصَلِّي
+EGYPTIAN,animal,animal.cat,ar-EG-SalmaNeural,قطة,قِطَّة
+EGYPTIAN,animal,animal.dog,ar-EG-SalmaNeural,كلب,كَلْبْ
+EGYPTIAN,animal,animal.sheep,ar-EG-SalmaNeural,خروف,خَروفْ
+EGYPTIAN,animal,animal.horse,ar-EG-SalmaNeural,حصان,حِصانْ
+EGYPTIAN,animal,animal.cow,ar-EG-SalmaNeural,بقرة,بَقَرَة
+EGYPTIAN,animal,animal.sparrow,ar-EG-SalmaNeural,عصفور,عُصْفورْ
+EGYPTIAN,animal,animal.pigeon,ar-EG-SalmaNeural,حمامة,حَمامَة
+EGYPTIAN,animal,animal.chicken,ar-EG-SalmaNeural,فرخة,فَرْخَة
+EGYPTIAN,animal,animal.duck,ar-EG-SalmaNeural,بطة,بَطَّة
+EGYPTIAN,animal,animal.camel,ar-EG-SalmaNeural,جمل,جَمَلْ
+EGYPTIAN,animal,animal.rooster,ar-EG-SalmaNeural,ديك,دِيكْ
+EGYPTIAN,animal,animal.rabbit,ar-EG-SalmaNeural,أرنب,أَرْنَبْ
+EGYPTIAN,transport,transport.car,ar-EG-SalmaNeural,عربية,عَرَبِيَّة
+EGYPTIAN,transport,transport.taxi,ar-EG-SalmaNeural,تاكسي,تَاكْسي
+EGYPTIAN,transport,transport.bus,ar-EG-SalmaNeural,أتوبيس,أُتوبيسْ
+EGYPTIAN,transport,transport.minibus,ar-EG-SalmaNeural,ميكروباص,مِيكْروباصْ
+EGYPTIAN,transport,transport.bicycle,ar-EG-SalmaNeural,عجلة,عَجَلَة
+EGYPTIAN,transport,transport.motorcycle,ar-EG-SalmaNeural,موتوسيكل,مُوتوسيكِلْ
+EGYPTIAN,transport,transport.train,ar-EG-SalmaNeural,قطر,قَطْرْ
+EGYPTIAN,transport,transport.airplane,ar-EG-SalmaNeural,طيارة,طَيَّارَة
+EGYPTIAN,transport,transport.helicopter,ar-EG-SalmaNeural,هليكوبتر,هِليكوبْتَرْ
+EGYPTIAN,transport,transport.ship,ar-EG-SalmaNeural,مركب كبير,مَرْكِبْ كِبيرْ
+EGYPTIAN,transport,transport.boat,ar-EG-SalmaNeural,مركب,مَرْكِبْ
+EGYPTIAN,transport,transport.truck,ar-EG-SalmaNeural,عربية نقل,عَرَبِيِّة نَقْلْ
+EGYPTIAN,greeting,greeting.salam,ar-EG-SalmaNeural,السلام عليكم,السَّلامُ عَلَيْكُمْ
+EGYPTIAN,greeting,greeting.reply,ar-EG-SalmaNeural,وعليكم السلام,وَعَلَيْكُمُ السَّلامْ
+EGYPTIAN,greeting,greeting.hello,ar-EG-SalmaNeural,أهلاً,أَهْلًا
+EGYPTIAN,greeting,greeting.welcome,ar-EG-SalmaNeural,أهلاً وسهلاً,أَهْلًا وَسَهْلًا
+EGYPTIAN,greeting,greeting.how_are_you,ar-EG-SalmaNeural,أخبارك إيه؟,أَخْبارَكْ إِيهْ؟
+EGYPTIAN,greeting,greeting.fine,ar-EG-SalmaNeural,الحمد لله,الْحَمْدُ لِلَّهْ
+EGYPTIAN,greeting,greeting.good_morning,ar-EG-SalmaNeural,صباح الخير,صَباحْ الْخيرْ
+EGYPTIAN,greeting,greeting.good_evening,ar-EG-SalmaNeural,مسا الخير,مَسا الْخيرْ
+EGYPTIAN,greeting,greeting.brighten,ar-EG-SalmaNeural,نورت,نَوَّرْتْ
+EGYPTIAN,greeting,greeting.good_health,ar-EG-SalmaNeural,تسلم,تِسْلَمْ
+EGYPTIAN,greeting,greeting.goodbye,ar-EG-SalmaNeural,مع السلامة,مَعَ السَّلامَة
+EGYPTIAN,greeting,greeting.safe,ar-EG-SalmaNeural,في أمان الله,فِي أَمانِ اللَّهْ
+EGYPTIAN,greeting,greeting.thanks,ar-EG-SalmaNeural,شكراً ليك,شُكْرًا لِيكْ
+EGYPTIAN,greeting,greeting.bless,ar-EG-SalmaNeural,ربنا يبارك فيك,رَبِّنَا يْبَارِك فِيكْ
+SYRIAN,family,family.father,ar-SY-AmanyNeural,أبوي,أَبويْ
+SYRIAN,family,family.mother,ar-SY-AmanyNeural,أمي,أُمِّي
+SYRIAN,family,family.husband,ar-SY-AmanyNeural,جوزي,جُوزِي
+SYRIAN,family,family.wife,ar-SY-AmanyNeural,مرتي,مَرْتي
+SYRIAN,family,family.son,ar-SY-AmanyNeural,ابني,اِبْني
+SYRIAN,family,family.daughter,ar-SY-AmanyNeural,بنتي,بِنْتي
+SYRIAN,family,family.brother,ar-SY-AmanyNeural,أخوي,أَخويْ
+SYRIAN,family,family.sister,ar-SY-AmanyNeural,أختي,أُخْتي
+SYRIAN,family,family.paternal_uncle,ar-SY-AmanyNeural,عمي,عَمِّي
+SYRIAN,family,family.paternal_aunt,ar-SY-AmanyNeural,عمتي,عَمْتِي
+SYRIAN,family,family.maternal_uncle,ar-SY-AmanyNeural,خالي,خَالي
+SYRIAN,family,family.maternal_aunt,ar-SY-AmanyNeural,خالتي,خَالْتِي
+SYRIAN,family,family.grandfather,ar-SY-AmanyNeural,جدي,جَدِّي
+SYRIAN,family,family.grandmother,ar-SY-AmanyNeural,جدتي,جَدَّتي
+SYRIAN,family,family.grandson,ar-SY-AmanyNeural,حفيدي,حَفيدي
+SYRIAN,family,family.granddaughter,ar-SY-AmanyNeural,حفيدتي,حَفِيدْتِي
+SYRIAN,family,family.paternal_uncle_son,ar-SY-AmanyNeural,ابن عمي,اِبْنْ عَمِّي
+SYRIAN,family,family.paternal_uncle_daughter,ar-SY-AmanyNeural,بنت عمي,بِنْتْ عَمِّي
+SYRIAN,family,family.paternal_aunt_son,ar-SY-AmanyNeural,ابن عمتي,اِبْنْ عَمْتي
+SYRIAN,family,family.paternal_aunt_daughter,ar-SY-AmanyNeural,بنت عمتي,بِنْتْ عَمْتي
+SYRIAN,family,family.maternal_uncle_son,ar-SY-AmanyNeural,ابن خالي,اِبْنْ خَالي
+SYRIAN,family,family.maternal_uncle_daughter,ar-SY-AmanyNeural,بنت خالي,بِنْتْ خَالي
+SYRIAN,family,family.maternal_aunt_son,ar-SY-AmanyNeural,ابن خالتي,اِبْنْ خَالْتي
+SYRIAN,family,family.maternal_aunt_daughter,ar-SY-AmanyNeural,بنت خالتي,بِنْتْ خَالْتي
+SYRIAN,family,family.brother_son,ar-SY-AmanyNeural,ابن أخوي,اِبْنْ أَخويْ
+SYRIAN,family,family.brother_daughter,ar-SY-AmanyNeural,بنت أخوي,بِنْتْ أَخويْ
+SYRIAN,family,family.sister_son,ar-SY-AmanyNeural,ابن أختي,اِبْنْ أُخْتي
+SYRIAN,family,family.sister_daughter,ar-SY-AmanyNeural,بنت أختي,بِنْتْ أُخْتي
+SYRIAN,family,family.husband_father,ar-SY-AmanyNeural,أبو جوزي,أَبو جُوزي
+SYRIAN,family,family.husband_mother,ar-SY-AmanyNeural,أم جوزي,أُمْ جُوزي
+SYRIAN,family,family.wife_father,ar-SY-AmanyNeural,أبو مرتي,أَبو مَرْتي
+SYRIAN,family,family.wife_mother,ar-SY-AmanyNeural,أم مرتي,أُمْ مَرْتي
+SYRIAN,family,family.husband_brother,ar-SY-AmanyNeural,أخو جوزي,أَخو جُوزي
+SYRIAN,family,family.husband_sister,ar-SY-AmanyNeural,أخت جوزي,أُخْتْ جُوزي
+SYRIAN,family,family.wife_brother,ar-SY-AmanyNeural,أخو مرتي,أَخو مَرْتي
+SYRIAN,family,family.wife_sister,ar-SY-AmanyNeural,أخت مرتي,أُخْتْ مَرْتي
+SYRIAN,family,family.sister_husband,ar-SY-AmanyNeural,جوز أختي,جُوزْ أُخْتي
+SYRIAN,family,family.brother_wife,ar-SY-AmanyNeural,مرت أخوي,مَرْتْ أَخويْ
+SYRIAN,family,family.daughter_husband,ar-SY-AmanyNeural,جوز بنتي,جُوزْ بِنْتي
+SYRIAN,family,family.son_wife,ar-SY-AmanyNeural,مرت ابني,مَرْتْ اِبْني
+SYRIAN,family,family.male_in_law,ar-SY-AmanyNeural,نسيبي,نَسيبي
+SYRIAN,family,family.female_in_law,ar-SY-AmanyNeural,نسيبتي,نَسِيبْتِي
+SYRIAN,family,family.male_relative,ar-SY-AmanyNeural,قريبي,قَريبي
+SYRIAN,family,family.female_relative,ar-SY-AmanyNeural,قريبتي,قَرِيبْتِي
+SYRIAN,request,request.water,ar-SY-AmanyNeural,بدي مي,بِدِّي مَيّ
+SYRIAN,request,request.tea,ar-SY-AmanyNeural,بدي شاي,بِدِّي شَايْ
+SYRIAN,request,request.rest,ar-SY-AmanyNeural,بدي ارتاح,بِدِّي إِرْتَاحْ
+SYRIAN,request,request.medicine,ar-SY-AmanyNeural,بدي دواي,بِدِّي دَوايْ
+SYRIAN,request,request.toilet,ar-SY-AmanyNeural,بدي روح عالحمام,بِدِّي رُوحْ عَالْحَمَّامْ
+SYRIAN,request,request.adjust_pillow,ar-SY-AmanyNeural,زبط لي المخدة,زَبِّط لِي المِخَدَّة
+SYRIAN,request,request.headache,ar-SY-AmanyNeural,راسي عم يوجعني,رَاسي عَمْ يُوجَعْني
+SYRIAN,request,request.cold,ar-SY-AmanyNeural,كتير برد,كْتِيرْ بَرْدْ
+SYRIAN,dish,dish.syrian.fried_kibbeh,ar-SY-AmanyNeural,كبة مقلية,كِبِّة مَقْلِيِّة
+SYRIAN,dish,dish.syrian.shakriya,ar-SY-AmanyNeural,شاكرية برز,شَاكْرِيَّة بِرِزّ
+SYRIAN,dish,dish.syrian.yabraq,ar-SY-AmanyNeural,يبرق ورق عنب,يَبْرَقْ وَرَقْ عِنَبْ
+SYRIAN,dish,dish.syrian.chicken_shawarma,ar-SY-AmanyNeural,شاورما دجاج,شَاوَرْما دَجاجْ
+SYRIAN,dish,dish.syrian.chickpea_fatteh,ar-SY-AmanyNeural,فتة حمص,فَتِّة حُمُّصْ
+SYRIAN,dish,dish.syrian.maqluba,ar-SY-AmanyNeural,مقلوبة باذنجان,مَقْلوبِة بَاذِنْجانْ
+SYRIAN,dish,dish.syrian.fattoush,ar-SY-AmanyNeural,فتوش,فَتُّوشْ
+SYRIAN,dish,dish.syrian.tabbouleh,ar-SY-AmanyNeural,تبولة,تَبُّولِة
+SYRIAN,dish,dish.syrian.kebab,ar-SY-AmanyNeural,كباب حلبي,كَبابْ حَلَبي
+SYRIAN,dish,dish.syrian.shish_barak,ar-SY-AmanyNeural,شيش برك,شِيشْ بَرَكْ
+SYRIAN,dish,dish.syrian.stuffed_zucchini,ar-SY-AmanyNeural,كوسا بلبن,كُوسا بِلَبَنْ
+SYRIAN,dish,dish.syrian.mutabbal,ar-SY-AmanyNeural,متبل باذنجان,مْتَبَّلْ بَاذِنْجَانْ
+SYRIAN,dish,dish.syrian.haraq_osbao,ar-SY-AmanyNeural,حراق إصبعو,حَرَّاق إِصْبَعُو
+SYRIAN,dish,dish.syrian.halawet_jibn,ar-SY-AmanyNeural,حلاوة الجبن,حَلَاوِة الْجِبِنْ
+SYRIAN,dish,dish.syrian.kunafa,ar-SY-AmanyNeural,كنافة نابلسية,كْنَافَة نَابُلْسِيَّة
+SYRIAN,routine,routine.call_to_prayer,ar-SY-AmanyNeural,أذان,أَذانْ
+SYRIAN,routine,routine.ablution,ar-SY-AmanyNeural,وضوء,وُضوءْ
+SYRIAN,routine,routine.prayer,ar-SY-AmanyNeural,صلاة,صَلاة
+SYRIAN,routine,routine.prayer_rug,ar-SY-AmanyNeural,سجادة صلاة,سَجَّادِة صَلَاة
+SYRIAN,routine,routine.prayer_beads,ar-SY-AmanyNeural,مسبحة,مِسْبَحَة
+SYRIAN,routine,routine.quran,ar-SY-AmanyNeural,مصحف,مُصْحَفْ
+SYRIAN,routine,routine.evening_coffee,ar-SY-AmanyNeural,قهوة المسا,قَهْوِة الْمَسَا
+SYRIAN,routine,routine.sleep,ar-SY-AmanyNeural,نوم,نُومْ
+SYRIAN,routine,routine.rest,ar-SY-AmanyNeural,راحة,رَاحَة
+SYRIAN,routine,routine.walk,ar-SY-AmanyNeural,مشي,مَشِي
+SYRIAN,vegetable,vegetable.tomato,ar-SY-AmanyNeural,بندورة,بَنْدورَة
+SYRIAN,vegetable,vegetable.potato,ar-SY-AmanyNeural,بطاطا,بَطاطا
+SYRIAN,vegetable,vegetable.onion,ar-SY-AmanyNeural,بصل,بَصَلْ
+SYRIAN,vegetable,vegetable.garlic,ar-SY-AmanyNeural,توم,تُومْ
+SYRIAN,vegetable,vegetable.carrot,ar-SY-AmanyNeural,جزر,جَزَرْ
+SYRIAN,vegetable,vegetable.cucumber,ar-SY-AmanyNeural,خيار,خِيارْ
+SYRIAN,vegetable,vegetable.pepper,ar-SY-AmanyNeural,فلفل,فِلْفِلْ
+SYRIAN,vegetable,vegetable.eggplant,ar-SY-AmanyNeural,باذنجان,بَاذِنْجانْ
+SYRIAN,vegetable,vegetable.zucchini,ar-SY-AmanyNeural,كوسا,كُوسا
+SYRIAN,vegetable,vegetable.lettuce,ar-SY-AmanyNeural,خس,خَسّ
+SYRIAN,vegetable,vegetable.parsley,ar-SY-AmanyNeural,بقدونس,بَقْدونِسْ
+SYRIAN,vegetable,vegetable.coriander,ar-SY-AmanyNeural,كزبرة,كُزْبَرَة
+SYRIAN,vegetable,vegetable.lemon,ar-SY-AmanyNeural,ليمون,لِيمونْ
+SYRIAN,vegetable,vegetable.peas,ar-SY-AmanyNeural,بازيلا,بَازيلَّا
+SYRIAN,vegetable,vegetable.green_beans,ar-SY-AmanyNeural,فاصوليا خضرا,فَاصولْيا خَضْرا
+SYRIAN,vegetable,vegetable.spinach,ar-SY-AmanyNeural,سبانخ,سَبانِخْ
+SYRIAN,vegetable,vegetable.cauliflower,ar-SY-AmanyNeural,زهرة,زَهْرَة
+SYRIAN,vegetable,vegetable.broccoli,ar-SY-AmanyNeural,بروكلي,بُروكْلي
+SYRIAN,vegetable,vegetable.radish,ar-SY-AmanyNeural,فجل,فِجِلْ
+SYRIAN,vegetable,vegetable.pumpkin,ar-SY-AmanyNeural,قرع,قَرَعْ
+SYRIAN,vegetable,vegetable.mint,ar-SY-AmanyNeural,نعناع,نَعْناعْ
+SYRIAN,vegetable,vegetable.corn,ar-SY-AmanyNeural,ذرة,ذُرَّة
+SYRIAN,fruit,fruit.apple,ar-SY-AmanyNeural,تفاح,تُفَّاحْ
+SYRIAN,fruit,fruit.banana,ar-SY-AmanyNeural,موز,مُوزْ
+SYRIAN,fruit,fruit.orange,ar-SY-AmanyNeural,بردقان,بُرْدْقانْ
+SYRIAN,fruit,fruit.grapes,ar-SY-AmanyNeural,عنب,عِنَبْ
+SYRIAN,fruit,fruit.strawberry,ar-SY-AmanyNeural,فراولة,فَراوْلَة
+SYRIAN,fruit,fruit.mango,ar-SY-AmanyNeural,مانجو,مَانْجو
+SYRIAN,fruit,fruit.watermelon,ar-SY-AmanyNeural,بطيخ,بَطِّيخْ
+SYRIAN,fruit,fruit.melon,ar-SY-AmanyNeural,شمام,شَمَّامْ
+SYRIAN,fruit,fruit.peach,ar-SY-AmanyNeural,خوخ,خُوخْ
+SYRIAN,fruit,fruit.apricot,ar-SY-AmanyNeural,مشمش,مِشْمِشْ
+SYRIAN,fruit,fruit.pear,ar-SY-AmanyNeural,إجاص,إِجَّاصْ
+SYRIAN,fruit,fruit.pomegranate,ar-SY-AmanyNeural,رمان,رُمَّانْ
+SYRIAN,fruit,fruit.figs,ar-SY-AmanyNeural,تين,تِينْ
+SYRIAN,fruit,fruit.dates,ar-SY-AmanyNeural,تمر,تَمْرْ
+SYRIAN,fruit,fruit.pineapple,ar-SY-AmanyNeural,أناناس,أَناناسْ
+SYRIAN,fruit,fruit.kiwi,ar-SY-AmanyNeural,كيوي,كِيويْ
+SYRIAN,fruit,fruit.cherry,ar-SY-AmanyNeural,كرز,كَرَزْ
+SYRIAN,fruit,fruit.berries,ar-SY-AmanyNeural,توت,تُوتْ
+SYRIAN,fruit,fruit.mandarin,ar-SY-AmanyNeural,يوسفي,يُوسْفي
+SYRIAN,fruit,fruit.avocado,ar-SY-AmanyNeural,أفوكادو,أَفوكادو
+SYRIAN,fruit,fruit.coconut,ar-SY-AmanyNeural,جوز الهند,جُوزْ الْهِنْدْ
+SYRIAN,food,food.bread,ar-SY-AmanyNeural,خبز,خُبِزْ
+SYRIAN,food,food.milk,ar-SY-AmanyNeural,حليب,حَليبْ
+SYRIAN,food,food.eggs,ar-SY-AmanyNeural,بيض,بِيضْ
+SYRIAN,food,food.cheese,ar-SY-AmanyNeural,جبنة,جِبْنَة
+SYRIAN,food,food.yogurt,ar-SY-AmanyNeural,لبن,لَبَنْ
+SYRIAN,food,food.butter,ar-SY-AmanyNeural,زبدة,زُبْدَة
+SYRIAN,food,food.rice,ar-SY-AmanyNeural,رز,رِزّ
+SYRIAN,food,food.pasta,ar-SY-AmanyNeural,معكرونة,مَعْكَرونَة
+SYRIAN,food,food.soup,ar-SY-AmanyNeural,شوربة,شُورْبَة
+SYRIAN,food,food.meat,ar-SY-AmanyNeural,لحم,لَحْمْ
+SYRIAN,food,food.chicken,ar-SY-AmanyNeural,جاج,جَاجْ
+SYRIAN,food,food.fish,ar-SY-AmanyNeural,سمك,سَمَكْ
+SYRIAN,food,food.olives,ar-SY-AmanyNeural,زيتون,زِيتونْ
+SYRIAN,food,food.oil,ar-SY-AmanyNeural,زيت,زِيتْ
+SYRIAN,food,food.tea,ar-SY-AmanyNeural,شاي,شَايْ
+SYRIAN,food,food.coffee,ar-SY-AmanyNeural,قهوة,قَهْوَة
+SYRIAN,food,food.juice,ar-SY-AmanyNeural,عصير,عَصيرْ
+SYRIAN,food,food.water,ar-SY-AmanyNeural,مي,مَيّ
+SYRIAN,food,food.honey,ar-SY-AmanyNeural,عسل,عَسَلْ
+SYRIAN,food,food.biscuit,ar-SY-AmanyNeural,بسكويت,بَسْكَوِيتْ
+SYRIAN,food,food.salt,ar-SY-AmanyNeural,ملح,مِلْحْ
+SYRIAN,food,food.sugar,ar-SY-AmanyNeural,سكر,سُكَّرْ
+SYRIAN,home,home.bed,ar-SY-AmanyNeural,سرير,سَريرْ
+SYRIAN,home,home.pillow,ar-SY-AmanyNeural,مخدة,مِخَدَّة
+SYRIAN,home,home.blanket,ar-SY-AmanyNeural,حرام,حْرَامْ
+SYRIAN,home,home.table,ar-SY-AmanyNeural,طاولة,طَاوِلَة
+SYRIAN,home,home.chair,ar-SY-AmanyNeural,كرسي,كُرْسي
+SYRIAN,home,home.sofa,ar-SY-AmanyNeural,كنبة,كَنَبَة
+SYRIAN,home,home.door,ar-SY-AmanyNeural,باب,بَابْ
+SYRIAN,home,home.window,ar-SY-AmanyNeural,شباك,شُبَّاكْ
+SYRIAN,home,home.television,ar-SY-AmanyNeural,تلفزيون,تِلِفِزْيونْ
+SYRIAN,home,home.fridge,ar-SY-AmanyNeural,ثلاجة,ثَلَّاجَة
+SYRIAN,home,home.washing_machine,ar-SY-AmanyNeural,غسالة,غَسَّالَة
+SYRIAN,home,home.stove,ar-SY-AmanyNeural,بوتاجاز,بُوتاجازْ
+SYRIAN,home,home.oven,ar-SY-AmanyNeural,فرن,فُرْنْ
+SYRIAN,home,home.air_conditioner,ar-SY-AmanyNeural,مكيف,مُكَيِّفْ
+SYRIAN,home,home.fan,ar-SY-AmanyNeural,مروحة,مَرْوَحَة
+SYRIAN,home,home.wardrobe,ar-SY-AmanyNeural,خزانة,خْزَانَة
+SYRIAN,home,home.key,ar-SY-AmanyNeural,مفتاح,مِفْتاحْ
+SYRIAN,home,home.clock,ar-SY-AmanyNeural,ساعة,سَاعَة
+SYRIAN,home,home.carpet,ar-SY-AmanyNeural,بساط,بِساطْ
+SYRIAN,home,home.kitchen,ar-SY-AmanyNeural,مطبخ,مَطْبَخْ
+SYRIAN,home,home.cup,ar-SY-AmanyNeural,كاسة,كَاسَة
+SYRIAN,home,home.tray,ar-SY-AmanyNeural,صينية,صِينِيَّة
+SYRIAN,home,home.spoon,ar-SY-AmanyNeural,ملعقة,مِلْعَقَة
+SYRIAN,home,home.fork,ar-SY-AmanyNeural,شوكة,شُوكَة
+SYRIAN,home,home.knife,ar-SY-AmanyNeural,سكين,سِكِّينْ
+SYRIAN,home,home.teapot,ar-SY-AmanyNeural,إبريق شاي,إِبْريقْ شَايْ
+SYRIAN,home,home.pot,ar-SY-AmanyNeural,طنجرة,طَنْجَرَة
+SYRIAN,home,home.water_bottle,ar-SY-AmanyNeural,قنينة مي,قَنِّينِة مَيّ
+SYRIAN,clothing,clothing.tshirt,ar-SY-AmanyNeural,تيشيرت,تِيشيرْتْ
+SYRIAN,clothing,clothing.shirt,ar-SY-AmanyNeural,قميص,قَميصْ
+SYRIAN,clothing,clothing.jacket,ar-SY-AmanyNeural,جاكيت,جَاكيتْ
+SYRIAN,clothing,clothing.shorts,ar-SY-AmanyNeural,شورت,شُورْتْ
+SYRIAN,clothing,clothing.blouse,ar-SY-AmanyNeural,بلوزة,بْلوزَة
+SYRIAN,clothing,clothing.trousers,ar-SY-AmanyNeural,بنطلون,بَنْطَلونْ
+SYRIAN,clothing,clothing.dress,ar-SY-AmanyNeural,فستان,فُسْتانْ
+SYRIAN,clothing,clothing.robe,ar-SY-AmanyNeural,روب,رُوبْ
+SYRIAN,clothing,clothing.abaya,ar-SY-AmanyNeural,عباية,عَبايَة
+SYRIAN,clothing,clothing.hijab,ar-SY-AmanyNeural,حجاب,حِجابْ
+SYRIAN,clothing,clothing.scarf,ar-SY-AmanyNeural,وشاح,وِشاحْ
+SYRIAN,clothing,clothing.shoes,ar-SY-AmanyNeural,كندرة,كَنْدَرَة
+SYRIAN,clothing,clothing.socks,ar-SY-AmanyNeural,جرابات,جْرَابَاتْ
+SYRIAN,clothing,clothing.coat,ar-SY-AmanyNeural,معطف,مِعْطَفْ
+SYRIAN,clothing,clothing.glasses,ar-SY-AmanyNeural,نظارة,نَظَّارَة
+SYRIAN,clothing,clothing.cap,ar-SY-AmanyNeural,طاقية,طَاقِيَّة
+SYRIAN,clothing,clothing.watch,ar-SY-AmanyNeural,ساعة يد,سَاعِة يَدّ
+SYRIAN,clothing,clothing.bag,ar-SY-AmanyNeural,شنطة,شَنْطَة
+SYRIAN,clothing,clothing.sandals,ar-SY-AmanyNeural,صندل,صَنْدَلْ
+SYRIAN,clothing,clothing.high_heels,ar-SY-AmanyNeural,كندرة كعب عالي,كَنْدْرِة كَعِبْ عَالِي
+SYRIAN,clothing,clothing.pajamas,ar-SY-AmanyNeural,بيجامة,بِيجامَة
+SYRIAN,clothing,clothing.belt,ar-SY-AmanyNeural,حزام,حْزَامْ
+SYRIAN,clothing,clothing.ring,ar-SY-AmanyNeural,خاتم,خَاتَمْ
+SYRIAN,body,body.eye,ar-SY-AmanyNeural,عين,عِينْ
+SYRIAN,body,body.nose,ar-SY-AmanyNeural,منخار,مَنْخارْ
+SYRIAN,body,body.mouth,ar-SY-AmanyNeural,تم,تِمّ
+SYRIAN,body,body.tongue,ar-SY-AmanyNeural,لسان,لِسانْ
+SYRIAN,body,body.ear,ar-SY-AmanyNeural,إذن,إِذِنْ
+SYRIAN,body,body.hand,ar-SY-AmanyNeural,يد,يَدْ
+SYRIAN,body,body.leg,ar-SY-AmanyNeural,رجل,رِجِلْ
+SYRIAN,body,body.head,ar-SY-AmanyNeural,راس,رَاسْ
+SYRIAN,body,body.hair,ar-SY-AmanyNeural,شعر,شَعْرْ
+SYRIAN,body,body.back,ar-SY-AmanyNeural,ظهر,ظَهْرْ
+SYRIAN,body,body.abdomen,ar-SY-AmanyNeural,بطن,بَطْنْ
+SYRIAN,body,body.knee,ar-SY-AmanyNeural,ركبة,رُكْبَة
+SYRIAN,body,body.finger,ar-SY-AmanyNeural,إصبع,إِصْبَعْ
+SYRIAN,body,body.neck,ar-SY-AmanyNeural,رقبة,رَقْبَة
+SYRIAN,body,body.chest,ar-SY-AmanyNeural,صدر,صَدْرْ
+SYRIAN,body,body.face,ar-SY-AmanyNeural,وش,وِشّ
+SYRIAN,body,body.tooth,ar-SY-AmanyNeural,سن,سِنّ
+SYRIAN,body,body.heart,ar-SY-AmanyNeural,قلب,قَلْبْ
+SYRIAN,body,body.shoulder,ar-SY-AmanyNeural,كتف,كِتْفْ
+SYRIAN,action,action.eat,ar-SY-AmanyNeural,آكل,آكُلْ
+SYRIAN,action,action.drink,ar-SY-AmanyNeural,أشرب,أَشْرَبْ
+SYRIAN,action,action.sleep,ar-SY-AmanyNeural,أنام,أَنامْ
+SYRIAN,action,action.sit,ar-SY-AmanyNeural,أقعد,أَقْعُدْ
+SYRIAN,action,action.walk,ar-SY-AmanyNeural,أمشي,أَمْشي
+SYRIAN,action,action.stand,ar-SY-AmanyNeural,أقوم,أَقومْ
+SYRIAN,action,action.wash,ar-SY-AmanyNeural,أغسل,أَغْسِلْ
+SYRIAN,action,action.speak,ar-SY-AmanyNeural,أحكي,أَحْكي
+SYRIAN,action,action.hear,ar-SY-AmanyNeural,أسمع,أَسْمَعْ
+SYRIAN,action,action.open,ar-SY-AmanyNeural,أفتح,أَفْتَحْ
+SYRIAN,action,action.close,ar-SY-AmanyNeural,أسكر,أَسَكِّرْ
+SYRIAN,action,action.read,ar-SY-AmanyNeural,أقرا,أَقْرا
+SYRIAN,action,action.laugh,ar-SY-AmanyNeural,أضحك,أَضْحَكْ
+SYRIAN,action,action.see,ar-SY-AmanyNeural,أشوف,أَشوفْ
+SYRIAN,action,action.dress,ar-SY-AmanyNeural,ألبس,أَلْبَسْ
+SYRIAN,action,action.pray,ar-SY-AmanyNeural,أصلي,أَصَلِّي
+SYRIAN,animal,animal.cat,ar-SY-AmanyNeural,بسة,بِسَّة
+SYRIAN,animal,animal.dog,ar-SY-AmanyNeural,كلب,كَلْبْ
+SYRIAN,animal,animal.sheep,ar-SY-AmanyNeural,خروف,خَروفْ
+SYRIAN,animal,animal.horse,ar-SY-AmanyNeural,حصان,حِصانْ
+SYRIAN,animal,animal.cow,ar-SY-AmanyNeural,بقرة,بَقَرَة
+SYRIAN,animal,animal.sparrow,ar-SY-AmanyNeural,عصفور,عُصْفورْ
+SYRIAN,animal,animal.pigeon,ar-SY-AmanyNeural,حمامة,حَمامَة
+SYRIAN,animal,animal.chicken,ar-SY-AmanyNeural,جاجة,جَاجَة
+SYRIAN,animal,animal.duck,ar-SY-AmanyNeural,بطة,بَطَّة
+SYRIAN,animal,animal.camel,ar-SY-AmanyNeural,جمل,جَمَلْ
+SYRIAN,animal,animal.rooster,ar-SY-AmanyNeural,ديك,دِيكْ
+SYRIAN,animal,animal.rabbit,ar-SY-AmanyNeural,أرنب,أَرْنَبْ
+SYRIAN,transport,transport.car,ar-SY-AmanyNeural,سيارة,سَيَّارَة
+SYRIAN,transport,transport.taxi,ar-SY-AmanyNeural,تكسي,تَكْسي
+SYRIAN,transport,transport.bus,ar-SY-AmanyNeural,باص,بَاصْ
+SYRIAN,transport,transport.minibus,ar-SY-AmanyNeural,سرفيس,سِرْفيسْ
+SYRIAN,transport,transport.bicycle,ar-SY-AmanyNeural,بسكليت,بِسْكْليتْ
+SYRIAN,transport,transport.motorcycle,ar-SY-AmanyNeural,موتور,مُوتورْ
+SYRIAN,transport,transport.train,ar-SY-AmanyNeural,قطار,قْطَارْ
+SYRIAN,transport,transport.airplane,ar-SY-AmanyNeural,طيارة,طَيَّارَة
+SYRIAN,transport,transport.helicopter,ar-SY-AmanyNeural,هليكوبتر,هِليكوبْتَرْ
+SYRIAN,transport,transport.ship,ar-SY-AmanyNeural,باخرة,بَاخِرَة
+SYRIAN,transport,transport.boat,ar-SY-AmanyNeural,قارب,قَارِبْ
+SYRIAN,transport,transport.truck,ar-SY-AmanyNeural,شاحنة,شَاحِنَة
+SYRIAN,greeting,greeting.salam,ar-SY-AmanyNeural,السلام عليكم,السَّلامُ عَلَيْكُمْ
+SYRIAN,greeting,greeting.reply,ar-SY-AmanyNeural,وعليكم السلام,وَعَلَيْكُمُ السَّلامْ
+SYRIAN,greeting,greeting.hello,ar-SY-AmanyNeural,مرحبا,مَرْحَبا
+SYRIAN,greeting,greeting.welcome,ar-SY-AmanyNeural,أهلين وسهلين,أَهْلينْ وَسَهْلينْ
+SYRIAN,greeting,greeting.how_are_you,ar-SY-AmanyNeural,كيفك؟,كِيفَكْ؟
+SYRIAN,greeting,greeting.fine,ar-SY-AmanyNeural,الحمد لله,الْحَمْدُ لِلَّهْ
+SYRIAN,greeting,greeting.good_morning,ar-SY-AmanyNeural,صباح الخير,صَباحْ الْخيرْ
+SYRIAN,greeting,greeting.good_evening,ar-SY-AmanyNeural,مسا الخير,مَسا الْخيرْ
+SYRIAN,greeting,greeting.brighten,ar-SY-AmanyNeural,نورت,نَوَّرْتْ
+SYRIAN,greeting,greeting.good_health,ar-SY-AmanyNeural,يعطيك العافية,يَعْطيكْ الْعافْيَة
+SYRIAN,greeting,greeting.goodbye,ar-SY-AmanyNeural,مع السلامة,مَعَ السَّلامَة
+SYRIAN,greeting,greeting.safe,ar-SY-AmanyNeural,في أمان الله,فِي أَمانِ اللَّهْ
+SYRIAN,greeting,greeting.thanks,ar-SY-AmanyNeural,يسلمو,يِسْلَمو
+SYRIAN,greeting,greeting.bless,ar-SY-AmanyNeural,الله يبارك فيك,اللَّه يْبَارِك فِيكْ
+IRAQI,family,family.father,ar-IQ-RanaNeural,أبويه,أَبُويَهْ
+IRAQI,family,family.mother,ar-IQ-RanaNeural,أمي,أُمِّي
+IRAQI,family,family.husband,ar-IQ-RanaNeural,زوجي,زَوْجِي
+IRAQI,family,family.wife,ar-IQ-RanaNeural,مرتي,مَرْتِي
+IRAQI,family,family.son,ar-IQ-RanaNeural,ابني,اِبْنِي
+IRAQI,family,family.daughter,ar-IQ-RanaNeural,بنتي,بِنْتِي
+IRAQI,family,family.brother,ar-IQ-RanaNeural,أخوي,أَخُويْ
+IRAQI,family,family.sister,ar-IQ-RanaNeural,أختي,أُخْتِي
+IRAQI,family,family.paternal_uncle,ar-IQ-RanaNeural,عمي,عَمِّي
+IRAQI,family,family.paternal_aunt,ar-IQ-RanaNeural,عمتي,عَمْتِي
+IRAQI,family,family.maternal_uncle,ar-IQ-RanaNeural,خالي,خَالِي
+IRAQI,family,family.maternal_aunt,ar-IQ-RanaNeural,خالتي,خَالْتِي
+IRAQI,family,family.grandfather,ar-IQ-RanaNeural,جدي,جَدِّي
+IRAQI,family,family.grandmother,ar-IQ-RanaNeural,جدتي,جَدَّتِي
+IRAQI,family,family.grandson,ar-IQ-RanaNeural,حفيدي,حَفِيدِي
+IRAQI,family,family.granddaughter,ar-IQ-RanaNeural,حفيدتي,حَفِيدْتِي
+IRAQI,family,family.paternal_uncle_son,ar-IQ-RanaNeural,ولد عمي,وَلَدْ عَمِّي
+IRAQI,family,family.paternal_uncle_daughter,ar-IQ-RanaNeural,بنت عمي,بِنْتْ عَمِّي
+IRAQI,family,family.paternal_aunt_son,ar-IQ-RanaNeural,ولد عمتي,وَلَدْ عَمْتِي
+IRAQI,family,family.paternal_aunt_daughter,ar-IQ-RanaNeural,بنت عمتي,بِنْتْ عَمْتِي
+IRAQI,family,family.maternal_uncle_son,ar-IQ-RanaNeural,ولد خالي,وَلَدْ خَالِي
+IRAQI,family,family.maternal_uncle_daughter,ar-IQ-RanaNeural,بنت خالي,بِنْتْ خَالِي
+IRAQI,family,family.maternal_aunt_son,ar-IQ-RanaNeural,ولد خالتي,وَلَدْ خَالْتِي
+IRAQI,family,family.maternal_aunt_daughter,ar-IQ-RanaNeural,بنت خالتي,بِنْتْ خَالْتِي
+IRAQI,family,family.brother_son,ar-IQ-RanaNeural,ولد أخوي,وَلَدْ أَخُويْ
+IRAQI,family,family.brother_daughter,ar-IQ-RanaNeural,بنت أخوي,بِنْتْ أَخُويْ
+IRAQI,family,family.sister_son,ar-IQ-RanaNeural,ولد أختي,وَلَدْ أُخْتِي
+IRAQI,family,family.sister_daughter,ar-IQ-RanaNeural,بنت أختي,بِنْتْ أُخْتِي
+IRAQI,family,family.husband_father,ar-IQ-RanaNeural,أبو زوجي,أَبُو زُوجِي
+IRAQI,family,family.husband_mother,ar-IQ-RanaNeural,أم زوجي,أُمْ زُوجِي
+IRAQI,family,family.wife_father,ar-IQ-RanaNeural,أبو مرتي,أَبُو مَرْتِي
+IRAQI,family,family.wife_mother,ar-IQ-RanaNeural,أم مرتي,أُمْ مَرْتِي
+IRAQI,family,family.husband_brother,ar-IQ-RanaNeural,أخو زوجي,أَخُو زُوجِي
+IRAQI,family,family.husband_sister,ar-IQ-RanaNeural,أخت زوجي,أُخْتْ زُوجِي
+IRAQI,family,family.wife_brother,ar-IQ-RanaNeural,أخو مرتي,أَخُو مَرْتِي
+IRAQI,family,family.wife_sister,ar-IQ-RanaNeural,أخت مرتي,أُخْتْ مَرْتِي
+IRAQI,family,family.sister_husband,ar-IQ-RanaNeural,زوج أختي,زُوجْ أُخْتِي
+IRAQI,family,family.brother_wife,ar-IQ-RanaNeural,مرت أخوي,مَرْتْ أَخُويْ
+IRAQI,family,family.daughter_husband,ar-IQ-RanaNeural,زوج بنتي,زُوجْ بِنْتِي
+IRAQI,family,family.son_wife,ar-IQ-RanaNeural,مرت ابني,مَرْتْ اِبْنِي
+IRAQI,family,family.male_in_law,ar-IQ-RanaNeural,نسيبي,نَسِيبِي
+IRAQI,family,family.female_in_law,ar-IQ-RanaNeural,نسيبتي,نَسِيبْتِي
+IRAQI,family,family.male_relative,ar-IQ-RanaNeural,قريبي,گَرِيبِي
+IRAQI,family,family.female_relative,ar-IQ-RanaNeural,قريبتي,قَرِيبْتِي
+IRAQI,request,request.water,ar-IQ-RanaNeural,أريد ماي,أَرِيدْ مَايْ
+IRAQI,request,request.tea,ar-IQ-RanaNeural,أريد چاي,أَرِيدْ تْشَايْ
+IRAQI,request,request.rest,ar-IQ-RanaNeural,أريد أرتاح,أَرِيدْ أَرْتَاحْ
+IRAQI,request,request.medicine,ar-IQ-RanaNeural,أريد دواي,أَرِيدْ دَوَايْ
+IRAQI,request,request.toilet,ar-IQ-RanaNeural,أريد أروح للحمام,أَرِيدْ أَرُوحْ لِلْحَمَّامْ
+IRAQI,request,request.adjust_pillow,ar-IQ-RanaNeural,عدّل لي المخدة,عَدِّلْ لِي الْمْخَدَّة
+IRAQI,request,request.headache,ar-IQ-RanaNeural,راسي يوجعني,رَاسِي يُوجَعْنِي
+IRAQI,request,request.cold,ar-IQ-RanaNeural,أحس ببرد,أَحِسْ بِبَرْدْ
+IRAQI,dish,dish.iraqi.dolma,ar-IQ-RanaNeural,دولمة عراقية,دُولْمَة عِرَاقِيَّة
+IRAQI,dish,dish.iraqi.masgouf,ar-IQ-RanaNeural,سمچ مسكوف,سِمَتْش مَسْكُوفْ
+IRAQI,dish,dish.iraqi.quzi,ar-IQ-RanaNeural,قوزي عالتمن,قُوزِي عَالْتِمَّنْ
+IRAQI,dish,dish.iraqi.tashreeb,ar-IQ-RanaNeural,تشريب لحم,تَشْرِيبْ لَحَمْ
+IRAQI,dish,dish.iraqi.pacha,ar-IQ-RanaNeural,باجة,بَاتْشَة
+IRAQI,dish,dish.iraqi.rice_kibbeh,ar-IQ-RanaNeural,كبة تمن,كُبِّة تِمَّنْ
+IRAQI,dish,dish.iraqi.mosul_kibbeh,ar-IQ-RanaNeural,كبة موصلية,كُبَّة مَوْصِلِيَّة
+IRAQI,dish,dish.iraqi.biryani,ar-IQ-RanaNeural,برياني عراقي,بِرْيَانِي عِرَاقِي
+IRAQI,dish,dish.iraqi.fish_mutabbaq,ar-IQ-RanaNeural,مطبق سمچ,مُطَبَّق سِمَتْشْ
+IRAQI,dish,dish.iraqi.makhlama,ar-IQ-RanaNeural,مخلمة,مَخْلَمَة
+IRAQI,dish,dish.iraqi.okra,ar-IQ-RanaNeural,باميا عالتمن,بَامْيَا عَالْتِمَّنْ
+IRAQI,dish,dish.iraqi.turnip,ar-IQ-RanaNeural,شلغم مطبوخ,شَلْغَمْ مَطْبُوخْ
+IRAQI,dish,dish.iraqi.harees,ar-IQ-RanaNeural,هريسة,هَرِيسَة
+IRAQI,dish,dish.iraqi.kleicha,ar-IQ-RanaNeural,كليجة,كْلِيتْشَة
+IRAQI,dish,dish.iraqi.zalabiya,ar-IQ-RanaNeural,زلابية,زَلَابْيَة
+IRAQI,routine,routine.call_to_prayer,ar-IQ-RanaNeural,أذان,أَذَانْ
+IRAQI,routine,routine.ablution,ar-IQ-RanaNeural,وضوء,وُضُوءْ
+IRAQI,routine,routine.prayer,ar-IQ-RanaNeural,صلاة,صَلَاة
+IRAQI,routine,routine.prayer_rug,ar-IQ-RanaNeural,سجادة صلاة,سَجَّادِة صَلَاة
+IRAQI,routine,routine.prayer_beads,ar-IQ-RanaNeural,مسبحة,مِسْبَحَة
+IRAQI,routine,routine.quran,ar-IQ-RanaNeural,مصحف,مُصْحَفْ
+IRAQI,routine,routine.evening_coffee,ar-IQ-RanaNeural,قهوة العصر,گَهْوِة الْعَصِرْ
+IRAQI,routine,routine.sleep,ar-IQ-RanaNeural,نوم,نُومْ
+IRAQI,routine,routine.rest,ar-IQ-RanaNeural,راحة,رَاحَة
+IRAQI,routine,routine.walk,ar-IQ-RanaNeural,مشي,مَشِي
+IRAQI,vegetable,vegetable.tomato,ar-IQ-RanaNeural,طماطة,طَمَاطَة
+IRAQI,vegetable,vegetable.potato,ar-IQ-RanaNeural,بتيتة,بُتِيتَة
+IRAQI,vegetable,vegetable.onion,ar-IQ-RanaNeural,بصل,بَصَلْ
+IRAQI,vegetable,vegetable.garlic,ar-IQ-RanaNeural,ثوم,ثُومْ
+IRAQI,vegetable,vegetable.carrot,ar-IQ-RanaNeural,جزر,جَزَرْ
+IRAQI,vegetable,vegetable.cucumber,ar-IQ-RanaNeural,خيار,خِيَارْ
+IRAQI,vegetable,vegetable.pepper,ar-IQ-RanaNeural,فلفل,فِلْفِلْ
+IRAQI,vegetable,vegetable.eggplant,ar-IQ-RanaNeural,باذنجان,بَاذِنْجَانْ
+IRAQI,vegetable,vegetable.zucchini,ar-IQ-RanaNeural,كوسة,كُوسَة
+IRAQI,vegetable,vegetable.lettuce,ar-IQ-RanaNeural,خس,خَسّ
+IRAQI,vegetable,vegetable.parsley,ar-IQ-RanaNeural,بقدونس,بَقْدُونِسْ
+IRAQI,vegetable,vegetable.coriander,ar-IQ-RanaNeural,كزبرة,كُزْبَرَة
+IRAQI,vegetable,vegetable.lemon,ar-IQ-RanaNeural,ليمون,لِيمُونْ
+IRAQI,vegetable,vegetable.peas,ar-IQ-RanaNeural,بزاليا,بَزَالْيَا
+IRAQI,vegetable,vegetable.green_beans,ar-IQ-RanaNeural,فاصوليا خضرا,فَاصُولْيَا خَضْرَا
+IRAQI,vegetable,vegetable.spinach,ar-IQ-RanaNeural,سبانخ,سَبَانِخْ
+IRAQI,vegetable,vegetable.cauliflower,ar-IQ-RanaNeural,قرنابيط,قَرْنَابِيطْ
+IRAQI,vegetable,vegetable.broccoli,ar-IQ-RanaNeural,بروكلي,بُرُوكْلِي
+IRAQI,vegetable,vegetable.radish,ar-IQ-RanaNeural,فجل,فِجِلْ
+IRAQI,vegetable,vegetable.pumpkin,ar-IQ-RanaNeural,قرع,قَرَعْ
+IRAQI,vegetable,vegetable.mint,ar-IQ-RanaNeural,نعناع,نَعْنَاعْ
+IRAQI,vegetable,vegetable.corn,ar-IQ-RanaNeural,ذرة,ذُرَّة
+IRAQI,fruit,fruit.apple,ar-IQ-RanaNeural,تفاح,تُفَّاحْ
+IRAQI,fruit,fruit.banana,ar-IQ-RanaNeural,موز,مُوزْ
+IRAQI,fruit,fruit.orange,ar-IQ-RanaNeural,برتقال,بُرْتُقَالْ
+IRAQI,fruit,fruit.grapes,ar-IQ-RanaNeural,عنب,عِنَبْ
+IRAQI,fruit,fruit.strawberry,ar-IQ-RanaNeural,فراولة,فَرَاوْلَة
+IRAQI,fruit,fruit.mango,ar-IQ-RanaNeural,مانجو,مَانْجُو
+IRAQI,fruit,fruit.watermelon,ar-IQ-RanaNeural,رقي,رَگِّي
+IRAQI,fruit,fruit.melon,ar-IQ-RanaNeural,شمام,شَمَّامْ
+IRAQI,fruit,fruit.peach,ar-IQ-RanaNeural,خوخ,خُوخْ
+IRAQI,fruit,fruit.apricot,ar-IQ-RanaNeural,مشمش,مِشْمِشْ
+IRAQI,fruit,fruit.pear,ar-IQ-RanaNeural,عرموط,عَرْمُوطْ
+IRAQI,fruit,fruit.pomegranate,ar-IQ-RanaNeural,رمان,رُمَّانْ
+IRAQI,fruit,fruit.figs,ar-IQ-RanaNeural,تين,تِينْ
+IRAQI,fruit,fruit.dates,ar-IQ-RanaNeural,تمر,تَمْرْ
+IRAQI,fruit,fruit.pineapple,ar-IQ-RanaNeural,أناناس,أَنَانَاسْ
+IRAQI,fruit,fruit.kiwi,ar-IQ-RanaNeural,كيوي,كِيوِي
+IRAQI,fruit,fruit.cherry,ar-IQ-RanaNeural,كرز,كَرَزْ
+IRAQI,fruit,fruit.berries,ar-IQ-RanaNeural,توت,تُوتْ
+IRAQI,fruit,fruit.mandarin,ar-IQ-RanaNeural,لالنكي,لَالَنْگِي
+IRAQI,fruit,fruit.avocado,ar-IQ-RanaNeural,أفوكادو,أَفُوكَادُو
+IRAQI,fruit,fruit.coconut,ar-IQ-RanaNeural,جوز الهند,جُوزْ الْهِنْدْ
+IRAQI,food,food.bread,ar-IQ-RanaNeural,خبز,خُبُزْ
+IRAQI,food,food.milk,ar-IQ-RanaNeural,حليب,حَلِيبْ
+IRAQI,food,food.eggs,ar-IQ-RanaNeural,بيض,بِيضْ
+IRAQI,food,food.cheese,ar-IQ-RanaNeural,جبن,جُبْنْ
+IRAQI,food,food.yogurt,ar-IQ-RanaNeural,لبن,لَبَنْ
+IRAQI,food,food.butter,ar-IQ-RanaNeural,زبدة,زُبْدَة
+IRAQI,food,food.rice,ar-IQ-RanaNeural,تمن,تِمَّنْ
+IRAQI,food,food.pasta,ar-IQ-RanaNeural,معكرونة,مَعْكَرُونَة
+IRAQI,food,food.soup,ar-IQ-RanaNeural,شوربة,شُورْبَة
+IRAQI,food,food.meat,ar-IQ-RanaNeural,لحم,لَحْمْ
+IRAQI,food,food.chicken,ar-IQ-RanaNeural,دجاج,دَجَاجْ
+IRAQI,food,food.fish,ar-IQ-RanaNeural,سمچ,سِمَتْشْ
+IRAQI,food,food.olives,ar-IQ-RanaNeural,زيتون,زِيتُونْ
+IRAQI,food,food.oil,ar-IQ-RanaNeural,زيت,زِيتْ
+IRAQI,food,food.tea,ar-IQ-RanaNeural,چاي,تْشَايْ
+IRAQI,food,food.coffee,ar-IQ-RanaNeural,قهوة,گَهْوَة
+IRAQI,food,food.juice,ar-IQ-RanaNeural,عصير,عَصِيرْ
+IRAQI,food,food.water,ar-IQ-RanaNeural,ماي,مَايْ
+IRAQI,food,food.honey,ar-IQ-RanaNeural,عسل,عَسَلْ
+IRAQI,food,food.biscuit,ar-IQ-RanaNeural,بسكويت,بَسْكَوِيتْ
+IRAQI,food,food.salt,ar-IQ-RanaNeural,ملح,مِلْحْ
+IRAQI,food,food.sugar,ar-IQ-RanaNeural,سكر,سُكَّرْ
+IRAQI,home,home.bed,ar-IQ-RanaNeural,سرير,سَرِيرْ
+IRAQI,home,home.pillow,ar-IQ-RanaNeural,مخدة,مَخَدَّة
+IRAQI,home,home.blanket,ar-IQ-RanaNeural,بطانية,بَطَّانِيَّة
+IRAQI,home,home.table,ar-IQ-RanaNeural,طاولة,طَاوِلَة
+IRAQI,home,home.chair,ar-IQ-RanaNeural,كرسي,كُرْسِي
+IRAQI,home,home.sofa,ar-IQ-RanaNeural,قنفة,قَنَفَة
+IRAQI,home,home.door,ar-IQ-RanaNeural,باب,بَابْ
+IRAQI,home,home.window,ar-IQ-RanaNeural,شباك,شُبَّاكْ
+IRAQI,home,home.television,ar-IQ-RanaNeural,تلفزيون,تِلِفِزْيُونْ
+IRAQI,home,home.fridge,ar-IQ-RanaNeural,ثلاجة,ثَلَّاجَة
+IRAQI,home,home.washing_machine,ar-IQ-RanaNeural,غسالة,غَسَّالَة
+IRAQI,home,home.stove,ar-IQ-RanaNeural,طباخ,طَبَّاخْ
+IRAQI,home,home.oven,ar-IQ-RanaNeural,فرن,فُرْنْ
+IRAQI,home,home.air_conditioner,ar-IQ-RanaNeural,مكيف,مُكَيِّفْ
+IRAQI,home,home.fan,ar-IQ-RanaNeural,مروحة,مَرْوَحَة
+IRAQI,home,home.wardrobe,ar-IQ-RanaNeural,كنتور,كَنْتُورْ
+IRAQI,home,home.key,ar-IQ-RanaNeural,مفتاح,مِفْتَاحْ
+IRAQI,home,home.clock,ar-IQ-RanaNeural,ساعة,سَاعَة
+IRAQI,home,home.carpet,ar-IQ-RanaNeural,زولية,زُولِيَّة
+IRAQI,home,home.kitchen,ar-IQ-RanaNeural,مطبخ,مَطْبَخْ
+IRAQI,home,home.cup,ar-IQ-RanaNeural,كوب,كُوبْ
+IRAQI,home,home.tray,ar-IQ-RanaNeural,صينية,صِينِيَّة
+IRAQI,home,home.spoon,ar-IQ-RanaNeural,ملعقة,مِلْعَقَة
+IRAQI,home,home.fork,ar-IQ-RanaNeural,شوكة,شُوكَة
+IRAQI,home,home.knife,ar-IQ-RanaNeural,سكين,سِكِّينْ
+IRAQI,home,home.teapot,ar-IQ-RanaNeural,قوري,گُورِي
+IRAQI,home,home.pot,ar-IQ-RanaNeural,جدر,جِدِرْ
+IRAQI,home,home.water_bottle,ar-IQ-RanaNeural,بطل مي,بُطُلْ مَيّ
+IRAQI,clothing,clothing.tshirt,ar-IQ-RanaNeural,تيشيرت,تِيشِيرْتْ
+IRAQI,clothing,clothing.shirt,ar-IQ-RanaNeural,قميص,قَمِيصْ
+IRAQI,clothing,clothing.jacket,ar-IQ-RanaNeural,جاكيت,جَاكِيتْ
+IRAQI,clothing,clothing.shorts,ar-IQ-RanaNeural,شورت,شُورْتْ
+IRAQI,clothing,clothing.blouse,ar-IQ-RanaNeural,بلوزة,بْلُوزَة
+IRAQI,clothing,clothing.trousers,ar-IQ-RanaNeural,بنطرون,بَنْطَرُونْ
+IRAQI,clothing,clothing.dress,ar-IQ-RanaNeural,فستان,فُسْتَانْ
+IRAQI,clothing,clothing.robe,ar-IQ-RanaNeural,روب,رُوبْ
+IRAQI,clothing,clothing.abaya,ar-IQ-RanaNeural,عباية,عَبَايَة
+IRAQI,clothing,clothing.hijab,ar-IQ-RanaNeural,حجاب,حِجَابْ
+IRAQI,clothing,clothing.scarf,ar-IQ-RanaNeural,وشاح,وِشَاحْ
+IRAQI,clothing,clothing.shoes,ar-IQ-RanaNeural,قندرة,قُنْدَرَة
+IRAQI,clothing,clothing.socks,ar-IQ-RanaNeural,جواريب,جْوَارِيبْ
+IRAQI,clothing,clothing.coat,ar-IQ-RanaNeural,قبوط,گَبُّوطْ
+IRAQI,clothing,clothing.glasses,ar-IQ-RanaNeural,نظارة,نَظَّارَة
+IRAQI,clothing,clothing.cap,ar-IQ-RanaNeural,طاقية,طَاقِيَّة
+IRAQI,clothing,clothing.watch,ar-IQ-RanaNeural,ساعة يد,سَاعِة يَدّ
+IRAQI,clothing,clothing.bag,ar-IQ-RanaNeural,جنطة,جَنْطَة
+IRAQI,clothing,clothing.sandals,ar-IQ-RanaNeural,صندل,صَنْدَلْ
+IRAQI,clothing,clothing.high_heels,ar-IQ-RanaNeural,قندرة كعب عالي,قُنْدْرِة كَعَبْ عَالِي
+IRAQI,clothing,clothing.pajamas,ar-IQ-RanaNeural,بيجامة,بِيجَامَة
+IRAQI,clothing,clothing.belt,ar-IQ-RanaNeural,حزام,حِزَامْ
+IRAQI,clothing,clothing.ring,ar-IQ-RanaNeural,خاتم,خَاتَمْ
+IRAQI,body,body.eye,ar-IQ-RanaNeural,عين,عِينْ
+IRAQI,body,body.nose,ar-IQ-RanaNeural,خشم,خَشِمْ
+IRAQI,body,body.mouth,ar-IQ-RanaNeural,حلك,حَلِگْ
+IRAQI,body,body.tongue,ar-IQ-RanaNeural,لسان,لِسَانْ
+IRAQI,body,body.ear,ar-IQ-RanaNeural,إذن,إِذِنْ
+IRAQI,body,body.hand,ar-IQ-RanaNeural,يد,يَدْ
+IRAQI,body,body.leg,ar-IQ-RanaNeural,رجل,رِجِلْ
+IRAQI,body,body.head,ar-IQ-RanaNeural,راس,رَاسْ
+IRAQI,body,body.hair,ar-IQ-RanaNeural,شعر,شَعْرْ
+IRAQI,body,body.back,ar-IQ-RanaNeural,ظهر,ظَهْرْ
+IRAQI,body,body.abdomen,ar-IQ-RanaNeural,بطن,بَطْنْ
+IRAQI,body,body.knee,ar-IQ-RanaNeural,ركبة,رُكْبَة
+IRAQI,body,body.finger,ar-IQ-RanaNeural,إصبع,إِصْبَعْ
+IRAQI,body,body.neck,ar-IQ-RanaNeural,رقبة,رُگْبَة
+IRAQI,body,body.chest,ar-IQ-RanaNeural,صدر,صَدْرْ
+IRAQI,body,body.face,ar-IQ-RanaNeural,وجه,وَجْهْ
+IRAQI,body,body.tooth,ar-IQ-RanaNeural,سن,سِنّ
+IRAQI,body,body.heart,ar-IQ-RanaNeural,قلب,گَلُبْ
+IRAQI,body,body.shoulder,ar-IQ-RanaNeural,كتف,كِتْفْ
+IRAQI,action,action.eat,ar-IQ-RanaNeural,آكل,آكُلْ
+IRAQI,action,action.drink,ar-IQ-RanaNeural,أشرب,أَشْرَبْ
+IRAQI,action,action.sleep,ar-IQ-RanaNeural,أنام,أَنَامْ
+IRAQI,action,action.sit,ar-IQ-RanaNeural,أقعد,أَگْعُدْ
+IRAQI,action,action.walk,ar-IQ-RanaNeural,أمشي,أَمْشِي
+IRAQI,action,action.stand,ar-IQ-RanaNeural,أقوم,أَگُومْ
+IRAQI,action,action.wash,ar-IQ-RanaNeural,أغسل,أَغْسِلْ
+IRAQI,action,action.speak,ar-IQ-RanaNeural,أحچي,أَحْتْشِي
+IRAQI,action,action.hear,ar-IQ-RanaNeural,أسمع,أَسْمَعْ
+IRAQI,action,action.open,ar-IQ-RanaNeural,أفتح,أَفْتَحْ
+IRAQI,action,action.close,ar-IQ-RanaNeural,أسدّ,أَسِدّ
+IRAQI,action,action.read,ar-IQ-RanaNeural,أقرا,أَگْرَا
+IRAQI,action,action.laugh,ar-IQ-RanaNeural,أضحك,أَضْحَكْ
+IRAQI,action,action.see,ar-IQ-RanaNeural,أشوف,أَشُوفْ
+IRAQI,action,action.dress,ar-IQ-RanaNeural,ألبس,أَلْبَسْ
+IRAQI,action,action.pray,ar-IQ-RanaNeural,أصلّي,أَصَلِّي
+IRAQI,animal,animal.cat,ar-IQ-RanaNeural,بزونة,بْزُونَة
+IRAQI,animal,animal.dog,ar-IQ-RanaNeural,كلب,كَلْبْ
+IRAQI,animal,animal.sheep,ar-IQ-RanaNeural,خروف,خَرُوفْ
+IRAQI,animal,animal.horse,ar-IQ-RanaNeural,حصان,حِصَانْ
+IRAQI,animal,animal.cow,ar-IQ-RanaNeural,بقرة,بَگْرَة
+IRAQI,animal,animal.sparrow,ar-IQ-RanaNeural,عصفور,عُصْفُورْ
+IRAQI,animal,animal.pigeon,ar-IQ-RanaNeural,حمامة,حَمَامَة
+IRAQI,animal,animal.chicken,ar-IQ-RanaNeural,دجاجة,دَجَاجَة
+IRAQI,animal,animal.duck,ar-IQ-RanaNeural,بطة,بَطَّة
+IRAQI,animal,animal.camel,ar-IQ-RanaNeural,جمل,جَمَلْ
+IRAQI,animal,animal.rooster,ar-IQ-RanaNeural,ديك,دِيكْ
+IRAQI,animal,animal.rabbit,ar-IQ-RanaNeural,أرنب,أَرْنَبْ
+IRAQI,transport,transport.car,ar-IQ-RanaNeural,سيارة,سَيَّارَة
+IRAQI,transport,transport.taxi,ar-IQ-RanaNeural,تاكسي,تَاكْسِي
+IRAQI,transport,transport.bus,ar-IQ-RanaNeural,باص,بَاصْ
+IRAQI,transport,transport.minibus,ar-IQ-RanaNeural,باص صغير,بَاصْ صْغِيرْ
+IRAQI,transport,transport.bicycle,ar-IQ-RanaNeural,بايسكل,بَايْسِكِلْ
+IRAQI,transport,transport.motorcycle,ar-IQ-RanaNeural,دراجة نارية,دَرَّاجَة نَارِيَّة
+IRAQI,transport,transport.train,ar-IQ-RanaNeural,قطار,قِطَارْ
+IRAQI,transport,transport.airplane,ar-IQ-RanaNeural,طيارة,طَيَّارَة
+IRAQI,transport,transport.helicopter,ar-IQ-RanaNeural,هليكوبتر,هِلِيكُوبْتَرْ
+IRAQI,transport,transport.ship,ar-IQ-RanaNeural,باخرة,بَاخِرَة
+IRAQI,transport,transport.boat,ar-IQ-RanaNeural,زورق,زَوْرَقْ
+IRAQI,transport,transport.truck,ar-IQ-RanaNeural,لوري,لُورِي
+IRAQI,greeting,greeting.salam,ar-IQ-RanaNeural,السلام عليكم,السَّلَامُ عَلَيْكُمْ
+IRAQI,greeting,greeting.reply,ar-IQ-RanaNeural,وعليكم السلام,وَعَلَيْكُمُ السَّلَامْ
+IRAQI,greeting,greeting.hello,ar-IQ-RanaNeural,هلا بيك,هَلَا بِيكْ
+IRAQI,greeting,greeting.welcome,ar-IQ-RanaNeural,أهلين وسهلين,أَهْلِينْ وَسَهْلِينْ
+IRAQI,greeting,greeting.how_are_you,ar-IQ-RanaNeural,شلونك؟,شْلُونَكْ؟
+IRAQI,greeting,greeting.fine,ar-IQ-RanaNeural,الحمد لله,الْحَمْدُ لِلَّهْ
+IRAQI,greeting,greeting.good_morning,ar-IQ-RanaNeural,صباح الخير,صَبَاحْ الْخِيرْ
+IRAQI,greeting,greeting.good_evening,ar-IQ-RanaNeural,مسا الخير,مَسَا الْخِيرْ
+IRAQI,greeting,greeting.brighten,ar-IQ-RanaNeural,نورت,نَوَّرْتْ
+IRAQI,greeting,greeting.good_health,ar-IQ-RanaNeural,عاشت إيدك,عَاشَتْ إِيدَكْ
+IRAQI,greeting,greeting.goodbye,ar-IQ-RanaNeural,مع السلامة,مَعَ السَّلَامَة
+IRAQI,greeting,greeting.safe,ar-IQ-RanaNeural,في أمان الله,فِي أَمَانِ اللَّهْ
+IRAQI,greeting,greeting.thanks,ar-IQ-RanaNeural,مشكور,مَشْكُورْ
+IRAQI,greeting,greeting.bless,ar-IQ-RanaNeural,الله يبارك بيك,اللَّه يْبَارِك بِيكْ
+TUNISIAN,family,family.father,ar-TN-ReemNeural,بابا,بَابَا
+TUNISIAN,family,family.mother,ar-TN-ReemNeural,أمي,أُمِّي
+TUNISIAN,family,family.husband,ar-TN-ReemNeural,راجلي,رَاجْلِي
+TUNISIAN,family,family.wife,ar-TN-ReemNeural,مرتي,مَرْتِي
+TUNISIAN,family,family.son,ar-TN-ReemNeural,ولدي,وِلْدِي
+TUNISIAN,family,family.daughter,ar-TN-ReemNeural,بنتي,بِنْتِي
+TUNISIAN,family,family.brother,ar-TN-ReemNeural,خويا,خُويَا
+TUNISIAN,family,family.sister,ar-TN-ReemNeural,أختي,أُخْتِي
+TUNISIAN,family,family.paternal_uncle,ar-TN-ReemNeural,عمي,عَمِّي
+TUNISIAN,family,family.paternal_aunt,ar-TN-ReemNeural,عمتي,عَمْتِي
+TUNISIAN,family,family.maternal_uncle,ar-TN-ReemNeural,خالي,خَالِي
+TUNISIAN,family,family.maternal_aunt,ar-TN-ReemNeural,خالتي,خَالْتِي
+TUNISIAN,family,family.grandfather,ar-TN-ReemNeural,جدي,جَدِّي
+TUNISIAN,family,family.grandmother,ar-TN-ReemNeural,جدتي,جَدَّتِي
+TUNISIAN,family,family.grandson,ar-TN-ReemNeural,حفيدي,حَفِيدِي
+TUNISIAN,family,family.granddaughter,ar-TN-ReemNeural,حفيدتي,حَفِيدْتِي
+TUNISIAN,family,family.paternal_uncle_son,ar-TN-ReemNeural,ولد عمي,وِلْد عَمِّي
+TUNISIAN,family,family.paternal_uncle_daughter,ar-TN-ReemNeural,بنت عمي,بِنْتْ عَمِّي
+TUNISIAN,family,family.paternal_aunt_son,ar-TN-ReemNeural,ولد عمتي,وِلْد عَمْتِي
+TUNISIAN,family,family.paternal_aunt_daughter,ar-TN-ReemNeural,بنت عمتي,بِنْتْ عَمْتِي
+TUNISIAN,family,family.maternal_uncle_son,ar-TN-ReemNeural,ولد خالي,وِلْد خَالِي
+TUNISIAN,family,family.maternal_uncle_daughter,ar-TN-ReemNeural,بنت خالي,بِنْتْ خَالِي
+TUNISIAN,family,family.maternal_aunt_son,ar-TN-ReemNeural,ولد خالتي,وِلْد خَالْتِي
+TUNISIAN,family,family.maternal_aunt_daughter,ar-TN-ReemNeural,بنت خالتي,بِنْتْ خَالْتِي
+TUNISIAN,family,family.brother_son,ar-TN-ReemNeural,ولد خويا,وِلْد خُويَا
+TUNISIAN,family,family.brother_daughter,ar-TN-ReemNeural,بنت خويا,بِنْتْ خُويَا
+TUNISIAN,family,family.sister_son,ar-TN-ReemNeural,ولد أختي,وِلْد أُخْتِي
+TUNISIAN,family,family.sister_daughter,ar-TN-ReemNeural,بنت أختي,بِنْتْ أُخْتِي
+TUNISIAN,family,family.husband_father,ar-TN-ReemNeural,بو راجلي,بُو رَاجْلِي
+TUNISIAN,family,family.husband_mother,ar-TN-ReemNeural,أم راجلي,أُمْ رَاجْلِي
+TUNISIAN,family,family.wife_father,ar-TN-ReemNeural,بو مرتي,بُو مَرْتِي
+TUNISIAN,family,family.wife_mother,ar-TN-ReemNeural,أم مرتي,أُمْ مَرْتِي
+TUNISIAN,family,family.husband_brother,ar-TN-ReemNeural,خو راجلي,خُو رَاجْلِي
+TUNISIAN,family,family.husband_sister,ar-TN-ReemNeural,أخت راجلي,أُخْتْ رَاجْلِي
+TUNISIAN,family,family.wife_brother,ar-TN-ReemNeural,خو مرتي,خُو مَرْتِي
+TUNISIAN,family,family.wife_sister,ar-TN-ReemNeural,أخت مرتي,أُخْتْ مَرْتِي
+TUNISIAN,family,family.sister_husband,ar-TN-ReemNeural,راجل أختي,رَاجِلْ أُخْتِي
+TUNISIAN,family,family.brother_wife,ar-TN-ReemNeural,مرت خويا,مَرْتْ خُويَا
+TUNISIAN,family,family.daughter_husband,ar-TN-ReemNeural,راجل بنتي,رَاجِلْ بِنْتِي
+TUNISIAN,family,family.son_wife,ar-TN-ReemNeural,مرت ولدي,مَرْت وِلْدِي
+TUNISIAN,family,family.male_in_law,ar-TN-ReemNeural,نسيبي,نْسِيبِي
+TUNISIAN,family,family.female_in_law,ar-TN-ReemNeural,نسيبتي,نْسِيبْتِي
+TUNISIAN,family,family.male_relative,ar-TN-ReemNeural,قريبي,قْرِيبِي
+TUNISIAN,family,family.female_relative,ar-TN-ReemNeural,قريبتي,قْرِيبْتِي
+TUNISIAN,request,request.water,ar-TN-ReemNeural,نحب شوية ما,نْحِبّ شْوَيَّة مَا
+TUNISIAN,request,request.tea,ar-TN-ReemNeural,نحب تاي,نْحِبّ تَايْ
+TUNISIAN,request,request.rest,ar-TN-ReemNeural,نحب نرتاح,نْحِبّ نِرْتَاحْ
+TUNISIAN,request,request.medicine,ar-TN-ReemNeural,نحب دوايا,نْحِبّ دْوَايَا
+TUNISIAN,request,request.toilet,ar-TN-ReemNeural,نحب نمشي للتواليت,نْحِبّ نِمْشِي لِلتْوَالِيتْ
+TUNISIAN,request,request.adjust_pillow,ar-TN-ReemNeural,صلّح لي المخدة,صَلَّح لِي المِخَدَّة
+TUNISIAN,request,request.headache,ar-TN-ReemNeural,راسي يوجع فيا,رَاسِي يُوجَعْ فِيَّا
+TUNISIAN,request,request.cold,ar-TN-ReemNeural,البرد قوي,الْبَرْدْ قْوِيّ
+TUNISIAN,dish,dish.tunisian.couscous_fish,ar-TN-ReemNeural,كسكسي بالحوت,كُسْكُسِي بِالحُوتْ
+TUNISIAN,dish,dish.tunisian.lablabi,ar-TN-ReemNeural,لبلابي,لَبْلَابِي
+TUNISIAN,dish,dish.tunisian.brik,ar-TN-ReemNeural,بريك,بْرِيكْ
+TUNISIAN,dish,dish.tunisian.kaftaji,ar-TN-ReemNeural,كفتاجي,كَفْتَاجِي
+TUNISIAN,dish,dish.tunisian.tajine,ar-TN-ReemNeural,طاجين تونسي,طَاجِينْ تُونْسِي
+TUNISIAN,dish,dish.tunisian.plate,ar-TN-ReemNeural,صحن تونسي,صْحَنْ تُونْسِي
+TUNISIAN,dish,dish.tunisian.bird_tongue_soup,ar-TN-ReemNeural,شربة لسان عصفور,شُرْبِة لْسَانْ عَصْفُورْ
+TUNISIAN,dish,dish.tunisian.molokhia,ar-TN-ReemNeural,ملوخية تونسية,مْلُوخِيَّة تُونْسِيَّة
+TUNISIAN,dish,dish.tunisian.pea_stew,ar-TN-ReemNeural,مرقة جلبانة,مَرْڨِة جِلْبَانَة
+TUNISIAN,dish,dish.tunisian.pasta,ar-TN-ReemNeural,مقرونة بالصلصة,مَڨْرُونَة بِالصَّلْصَة
+TUNISIAN,dish,dish.tunisian.merguez_omelette,ar-TN-ReemNeural,عجة بالمرقاز,عُجَّة بِالْمَرْڨَازْ
+TUNISIAN,dish,dish.tunisian.grilled_salad,ar-TN-ReemNeural,سلاطة مشوية,سَلَاطَة مَشْوِيَّة
+TUNISIAN,dish,dish.tunisian.fricassee,ar-TN-ReemNeural,فريكاسي,فْرِيكَاسِي
+TUNISIAN,dish,dish.tunisian.maqroudh,ar-TN-ReemNeural,مقروض قيرواني,مَڨْرُوضْ قَيْرَوَانِي
+TUNISIAN,dish,dish.tunisian.bambalouni,ar-TN-ReemNeural,بامبالوني,بَامْبَالُونِي
+TUNISIAN,routine,routine.call_to_prayer,ar-TN-ReemNeural,أذان,أَذَانْ
+TUNISIAN,routine,routine.ablution,ar-TN-ReemNeural,وضوء,وُضُوءْ
+TUNISIAN,routine,routine.prayer,ar-TN-ReemNeural,صلاة,صْلَاة
+TUNISIAN,routine,routine.prayer_rug,ar-TN-ReemNeural,سجادة صلاة,سَجَّادِة صْلَاة
+TUNISIAN,routine,routine.prayer_beads,ar-TN-ReemNeural,مسبحة,مِسْبَحَة
+TUNISIAN,routine,routine.quran,ar-TN-ReemNeural,مصحف,مُصْحَفْ
+TUNISIAN,routine,routine.evening_coffee,ar-TN-ReemNeural,قهوة العشية,قَهْوِة الْعَشِيَّة
+TUNISIAN,routine,routine.sleep,ar-TN-ReemNeural,رقاد,رْڨَادْ
+TUNISIAN,routine,routine.rest,ar-TN-ReemNeural,راحة,رَاحَة
+TUNISIAN,routine,routine.walk,ar-TN-ReemNeural,مشي,مَشِي
+TUNISIAN,vegetable,vegetable.tomato,ar-TN-ReemNeural,طماطم,طَمَاطِمْ
+TUNISIAN,vegetable,vegetable.potato,ar-TN-ReemNeural,بطاطا,بَطَاطَا
+TUNISIAN,vegetable,vegetable.onion,ar-TN-ReemNeural,بصل,بَصَلْ
+TUNISIAN,vegetable,vegetable.garlic,ar-TN-ReemNeural,ثوم,تُومْ
+TUNISIAN,vegetable,vegetable.carrot,ar-TN-ReemNeural,سفنارية,سْفِنَّارِيَّة
+TUNISIAN,vegetable,vegetable.cucumber,ar-TN-ReemNeural,خيار,خِيَارْ
+TUNISIAN,vegetable,vegetable.pepper,ar-TN-ReemNeural,فلفل,فِلْفِلْ
+TUNISIAN,vegetable,vegetable.eggplant,ar-TN-ReemNeural,باذنجان,بَاذِنْجَانْ
+TUNISIAN,vegetable,vegetable.zucchini,ar-TN-ReemNeural,قرع أخضر,ڨْرَعْ أَخْضَرْ
+TUNISIAN,vegetable,vegetable.lettuce,ar-TN-ReemNeural,خس,خَسّ
+TUNISIAN,vegetable,vegetable.parsley,ar-TN-ReemNeural,معدنوس,مَعْدَنُوسْ
+TUNISIAN,vegetable,vegetable.coriander,ar-TN-ReemNeural,كزبرة,كُزْبْرَة
+TUNISIAN,vegetable,vegetable.lemon,ar-TN-ReemNeural,قارص,قَارِصْ
+TUNISIAN,vegetable,vegetable.peas,ar-TN-ReemNeural,جلبانة,جِلْبَانَة
+TUNISIAN,vegetable,vegetable.green_beans,ar-TN-ReemNeural,لوبيا خضرا,لُوبْيَا خَضْرَا
+TUNISIAN,vegetable,vegetable.spinach,ar-TN-ReemNeural,سبانخ,سَبَانِخْ
+TUNISIAN,vegetable,vegetable.cauliflower,ar-TN-ReemNeural,شفلور,شَفْلُورْ
+TUNISIAN,vegetable,vegetable.broccoli,ar-TN-ReemNeural,بروكلي,بُرُوكْلِي
+TUNISIAN,vegetable,vegetable.radish,ar-TN-ReemNeural,فجل,فِجِلْ
+TUNISIAN,vegetable,vegetable.pumpkin,ar-TN-ReemNeural,قرع,ڨْرَعْ
+TUNISIAN,vegetable,vegetable.mint,ar-TN-ReemNeural,نعناع,نَعْنَاعْ
+TUNISIAN,vegetable,vegetable.corn,ar-TN-ReemNeural,ذرة,ذُرَّة
+TUNISIAN,fruit,fruit.apple,ar-TN-ReemNeural,تفاح,تُفَّاحْ
+TUNISIAN,fruit,fruit.banana,ar-TN-ReemNeural,موز,مُوزْ
+TUNISIAN,fruit,fruit.orange,ar-TN-ReemNeural,بردقان,بُرْدْڨَانْ
+TUNISIAN,fruit,fruit.grapes,ar-TN-ReemNeural,عنب,عِنَبْ
+TUNISIAN,fruit,fruit.strawberry,ar-TN-ReemNeural,فراولة,فَرَاوْلَة
+TUNISIAN,fruit,fruit.mango,ar-TN-ReemNeural,مانجو,مَانْجُو
+TUNISIAN,fruit,fruit.watermelon,ar-TN-ReemNeural,دلاّع,دَلَّاعْ
+TUNISIAN,fruit,fruit.melon,ar-TN-ReemNeural,بطيخ,بِطِّيخْ
+TUNISIAN,fruit,fruit.peach,ar-TN-ReemNeural,خوخ,خُوخْ
+TUNISIAN,fruit,fruit.apricot,ar-TN-ReemNeural,مشمش,مِشْمِشْ
+TUNISIAN,fruit,fruit.pear,ar-TN-ReemNeural,إجاص,إِجَّاصْ
+TUNISIAN,fruit,fruit.pomegranate,ar-TN-ReemNeural,رمان,رُمَّانْ
+TUNISIAN,fruit,fruit.figs,ar-TN-ReemNeural,كرموس,كَرْمُوسْ
+TUNISIAN,fruit,fruit.dates,ar-TN-ReemNeural,تمر,تَمْرْ
+TUNISIAN,fruit,fruit.pineapple,ar-TN-ReemNeural,أناناس,أَنَانَاسْ
+TUNISIAN,fruit,fruit.kiwi,ar-TN-ReemNeural,كيوي,كِيوِي
+TUNISIAN,fruit,fruit.cherry,ar-TN-ReemNeural,كرز,كَرَزْ
+TUNISIAN,fruit,fruit.berries,ar-TN-ReemNeural,توت,تُوتْ
+TUNISIAN,fruit,fruit.mandarin,ar-TN-ReemNeural,مندرينة,مَنْدَرِينَة
+TUNISIAN,fruit,fruit.avocado,ar-TN-ReemNeural,أفوكادو,أَفُوكَادُو
+TUNISIAN,fruit,fruit.coconut,ar-TN-ReemNeural,جوز الهند,جُوزْ الْهِنْدْ
+TUNISIAN,food,food.bread,ar-TN-ReemNeural,خبز,خُبْزْ
+TUNISIAN,food,food.milk,ar-TN-ReemNeural,حليب,حَلِيبْ
+TUNISIAN,food,food.eggs,ar-TN-ReemNeural,عظم,عْظَمْ
+TUNISIAN,food,food.cheese,ar-TN-ReemNeural,جبن,جُبْنْ
+TUNISIAN,food,food.yogurt,ar-TN-ReemNeural,ياغرت,يَاغُرْتْ
+TUNISIAN,food,food.butter,ar-TN-ReemNeural,زبدة,زُبْدَة
+TUNISIAN,food,food.rice,ar-TN-ReemNeural,روز,رُوزْ
+TUNISIAN,food,food.pasta,ar-TN-ReemNeural,مقرونة,مَڨْرُونَة
+TUNISIAN,food,food.soup,ar-TN-ReemNeural,شربة,شُرْبَة
+TUNISIAN,food,food.meat,ar-TN-ReemNeural,لحم,لَحْمْ
+TUNISIAN,food,food.chicken,ar-TN-ReemNeural,دجاج,دَجَاجْ
+TUNISIAN,food,food.fish,ar-TN-ReemNeural,حوت,حُوتْ
+TUNISIAN,food,food.olives,ar-TN-ReemNeural,زيتون,زِيتُونْ
+TUNISIAN,food,food.oil,ar-TN-ReemNeural,زيت,زِيتْ
+TUNISIAN,food,food.tea,ar-TN-ReemNeural,تاي,تَايْ
+TUNISIAN,food,food.coffee,ar-TN-ReemNeural,قهوة,قَهْوَة
+TUNISIAN,food,food.juice,ar-TN-ReemNeural,عصير,عَصِيرْ
+TUNISIAN,food,food.water,ar-TN-ReemNeural,ماء,مَاءْ
+TUNISIAN,food,food.honey,ar-TN-ReemNeural,عسل,عَسَلْ
+TUNISIAN,food,food.biscuit,ar-TN-ReemNeural,بسكويت,بَسْكَوِيتْ
+TUNISIAN,food,food.salt,ar-TN-ReemNeural,ملح,مِلْحْ
+TUNISIAN,food,food.sugar,ar-TN-ReemNeural,سكر,سُكَّرْ
+TUNISIAN,home,home.bed,ar-TN-ReemNeural,سرير,سَرِيرْ
+TUNISIAN,home,home.pillow,ar-TN-ReemNeural,مخدة,مِخَدَّة
+TUNISIAN,home,home.blanket,ar-TN-ReemNeural,فراشية,فْرَاشِيَّة
+TUNISIAN,home,home.table,ar-TN-ReemNeural,طاولة,طَاوِلَة
+TUNISIAN,home,home.chair,ar-TN-ReemNeural,كرسي,كُرْسِي
+TUNISIAN,home,home.sofa,ar-TN-ReemNeural,فوتاي,فُوتَايْ
+TUNISIAN,home,home.door,ar-TN-ReemNeural,باب,بَابْ
+TUNISIAN,home,home.window,ar-TN-ReemNeural,شباك,شُبَّاكْ
+TUNISIAN,home,home.television,ar-TN-ReemNeural,تلفزيون,تِلِفِزْيُونْ
+TUNISIAN,home,home.fridge,ar-TN-ReemNeural,ثلاجة,ثَلَّاجَة
+TUNISIAN,home,home.washing_machine,ar-TN-ReemNeural,غسالة,غَسَّالَة
+TUNISIAN,home,home.stove,ar-TN-ReemNeural,غاز,غَازْ
+TUNISIAN,home,home.oven,ar-TN-ReemNeural,فرن,فُرْنْ
+TUNISIAN,home,home.air_conditioner,ar-TN-ReemNeural,مكيف,مُكَيِّفْ
+TUNISIAN,home,home.fan,ar-TN-ReemNeural,مروحة,مَرْوَحَة
+TUNISIAN,home,home.wardrobe,ar-TN-ReemNeural,مريو,مَرْيُو
+TUNISIAN,home,home.key,ar-TN-ReemNeural,مفتاح,مِفْتَاحْ
+TUNISIAN,home,home.clock,ar-TN-ReemNeural,ساعة,سَاعَة
+TUNISIAN,home,home.carpet,ar-TN-ReemNeural,زربية,زَرْبِيَّة
+TUNISIAN,home,home.kitchen,ar-TN-ReemNeural,كوجينة,كُوجِينَة
+TUNISIAN,home,home.cup,ar-TN-ReemNeural,كاس,كَاسْ
+TUNISIAN,home,home.tray,ar-TN-ReemNeural,صينية,صِينِيَّة
+TUNISIAN,home,home.spoon,ar-TN-ReemNeural,مغرفة,مَغْرْفَة
+TUNISIAN,home,home.fork,ar-TN-ReemNeural,فرشيطة,فَرْشِيطَة
+TUNISIAN,home,home.knife,ar-TN-ReemNeural,سكينة,سِكِّينَة
+TUNISIAN,home,home.teapot,ar-TN-ReemNeural,براد,بَرَّادْ
+TUNISIAN,home,home.pot,ar-TN-ReemNeural,طنجرة,طَنْجْرَة
+TUNISIAN,home,home.water_bottle,ar-TN-ReemNeural,دبوزة ماء,دَبُّوزِة مَاءْ
+TUNISIAN,clothing,clothing.tshirt,ar-TN-ReemNeural,تيشيرت,تِيشِيرْتْ
+TUNISIAN,clothing,clothing.shirt,ar-TN-ReemNeural,قميص,قَمِيصْ
+TUNISIAN,clothing,clothing.jacket,ar-TN-ReemNeural,فيستة,فِيسْتَة
+TUNISIAN,clothing,clothing.shorts,ar-TN-ReemNeural,شورت,شُورْتْ
+TUNISIAN,clothing,clothing.blouse,ar-TN-ReemNeural,بلوزة,بْلُوزَة
+TUNISIAN,clothing,clothing.trousers,ar-TN-ReemNeural,سروال,سِرْوَالْ
+TUNISIAN,clothing,clothing.dress,ar-TN-ReemNeural,فستان,فُسْتَانْ
+TUNISIAN,clothing,clothing.robe,ar-TN-ReemNeural,روب,رُوبْ
+TUNISIAN,clothing,clothing.abaya,ar-TN-ReemNeural,عباية,عَبَايَة
+TUNISIAN,clothing,clothing.hijab,ar-TN-ReemNeural,حجاب,حِجَابْ
+TUNISIAN,clothing,clothing.scarf,ar-TN-ReemNeural,وشاح,وِشَاحْ
+TUNISIAN,clothing,clothing.shoes,ar-TN-ReemNeural,سباط,سْبَاطْ
+TUNISIAN,clothing,clothing.socks,ar-TN-ReemNeural,كلسيطة,كَلْسِيطَة
+TUNISIAN,clothing,clothing.coat,ar-TN-ReemNeural,مانتو,مَانْتُو
+TUNISIAN,clothing,clothing.glasses,ar-TN-ReemNeural,نظارات,نَظَّارَاتْ
+TUNISIAN,clothing,clothing.cap,ar-TN-ReemNeural,كاسكيطة,كَاسْكِيطَة
+TUNISIAN,clothing,clothing.watch,ar-TN-ReemNeural,ساعة يد,سَاعِة يَدّ
+TUNISIAN,clothing,clothing.bag,ar-TN-ReemNeural,صاك,صَاكْ
+TUNISIAN,clothing,clothing.sandals,ar-TN-ReemNeural,صندل,صَنْدَلْ
+TUNISIAN,clothing,clothing.high_heels,ar-TN-ReemNeural,سباط طالون,سْبَاطْ طَالُونْ
+TUNISIAN,clothing,clothing.pajamas,ar-TN-ReemNeural,بيجامة,بِيجَامَة
+TUNISIAN,clothing,clothing.belt,ar-TN-ReemNeural,سبتة,سِبْتَة
+TUNISIAN,clothing,clothing.ring,ar-TN-ReemNeural,خاتم,خَاتَمْ
+TUNISIAN,body,body.eye,ar-TN-ReemNeural,عين,عِينْ
+TUNISIAN,body,body.nose,ar-TN-ReemNeural,خشم,خَشِمْ
+TUNISIAN,body,body.mouth,ar-TN-ReemNeural,فم,فَمْ
+TUNISIAN,body,body.tongue,ar-TN-ReemNeural,لسان,لِسَانْ
+TUNISIAN,body,body.ear,ar-TN-ReemNeural,وذن,وِذِنْ
+TUNISIAN,body,body.hand,ar-TN-ReemNeural,يد,يَدْ
+TUNISIAN,body,body.leg,ar-TN-ReemNeural,ساق,سَاقْ
+TUNISIAN,body,body.head,ar-TN-ReemNeural,راس,رَاسْ
+TUNISIAN,body,body.hair,ar-TN-ReemNeural,شعر,شَعْرْ
+TUNISIAN,body,body.back,ar-TN-ReemNeural,ظهر,ظَهْرْ
+TUNISIAN,body,body.abdomen,ar-TN-ReemNeural,بطن,بَطْنْ
+TUNISIAN,body,body.knee,ar-TN-ReemNeural,ركبة,رُكْبَة
+TUNISIAN,body,body.finger,ar-TN-ReemNeural,صبع,صُبُعْ
+TUNISIAN,body,body.neck,ar-TN-ReemNeural,رقبة,رَڨْبَة
+TUNISIAN,body,body.chest,ar-TN-ReemNeural,صدر,صَدْرْ
+TUNISIAN,body,body.face,ar-TN-ReemNeural,وجه,وَجْهْ
+TUNISIAN,body,body.tooth,ar-TN-ReemNeural,سنة,سِنَّة
+TUNISIAN,body,body.heart,ar-TN-ReemNeural,قلب,قَلْبْ
+TUNISIAN,body,body.shoulder,ar-TN-ReemNeural,كتف,كِتْفْ
+TUNISIAN,action,action.eat,ar-TN-ReemNeural,ناكل,نَاكِلْ
+TUNISIAN,action,action.drink,ar-TN-ReemNeural,نشرب,نِشْرِبْ
+TUNISIAN,action,action.sleep,ar-TN-ReemNeural,نرقد,نُرْڨُدْ
+TUNISIAN,action,action.sit,ar-TN-ReemNeural,نقعد,نُڨْعُدْ
+TUNISIAN,action,action.walk,ar-TN-ReemNeural,نمشي,نِمْشِي
+TUNISIAN,action,action.stand,ar-TN-ReemNeural,نوقف,نُوقَفْ
+TUNISIAN,action,action.wash,ar-TN-ReemNeural,نغسل,نِغْسِلْ
+TUNISIAN,action,action.speak,ar-TN-ReemNeural,نحكي,نِحْكِي
+TUNISIAN,action,action.hear,ar-TN-ReemNeural,نسمع,نِسْمَعْ
+TUNISIAN,action,action.open,ar-TN-ReemNeural,نحل,نْحِلّ
+TUNISIAN,action,action.close,ar-TN-ReemNeural,نسكر,نْسَكِّرْ
+TUNISIAN,action,action.read,ar-TN-ReemNeural,نقرا,نَقْرَا
+TUNISIAN,action,action.laugh,ar-TN-ReemNeural,نضحك,نِضْحَكْ
+TUNISIAN,action,action.see,ar-TN-ReemNeural,نشوف,نْشُوفْ
+TUNISIAN,action,action.dress,ar-TN-ReemNeural,نلبس,نِلْبِسْ
+TUNISIAN,action,action.pray,ar-TN-ReemNeural,نصلي,نْصَلِّي
+TUNISIAN,animal,animal.cat,ar-TN-ReemNeural,قطوسة,ڨَطُّوسَة
+TUNISIAN,animal,animal.dog,ar-TN-ReemNeural,كلب,كَلْبْ
+TUNISIAN,animal,animal.sheep,ar-TN-ReemNeural,علوش,عَلُّوشْ
+TUNISIAN,animal,animal.horse,ar-TN-ReemNeural,حصان,حِصَانْ
+TUNISIAN,animal,animal.cow,ar-TN-ReemNeural,بقرة,بَڨْرَة
+TUNISIAN,animal,animal.sparrow,ar-TN-ReemNeural,عصفور,عُصْفُورْ
+TUNISIAN,animal,animal.pigeon,ar-TN-ReemNeural,حمامة,حْمَامَة
+TUNISIAN,animal,animal.chicken,ar-TN-ReemNeural,دجاجة,دْجَاجَة
+TUNISIAN,animal,animal.duck,ar-TN-ReemNeural,بطة,بَطَّة
+TUNISIAN,animal,animal.camel,ar-TN-ReemNeural,جمل,جَمَلْ
+TUNISIAN,animal,animal.rooster,ar-TN-ReemNeural,سردوك,سَرْدُوكْ
+TUNISIAN,animal,animal.rabbit,ar-TN-ReemNeural,أرنب,أَرْنَبْ
+TUNISIAN,transport,transport.car,ar-TN-ReemNeural,كرهبة,كَرْهَبَة
+TUNISIAN,transport,transport.taxi,ar-TN-ReemNeural,تاكسي,تَاكْسِي
+TUNISIAN,transport,transport.bus,ar-TN-ReemNeural,كار,كَارْ
+TUNISIAN,transport,transport.minibus,ar-TN-ReemNeural,لواج,لُوَاجْ
+TUNISIAN,transport,transport.bicycle,ar-TN-ReemNeural,بسكلات,بِسْكْلَاتْ
+TUNISIAN,transport,transport.motorcycle,ar-TN-ReemNeural,موتور,مُوتُورْ
+TUNISIAN,transport,transport.train,ar-TN-ReemNeural,تران,تْرَانْ
+TUNISIAN,transport,transport.airplane,ar-TN-ReemNeural,طيارة,طَيَّارَة
+TUNISIAN,transport,transport.helicopter,ar-TN-ReemNeural,هليكوبتر,هِلِيكُوبْتَرْ
+TUNISIAN,transport,transport.ship,ar-TN-ReemNeural,باطو,بَاطُو
+TUNISIAN,transport,transport.boat,ar-TN-ReemNeural,فلوكة,فْلُوكَة
+TUNISIAN,transport,transport.truck,ar-TN-ReemNeural,كاميون,كَامْيُونْ
+TUNISIAN,greeting,greeting.salam,ar-TN-ReemNeural,السلام عليكم,السَّلَامُ عَلَيْكُمْ
+TUNISIAN,greeting,greeting.reply,ar-TN-ReemNeural,وعليكم السلام,وَعَلَيْكُمُ السَّلَامْ
+TUNISIAN,greeting,greeting.hello,ar-TN-ReemNeural,عسلامة,عَسْلَامَة
+TUNISIAN,greeting,greeting.welcome,ar-TN-ReemNeural,مرحبا بيك,مَرْحَبَا بِيكْ
+TUNISIAN,greeting,greeting.how_are_you,ar-TN-ReemNeural,شنوة أحوالك؟,شْنُوَّة أَحْوَالَكْ؟
+TUNISIAN,greeting,greeting.fine,ar-TN-ReemNeural,الحمد لله,الْحَمْدُ لِلَّهْ
+TUNISIAN,greeting,greeting.good_morning,ar-TN-ReemNeural,صباح الخير,صَبَاحْ الْخِيرْ
+TUNISIAN,greeting,greeting.good_evening,ar-TN-ReemNeural,مسا الخير,مَسَا الْخِيرْ
+TUNISIAN,greeting,greeting.brighten,ar-TN-ReemNeural,نورت,نَوَّرْتْ
+TUNISIAN,greeting,greeting.good_health,ar-TN-ReemNeural,يعطيك الصحة,يَعْطِيكْ الصَّحَّة
+TUNISIAN,greeting,greeting.goodbye,ar-TN-ReemNeural,بالسلامة,بِالسَّلَامَة
+TUNISIAN,greeting,greeting.safe,ar-TN-ReemNeural,في أمان الله,فِي أَمَانِ اللَّهْ
+TUNISIAN,greeting,greeting.thanks,ar-TN-ReemNeural,شكراً ليك,شُكْرًا لِيكْ
+TUNISIAN,greeting,greeting.bless,ar-TN-ReemNeural,ربي يبارك فيك,رَبِّي يْبَارِك فِيكْ
+MOROCCAN,family,family.father,ar-MA-MounaNeural,بّا,بَّا
+MOROCCAN,family,family.mother,ar-MA-MounaNeural,مّي,مِّي
+MOROCCAN,family,family.husband,ar-MA-MounaNeural,راجلي,رَاجْلِي
+MOROCCAN,family,family.wife,ar-MA-MounaNeural,مرتي,مَرْتِي
+MOROCCAN,family,family.son,ar-MA-MounaNeural,ولدي,وَلْدِي
+MOROCCAN,family,family.daughter,ar-MA-MounaNeural,بنتي,بَنْتِي
+MOROCCAN,family,family.brother,ar-MA-MounaNeural,خويا,خُويَا
+MOROCCAN,family,family.sister,ar-MA-MounaNeural,أختي,أُخْتِي
+MOROCCAN,family,family.paternal_uncle,ar-MA-MounaNeural,عمي,عَمِّي
+MOROCCAN,family,family.paternal_aunt,ar-MA-MounaNeural,عمتي,عَمْتِي
+MOROCCAN,family,family.maternal_uncle,ar-MA-MounaNeural,خالي,خَالِي
+MOROCCAN,family,family.maternal_aunt,ar-MA-MounaNeural,خالتي,خَالْتِي
+MOROCCAN,family,family.grandfather,ar-MA-MounaNeural,جدي,جَدِّي
+MOROCCAN,family,family.grandmother,ar-MA-MounaNeural,جدتي,جَدَّتِي
+MOROCCAN,family,family.grandson,ar-MA-MounaNeural,حفيدي,حَفِيدِي
+MOROCCAN,family,family.granddaughter,ar-MA-MounaNeural,حفيدتي,حَفِيدْتِي
+MOROCCAN,family,family.paternal_uncle_son,ar-MA-MounaNeural,ولد عمي,وَلْدْ عَمِّي
+MOROCCAN,family,family.paternal_uncle_daughter,ar-MA-MounaNeural,بنت عمي,بِنْتْ عَمِّي
+MOROCCAN,family,family.paternal_aunt_son,ar-MA-MounaNeural,ولد عمتي,وَلْدْ عَمْتِي
+MOROCCAN,family,family.paternal_aunt_daughter,ar-MA-MounaNeural,بنت عمتي,بِنْتْ عَمْتِي
+MOROCCAN,family,family.maternal_uncle_son,ar-MA-MounaNeural,ولد خالي,وَلْدْ خَالِي
+MOROCCAN,family,family.maternal_uncle_daughter,ar-MA-MounaNeural,بنت خالي,بِنْتْ خَالِي
+MOROCCAN,family,family.maternal_aunt_son,ar-MA-MounaNeural,ولد خالتي,وَلْدْ خَالْتِي
+MOROCCAN,family,family.maternal_aunt_daughter,ar-MA-MounaNeural,بنت خالتي,بِنْتْ خَالْتِي
+MOROCCAN,family,family.brother_son,ar-MA-MounaNeural,ولد خويا,وَلْدْ خُويَا
+MOROCCAN,family,family.brother_daughter,ar-MA-MounaNeural,بنت خويا,بِنْتْ خُويَا
+MOROCCAN,family,family.sister_son,ar-MA-MounaNeural,ولد أختي,وَلْدْ أُخْتِي
+MOROCCAN,family,family.sister_daughter,ar-MA-MounaNeural,بنت أختي,بِنْتْ أُخْتِي
+MOROCCAN,family,family.husband_father,ar-MA-MounaNeural,بو راجلي,بُو رَاجْلِي
+MOROCCAN,family,family.husband_mother,ar-MA-MounaNeural,أم راجلي,أُمْ رَاجْلِي
+MOROCCAN,family,family.wife_father,ar-MA-MounaNeural,بو مرتي,بُو مَرْتِي
+MOROCCAN,family,family.wife_mother,ar-MA-MounaNeural,أم مرتي,أُمْ مَرْتِي
+MOROCCAN,family,family.husband_brother,ar-MA-MounaNeural,خو راجلي,خُو رَاجْلِي
+MOROCCAN,family,family.husband_sister,ar-MA-MounaNeural,أخت راجلي,أُخْتْ رَاجْلِي
+MOROCCAN,family,family.wife_brother,ar-MA-MounaNeural,خو مرتي,خُو مَرْتِي
+MOROCCAN,family,family.wife_sister,ar-MA-MounaNeural,أخت مرتي,أُخْتْ مَرْتِي
+MOROCCAN,family,family.sister_husband,ar-MA-MounaNeural,راجل أختي,رَاجِلْ أُخْتِي
+MOROCCAN,family,family.brother_wife,ar-MA-MounaNeural,مرت خويا,مَرْتْ خُويَا
+MOROCCAN,family,family.daughter_husband,ar-MA-MounaNeural,راجل بنتي,رَاجِلْ بِنْتِي
+MOROCCAN,family,family.son_wife,ar-MA-MounaNeural,مرت ولدي,مَرْتْ وَلْدِي
+MOROCCAN,family,family.male_in_law,ar-MA-MounaNeural,نسيبي,نْسِيبِي
+MOROCCAN,family,family.female_in_law,ar-MA-MounaNeural,نسيبتي,نْسِيبْتِي
+MOROCCAN,family,family.male_relative,ar-MA-MounaNeural,قريبي,قْرِيبِي
+MOROCCAN,family,family.female_relative,ar-MA-MounaNeural,قريبتي,قْرِيبْتِي
+MOROCCAN,request,request.water,ar-MA-MounaNeural,بغيت الما,بْغِيتْ الْمَا
+MOROCCAN,request,request.tea,ar-MA-MounaNeural,بغيت أتاي,بْغِيتْ أَتَايْ
+MOROCCAN,request,request.rest,ar-MA-MounaNeural,بغيت نرتاح,بْغِيتْ نِرْتَاحْ
+MOROCCAN,request,request.medicine,ar-MA-MounaNeural,بغيت الدوا ديالي,بْغِيتْ الدّوَا دْيَالِي
+MOROCCAN,request,request.toilet,ar-MA-MounaNeural,بغيت نمشي للحمام,بْغِيتْ نْمْشِي لِلْحَمَّامْ
+MOROCCAN,request,request.adjust_pillow,ar-MA-MounaNeural,صوّب ليا المخدة,صَوَّبْ لِيَّا الْمْخَدَّة
+MOROCCAN,request,request.headache,ar-MA-MounaNeural,راسي كيوجعني,رَاسِي كَيُوجَعْنِي
+MOROCCAN,request,request.cold,ar-MA-MounaNeural,حسّيت بالبرد,حَسِّيتْ بِالْبَرْدْ
+MOROCCAN,dish,dish.moroccan.prune_tajine,ar-MA-MounaNeural,طاجين بالبرقوق,طَاجِينْ بِالْبَرْقُوقْ
+MOROCCAN,dish,dish.moroccan.couscous,ar-MA-MounaNeural,كسكسو سبع خضار,كُسْكْسُو سْبَعْ خْضَارْ
+MOROCCAN,dish,dish.moroccan.pastilla,ar-MA-MounaNeural,بسطيلة بالحوت,بَسْطِيلَة بِالْحُوتْ
+MOROCCAN,dish,dish.moroccan.harira,ar-MA-MounaNeural,حريرة مغربية,حْرِيرَة مَغْرِبِيَّة
+MOROCCAN,dish,dish.moroccan.tangia,ar-MA-MounaNeural,طنجية مراكشية,طَنْجِيَّة مَرَّاكْشِيَّة
+MOROCCAN,dish,dish.moroccan.rfissa,ar-MA-MounaNeural,رفيسة بالدجاج,رْفِيسَة بِالدّجَاجْ
+MOROCCAN,dish,dish.moroccan.zaalouk,ar-MA-MounaNeural,زعلوك,زَعْلُوكْ
+MOROCCAN,dish,dish.moroccan.taktouka,ar-MA-MounaNeural,تكتوكة,تَكْتُوكَة
+MOROCCAN,dish,dish.moroccan.kefta_tajine,ar-MA-MounaNeural,طاجين كفتة بالبيض,طَاجِينْ كُفْتَة بِالْبِيضْ
+MOROCCAN,dish,dish.moroccan.skewers,ar-MA-MounaNeural,قطبان,گُطْبَانْ
+MOROCCAN,dish,dish.moroccan.msemen,ar-MA-MounaNeural,مسمن,مْسَمَّنْ
+MOROCCAN,dish,dish.moroccan.baghrir,ar-MA-MounaNeural,بغرير,بَغْرِيرْ
+MOROCCAN,dish,dish.moroccan.seffa,ar-MA-MounaNeural,سفة مدفونة,سَفَّة مَدْفُونَة
+MOROCCAN,dish,dish.moroccan.chebakia,ar-MA-MounaNeural,شباكية,شَبَّاكِيَّة
+MOROCCAN,dish,dish.moroccan.sellou,ar-MA-MounaNeural,سلو,سَلُّو
+MOROCCAN,routine,routine.call_to_prayer,ar-MA-MounaNeural,أذان,أَذَانْ
+MOROCCAN,routine,routine.ablution,ar-MA-MounaNeural,وضوء,وُضُوءْ
+MOROCCAN,routine,routine.prayer,ar-MA-MounaNeural,صلاة,صْلَاة
+MOROCCAN,routine,routine.prayer_rug,ar-MA-MounaNeural,سجادة صلاة,سَجَّادِة صْلَاة
+MOROCCAN,routine,routine.prayer_beads,ar-MA-MounaNeural,مسبحة,مِسْبَحَة
+MOROCCAN,routine,routine.quran,ar-MA-MounaNeural,مصحف,مُصْحَفْ
+MOROCCAN,routine,routine.evening_coffee,ar-MA-MounaNeural,قهوة العشية,قَهْوِة الْعَشِيَّة
+MOROCCAN,routine,routine.sleep,ar-MA-MounaNeural,نعاس,نْعَاسْ
+MOROCCAN,routine,routine.rest,ar-MA-MounaNeural,راحة,رَاحَة
+MOROCCAN,routine,routine.walk,ar-MA-MounaNeural,مشي,مْشِي
+MOROCCAN,vegetable,vegetable.tomato,ar-MA-MounaNeural,مطيشة,مَطِيشَة
+MOROCCAN,vegetable,vegetable.potato,ar-MA-MounaNeural,بطاطا,بَطَاطَا
+MOROCCAN,vegetable,vegetable.onion,ar-MA-MounaNeural,بصل,بَصَلْ
+MOROCCAN,vegetable,vegetable.garlic,ar-MA-MounaNeural,ثوم,تُومْ
+MOROCCAN,vegetable,vegetable.carrot,ar-MA-MounaNeural,خيزو,خِيزُّو
+MOROCCAN,vegetable,vegetable.cucumber,ar-MA-MounaNeural,خيار,خِيَارْ
+MOROCCAN,vegetable,vegetable.pepper,ar-MA-MounaNeural,فلفل,فِلْفِلْ
+MOROCCAN,vegetable,vegetable.eggplant,ar-MA-MounaNeural,دنجال,دَنْجَالْ
+MOROCCAN,vegetable,vegetable.zucchini,ar-MA-MounaNeural,كوسة,كُوسَة
+MOROCCAN,vegetable,vegetable.lettuce,ar-MA-MounaNeural,خس,خَسّ
+MOROCCAN,vegetable,vegetable.parsley,ar-MA-MounaNeural,معدنوس,مَعْدَنُوسْ
+MOROCCAN,vegetable,vegetable.coriander,ar-MA-MounaNeural,قزبور,گَزْبُورْ
+MOROCCAN,vegetable,vegetable.lemon,ar-MA-MounaNeural,حامض,حَامِضْ
+MOROCCAN,vegetable,vegetable.peas,ar-MA-MounaNeural,جلبانة,جِلْبَانَة
+MOROCCAN,vegetable,vegetable.green_beans,ar-MA-MounaNeural,لوبيا خضرا,لُوبْيَا خَضْرَا
+MOROCCAN,vegetable,vegetable.spinach,ar-MA-MounaNeural,سبانخ,سَبَانِخْ
+MOROCCAN,vegetable,vegetable.cauliflower,ar-MA-MounaNeural,شيفلور,شِيفْلُورْ
+MOROCCAN,vegetable,vegetable.broccoli,ar-MA-MounaNeural,بروكلي,بُرُوكْلِي
+MOROCCAN,vegetable,vegetable.radish,ar-MA-MounaNeural,فجل,فِجِلْ
+MOROCCAN,vegetable,vegetable.pumpkin,ar-MA-MounaNeural,قرعة حمرا,گَرْعَة حَمْرَا
+MOROCCAN,vegetable,vegetable.mint,ar-MA-MounaNeural,نعناع,نَعْنَاعْ
+MOROCCAN,vegetable,vegetable.corn,ar-MA-MounaNeural,ذرة,ذُرَّة
+MOROCCAN,fruit,fruit.apple,ar-MA-MounaNeural,تفاح,تُفَّاحْ
+MOROCCAN,fruit,fruit.banana,ar-MA-MounaNeural,بنان,بَنَانْ
+MOROCCAN,fruit,fruit.orange,ar-MA-MounaNeural,برتقال,بُرْتُقَالْ
+MOROCCAN,fruit,fruit.grapes,ar-MA-MounaNeural,عنب,عِنَبْ
+MOROCCAN,fruit,fruit.strawberry,ar-MA-MounaNeural,فراولة,فَرَاوْلَة
+MOROCCAN,fruit,fruit.mango,ar-MA-MounaNeural,مانجو,مَانْجُو
+MOROCCAN,fruit,fruit.watermelon,ar-MA-MounaNeural,دلاّح,دَلَّاحْ
+MOROCCAN,fruit,fruit.melon,ar-MA-MounaNeural,شمام,شَمَّامْ
+MOROCCAN,fruit,fruit.peach,ar-MA-MounaNeural,خوخ,خُوخْ
+MOROCCAN,fruit,fruit.apricot,ar-MA-MounaNeural,مشمش,مِشْمِشْ
+MOROCCAN,fruit,fruit.pear,ar-MA-MounaNeural,إجاص,إِجَّاصْ
+MOROCCAN,fruit,fruit.pomegranate,ar-MA-MounaNeural,رمان,رُمَّانْ
+MOROCCAN,fruit,fruit.figs,ar-MA-MounaNeural,كرموس,كَرْمُوسْ
+MOROCCAN,fruit,fruit.dates,ar-MA-MounaNeural,تمر,تَمْرْ
+MOROCCAN,fruit,fruit.pineapple,ar-MA-MounaNeural,أناناس,أَنَانَاسْ
+MOROCCAN,fruit,fruit.kiwi,ar-MA-MounaNeural,كيوي,كِيوِي
+MOROCCAN,fruit,fruit.cherry,ar-MA-MounaNeural,كرز,كَرَزْ
+MOROCCAN,fruit,fruit.berries,ar-MA-MounaNeural,توت,تُوتْ
+MOROCCAN,fruit,fruit.mandarin,ar-MA-MounaNeural,مندرين,مَنْدَرِينْ
+MOROCCAN,fruit,fruit.avocado,ar-MA-MounaNeural,أفوكادو,أَفُوكَادُو
+MOROCCAN,fruit,fruit.coconut,ar-MA-MounaNeural,جوز الهند,جُوزْ الْهِنْدْ
+MOROCCAN,food,food.bread,ar-MA-MounaNeural,خبز,خُبْزْ
+MOROCCAN,food,food.milk,ar-MA-MounaNeural,حليب,حَلِيبْ
+MOROCCAN,food,food.eggs,ar-MA-MounaNeural,بيض,بِيضْ
+MOROCCAN,food,food.cheese,ar-MA-MounaNeural,فرماج,فُرْمَاجْ
+MOROCCAN,food,food.yogurt,ar-MA-MounaNeural,ياغورت,يَاغُورْتْ
+MOROCCAN,food,food.butter,ar-MA-MounaNeural,زبدة,زُبْدَة
+MOROCCAN,food,food.rice,ar-MA-MounaNeural,روز,رُوزْ
+MOROCCAN,food,food.pasta,ar-MA-MounaNeural,مقرونية,مَگْرُونِيَّة
+MOROCCAN,food,food.soup,ar-MA-MounaNeural,حريرة,حْرِيرَة
+MOROCCAN,food,food.meat,ar-MA-MounaNeural,لحم,لَحْمْ
+MOROCCAN,food,food.chicken,ar-MA-MounaNeural,دجاج,دْجَاجْ
+MOROCCAN,food,food.fish,ar-MA-MounaNeural,حوت,حُوتْ
+MOROCCAN,food,food.olives,ar-MA-MounaNeural,زيتون,زِيتُونْ
+MOROCCAN,food,food.oil,ar-MA-MounaNeural,زيت,زِيتْ
+MOROCCAN,food,food.tea,ar-MA-MounaNeural,أتاي,أَتَايْ
+MOROCCAN,food,food.coffee,ar-MA-MounaNeural,قهوة,قَهْوَة
+MOROCCAN,food,food.juice,ar-MA-MounaNeural,عصير,عَصِيرْ
+MOROCCAN,food,food.water,ar-MA-MounaNeural,ماء,مَاءْ
+MOROCCAN,food,food.honey,ar-MA-MounaNeural,عسل,عَسَلْ
+MOROCCAN,food,food.biscuit,ar-MA-MounaNeural,بسكويت,بَسْكَوِيتْ
+MOROCCAN,food,food.salt,ar-MA-MounaNeural,ملح,مِلْحْ
+MOROCCAN,food,food.sugar,ar-MA-MounaNeural,سكر,سُكَّرْ
+MOROCCAN,home,home.bed,ar-MA-MounaNeural,سرير,سَرِيرْ
+MOROCCAN,home,home.pillow,ar-MA-MounaNeural,مخدة,مْخَدَّة
+MOROCCAN,home,home.blanket,ar-MA-MounaNeural,مانطة,مَانْطَة
+MOROCCAN,home,home.table,ar-MA-MounaNeural,طاولة,طَاوِلَة
+MOROCCAN,home,home.chair,ar-MA-MounaNeural,كرسي,كُرْسِي
+MOROCCAN,home,home.sofa,ar-MA-MounaNeural,سداري,سَدَّارِي
+MOROCCAN,home,home.door,ar-MA-MounaNeural,باب,بَابْ
+MOROCCAN,home,home.window,ar-MA-MounaNeural,شرجم,شَرْجَمْ
+MOROCCAN,home,home.television,ar-MA-MounaNeural,تلفزيون,تِلِفِزْيُونْ
+MOROCCAN,home,home.fridge,ar-MA-MounaNeural,ثلاجة,ثَلَّاجَة
+MOROCCAN,home,home.washing_machine,ar-MA-MounaNeural,غسالة,غَسَّالَة
+MOROCCAN,home,home.stove,ar-MA-MounaNeural,بوطة,بُوطَة
+MOROCCAN,home,home.oven,ar-MA-MounaNeural,فران,فَرَّانْ
+MOROCCAN,home,home.air_conditioner,ar-MA-MounaNeural,مكيف,مُكَيِّفْ
+MOROCCAN,home,home.fan,ar-MA-MounaNeural,مروحة,مَرْوَحَة
+MOROCCAN,home,home.wardrobe,ar-MA-MounaNeural,خزانة,خْزَانَة
+MOROCCAN,home,home.key,ar-MA-MounaNeural,مفتاح,مِفْتَاحْ
+MOROCCAN,home,home.clock,ar-MA-MounaNeural,ساعة,سَاعَة
+MOROCCAN,home,home.carpet,ar-MA-MounaNeural,زربية,زَرْبِيَّة
+MOROCCAN,home,home.kitchen,ar-MA-MounaNeural,كوزينة,كُوزِينَة
+MOROCCAN,home,home.cup,ar-MA-MounaNeural,كاس,كَاسْ
+MOROCCAN,home,home.tray,ar-MA-MounaNeural,صينية,صِينِيَّة
+MOROCCAN,home,home.spoon,ar-MA-MounaNeural,معلقة,مْعِلْقَة
+MOROCCAN,home,home.fork,ar-MA-MounaNeural,فرشيطة,فَرْشِيطَة
+MOROCCAN,home,home.knife,ar-MA-MounaNeural,موس,مُوسْ
+MOROCCAN,home,home.teapot,ar-MA-MounaNeural,براد,بَرَّادْ
+MOROCCAN,home,home.pot,ar-MA-MounaNeural,طنجرة,طَنْجْرَة
+MOROCCAN,home,home.water_bottle,ar-MA-MounaNeural,قرعة ماء,گَرْعِة مَاءْ
+MOROCCAN,clothing,clothing.tshirt,ar-MA-MounaNeural,تيشيرت,تِيشِيرْتْ
+MOROCCAN,clothing,clothing.shirt,ar-MA-MounaNeural,قميص,قَمِيصْ
+MOROCCAN,clothing,clothing.jacket,ar-MA-MounaNeural,جاكيطة,جَاكِيطَة
+MOROCCAN,clothing,clothing.shorts,ar-MA-MounaNeural,شورت,شُورْتْ
+MOROCCAN,clothing,clothing.blouse,ar-MA-MounaNeural,بلوزة,بْلُوزَة
+MOROCCAN,clothing,clothing.trousers,ar-MA-MounaNeural,سروال,سِرْوَالْ
+MOROCCAN,clothing,clothing.dress,ar-MA-MounaNeural,فستان,فُسْتَانْ
+MOROCCAN,clothing,clothing.robe,ar-MA-MounaNeural,روب,رُوبْ
+MOROCCAN,clothing,clothing.abaya,ar-MA-MounaNeural,عباية,عَبَايَة
+MOROCCAN,clothing,clothing.hijab,ar-MA-MounaNeural,حجاب,حِجَابْ
+MOROCCAN,clothing,clothing.scarf,ar-MA-MounaNeural,وشاح,وِشَاحْ
+MOROCCAN,clothing,clothing.shoes,ar-MA-MounaNeural,صباط,صْبَاطْ
+MOROCCAN,clothing,clothing.socks,ar-MA-MounaNeural,تقاشر,تْگَاشِرْ
+MOROCCAN,clothing,clothing.coat,ar-MA-MounaNeural,مانتو,مَانْتُو
+MOROCCAN,clothing,clothing.glasses,ar-MA-MounaNeural,نضاضر,نْضَاضِرْ
+MOROCCAN,clothing,clothing.cap,ar-MA-MounaNeural,طاقية,طَاقِيَّة
+MOROCCAN,clothing,clothing.watch,ar-MA-MounaNeural,ساعة يد,سَاعِة يَدّ
+MOROCCAN,clothing,clothing.bag,ar-MA-MounaNeural,صاك,صَاكْ
+MOROCCAN,clothing,clothing.sandals,ar-MA-MounaNeural,صندل,صَنْدَلْ
+MOROCCAN,clothing,clothing.high_heels,ar-MA-MounaNeural,صباط طالون,صْبَاطْ طَالُونْ
+MOROCCAN,clothing,clothing.pajamas,ar-MA-MounaNeural,بيجامة,بِيجَامَة
+MOROCCAN,clothing,clothing.belt,ar-MA-MounaNeural,سمطة,سَمْطَة
+MOROCCAN,clothing,clothing.ring,ar-MA-MounaNeural,خاتم,خَاتَمْ
+MOROCCAN,body,body.eye,ar-MA-MounaNeural,عين,عِينْ
+MOROCCAN,body,body.nose,ar-MA-MounaNeural,نيف,نِيفْ
+MOROCCAN,body,body.mouth,ar-MA-MounaNeural,فم,فَمْ
+MOROCCAN,body,body.tongue,ar-MA-MounaNeural,لسان,لِسَانْ
+MOROCCAN,body,body.ear,ar-MA-MounaNeural,وذن,وِذِنْ
+MOROCCAN,body,body.hand,ar-MA-MounaNeural,يد,يَدْ
+MOROCCAN,body,body.leg,ar-MA-MounaNeural,رجل,رِجْلْ
+MOROCCAN,body,body.head,ar-MA-MounaNeural,راس,رَاسْ
+MOROCCAN,body,body.hair,ar-MA-MounaNeural,شعر,شَعْرْ
+MOROCCAN,body,body.back,ar-MA-MounaNeural,ظهر,ظَهْرْ
+MOROCCAN,body,body.abdomen,ar-MA-MounaNeural,بطن,بَطْنْ
+MOROCCAN,body,body.knee,ar-MA-MounaNeural,ركبة,رُكْبَة
+MOROCCAN,body,body.finger,ar-MA-MounaNeural,صبع,صُبَعْ
+MOROCCAN,body,body.neck,ar-MA-MounaNeural,رقبة,رَگْبَة
+MOROCCAN,body,body.chest,ar-MA-MounaNeural,صدر,صَدْرْ
+MOROCCAN,body,body.face,ar-MA-MounaNeural,وجه,وَجْهْ
+MOROCCAN,body,body.tooth,ar-MA-MounaNeural,سن,سِنّ
+MOROCCAN,body,body.heart,ar-MA-MounaNeural,قلب,قَلْبْ
+MOROCCAN,body,body.shoulder,ar-MA-MounaNeural,كتف,كِتْفْ
+MOROCCAN,action,action.eat,ar-MA-MounaNeural,ناكل,نَاكُلْ
+MOROCCAN,action,action.drink,ar-MA-MounaNeural,نشرب,نِشْرَبْ
+MOROCCAN,action,action.sleep,ar-MA-MounaNeural,ننعس,نِنْعَسْ
+MOROCCAN,action,action.sit,ar-MA-MounaNeural,نجلس,نِجْلِسْ
+MOROCCAN,action,action.walk,ar-MA-MounaNeural,نمشي,نْمْشِي
+MOROCCAN,action,action.stand,ar-MA-MounaNeural,نوقف,نُوقَفْ
+MOROCCAN,action,action.wash,ar-MA-MounaNeural,نغسل,نِغْسِلْ
+MOROCCAN,action,action.speak,ar-MA-MounaNeural,نهضر,نَهْضَرْ
+MOROCCAN,action,action.hear,ar-MA-MounaNeural,نسمع,نِسْمَعْ
+MOROCCAN,action,action.open,ar-MA-MounaNeural,نحل,نْحِلّ
+MOROCCAN,action,action.close,ar-MA-MounaNeural,نسد,نْسَدّ
+MOROCCAN,action,action.read,ar-MA-MounaNeural,نقرا,نَقْرَا
+MOROCCAN,action,action.laugh,ar-MA-MounaNeural,نضحك,نِضْحَكْ
+MOROCCAN,action,action.see,ar-MA-MounaNeural,نشوف,نْشُوفْ
+MOROCCAN,action,action.dress,ar-MA-MounaNeural,نلبس,نِلْبَسْ
+MOROCCAN,action,action.pray,ar-MA-MounaNeural,نصلي,نْصَلِّي
+MOROCCAN,animal,animal.cat,ar-MA-MounaNeural,مش,مُشّ
+MOROCCAN,animal,animal.dog,ar-MA-MounaNeural,كلب,كَلْبْ
+MOROCCAN,animal,animal.sheep,ar-MA-MounaNeural,حولي,حَوْلِي
+MOROCCAN,animal,animal.horse,ar-MA-MounaNeural,حصان,حِصَانْ
+MOROCCAN,animal,animal.cow,ar-MA-MounaNeural,بقرة,بَگْرَة
+MOROCCAN,animal,animal.sparrow,ar-MA-MounaNeural,عصفور,عُصْفُورْ
+MOROCCAN,animal,animal.pigeon,ar-MA-MounaNeural,حمامة,حْمَامَة
+MOROCCAN,animal,animal.chicken,ar-MA-MounaNeural,دجاجة,دْجَاجَة
+MOROCCAN,animal,animal.duck,ar-MA-MounaNeural,بطة,بَطَّة
+MOROCCAN,animal,animal.camel,ar-MA-MounaNeural,جمل,جَمَلْ
+MOROCCAN,animal,animal.rooster,ar-MA-MounaNeural,ديك,دِيكْ
+MOROCCAN,animal,animal.rabbit,ar-MA-MounaNeural,قنية,گْنِيَّة
+MOROCCAN,transport,transport.car,ar-MA-MounaNeural,طوموبيل,طُومُوبِيلْ
+MOROCCAN,transport,transport.taxi,ar-MA-MounaNeural,طاكسي,طَاكْسِي
+MOROCCAN,transport,transport.bus,ar-MA-MounaNeural,طوبيس,طُوبِيسْ
+MOROCCAN,transport,transport.minibus,ar-MA-MounaNeural,طوبيس صغير,طُوبِيسْ صْغِيرْ
+MOROCCAN,transport,transport.bicycle,ar-MA-MounaNeural,بيكالة,بِيكَالَة
+MOROCCAN,transport,transport.motorcycle,ar-MA-MounaNeural,موطور,مُوطُورْ
+MOROCCAN,transport,transport.train,ar-MA-MounaNeural,تران,تْرَانْ
+MOROCCAN,transport,transport.airplane,ar-MA-MounaNeural,طيارة,طَيَّارَة
+MOROCCAN,transport,transport.helicopter,ar-MA-MounaNeural,هليكوبتر,هِلِيكُوبْتَرْ
+MOROCCAN,transport,transport.ship,ar-MA-MounaNeural,باخرة,بَاخِرَة
+MOROCCAN,transport,transport.boat,ar-MA-MounaNeural,فلوكة,فْلُوكَة
+MOROCCAN,transport,transport.truck,ar-MA-MounaNeural,كاميو,كَامْيُو
+MOROCCAN,greeting,greeting.salam,ar-MA-MounaNeural,السلام عليكم,السَّلَامُ عَلَيْكُمْ
+MOROCCAN,greeting,greeting.reply,ar-MA-MounaNeural,وعليكم السلام,وَعَلَيْكُمُ السَّلَامْ
+MOROCCAN,greeting,greeting.hello,ar-MA-MounaNeural,مرحبا,مَرْحَبَا
+MOROCCAN,greeting,greeting.welcome,ar-MA-MounaNeural,مرحبا بيك,مَرْحَبَا بِيكْ
+MOROCCAN,greeting,greeting.how_are_you,ar-MA-MounaNeural,لاباس عليك؟,لَابَاسْ عَلِيكْ؟
+MOROCCAN,greeting,greeting.fine,ar-MA-MounaNeural,الحمد لله,الْحَمْدُ لِلَّهْ
+MOROCCAN,greeting,greeting.good_morning,ar-MA-MounaNeural,صباح الخير,صَبَاحْ الْخِيرْ
+MOROCCAN,greeting,greeting.good_evening,ar-MA-MounaNeural,مسا الخير,مَسَا الْخِيرْ
+MOROCCAN,greeting,greeting.brighten,ar-MA-MounaNeural,نورت,نَوَّرْتْ
+MOROCCAN,greeting,greeting.good_health,ar-MA-MounaNeural,يعطيك الصحة,يَعْطِيكْ الصَّحَّة
+MOROCCAN,greeting,greeting.goodbye,ar-MA-MounaNeural,بالسلامة,بِالسَّلَامَة
+MOROCCAN,greeting,greeting.safe,ar-MA-MounaNeural,في أمان الله,فِي أَمَانِ اللَّهْ
+MOROCCAN,greeting,greeting.thanks,ar-MA-MounaNeural,شكراً بزاف,شُكْرًا بِزَّافْ
+MOROCCAN,greeting,greeting.bless,ar-MA-MounaNeural,الله يبارك فيك,اللَّه يْبَارِك فِيكْ
+ALGERIAN,family,family.father,ar-DZ-AminaNeural,بابا,بَابَا
+ALGERIAN,family,family.mother,ar-DZ-AminaNeural,يما,يَمَّا
+ALGERIAN,family,family.husband,ar-DZ-AminaNeural,راجلي,رَاجْلِي
+ALGERIAN,family,family.wife,ar-DZ-AminaNeural,مرتي,مَرْتِي
+ALGERIAN,family,family.son,ar-DZ-AminaNeural,ولدي,وَلْدِي
+ALGERIAN,family,family.daughter,ar-DZ-AminaNeural,بنتي,بَنْتِي
+ALGERIAN,family,family.brother,ar-DZ-AminaNeural,خويا,خُويَا
+ALGERIAN,family,family.sister,ar-DZ-AminaNeural,أختي,أُخْتِي
+ALGERIAN,family,family.paternal_uncle,ar-DZ-AminaNeural,عمي,عَمِّي
+ALGERIAN,family,family.paternal_aunt,ar-DZ-AminaNeural,عمتي,عَمْتِي
+ALGERIAN,family,family.maternal_uncle,ar-DZ-AminaNeural,خالي,خَالِي
+ALGERIAN,family,family.maternal_aunt,ar-DZ-AminaNeural,خالتي,خَالْتِي
+ALGERIAN,family,family.grandfather,ar-DZ-AminaNeural,جدي,جَدِّي
+ALGERIAN,family,family.grandmother,ar-DZ-AminaNeural,جدتي,جَدَّتِي
+ALGERIAN,family,family.grandson,ar-DZ-AminaNeural,حفيدي,حَفِيدِي
+ALGERIAN,family,family.granddaughter,ar-DZ-AminaNeural,حفيدتي,حَفِيدْتِي
+ALGERIAN,family,family.paternal_uncle_son,ar-DZ-AminaNeural,ولد عمي,وَلْدْ عَمِّي
+ALGERIAN,family,family.paternal_uncle_daughter,ar-DZ-AminaNeural,بنت عمي,بِنْتْ عَمِّي
+ALGERIAN,family,family.paternal_aunt_son,ar-DZ-AminaNeural,ولد عمتي,وَلْدْ عَمْتِي
+ALGERIAN,family,family.paternal_aunt_daughter,ar-DZ-AminaNeural,بنت عمتي,بِنْتْ عَمْتِي
+ALGERIAN,family,family.maternal_uncle_son,ar-DZ-AminaNeural,ولد خالي,وَلْدْ خَالِي
+ALGERIAN,family,family.maternal_uncle_daughter,ar-DZ-AminaNeural,بنت خالي,بِنْتْ خَالِي
+ALGERIAN,family,family.maternal_aunt_son,ar-DZ-AminaNeural,ولد خالتي,وَلْدْ خَالْتِي
+ALGERIAN,family,family.maternal_aunt_daughter,ar-DZ-AminaNeural,بنت خالتي,بِنْتْ خَالْتِي
+ALGERIAN,family,family.brother_son,ar-DZ-AminaNeural,ولد خويا,وَلْدْ خُويَا
+ALGERIAN,family,family.brother_daughter,ar-DZ-AminaNeural,بنت خويا,بِنْتْ خُويَا
+ALGERIAN,family,family.sister_son,ar-DZ-AminaNeural,ولد أختي,وَلْدْ أُخْتِي
+ALGERIAN,family,family.sister_daughter,ar-DZ-AminaNeural,بنت أختي,بِنْتْ أُخْتِي
+ALGERIAN,family,family.husband_father,ar-DZ-AminaNeural,بو راجلي,بُو رَاجْلِي
+ALGERIAN,family,family.husband_mother,ar-DZ-AminaNeural,أم راجلي,أُمْ رَاجْلِي
+ALGERIAN,family,family.wife_father,ar-DZ-AminaNeural,بو مرتي,بُو مَرْتِي
+ALGERIAN,family,family.wife_mother,ar-DZ-AminaNeural,أم مرتي,أُمْ مَرْتِي
+ALGERIAN,family,family.husband_brother,ar-DZ-AminaNeural,خو راجلي,خُو رَاجْلِي
+ALGERIAN,family,family.husband_sister,ar-DZ-AminaNeural,أخت راجلي,أُخْتْ رَاجْلِي
+ALGERIAN,family,family.wife_brother,ar-DZ-AminaNeural,خو مرتي,خُو مَرْتِي
+ALGERIAN,family,family.wife_sister,ar-DZ-AminaNeural,أخت مرتي,أُخْتْ مَرْتِي
+ALGERIAN,family,family.sister_husband,ar-DZ-AminaNeural,راجل أختي,رَاجِلْ أُخْتِي
+ALGERIAN,family,family.brother_wife,ar-DZ-AminaNeural,مرت خويا,مَرْتْ خُويَا
+ALGERIAN,family,family.daughter_husband,ar-DZ-AminaNeural,راجل بنتي,رَاجِلْ بِنْتِي
+ALGERIAN,family,family.son_wife,ar-DZ-AminaNeural,مرت ولدي,مَرْتْ وَلْدِي
+ALGERIAN,family,family.male_in_law,ar-DZ-AminaNeural,نسيبي,نْسِيبِي
+ALGERIAN,family,family.female_in_law,ar-DZ-AminaNeural,نسيبتي,نْسِيبْتِي
+ALGERIAN,family,family.male_relative,ar-DZ-AminaNeural,قريبي,قْرِيبِي
+ALGERIAN,family,family.female_relative,ar-DZ-AminaNeural,قريبتي,قْرِيبْتِي
+ALGERIAN,request,request.water,ar-DZ-AminaNeural,نحب نشرب الما,نْحَبّ نَشْرَبْ الْمَا
+ALGERIAN,request,request.tea,ar-DZ-AminaNeural,نحب أتاي,نْحَبّ أَتَايْ
+ALGERIAN,request,request.rest,ar-DZ-AminaNeural,نحب نرتاح,نْحَبّ نِرْتَاحْ
+ALGERIAN,request,request.medicine,ar-DZ-AminaNeural,نحب دوايا,نْحَبّ دْوَايَا
+ALGERIAN,request,request.toilet,ar-DZ-AminaNeural,بغيت نروح للتواليت,بْغِيت نْرُوح لِلتْوَالِيتْ
+ALGERIAN,request,request.adjust_pillow,ar-DZ-AminaNeural,صلّحلي المخدة,صَلَّحْلِي الْمْخَدَّة
+ALGERIAN,request,request.headache,ar-DZ-AminaNeural,راسي يوجعني,رَاسِي يُوجَعْنِي
+ALGERIAN,request,request.cold,ar-DZ-AminaNeural,راني بردان,رَانِي بَرْدَانْ
+ALGERIAN,dish,dish.algerian.rechta,ar-DZ-AminaNeural,رشتة,رَشْتَة
+ALGERIAN,dish,dish.algerian.chakhchoukha,ar-DZ-AminaNeural,شخشوخة بسكرية,شَخْشُوخَة بِسْكْرِيَّة
+ALGERIAN,dish,dish.algerian.couscous,ar-DZ-AminaNeural,طعام,طْعَامْ
+ALGERIAN,dish,dish.algerian.olive_tajine,ar-DZ-AminaNeural,طاجين الزيتون,طَاجِينْ الزِّيتُونْ
+ALGERIAN,dish,dish.algerian.frik_soup,ar-DZ-AminaNeural,شربة فريك,شُرْبِة فْرِيكْ
+ALGERIAN,dish,dish.algerian.bourek,ar-DZ-AminaNeural,بوراك,بُورَاكْ
+ALGERIAN,dish,dish.algerian.garantita,ar-DZ-AminaNeural,كرانتيكا,كْرَانْتِيكَا
+ALGERIAN,dish,dish.algerian.sweet_tajine,ar-DZ-AminaNeural,طاجين الحلو,طَاجِينْ الْحْلُو
+ALGERIAN,dish,dish.algerian.berkoukes,ar-DZ-AminaNeural,بركوكس,بَرْكُوكَسْ
+ALGERIAN,dish,dish.algerian.potato_stew,ar-DZ-AminaNeural,جواز بطاطا,جْوَازْ بَطَاطَا
+ALGERIAN,dish,dish.algerian.mahajeb,ar-DZ-AminaNeural,محاجب,مْحَاجِبْ
+ALGERIAN,dish,dish.algerian.douara,ar-DZ-AminaNeural,دوارة,دْوَارَة
+ALGERIAN,dish,dish.algerian.stuffed_artichoke,ar-DZ-AminaNeural,قرنون معمر,ڨَرْنُونْ مْعَمَّرْ
+ALGERIAN,dish,dish.algerian.kalb_el_louz,ar-DZ-AminaNeural,قلب اللوز,قَلْبْ اللُّوزْ
+ALGERIAN,dish,dish.algerian.makrout,ar-DZ-AminaNeural,مقروط العسل,مَقْرُوطْ الْعَسَلْ
+ALGERIAN,routine,routine.call_to_prayer,ar-DZ-AminaNeural,أذان,أَذَانْ
+ALGERIAN,routine,routine.ablution,ar-DZ-AminaNeural,وضوء,وُضُوءْ
+ALGERIAN,routine,routine.prayer,ar-DZ-AminaNeural,صلاة,صْلَاة
+ALGERIAN,routine,routine.prayer_rug,ar-DZ-AminaNeural,سجادة صلاة,سَجَّادِة صْلَاة
+ALGERIAN,routine,routine.prayer_beads,ar-DZ-AminaNeural,مسبحة,مِسْبَحَة
+ALGERIAN,routine,routine.quran,ar-DZ-AminaNeural,مصحف,مُصْحَفْ
+ALGERIAN,routine,routine.evening_coffee,ar-DZ-AminaNeural,قهوة العشية,قَهْوِة الْعَشِيَّة
+ALGERIAN,routine,routine.sleep,ar-DZ-AminaNeural,رقاد,رْڨَادْ
+ALGERIAN,routine,routine.rest,ar-DZ-AminaNeural,راحة,رَاحَة
+ALGERIAN,routine,routine.walk,ar-DZ-AminaNeural,مشي,مْشِي
+ALGERIAN,vegetable,vegetable.tomato,ar-DZ-AminaNeural,طماطم,طْمَاطَمْ
+ALGERIAN,vegetable,vegetable.potato,ar-DZ-AminaNeural,بطاطا,بَطَاطَا
+ALGERIAN,vegetable,vegetable.onion,ar-DZ-AminaNeural,بصل,بَصَلْ
+ALGERIAN,vegetable,vegetable.garlic,ar-DZ-AminaNeural,ثوم,تُومْ
+ALGERIAN,vegetable,vegetable.carrot,ar-DZ-AminaNeural,زرودية,زْرُودِيَّة
+ALGERIAN,vegetable,vegetable.cucumber,ar-DZ-AminaNeural,خيار,خِيَارْ
+ALGERIAN,vegetable,vegetable.pepper,ar-DZ-AminaNeural,فلفل,فِلْفِلْ
+ALGERIAN,vegetable,vegetable.eggplant,ar-DZ-AminaNeural,باذنجان,بَاذِنْجَانْ
+ALGERIAN,vegetable,vegetable.zucchini,ar-DZ-AminaNeural,كوسة,كُوسَة
+ALGERIAN,vegetable,vegetable.lettuce,ar-DZ-AminaNeural,خس,خَسّ
+ALGERIAN,vegetable,vegetable.parsley,ar-DZ-AminaNeural,معدنوس,مَعْدَنُوسْ
+ALGERIAN,vegetable,vegetable.coriander,ar-DZ-AminaNeural,قزبر,ڨُزْبُرْ
+ALGERIAN,vegetable,vegetable.lemon,ar-DZ-AminaNeural,قارص,قَارَصْ
+ALGERIAN,vegetable,vegetable.peas,ar-DZ-AminaNeural,جلبانة,جِلْبَانَة
+ALGERIAN,vegetable,vegetable.green_beans,ar-DZ-AminaNeural,لوبيا خضرا,لُوبْيَا خَضْرَا
+ALGERIAN,vegetable,vegetable.spinach,ar-DZ-AminaNeural,سبانخ,سَبَانِخْ
+ALGERIAN,vegetable,vegetable.cauliflower,ar-DZ-AminaNeural,شيفلور,شِيفْلُورْ
+ALGERIAN,vegetable,vegetable.broccoli,ar-DZ-AminaNeural,بروكلي,بُرُوكْلِي
+ALGERIAN,vegetable,vegetable.radish,ar-DZ-AminaNeural,فجل,فِجِلْ
+ALGERIAN,vegetable,vegetable.pumpkin,ar-DZ-AminaNeural,قرعة حمرا,ڨَرْعَة حَمْرَا
+ALGERIAN,vegetable,vegetable.mint,ar-DZ-AminaNeural,نعناع,نَعْنَاعْ
+ALGERIAN,vegetable,vegetable.corn,ar-DZ-AminaNeural,ذرة,ذُرَّة
+ALGERIAN,fruit,fruit.apple,ar-DZ-AminaNeural,تفاح,تُفَّاحْ
+ALGERIAN,fruit,fruit.banana,ar-DZ-AminaNeural,بنان,بَنَانْ
+ALGERIAN,fruit,fruit.orange,ar-DZ-AminaNeural,تشينة,تْشِينَة
+ALGERIAN,fruit,fruit.grapes,ar-DZ-AminaNeural,عنب,عِنَبْ
+ALGERIAN,fruit,fruit.strawberry,ar-DZ-AminaNeural,فراولة,فَرَاوْلَة
+ALGERIAN,fruit,fruit.mango,ar-DZ-AminaNeural,مانجو,مَانْجُو
+ALGERIAN,fruit,fruit.watermelon,ar-DZ-AminaNeural,دلاّع,دَلَّاعْ
+ALGERIAN,fruit,fruit.melon,ar-DZ-AminaNeural,شمام,شَمَّامْ
+ALGERIAN,fruit,fruit.peach,ar-DZ-AminaNeural,خوخ,خُوخْ
+ALGERIAN,fruit,fruit.apricot,ar-DZ-AminaNeural,مشمش,مِشْمِشْ
+ALGERIAN,fruit,fruit.pear,ar-DZ-AminaNeural,بوعويدة,بُوعْوِيدَة
+ALGERIAN,fruit,fruit.pomegranate,ar-DZ-AminaNeural,رمان,رُمَّانْ
+ALGERIAN,fruit,fruit.figs,ar-DZ-AminaNeural,كرموس,كَرْمُوسْ
+ALGERIAN,fruit,fruit.dates,ar-DZ-AminaNeural,تمر,تَمْرْ
+ALGERIAN,fruit,fruit.pineapple,ar-DZ-AminaNeural,أناناس,أَنَانَاسْ
+ALGERIAN,fruit,fruit.kiwi,ar-DZ-AminaNeural,كيوي,كِيوِي
+ALGERIAN,fruit,fruit.cherry,ar-DZ-AminaNeural,كرز,كَرَزْ
+ALGERIAN,fruit,fruit.berries,ar-DZ-AminaNeural,توت,تُوتْ
+ALGERIAN,fruit,fruit.mandarin,ar-DZ-AminaNeural,مندارين,مَنْدَارِينْ
+ALGERIAN,fruit,fruit.avocado,ar-DZ-AminaNeural,أفوكادو,أَفُوكَادُو
+ALGERIAN,fruit,fruit.coconut,ar-DZ-AminaNeural,جوز الهند,جُوزْ الْهِنْدْ
+ALGERIAN,food,food.bread,ar-DZ-AminaNeural,خبز,خُبْزْ
+ALGERIAN,food,food.milk,ar-DZ-AminaNeural,حليب,حَلِيبْ
+ALGERIAN,food,food.eggs,ar-DZ-AminaNeural,بيض,بِيضْ
+ALGERIAN,food,food.cheese,ar-DZ-AminaNeural,فرماج,فُرْمَاجْ
+ALGERIAN,food,food.yogurt,ar-DZ-AminaNeural,ياغرت,يَاغُرْتْ
+ALGERIAN,food,food.butter,ar-DZ-AminaNeural,زبدة,زُبْدَة
+ALGERIAN,food,food.rice,ar-DZ-AminaNeural,روز,رُوزْ
+ALGERIAN,food,food.pasta,ar-DZ-AminaNeural,مقرون,مَڨْرُونْ
+ALGERIAN,food,food.soup,ar-DZ-AminaNeural,شربة,شُرْبَة
+ALGERIAN,food,food.meat,ar-DZ-AminaNeural,لحم,لَحْمْ
+ALGERIAN,food,food.chicken,ar-DZ-AminaNeural,دجاج,دْجَاجْ
+ALGERIAN,food,food.fish,ar-DZ-AminaNeural,حوت,حُوتْ
+ALGERIAN,food,food.olives,ar-DZ-AminaNeural,زيتون,زِيتُونْ
+ALGERIAN,food,food.oil,ar-DZ-AminaNeural,زيت,زِيتْ
+ALGERIAN,food,food.tea,ar-DZ-AminaNeural,أتاي,أَتَايْ
+ALGERIAN,food,food.coffee,ar-DZ-AminaNeural,قهوة,قَهْوَة
+ALGERIAN,food,food.juice,ar-DZ-AminaNeural,عصير,عَصِيرْ
+ALGERIAN,food,food.water,ar-DZ-AminaNeural,ماء,مَاءْ
+ALGERIAN,food,food.honey,ar-DZ-AminaNeural,عسل,عَسَلْ
+ALGERIAN,food,food.biscuit,ar-DZ-AminaNeural,بسكويت,بَسْكَوِيتْ
+ALGERIAN,food,food.salt,ar-DZ-AminaNeural,ملح,مِلْحْ
+ALGERIAN,food,food.sugar,ar-DZ-AminaNeural,سكر,سُكَّرْ
+ALGERIAN,home,home.bed,ar-DZ-AminaNeural,سرير,سَرِيرْ
+ALGERIAN,home,home.pillow,ar-DZ-AminaNeural,مخدة,مْخَدَّة
+ALGERIAN,home,home.blanket,ar-DZ-AminaNeural,كوفيرتة,كُوفِيرْتَة
+ALGERIAN,home,home.table,ar-DZ-AminaNeural,طاولة,طَاوِلَة
+ALGERIAN,home,home.chair,ar-DZ-AminaNeural,كرسي,كُرْسِي
+ALGERIAN,home,home.sofa,ar-DZ-AminaNeural,فوتاي,فُوتَايْ
+ALGERIAN,home,home.door,ar-DZ-AminaNeural,باب,بَابْ
+ALGERIAN,home,home.window,ar-DZ-AminaNeural,طاقة,طَاقَة
+ALGERIAN,home,home.television,ar-DZ-AminaNeural,تلفزيون,تِلِفِزْيُونْ
+ALGERIAN,home,home.fridge,ar-DZ-AminaNeural,ثلاجة,ثَلَّاجَة
+ALGERIAN,home,home.washing_machine,ar-DZ-AminaNeural,غسالة,غَسَّالَة
+ALGERIAN,home,home.stove,ar-DZ-AminaNeural,كويزينيير,كُويزِينْيِيرْ
+ALGERIAN,home,home.oven,ar-DZ-AminaNeural,فرن,فُرْنْ
+ALGERIAN,home,home.air_conditioner,ar-DZ-AminaNeural,مكيف,مُكَيِّفْ
+ALGERIAN,home,home.fan,ar-DZ-AminaNeural,مروحة,مَرْوَحَة
+ALGERIAN,home,home.wardrobe,ar-DZ-AminaNeural,خزانة,خْزَانَة
+ALGERIAN,home,home.key,ar-DZ-AminaNeural,مفتاح,مِفْتَاحْ
+ALGERIAN,home,home.clock,ar-DZ-AminaNeural,ساعة,سَاعَة
+ALGERIAN,home,home.carpet,ar-DZ-AminaNeural,زربية,زَرْبِيَّة
+ALGERIAN,home,home.kitchen,ar-DZ-AminaNeural,كوزينة,كُوزِينَة
+ALGERIAN,home,home.cup,ar-DZ-AminaNeural,كاس,كَاسْ
+ALGERIAN,home,home.tray,ar-DZ-AminaNeural,صينية,صِينِيَّة
+ALGERIAN,home,home.spoon,ar-DZ-AminaNeural,مغرف,مْغْرُفْ
+ALGERIAN,home,home.fork,ar-DZ-AminaNeural,فرشيطة,فَرْشِيطَة
+ALGERIAN,home,home.knife,ar-DZ-AminaNeural,موس,مُوسْ
+ALGERIAN,home,home.teapot,ar-DZ-AminaNeural,براد,بَرَّادْ
+ALGERIAN,home,home.pot,ar-DZ-AminaNeural,طنجرة,طَنْجْرَة
+ALGERIAN,home,home.water_bottle,ar-DZ-AminaNeural,قرعة ماء,ڨَرْعِة مَاءْ
+ALGERIAN,clothing,clothing.tshirt,ar-DZ-AminaNeural,تيشيرت,تِيشِيرْتْ
+ALGERIAN,clothing,clothing.shirt,ar-DZ-AminaNeural,قميص,قَمِيصْ
+ALGERIAN,clothing,clothing.jacket,ar-DZ-AminaNeural,فيستة,فِيسْتَة
+ALGERIAN,clothing,clothing.shorts,ar-DZ-AminaNeural,شورت,شُورْتْ
+ALGERIAN,clothing,clothing.blouse,ar-DZ-AminaNeural,بلوزة,بْلُوزَة
+ALGERIAN,clothing,clothing.trousers,ar-DZ-AminaNeural,سروال,سِرْوَالْ
+ALGERIAN,clothing,clothing.dress,ar-DZ-AminaNeural,فستان,فُسْتَانْ
+ALGERIAN,clothing,clothing.robe,ar-DZ-AminaNeural,روب,رُوبْ
+ALGERIAN,clothing,clothing.abaya,ar-DZ-AminaNeural,عباية,عَبَايَة
+ALGERIAN,clothing,clothing.hijab,ar-DZ-AminaNeural,حجاب,حِجَابْ
+ALGERIAN,clothing,clothing.scarf,ar-DZ-AminaNeural,وشاح,وِشَاحْ
+ALGERIAN,clothing,clothing.shoes,ar-DZ-AminaNeural,سباط,سْبَاطْ
+ALGERIAN,clothing,clothing.socks,ar-DZ-AminaNeural,تقاشر,تْڨَاشِرْ
+ALGERIAN,clothing,clothing.coat,ar-DZ-AminaNeural,مانتو,مَانْتُو
+ALGERIAN,clothing,clothing.glasses,ar-DZ-AminaNeural,نظارة,نَظَّارَة
+ALGERIAN,clothing,clothing.cap,ar-DZ-AminaNeural,كاسكيطة,كَاسْكِيطَة
+ALGERIAN,clothing,clothing.watch,ar-DZ-AminaNeural,ساعة يد,سَاعِة يَدّ
+ALGERIAN,clothing,clothing.bag,ar-DZ-AminaNeural,صاك,صَاكْ
+ALGERIAN,clothing,clothing.sandals,ar-DZ-AminaNeural,صندل,صَنْدَلْ
+ALGERIAN,clothing,clothing.high_heels,ar-DZ-AminaNeural,سباط طالون,سْبَاطْ طَالُونْ
+ALGERIAN,clothing,clothing.pajamas,ar-DZ-AminaNeural,بيجامة,بِيجَامَة
+ALGERIAN,clothing,clothing.belt,ar-DZ-AminaNeural,سبتة,سِبْتَة
+ALGERIAN,clothing,clothing.ring,ar-DZ-AminaNeural,خاتم,خَاتَمْ
+ALGERIAN,body,body.eye,ar-DZ-AminaNeural,عين,عِينْ
+ALGERIAN,body,body.nose,ar-DZ-AminaNeural,نيف,نِيفْ
+ALGERIAN,body,body.mouth,ar-DZ-AminaNeural,فم,فَمْ
+ALGERIAN,body,body.tongue,ar-DZ-AminaNeural,لسان,لِسَانْ
+ALGERIAN,body,body.ear,ar-DZ-AminaNeural,وذن,وِذِنْ
+ALGERIAN,body,body.hand,ar-DZ-AminaNeural,يد,يَدْ
+ALGERIAN,body,body.leg,ar-DZ-AminaNeural,رجل,رِجْلْ
+ALGERIAN,body,body.head,ar-DZ-AminaNeural,راس,رَاسْ
+ALGERIAN,body,body.hair,ar-DZ-AminaNeural,شعر,شَعْرْ
+ALGERIAN,body,body.back,ar-DZ-AminaNeural,ظهر,ظَهْرْ
+ALGERIAN,body,body.abdomen,ar-DZ-AminaNeural,بطن,بَطْنْ
+ALGERIAN,body,body.knee,ar-DZ-AminaNeural,ركبة,رُكْبَة
+ALGERIAN,body,body.finger,ar-DZ-AminaNeural,صبع,صُبُعْ
+ALGERIAN,body,body.neck,ar-DZ-AminaNeural,رقبة,رَڨْبَة
+ALGERIAN,body,body.chest,ar-DZ-AminaNeural,صدر,صَدْرْ
+ALGERIAN,body,body.face,ar-DZ-AminaNeural,وجه,وَجْهْ
+ALGERIAN,body,body.tooth,ar-DZ-AminaNeural,سنة,سِنَّة
+ALGERIAN,body,body.heart,ar-DZ-AminaNeural,قلب,قَلْبْ
+ALGERIAN,body,body.shoulder,ar-DZ-AminaNeural,كتف,كِتْفْ
+ALGERIAN,action,action.eat,ar-DZ-AminaNeural,ناكل,نَاكُلْ
+ALGERIAN,action,action.drink,ar-DZ-AminaNeural,نشرب,نِشْرُبْ
+ALGERIAN,action,action.sleep,ar-DZ-AminaNeural,نرقد,نُرْڨُدْ
+ALGERIAN,action,action.sit,ar-DZ-AminaNeural,نقعد,نُڨْعُدْ
+ALGERIAN,action,action.walk,ar-DZ-AminaNeural,نمشي,نْمْشِي
+ALGERIAN,action,action.stand,ar-DZ-AminaNeural,نوقف,نُوقَفْ
+ALGERIAN,action,action.wash,ar-DZ-AminaNeural,نغسل,نِغْسِلْ
+ALGERIAN,action,action.speak,ar-DZ-AminaNeural,نهدر,نَهْدَرْ
+ALGERIAN,action,action.hear,ar-DZ-AminaNeural,نسمع,نِسْمَعْ
+ALGERIAN,action,action.open,ar-DZ-AminaNeural,نحل,نْحِلّ
+ALGERIAN,action,action.close,ar-DZ-AminaNeural,نسكر,نْسَكِّرْ
+ALGERIAN,action,action.read,ar-DZ-AminaNeural,نقرا,نَقْرَا
+ALGERIAN,action,action.laugh,ar-DZ-AminaNeural,نضحك,نِضْحَكْ
+ALGERIAN,action,action.see,ar-DZ-AminaNeural,نشوف,نْشُوفْ
+ALGERIAN,action,action.dress,ar-DZ-AminaNeural,نلبس,نِلْبِسْ
+ALGERIAN,action,action.pray,ar-DZ-AminaNeural,نصلي,نْصَلِّي
+ALGERIAN,animal,animal.cat,ar-DZ-AminaNeural,قطة,ڨَطَّة
+ALGERIAN,animal,animal.dog,ar-DZ-AminaNeural,كلب,كَلْبْ
+ALGERIAN,animal,animal.sheep,ar-DZ-AminaNeural,خروف,خَرُوفْ
+ALGERIAN,animal,animal.horse,ar-DZ-AminaNeural,حصان,حِصَانْ
+ALGERIAN,animal,animal.cow,ar-DZ-AminaNeural,بقرة,بَڨْرَة
+ALGERIAN,animal,animal.sparrow,ar-DZ-AminaNeural,زاوش,زَاوْشْ
+ALGERIAN,animal,animal.pigeon,ar-DZ-AminaNeural,حمامة,حْمَامَة
+ALGERIAN,animal,animal.chicken,ar-DZ-AminaNeural,دجاجة,دْجَاجَة
+ALGERIAN,animal,animal.duck,ar-DZ-AminaNeural,بطة,بَطَّة
+ALGERIAN,animal,animal.camel,ar-DZ-AminaNeural,جمل,جَمَلْ
+ALGERIAN,animal,animal.rooster,ar-DZ-AminaNeural,ديك,دِيكْ
+ALGERIAN,animal,animal.rabbit,ar-DZ-AminaNeural,أرنب,أَرْنَبْ
+ALGERIAN,transport,transport.car,ar-DZ-AminaNeural,طوموبيل,طُومُوبِيلْ
+ALGERIAN,transport,transport.taxi,ar-DZ-AminaNeural,طاكسي,طَاكْسِي
+ALGERIAN,transport,transport.bus,ar-DZ-AminaNeural,طوبيس,طُوبِيسْ
+ALGERIAN,transport,transport.minibus,ar-DZ-AminaNeural,حافلة صغيرة,حَافِلَة صَغِيرَة
+ALGERIAN,transport,transport.bicycle,ar-DZ-AminaNeural,فيلو,فِيلُو
+ALGERIAN,transport,transport.motorcycle,ar-DZ-AminaNeural,موتو,مُوتُو
+ALGERIAN,transport,transport.train,ar-DZ-AminaNeural,تران,تْرَانْ
+ALGERIAN,transport,transport.airplane,ar-DZ-AminaNeural,طيارة,طَيَّارَة
+ALGERIAN,transport,transport.helicopter,ar-DZ-AminaNeural,هليكوبتر,هِلِيكُوبْتَرْ
+ALGERIAN,transport,transport.ship,ar-DZ-AminaNeural,باخرة,بَاخِرَة
+ALGERIAN,transport,transport.boat,ar-DZ-AminaNeural,قارب,قَارِبْ
+ALGERIAN,transport,transport.truck,ar-DZ-AminaNeural,كاميون,كَامْيُونْ
+ALGERIAN,greeting,greeting.salam,ar-DZ-AminaNeural,السلام عليكم,السَّلَامُ عَلَيْكُمْ
+ALGERIAN,greeting,greeting.reply,ar-DZ-AminaNeural,وعليكم السلام,وَعَلَيْكُمُ السَّلَامْ
+ALGERIAN,greeting,greeting.hello,ar-DZ-AminaNeural,مرحبا,مَرْحَبَا
+ALGERIAN,greeting,greeting.welcome,ar-DZ-AminaNeural,أهلا وسهلا,أَهْلًا وَسَهْلًا
+ALGERIAN,greeting,greeting.how_are_you,ar-DZ-AminaNeural,لاباس عليك؟,لَابَاسْ عَلِيكْ؟
+ALGERIAN,greeting,greeting.fine,ar-DZ-AminaNeural,الحمد لله,الْحَمْدُ لِلَّهْ
+ALGERIAN,greeting,greeting.good_morning,ar-DZ-AminaNeural,صباح الخير,صَبَاحْ الْخِيرْ
+ALGERIAN,greeting,greeting.good_evening,ar-DZ-AminaNeural,مسا الخير,مَسَا الْخِيرْ
+ALGERIAN,greeting,greeting.brighten,ar-DZ-AminaNeural,نورت,نَوَّرْتْ
+ALGERIAN,greeting,greeting.good_health,ar-DZ-AminaNeural,يعطيك الصحة,يَعْطِيكْ الصَّحَّة
+ALGERIAN,greeting,greeting.goodbye,ar-DZ-AminaNeural,بالسلامة,بِالسَّلَامَة
+ALGERIAN,greeting,greeting.safe,ar-DZ-AminaNeural,في أمان الله,فِي أَمَانِ اللَّهْ
+ALGERIAN,greeting,greeting.thanks,ar-DZ-AminaNeural,صحا,صَحَّا
+ALGERIAN,greeting,greeting.bless,ar-DZ-AminaNeural,ربي يبارك فيك,رَبِّي يْبَارِك فِيكْ

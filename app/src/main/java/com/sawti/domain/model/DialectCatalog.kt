@@ -1206,6 +1206,7 @@ object DialectCatalog {
     }
 
     fun text(semanticKey: String, dialect: ArabicDialect, fallback: String): String {
+        NeuralLexicon162.get(dialect, semanticKey)?.let { return it.displayText }
         val original = if (dialect == ArabicDialect.STANDARD) fallback
             else words[semanticKey]?.get(dialect)?.displayText ?: fallback
         return Audit161Confirmed.overrideLabel(dialect, semanticKey,
@@ -1220,9 +1221,7 @@ object DialectCatalog {
             else RegionalDishesCatalog.variant(key, dialect)
         fun custom(flag: Int) = item.customTextFields and flag != 0
         val form = DialectSpeechCatalog.resolve(item, dialect)
-        val neuralForm = DialectSpeechCatalog.resolveForNeural(item, dialect)
-        val neuralSpeech = if (custom(CardDetails.SPEECH) || custom(CardDetails.LABEL))
-            null else neuralForm.speechText
+        val neuralSpeech = DialectSpeechCatalog.neuralTextFor(item, dialect)
         val projected = item.copy(
             displayText = form.displayText,
             ttsPrompt = form.speechText,
