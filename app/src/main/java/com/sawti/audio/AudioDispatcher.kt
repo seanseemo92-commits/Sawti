@@ -1,6 +1,7 @@
 package com.sawti.audio
 
 import android.util.Log
+import com.sawti.domain.model.CardDetails
 import com.sawti.domain.model.DialectSpeechCatalog
 import com.sawti.domain.model.PhonemicCue
 import com.sawti.domain.model.SentenceComposer
@@ -66,7 +67,8 @@ class AudioDispatcher(
                 _playback.value = PlaybackVisual(activeWordId = item.id, isSpeaking = true)
             }
         }
-        val isCustom = item.semanticKey == null || item.categoryId.startsWith("custom_")
+        val isCustom = item.semanticKey == null || item.categoryId.startsWith("custom_") ||
+            item.customTextFields and (CardDetails.LABEL or CardDetails.SPEECH) != 0
         val onMissing = {
             if (current == generation) {
                 Log.e("SawtiHabibi", "Built-in audio missing/invalid: " +

@@ -28,7 +28,8 @@ object SentenceComposer {
         semanticKey = word.semanticKey,
         neuralSpeechText = word.neuralDialect?.let { DialectSpeechCatalog.neuralTextFor(word, it) },
         neuralDialect = word.neuralDialect,
-        isCustom = word.semanticKey == null || word.categoryId.startsWith("custom_"),
+        isCustom = word.semanticKey == null || word.categoryId.startsWith("custom_") ||
+            word.customTextFields and (CardDetails.LABEL or CardDetails.SPEECH) != 0,
     )
 
     fun add(current: List<SentencePiece>, word: WordItem): List<SentencePiece> {
