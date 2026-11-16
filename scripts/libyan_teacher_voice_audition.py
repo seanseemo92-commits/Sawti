@@ -13,6 +13,7 @@ import wave
 from pathlib import Path
 
 import edge_tts
+import imageio_ffmpeg
 
 CATALOG = Path("scripts/neural_v162_overrides.csv")
 OUT = Path("build/libyan-teacher-voice-audition")
@@ -73,7 +74,7 @@ def make_montage(files, output):
             lines.append("file '" + (OUT / "silence.mp3").resolve().as_posix() + "'")
     concat.write_text("\n".join(lines) + "\n", encoding="utf-8")
     subprocess.run(
-        ["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0",
+        [imageio_ffmpeg.get_ffmpeg_exe(), "-y", "-v", "error", "-f", "concat", "-safe", "0",
          "-i", str(concat), "-c:a", "libmp3lame", "-q:a", "4", str(output)],
         check=True,
     )
@@ -88,7 +89,7 @@ def make_silence():
         f.setframerate(24000)
         f.writeframes(b"\x00\x00" * int(24000 * 0.65))
     subprocess.run(
-        ["ffmpeg", "-y", "-v", "error", "-i", str(audio),
+        [imageio_ffmpeg.get_ffmpeg_exe(), "-y", "-v", "error", "-i", str(audio),
          "-codec:a", "libmp3lame", "-q:a", "5", str(OUT / "silence.mp3")],
         check=True,
     )
