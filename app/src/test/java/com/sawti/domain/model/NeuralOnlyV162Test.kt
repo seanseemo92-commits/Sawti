@@ -58,10 +58,47 @@ class NeuralOnlyV162Test {
             val seed = requireNotNull(seeds[key])
             assertEquals(row.speech, DialectSpeechCatalog.neuralTextFor(seed, dialect))
         }
-        assertTrue(rows.any { it.speech.startsWith("نْق") })
+        assertEquals("نْجَعْمِزْ", NeuralLexicon162.get(ArabicDialect.LIBYAN, "action.sit")?.speechText)
         assertTrue(rows.any { it.speech.startsWith("تْش") })
         assertTrue(rows.any { it.speech.endsWith('ْ') })
         assertTrue(rows.any { it.speech.contains("حِذَاءٌ بِكَعْبٍ عَالٍ") })
+    }
+
+
+    @Test fun libyanHardGVariantsAreExplicitAndDoNotAffectOtherDialectsOrFormalQaf() {
+        val variants = File("../scripts/libyan_shakir_hard_g_review.csv")
+            .readLines(Charsets.UTF_8).drop(1).filter { it.isNotBlank() }
+            .map { line ->
+                val fields = line.split(',', limit = 8)
+                require(fields.size == 8) { "Bad hard-g row: $"+ "line" }
+                fields
+            }
+        assertEquals(21, variants.size)
+        assertEquals(21, variants.map { it[0] }.toSet().size)
+        for (fields in variants) {
+            val (key, display, source, target, voice, rate, pitch, status) = fields
+            assertEquals("ar-EG-ShakirNeural", voice)
+            assertEquals("-8%", rate)
+            assertEquals("+12Hz", pitch)
+            assertEquals("needs_native_listening", status)
+            assertTrue(source.contains('ق'))
+            assertEquals(source.replace('ق', 'ج'), target)
+            assertFalse(target.contains('ق'))
+            val item = requireNotNull(seeds[key])
+            val entry = requireNotNull(NeuralLexicon162.get(ArabicDialect.LIBYAN, key))
+            assertEquals(display, entry.displayText)
+            assertEquals(target, entry.speechText)
+            assertEquals(target, DialectSpeechCatalog.neuralTextFor(item, ArabicDialect.LIBYAN))
+            assertEquals(target, DialectSpeechCatalog.resolve(item, ArabicDialect.LIBYAN).speechText)
+        }
+        // Formal vocabulary may genuinely retain /q/; the change is not global.
+        assertEquals("قِطَارْ", NeuralLexicon162.get(ArabicDialect.LIBYAN, "transport.train")?.speechText)
+        assertEquals("قَارِبْ", NeuralLexicon162.get(ArabicDialect.LIBYAN, "transport.boat")?.speechText)
+        // The one listener-validated word retains its exact approved TTS input.
+        assertEquals("بُجْرَهْ", NeuralLexicon162.get(ArabicDialect.LIBYAN, "animal.cow")?.speechText)
+        assertEquals("بقرة", NeuralLexicon162.get(ArabicDialect.LIBYAN, "animal.cow")?.displayText)
+        // Standard Arabic unaffected by dialect-specific voice spellings.
+        assertEquals("بَقَرَةٌ", NeuralLexicon162.get(ArabicDialect.STANDARD, "animal.cow")?.speechText)
     }
 
     @Test fun originalCardsAreNeuralOnlyAndPersonalEditsRemainTtsEligible() {
