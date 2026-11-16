@@ -307,8 +307,8 @@ LIBYAN,family,family.daughter_husband,ar-EG-ShakirNeural,راجل بنتي,رَ�
 LIBYAN,family,family.son_wife,ar-EG-ShakirNeural,مرت ولدي,مَرْت وِلْدِي
 LIBYAN,family,family.male_in_law,ar-EG-ShakirNeural,نسيبي,نَسِيبِي
 LIBYAN,family,family.female_in_law,ar-EG-ShakirNeural,نسيبتي,نَسِيبْتِي
-LIBYAN,family,family.male_relative,ar-EG-ShakirNeural,قريبي,قَرِيبِي
-LIBYAN,family,family.female_relative,ar-EG-ShakirNeural,قريبتي,قَرِيبْتِي
+LIBYAN,family,family.male_relative,ar-EG-ShakirNeural,قريبي,جَرِيبِي
+LIBYAN,family,family.female_relative,ar-EG-ShakirNeural,قريبتي,جَرِيبْتِي
 LIBYAN,request,request.water,ar-EG-ShakirNeural,نبي مية,نِبِّي إِمَّيَّهْ
 LIBYAN,request,request.tea,ar-EG-ShakirNeural,نبي شاهي,نِبِّي شَاهِي
 LIBYAN,request,request.rest,ar-EG-ShakirNeural,نبي نرتاح,نِبِّي نِرْتَاحْ
@@ -321,7 +321,7 @@ LIBYAN,dish,dish.bazin,ar-EG-ShakirNeural,بازين,بَازِينْ
 LIBYAN,dish,dish.reshda_kaskas,ar-EG-ShakirNeural,رشدة كسكاس,رِشْدِة كِسْكَاسْ
 LIBYAN,dish,dish.reshda_borma,ar-EG-ShakirNeural,رشدة برمة,رِشْدِة بُرْمَة
 LIBYAN,dish,dish.mbakbaka,ar-EG-ShakirNeural,مكرونة مبكبكة,مَكْرُونَة مْبَكْبَكَة
-LIBYAN,dish,dish.pasta_masqiya,ar-EG-ShakirNeural,مكرونة مسقية,مَكْرُونَة مِسْقِيَّة
+LIBYAN,dish,dish.pasta_masqiya,ar-EG-ShakirNeural,مكرونة مسقية,مَكْرُونَة مِسْجِيَّة
 LIBYAN,dish,dish.couscous_fish,ar-EG-ShakirNeural,كسكسي بالحوت,كُسْكُسِي بِالحُوتْ
 LIBYAN,dish,dish.rice_blaw,ar-EG-ShakirNeural,رز بلاو,رُزّ بِلَاو
 LIBYAN,dish,dish.libyan_soup,ar-EG-ShakirNeural,شربة ليبية,شَرْبَة لِيبِيَّة
@@ -329,9 +329,9 @@ LIBYAN,dish,dish.potato_stew,ar-EG-ShakirNeural,طبيخة بطاطا,طْبِي
 LIBYAN,dish,dish.osban,ar-EG-ShakirNeural,عصبان,عُصْبَانْ
 LIBYAN,dish,dish.bourek,ar-EG-ShakirNeural,بوريك,بُورِيكْ
 LIBYAN,dish,dish.khobz_tajin,ar-EG-ShakirNeural,خبزة طاجين,خُبْزِة طَاجِينْ
-LIBYAN,dish,dish.maqroudh,ar-EG-ShakirNeural,مقروض,مَقْرُوضْ
+LIBYAN,dish,dish.maqroudh,ar-EG-ShakirNeural,مقروض,مَجْرُوضْ
 LIBYAN,dish,dish.mint_tea,ar-EG-ShakirNeural,شاهي بالنعناع,شَاهِي بِالنَّعْنَاعْ
-LIBYAN,dish,dish.arabic_coffee,ar-EG-ShakirNeural,قهوة عربية,قَهْوَة عَرَبِيَّة
+LIBYAN,dish,dish.arabic_coffee,ar-EG-ShakirNeural,قهوة عربية,جَهْوَة عَرَبِيَّة
 LIBYAN,dish,dish.mbattan,ar-EG-ShakirNeural,مبطن,مْبَطَّنْ
 LIBYAN,dish,dish.hraymi,ar-EG-ShakirNeural,حرايمي,حْرَايْمِي
 LIBYAN,dish,dish.sfinz,ar-EG-ShakirNeural,سفنز,إِسْفِنْزْ
@@ -343,7 +343,7 @@ LIBYAN,routine,routine.prayer,ar-EG-ShakirNeural,صلاة,صَلَاة
 LIBYAN,routine,routine.prayer_rug,ar-EG-ShakirNeural,سجادة,سَجَّادَة
 LIBYAN,routine,routine.prayer_beads,ar-EG-ShakirNeural,سبحة,سِبْحَة
 LIBYAN,routine,routine.quran,ar-EG-ShakirNeural,مصحف,مُصْحَفْ
-LIBYAN,routine,routine.evening_coffee,ar-EG-ShakirNeural,قهوة العشية,قَهْوِة الْعَشِيَّة
+LIBYAN,routine,routine.evening_coffee,ar-EG-ShakirNeural,قهوة العشية,جَهْوِة الْعَشِيَّة
 LIBYAN,routine,routine.sleep,ar-EG-ShakirNeural,نوم,نُومْ
 LIBYAN,routine,routine.rest,ar-EG-ShakirNeural,راحة,رَاحَة
 LIBYAN,routine,routine.walk,ar-EG-ShakirNeural,مشي,مَشِي
@@ -358,25 +358,25 @@ LIBYAN,vegetable,vegetable.eggplant,ar-EG-ShakirNeural,باذنجان,بَاذِ
 LIBYAN,vegetable,vegetable.zucchini,ar-EG-ShakirNeural,كوسة,كُوسَة
 LIBYAN,vegetable,vegetable.lettuce,ar-EG-ShakirNeural,خس,خَسّ
 LIBYAN,vegetable,vegetable.parsley,ar-EG-ShakirNeural,معدنوس,مَعْدَنُوسْ
-LIBYAN,vegetable,vegetable.coriander,ar-EG-ShakirNeural,قصبر,قُصْبُرْ
+LIBYAN,vegetable,vegetable.coriander,ar-EG-ShakirNeural,قصبر,جُصْبُرْ
 LIBYAN,vegetable,vegetable.lemon,ar-EG-ShakirNeural,ليمون,لِيمُونْ
 LIBYAN,vegetable,vegetable.peas,ar-EG-ShakirNeural,بازيلية,بَازِيلْيَا
 LIBYAN,vegetable,vegetable.green_beans,ar-EG-ShakirNeural,فاصوليا,فَاصُولِيَا
 LIBYAN,vegetable,vegetable.spinach,ar-EG-ShakirNeural,سبانخ,سَبَانِخْ
-LIBYAN,vegetable,vegetable.cauliflower,ar-EG-ShakirNeural,قرنبيط,قَرْنَبِيطْ
+LIBYAN,vegetable,vegetable.cauliflower,ar-EG-ShakirNeural,قرنبيط,جَرْنَبِيطْ
 LIBYAN,vegetable,vegetable.broccoli,ar-EG-ShakirNeural,بروكلي,بُرُوكْلِي
 LIBYAN,vegetable,vegetable.radish,ar-EG-ShakirNeural,فجل,فِجِلْ
-LIBYAN,vegetable,vegetable.pumpkin,ar-EG-ShakirNeural,قرعة,قَرْعَة
+LIBYAN,vegetable,vegetable.pumpkin,ar-EG-ShakirNeural,قرعة,جَرْعَة
 LIBYAN,vegetable,vegetable.mint,ar-EG-ShakirNeural,نعناع,نَعْنَاعْ
 LIBYAN,vegetable,vegetable.corn,ar-EG-ShakirNeural,ذرة,ذُرَة
 LIBYAN,fruit,fruit.apple,ar-EG-ShakirNeural,تفاح,تُفَّاحْ
 LIBYAN,fruit,fruit.banana,ar-EG-ShakirNeural,موز,مُوزْ
-LIBYAN,fruit,fruit.orange,ar-EG-ShakirNeural,برتقال,بُرْتُقَالْ
+LIBYAN,fruit,fruit.orange,ar-EG-ShakirNeural,برتقال,بُرْتُجَالْ
 LIBYAN,fruit,fruit.grapes,ar-EG-ShakirNeural,عنب,عِنَبْ
 LIBYAN,fruit,fruit.strawberry,ar-EG-ShakirNeural,فراولة,فَرَاوْلَة
 LIBYAN,fruit,fruit.mango,ar-EG-ShakirNeural,مانجو,مَانْجُو
 LIBYAN,fruit,fruit.watermelon,ar-EG-ShakirNeural,دلاع,دَلَّاعْ
-LIBYAN,fruit,fruit.melon,ar-EG-ShakirNeural,قلعاوي,قَلْعَاوِي
+LIBYAN,fruit,fruit.melon,ar-EG-ShakirNeural,قلعاوي,جَلْعَاوِي
 LIBYAN,fruit,fruit.peach,ar-EG-ShakirNeural,خوخ,خُوخْ
 LIBYAN,fruit,fruit.apricot,ar-EG-ShakirNeural,مشمش,مِشْمِشْ
 LIBYAN,fruit,fruit.pear,ar-EG-ShakirNeural,كمثرى,كُمِّثْرَى
@@ -405,7 +405,7 @@ LIBYAN,food,food.fish,ar-EG-ShakirNeural,حوت,حُوتْ
 LIBYAN,food,food.olives,ar-EG-ShakirNeural,زيتون,زِيتُونْ
 LIBYAN,food,food.oil,ar-EG-ShakirNeural,زيت,زِيتْ
 LIBYAN,food,food.tea,ar-EG-ShakirNeural,شاهي,شَاهِي
-LIBYAN,food,food.coffee,ar-EG-ShakirNeural,قهوة,قَهْوَة
+LIBYAN,food,food.coffee,ar-EG-ShakirNeural,قهوة,جَهْوَة
 LIBYAN,food,food.juice,ar-EG-ShakirNeural,عصير,عَصِيرْ
 LIBYAN,food,food.water,ar-EG-ShakirNeural,مية,إِمَّيَّهْ
 LIBYAN,food,food.honey,ar-EG-ShakirNeural,عسل,عَسَلْ
@@ -441,7 +441,7 @@ LIBYAN,home,home.teapot,ar-EG-ShakirNeural,براد,بَرَّادْ
 LIBYAN,home,home.pot,ar-EG-ShakirNeural,طنجرة,طَنْجْرَة
 LIBYAN,home,home.water_bottle,ar-EG-ShakirNeural,شيشة مية,شِيشَة إِمَّيَّهْ
 LIBYAN,clothing,clothing.tshirt,ar-EG-ShakirNeural,تيشرت,تِيشِرْتْ
-LIBYAN,clothing,clothing.shirt,ar-EG-ShakirNeural,قميص,قَمِيصْ
+LIBYAN,clothing,clothing.shirt,ar-EG-ShakirNeural,قميص,جَمِيصْ
 LIBYAN,clothing,clothing.jacket,ar-EG-ShakirNeural,جاكة,جَاكَة
 LIBYAN,clothing,clothing.shorts,ar-EG-ShakirNeural,شورت,شُورْتْ
 LIBYAN,clothing,clothing.blouse,ar-EG-ShakirNeural,سورية,سُورِيَّة
@@ -455,7 +455,7 @@ LIBYAN,clothing,clothing.shoes,ar-EG-ShakirNeural,كندرة,كَنْدْرَة
 LIBYAN,clothing,clothing.socks,ar-EG-ShakirNeural,شخاشير,شْخَاشِيرْ
 LIBYAN,clothing,clothing.coat,ar-EG-ShakirNeural,كبوط,كَبُّوطْ
 LIBYAN,clothing,clothing.glasses,ar-EG-ShakirNeural,نظارة,نَظَّارَة
-LIBYAN,clothing,clothing.cap,ar-EG-ShakirNeural,طاقية,طَاقِيَّة
+LIBYAN,clothing,clothing.cap,ar-EG-ShakirNeural,طاقية,طَاجِيَّة
 LIBYAN,clothing,clothing.watch,ar-EG-ShakirNeural,ساعة يد,سَاعِة يَدّ
 LIBYAN,clothing,clothing.bag,ar-EG-ShakirNeural,شنطة,شَنْطَة
 LIBYAN,clothing,clothing.sandals,ar-EG-ShakirNeural,صندل,صَنْدَلْ
@@ -476,29 +476,29 @@ LIBYAN,body,body.back,ar-EG-ShakirNeural,ظهر,ظَهْرْ
 LIBYAN,body,body.abdomen,ar-EG-ShakirNeural,بطن,بَطْنْ
 LIBYAN,body,body.knee,ar-EG-ShakirNeural,ركبة,رُكْبَة
 LIBYAN,body,body.finger,ar-EG-ShakirNeural,صبع,صْبَعْ
-LIBYAN,body,body.neck,ar-EG-ShakirNeural,رقبة,رَقْبَة
+LIBYAN,body,body.neck,ar-EG-ShakirNeural,رقبة,رَجْبَة
 LIBYAN,body,body.chest,ar-EG-ShakirNeural,صدر,صَدْرْ
 LIBYAN,body,body.face,ar-EG-ShakirNeural,وجه,وَجِهْ
 LIBYAN,body,body.tooth,ar-EG-ShakirNeural,سنة,سِنَّة
-LIBYAN,body,body.heart,ar-EG-ShakirNeural,قلب,قَلْبْ
+LIBYAN,body,body.heart,ar-EG-ShakirNeural,قلب,جَلْبْ
 LIBYAN,body,body.shoulder,ar-EG-ShakirNeural,كتف,كِتْفْ
 LIBYAN,action,action.eat,ar-EG-ShakirNeural,ناكل,نَاكُلْ
 LIBYAN,action,action.drink,ar-EG-ShakirNeural,نشرب,نِشْرَبْ
-LIBYAN,action,action.sleep,ar-EG-ShakirNeural,نرقد,نُرْقُدْ
-LIBYAN,action,action.sit,ar-EG-ShakirNeural,نقعمز,نْقَعْمِزْ
+LIBYAN,action,action.sleep,ar-EG-ShakirNeural,نرقد,نُرْجُدْ
+LIBYAN,action,action.sit,ar-EG-ShakirNeural,نقعمز,نْجَعْمِزْ
 LIBYAN,action,action.walk,ar-EG-ShakirNeural,نمشي,نِمْشِي
-LIBYAN,action,action.stand,ar-EG-ShakirNeural,نوقف,نُوقَفْ
+LIBYAN,action,action.stand,ar-EG-ShakirNeural,نوقف,نُوجَفْ
 LIBYAN,action,action.wash,ar-EG-ShakirNeural,نغسل,نِغْسِلْ
 LIBYAN,action,action.speak,ar-EG-ShakirNeural,ندوي,نِدْوِي
 LIBYAN,action,action.hear,ar-EG-ShakirNeural,نسمع,نِسْمَعْ
 LIBYAN,action,action.open,ar-EG-ShakirNeural,نفتح,نِفْتَحْ
 LIBYAN,action,action.close,ar-EG-ShakirNeural,نسكر,نِسَكِّرْ
-LIBYAN,action,action.read,ar-EG-ShakirNeural,نقرا,نَقْرَا
+LIBYAN,action,action.read,ar-EG-ShakirNeural,نقرا,نَجْرَا
 LIBYAN,action,action.laugh,ar-EG-ShakirNeural,نضحك,نِضْحَكْ
 LIBYAN,action,action.see,ar-EG-ShakirNeural,نشوف,نِشُوفْ
 LIBYAN,action,action.dress,ar-EG-ShakirNeural,نلبس,نِلْبِسْ
 LIBYAN,action,action.pray,ar-EG-ShakirNeural,نصلي,نِصَلِّي
-LIBYAN,animal,animal.cat,ar-EG-ShakirNeural,قطوسة,قَطُّوسَة
+LIBYAN,animal,animal.cat,ar-EG-ShakirNeural,قطوسة,جَطُّوسَة
 LIBYAN,animal,animal.dog,ar-EG-ShakirNeural,كلب,كَلْبْ
 LIBYAN,animal,animal.sheep,ar-EG-ShakirNeural,خروف,خَرُوفْ
 LIBYAN,animal,animal.horse,ar-EG-ShakirNeural,حصان,حْصَانْ
