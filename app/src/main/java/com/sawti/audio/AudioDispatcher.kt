@@ -1,5 +1,7 @@
 package com.sawti.audio
 
+import android.util.Log
+
 import com.sawti.domain.model.DialectSpeechCatalog
 import com.sawti.domain.model.PhonemicCue
 import com.sawti.domain.model.SentenceComposer
@@ -17,7 +19,7 @@ data class PlaybackVisual(
     val isSpeaking: Boolean = false,
 )
 
-/** Priority: caregiver recording -> keyed neural clip -> dialect-aware Android TTS. */
+/** Built-ins: recording -> exact neural clip -> explicit error. TTS: personal/dynamic only. */
 class AudioDispatcher(
     private val speech: SpeechManager,
     private val player: AudioPlayer,
@@ -25,12 +27,21 @@ class AudioDispatcher(
 ) {
     private val _playback = MutableStateFlow(PlaybackVisual())
     val playback: StateFlow<PlaybackVisual> = _playback.asStateFlow()
+    private val _neuralError = MutableStateFlow<String?>(null)
+    val neuralError: StateFlow<String?> = _neuralError.asStateFlow()
     private var generation = 0L
     private var quranStopper: (() -> Unit)? = null
 
     fun registerQuranStopper(stopper: () -> Unit) { quranStopper = stopper }
     fun unregisterQuranStopper(stopper: () -> Unit) {
         if (quranStopper === stopper) quranStopper = null
+    }
+
+    private fun missingNeural(key: String?, done: () -> Unit) {
+        val message = "Neural clip missing/stale for ${speech.activeDialect.name}/${key ?: "unknown"}; Android TTS disabled"
+        Log.e("SawtiNeuralOnly", message)
+        _neuralError.value = message
+        done()
     }
 
     private fun playNeural(key: String?, text: String, done: () -> Unit,
@@ -52,6 +63,8 @@ class AudioDispatcher(
 
     fun play(item: WordItem) {
         stopAll()
+        _neuralError.value = null
+        val neuralOnly = DialectSpeechCatalog.isNeuralOnly(item)
         val current = generation
         val done = { if (current == generation) _playback.value = PlaybackVisual() }
         val canceled = { if (current == generation) _playback.value = PlaybackVisual() }
@@ -59,8 +72,11 @@ class AudioDispatcher(
             _playback.value = PlaybackVisual(activeWordId = item.id, isSpeaking = true) }
         val fallback = {
             if (current == generation) {
-                mark()
-                speech.speak(item.speechText, onDone = done, onCanceled = canceled)
+                if (neuralOnly) missingNeural(item.semanticKey, done)
+                else {
+                    mark()
+                    speech.speak(item.speechText, onDone = done, onCanceled = canceled)
+                }
             }
         }
         // Personal speech/labels are ineligible. No fragile text equality with old manifests.
@@ -84,6 +100,7 @@ class AudioDispatcher(
         val speakable = SentenceComposer.spokenPieces(pieces)
         if (speakable.isEmpty()) return
         stopAll()
+        _neuralError.value = null
         val current = generation
         fun playPiece(position: Int) {
             if (current != generation) return
@@ -100,8 +117,10 @@ class AudioDispatcher(
             val done = { if (current == generation) playPiece(position + 1) }
             val canceled = { if (current == generation) _playback.value = PlaybackVisual() }
             val fallback = {
-                if (current == generation) speech.speak(piece.speech,
-                    onDone = done, onCanceled = canceled)
+                if (current == generation) {
+                    if (piece.neuralOnly) missingNeural(piece.semanticKey, done)
+                    else speech.speak(piece.speech, onDone = done, onCanceled = canceled)
+                }
             }
             val startNeural = {
                 current == generation && piece.neuralDialect == speech.activeDialect &&

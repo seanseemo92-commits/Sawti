@@ -31,9 +31,11 @@ class PhonemicCueArabicTest {
         assertEquals("قَـ...", PhonemicCue.derive("الْقَمَرْ"))
     }
 
-    @Test fun unvocalizedLabelsDoNotInventAPhonemicCue() {
-        assertEquals("", PhonemicCue.derive("بيض"))
-        assertEquals("", PhonemicCue.derive("اسم خاص"))
+    @Test fun unvocalizedLabelsUseWrittenFirstLetterWithoutGuessingVowels() {
+        // Built-in speech cards need a usable cue even when the word has no
+        // vowel marks; no synthetic vowel or consonant is added to the cue.
+        assertEquals("بـ...", PhonemicCue.derive("بيض"))
+        assertEquals("اـ...", PhonemicCue.derive("اسم خاص"))
         assertEquals("نْحِـ...", PhonemicCue.derive("نْحِبْ"))
     }
 }

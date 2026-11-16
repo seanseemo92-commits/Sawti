@@ -24,11 +24,10 @@ class NeuralAudioResolverTest {
             val resolver = NeuralAudioResolver(app)
             assertEquals(NeuralClip.Downloaded(audio),
                 resolver.resolve(ArabicDialect.LIBYAN, "request.water", "نِبِّي مَيَّة"))
-            assertEquals(NeuralClip.Downloaded(audio),
-                resolver.resolve(ArabicDialect.LIBYAN, "request.water", "نِبِّي مَيّه"))
+            // v1.6.2 rejects even a one-character speechText mismatch.
+            assertNull(resolver.resolve(ArabicDialect.LIBYAN, "request.water", "نِبِّي مَيّه"))
             assertNull(resolver.resolve(ArabicDialect.LIBYAN, "custom.user", "نِبِّي مَيَّة"))
-            assertEquals(NeuralClip.Bundled("neural_tts/tunisian/request.water.mp3"),
-                resolver.resolve(ArabicDialect.TUNISIAN, "request.water", "نِبِّي مَيَّة"))
+            assertNull(resolver.resolve(ArabicDialect.TUNISIAN, "request.water", "نِبِّي مَيَّة"))
         } finally { audio.delete(); manifest.delete(); folder.delete() }
     }
 
@@ -47,8 +46,11 @@ class NeuralAudioResolverTest {
             writeText("""{"version":1,"rate":"-18%","entries":{"request.water":{"file":"request.water.mp3","speechText":"نَبِّيْ إِمِّيَّهْ"}}}""")
         }
         try {
+            // A stale local file cannot shadow the current bundled v1.6.2 file.
+            val current = requireNotNull(com.sawti.domain.model.NeuralLexicon162.get(
+                ArabicDialect.LIBYAN, "request.water"))
             assertEquals(NeuralClip.Bundled("neural_tts/libyan/request.water.mp3"),
-                NeuralAudioResolver(app).resolve(ArabicDialect.LIBYAN, "request.water", "نِبِّي مَيَّة"))
+                NeuralAudioResolver(app).resolve(ArabicDialect.LIBYAN, "request.water", current.speechText))
         } finally { audio.delete(); manifest.delete(); folder.delete() }
     }
 
@@ -60,8 +62,13 @@ class NeuralAudioResolverTest {
             writeText("""{"version":1,"entries":{"request.water":{"file":"request.water.mp3","speechText":"صوت"}}}""")
         }
         try {
+            // A manifest with the wrong rate must not be used, and old
+            // strings never match current bundled neural speech.
+            assertNull(NeuralAudioResolver(app).resolve(ArabicDialect.LIBYAN, "request.water", "صوت"))
+            val current = requireNotNull(com.sawti.domain.model.NeuralLexicon162.get(
+                ArabicDialect.LIBYAN, "request.water"))
             assertEquals(NeuralClip.Bundled("neural_tts/libyan/request.water.mp3"),
-                NeuralAudioResolver(app).resolve(ArabicDialect.LIBYAN, "request.water", "صوت"))
+                NeuralAudioResolver(app).resolve(ArabicDialect.LIBYAN, "request.water", current.speechText))
         } finally { audio.delete(); manifest.delete(); folder.delete() }
     }
 }

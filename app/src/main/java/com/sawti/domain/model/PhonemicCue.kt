@@ -25,7 +25,9 @@ object PhonemicCue {
         if (cl.isEmpty()) return ""
         val start = if (cl.size > 2 && cl[0][0] in "اٱ" && cl[1][0] == 'ل') 2 else 0
         val first = cl[start]
-        if (!hasVowel(first) && SUKUN !in first && first[0] != 'آ') return ""
+        // An unvowelled built-in word still needs a non-empty, conservative cue.
+        if (!hasVowel(first) && SUKUN !in first && first[0] != 'آ')
+            return first[0].toString() + "ـ..."
         val result = StringBuilder(first) // Preserve shadda and the existing vowel marks.
         val next = cl.getOrNull(start + 1)
         if (next != null) {

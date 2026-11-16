@@ -65,20 +65,34 @@ object DialectSpeechCatalog {
     }
 
     /**
-     * One and only catalog projection for display, Android fallback and neural speech.
-     * Never rewrite caregiver-supplied text. Published assets are keyed by concept/dialect,
-     * rather than a fragile string comparison with this human-readable speech form.
+     * The v1.6.2 table is authoritative for built-in display and neural speech.
+     * Caregiver edits and non-table legacy concepts remain protected.
      */
     fun resolve(value: WordItem, dialect: ArabicDialect): SpeechForm {
+        // v1.6.2 built-in entries never pass through legacy diacritic cleanup.
+        val key = value.semanticKey
+        if (isNeuralOnly(value) && key != null) {
+            NeuralLexicon162.get(dialect, key)?.let { entry ->
+                val safeSpeech = NeuralSpeechNormalizer.normalize(entry.speechText)
+                val cue = if (value.customTextFields and CardDetails.CUE != 0)
+                    value.forEditing().phonemicCue else PhonemicCue.derive(safeSpeech)
+                return SpeechForm(entry.displayText, safeSpeech, cue,
+                    SpeechSource.EXPLICIT_DIALECT)
+            }
+        }
+        // Preserve personal edits and unlisted legacy concepts.
         val form = resolveUncorrected(value, dialect)
         if (form.source == SpeechSource.USER ||
             value.semanticKey?.substringBefore('.') !in builtinNamespaces) return form
         val clean = cleanSpeech(form.displayText, form.speechText, dialect)
-        val reviewedCue = if (DialectSpeechRevisions.hasCompletedCandidate(
-                dialect, value.semanticKey.orEmpty()
-            )) PhonemicCue.derive(clean) else ""
-        val cue = reviewedCue.ifBlank { form.phonemicCue }
-        return form.copy(speechText = clean, phonemicCue = cue)
+        val final = Audit161Confirmed.apply(value, dialect, form.copy(speechText = clean))
+        // A cue must refer to the final speech, not an outdated catalog candidate.
+        // Keep any explicit caregiver override untouched.
+        val derived = PhonemicCue.derive(final.speechText)
+        val cue = if (value.customTextFields and CardDetails.CUE != 0) final.phonemicCue
+            else if (final.speechText != value.ttsPrompt || final.phonemicCue.isBlank() ||
+                final.phonemicCue != derived) derived else final.phonemicCue
+        return final.copy(phonemicCue = cue)
     }
 
     /** Kept as an API alias for callers which export the voice catalog; no second pipeline. */
@@ -88,22 +102,23 @@ object DialectSpeechCatalog {
      * Eligibility lives next to the single projection, not in a competing playback policy.
      * Users' personal labels/speech always use their recording or Android TTS.
      */
+    /** Built-in identity is independent of whether an MP3 is available. */
+    fun isNeuralOnly(item: WordItem): Boolean =
+        !item.semanticKey.isNullOrBlank() &&
+            !item.categoryId.startsWith("custom_") &&
+            item.customTextFields and (CardDetails.LABEL or CardDetails.SPEECH) == 0
+
     fun neuralTextFor(item: WordItem, dialect: ArabicDialect): String? {
-        if (item.semanticKey.isNullOrBlank() || item.categoryId.startsWith("custom_") ||
-            item.semanticKey.substringBefore('.') !in builtinNamespaces)
-            return null
-        if (item.customTextFields and (CardDetails.LABEL or CardDetails.SPEECH) != 0)
-            return null
+        if (!isNeuralOnly(item)) return null
         if (item.neuralDialect != null && item.neuralDialect != dialect) return null
-        val form = resolve(item.forEditing(), dialect)
-        return form.speechText.takeIf { form.source != SpeechSource.USER && it.isNotBlank() }
+        return NeuralLexicon162.get(dialect, item.semanticKey!!)?.speechText
+            ?.let { NeuralSpeechNormalizer.normalize(it) }
     }
 
-    // Lexical diacritics stay intact; remove only pronunciation aids from built-in phrases.
-    // This function is deliberately shared by export and Android fallback.
+    // Historical compatibility helper only; never called for a v1.6.2 table row.
     internal fun cleanSpeech(display: String, spoken: String, dialect: ArabicDialect): String {
         if (spoken.isBlank()) return spoken
-        val sounds = spoken.trim().split(Regex("""\s+"""))
+        val sounds = NeuralSpeechNormalizer.normalize(spoken).trim().split(Regex("""\s+"""))
         val labels = display.trim().split(Regex("""\s+"""))
         val aligned = sounds.size == labels.size
         val marks = Regex("""[\u064B-\u065F\u0670]""")
@@ -122,8 +137,9 @@ object DialectSpeechCatalog {
                 else -> base
             }
             if (word.startsWith("إِ") && !visible.isNullOrEmpty() &&
-                visible.first() !in "اأإآٱ") word = word.removePrefix("إِ")
-            word = word.replace("تْش", "تش")
+                visible.first() !in "اأإآٱ" && !word.startsWith("إِسْفِنْز"))
+                word = word.removePrefix("إِ")
+            // تْش is a deliberate Iraqi /tʃ/ cluster: never remove its sukun.
             // Keep lexical clusters in خَالْتِي and similar regional words.
             if (word.startsWith("الْ")) word = word.replaceFirst("الْ", "ال")
             else if (word.startsWith("بِالْ")) word = word.replaceFirst("بِالْ", "بِال")
@@ -133,8 +149,10 @@ object DialectSpeechCatalog {
             // صْبَع is a deliberate Libyan lexical cluster, not a prosthetic sukun.
             // Explicit regional onset clusters (حْرَام، قْنِيَّة، دْجَاج)
             // are lexical, not synthetic prefixes; keep their initial sukun.
-            if (visible?.endsWith('ة') == true) word = word.replace(terminalTa, "ة")
-            word = word.removeSuffix("ْ")
+            // Fusha construct-state vowels (ةُ) are lexical inflection, not pause noise.
+            if (dialect != ArabicDialect.STANDARD && visible?.endsWith('ة') == true)
+                word = word.replace(terminalTa, "ة")
+            word = word.replace("ّْ", "ّ").removeSuffix("ْ")
             // Keep every deliberately specified medial vowel. In Arabic greetings
             // these vowels control liaison and the pronunciation of 'اللَّهُ'.
             word + punctuation

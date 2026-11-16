@@ -61,7 +61,7 @@ async def synthesize(voice, text, target, semaphore, attempts, rate):
                 partial = target.with_suffix(".mp3.partial")
                 partial.unlink(missing_ok=True)
                 await edge_tts.Communicate(text, voice, rate=rate).save(str(partial))
-                if partial.stat().st_size < 64:
+                if partial.stat().st_size <= 1024:
                     raise IOError(f"Empty/short TTS response: {target}")
                 partial.replace(target)
                 return
@@ -93,7 +93,7 @@ async def generate(args):
             target = folder / filename
             # A changed text or gender invalidates the previous audio, even if it exists.
             previous = prior.get("entries", {}).get(key, {})
-            reusable = (not args.force and target.is_file() and target.stat().st_size > 64
+            reusable = (not args.force and target.is_file() and target.stat().st_size > 1024
                         and prior.get("voice") == voice and prior.get("rate") == args.rate
                         and previous.get("speechText") == text)
             if not reusable:

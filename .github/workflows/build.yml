@@ -27,7 +27,7 @@ jobs:
     env:
       # Fast path (PRs): validation + unit tests + schema check only.
       # Full path (push to main, or manual dispatch with full_build): also APKs and lint.
-      FULL_BUILD: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && (github.head_ref == 'integration/android26-36-adaptive-20261113' || github.head_ref == 'fix/dialect-display-speech-86-20261114' || github.head_ref == 'fix/sawti-153-audio-ui-polish-20261115' || github.head_ref == 'fix/dialect-speech-245-20261115' || github.head_ref == 'fix/sawti-154-quran-background-ducking-20261115' || github.head_ref == 'fix/libyan-dialect-polish-five-20261115' || github.head_ref == 'fix/other-dialects-polish-20261115' || github.head_ref == 'feature/neural-voices-hybrid-v160-20261115' || github.head_ref == 'fix/sawti-v161-neural-lexicon-20261115')) || (github.event_name == 'workflow_dispatch' && inputs.full_build) }}
+      FULL_BUILD: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && (github.head_ref == 'integration/android26-36-adaptive-20261113' || github.head_ref == 'fix/dialect-display-speech-86-20261114' || github.head_ref == 'fix/sawti-153-audio-ui-polish-20261115' || github.head_ref == 'fix/dialect-speech-245-20261115' || github.head_ref == 'fix/sawti-154-quran-background-ducking-20261115' || github.head_ref == 'fix/libyan-dialect-polish-five-20261115' || github.head_ref == 'fix/other-dialects-polish-20261115' || github.head_ref == 'feature/neural-voices-hybrid-v160-20261115' || github.head_ref == 'fix/sawti-v161-neural-lexicon-20261115' || github.head_ref == 'fix/audit-v161-199-confirmed-20261116')) || (github.event_name == 'workflow_dispatch' && inputs.full_build) }}
     steps:
       - name: Checkout Sawti source
         uses: actions/checkout@v4
@@ -46,6 +46,9 @@ jobs:
         run: python3 scripts/verify_repository_baseline.py
       - name: Compile and run unit tests (fast path)
         run: ./gradlew --no-daemon :app:testDebugUnitTest
+      - name: Verify byte-for-byte v1.6.2 CSV/catalog parity
+        if: ${{ github.event_name == 'pull_request' && github.head_ref == 'fix/audit-v161-199-confirmed-20261116' || github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/fix/audit-v161-199-confirmed-20261116' }}
+        run: python3 scripts/verify_neural_v162_catalog.py
       - name: Check exported foundation schema
         run: |
           test -s app/schemas/com.sawti.data.db.AppDatabase/1.json

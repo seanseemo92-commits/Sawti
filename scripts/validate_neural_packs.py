@@ -34,7 +34,7 @@ def main():
             audio = folder / f"{key}.mp3"
             if (entry.get("speechText") != expected_speech or
                 entry.get("file") != f"{key}.mp3" or
-                not audio.is_file() or audio.stat().st_size < 64):
+                not audio.is_file() or audio.stat().st_size <= 1024):
                 raise SystemExit(f"Missing/stale/empty neural audio: {dialect}/{key}")
         print(f"{dialect}: {len(expected)} verified clips ({manifest['voice']})")
     print(f"Verified all {total} offline neural voice clips in nine dialects.")

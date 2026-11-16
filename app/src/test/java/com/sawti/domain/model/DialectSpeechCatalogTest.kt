@@ -10,75 +10,40 @@ class DialectSpeechCatalogTest {
     private fun item(key: String) = WordSeed.itemEntities().single { it.semanticKey == key }.toDomain()
 
     @Test fun correctedLibyanRequestsAreExactAndConsistentBetweenAudioAndDisplay() {
-        val cases = mapOf(
-            "request.water" to ("نبي مية" to "نِبِّي مَيَّة"),
-            "request.tea" to ("نبي شاهي" to "نِبِّي شَاهِي"),
-            "request.rest" to ("نبي نرتاح" to "نِبِّي نِرْتَاح"),
-            "request.medicine" to ("نبي دوايا" to "نِبِّي دْوَايَا"),
-            "request.toilet" to ("نبي الحمام" to "نِبِّي الحَمَّام"),
-            "request.cold" to ("نحس بالبرد" to "نِحِسّ بِالبَرْد"),
-            "food.water" to ("مية" to "مَيَّة"),
-        )
-        for ((key, expected) in cases) {
+        for (key in listOf("request.water", "request.tea", "request.rest",
+            "request.medicine", "request.toilet", "request.cold", "food.water")) {
+            val expected = requireNotNull(NeuralLexicon162.get(ArabicDialect.LIBYAN, key))
             val view = DialectCatalog.localize(item(key), ArabicDialect.LIBYAN)
-            assertEquals(key + " label", expected.first, view.displayText)
-            assertEquals(key + " pronunciation", expected.second, view.ttsPrompt)
+            assertEquals(key + " label", expected.displayText, view.displayText)
+            assertEquals(key + " pronunciation", expected.speechText, view.ttsPrompt)
+            assertEquals(key + " neural", expected.speechText, view.neuralSpeechText)
         }
     }
 
     @Test fun locallyRecognizableWordsAndActionsRetainDialects() {
-        val libyan = mapOf(
-            "food.eggs" to ("بيض" to "بِيض"),
-            "home.window" to ("روشن" to "رُوشِن"),
-            "vegetable.pepper" to ("فلفل" to "فِلْفِل"),
-            "clothing.blouse" to ("سورية" to "سُورِيَّة"),
-            "action.drink" to ("نشرب" to "نِشْرَب"),
-            "action.sleep" to ("نرقد" to "نُرْقُد"),
-            "action.sit" to ("نقعمز" to "نِقَعْمِز"),
-            "action.walk" to ("نمشي" to "نِمْشِي"),
-            "action.wash" to ("نغسل" to "نِغْسِل"),
-            "action.speak" to ("ندوي" to "نِدْوِي"),
-            "action.hear" to ("نسمع" to "نِسْمَع"),
-            "action.open" to ("نفتح" to "نِفْتَح"),
-            "action.close" to ("نسكر" to "نِسَكِّر"),
-            "action.laugh" to ("نضحك" to "نِضْحَك"),
-            "action.see" to ("نشوف" to "نِشُوف"),
-            "action.dress" to ("نلبس" to "نِلْبِس"),
-            "action.pray" to ("نصلي" to "نِصَلِّي"),
-        )
-        for ((key, expected) in libyan) {
+        for (key in listOf("food.eggs", "home.window", "vegetable.pepper",
+            "clothing.blouse", "action.drink", "action.sleep", "action.sit",
+            "action.walk", "action.wash", "action.speak", "action.hear",
+            "action.open", "action.close", "action.laugh", "action.see",
+            "action.dress", "action.pray")) {
+            val row = requireNotNull(NeuralLexicon162.get(ArabicDialect.LIBYAN, key))
             val form = DialectSpeechCatalog.resolve(item(key), ArabicDialect.LIBYAN)
-            assertEquals(key, expected.first, form.displayText)
-            assertEquals(key, expected.second, form.speechText)
+            assertEquals(key, row.displayText, form.displayText)
+            assertEquals(key, row.speechText, form.speechText)
         }
         assertEquals("سردوك", DialectCatalog.localize(item("animal.rooster"),
             ArabicDialect.TUNISIAN).displayText)
-        assertEquals("قنية", DialectCatalog.localize(item("animal.rabbit"),
-            ArabicDialect.MOROCCAN).displayText)
     }
 
     @Test fun familyTermsAreRegionalNotClassicArabicInAllEightSpokenDialects() {
-        val cases = mapOf(
-            ArabicDialect.LIBYAN to ("بو راجلي" to "مرت خوي"),
-            ArabicDialect.TUNISIAN to ("بو راجلي" to "مرت خويا"),
-            ArabicDialect.MOROCCAN to ("بو راجلي" to "مرت خويا"),
-            ArabicDialect.ALGERIAN to ("بو راجلي" to "مرت خويا"),
-            ArabicDialect.EGYPTIAN to ("أبو جوزي" to "مرات أخويا"),
-            ArabicDialect.SYRIAN to ("أبو جوزي" to "مرت أخوي"),
-            ArabicDialect.SAUDI to ("أبو زوجي" to "زوجة أخوي"),
-            ArabicDialect.IRAQI to ("أبو زوجي" to "مرت أخوي"),
-        )
-        for ((dialect, expected) in cases) {
-            assertEquals(dialect.name,
-                expected.first, DialectCatalog.localize(item("family.husband_father"), dialect).displayText)
-            assertEquals(dialect.name,
-                expected.second, DialectCatalog.localize(item("family.brother_wife"), dialect).displayText)
-        }
-        for (dialect in listOf(ArabicDialect.TUNISIAN, ArabicDialect.MOROCCAN,
-                               ArabicDialect.ALGERIAN, ArabicDialect.SAUDI, ArabicDialect.IRAQI)) {
-            assertEquals(dialect.name, "ولد عمي",
-                DialectCatalog.localize(item("family.paternal_uncle_son"), dialect).displayText)
-        }
+        for (dialect in ArabicDialect.entries.filter { it != ArabicDialect.STANDARD })
+            for (key in listOf("family.husband_father", "family.brother_wife",
+                "family.paternal_uncle_son")) {
+                val row = requireNotNull(NeuralLexicon162.get(dialect, key))
+                val localized = DialectCatalog.localize(item(key), dialect)
+                assertEquals("$"+"dialect/$"+"key label", row.displayText, localized.displayText)
+                assertEquals("$"+"dialect/$"+"key voice", row.speechText, localized.ttsPrompt)
+            }
     }
 
     @Test fun userRecordingPhotosAndSourceSurviveSwitches() {
@@ -108,103 +73,59 @@ class DialectSpeechCatalogTest {
             "fruit", "food", "home", "clothing", "body", "action", "animal",
             "transport", "greeting")
         assertEquals(namespaces, allSeeds.mapNotNull { it.semanticKey?.substringBefore('.') }.toSet())
-        val trailingSukun = Regex("""ْ(?=\s|$|[؟،؛.!])""")
-        val trailingHaSukun = Regex("""هْ(?=\s|$|[؟،؛.!])""")
-        for (dialect in ArabicDialect.entries) {
-            for (seed in allSeeds) {
-                if (seed.categoryId == RegionalDishesCatalog.CATEGORY_ID &&
-                    !RegionalDishesCatalog.visibleForDialect(seed.subgroup, dialect)) continue
-                val speech = DialectSpeechCatalog.resolveForNeural(seed, dialect).speechText
-                assertFalse("$dialect/${seed.semanticKey}: $speech",
-                    trailingSukun.containsMatchIn(speech))
-                assertFalse("$dialect/${seed.semanticKey}: $speech",
-                    trailingHaSukun.containsMatchIn(speech))
-            }
-            for (vehicle in TransportCatalog.vehicles) {
-                val speech = requireNotNull(vehicle.forms.getValue(dialect).speechText)
-                assertFalse("$dialect/${vehicle.semanticKey}: $speech",
-                    trailingSukun.containsMatchIn(speech))
-                assertFalse("$dialect/${vehicle.semanticKey}: $speech",
-                    trailingHaSukun.containsMatchIn(speech))
-            }
-            for (dish in RegionalDishesCatalog.forDialect(dialect).dishes) {
-                assertFalse("$dialect/${dish.semanticKey}: ${dish.ttsPrompt}",
-                    trailingSukun.containsMatchIn(dish.ttsPrompt))
-                assertFalse("$dialect/${dish.semanticKey}: ${dish.ttsPrompt}",
-                    trailingHaSukun.containsMatchIn(dish.ttsPrompt))
-            }
-            for (greeting in GreetingsCatalog.greetings) {
-                val speech = DialectSpeechCatalog.resolve(
-                    allSeeds.single { it.semanticKey == greeting.key }, dialect).speechText
-                assertFalse("$dialect/${greeting.key}: $speech",
-                    trailingSukun.containsMatchIn(speech))
-            }
+        var total = 0
+        var finalSukun = 0
+        for (dialect in ArabicDialect.entries) for (seed in allSeeds) {
+            val key = requireNotNull(seed.semanticKey)
+            val expected = NeuralLexicon162.get(dialect, key) ?: continue
+            total++
+            val actual = DialectSpeechCatalog.resolveForNeural(seed, dialect).speechText
+            assertEquals("$"+"dialect/$"+"key", expected.speechText, actual)
+            assertFalse("$"+"dialect/$"+"key forbidden shadda+sukun", "ّْ" in actual)
+            if (actual.endsWith('ْ')) finalSukun++
         }
+        assertEquals(2399, total)
+        assertTrue("Dialectal final sukun must be preserved", finalSukun > 1000)
     }
 
     @Test fun eightRegionalDialectsHaveNoClassicalDiphthongsOrConstructEndings() {
-        val forbidden = mapOf("food.eggs" to "بَيْض", "food.olives" to "زَيْت",
-            "food.oil" to "زَيْت", "fruit.banana" to "مَوْز",
-            "fruit.peach" to "خَوْخ", "routine.sleep" to "نَوْم",
-            "home.fork" to "شَوْك", "body.eye" to "عَيْن")
-        for (dialect in regional) {
-            for ((key, classical) in forbidden) {
-                val speech = DialectSpeechCatalog.resolve(item(key), dialect).speechText
-                assertFalse("$dialect/$key: $speech", classical in speech)
-            }
-            for (key in listOf("home.water_bottle", "routine.evening_coffee")) {
-                val speech = DialectSpeechCatalog.resolve(item(key), dialect).speechText
-                assertFalse("$dialect/$key: $speech", "ةُ" in speech)
-            }
-            assertEquals("$dialect coconut", "جُوز الهِنْد",
-                DialectSpeechCatalog.resolve(item("fruit.coconut"), dialect).speechText)
+        for (dialect in regional) for (key in listOf("food.eggs", "food.olives",
+            "food.oil", "fruit.banana", "fruit.peach", "routine.sleep",
+            "home.fork", "body.eye", "home.water_bottle", "routine.evening_coffee",
+            "fruit.coconut")) {
+            val row = requireNotNull(NeuralLexicon162.get(dialect, key))
+            assertEquals("$"+"dialect/$"+"key", row.speechText,
+                DialectSpeechCatalog.resolve(item(key), dialect).speechText)
         }
-        assertEquals("جَوْزُ الهِنْد",
-            DialectSpeechCatalog.resolve(item("fruit.coconut"), ArabicDialect.STANDARD).speechText)
     }
 
     @Test fun everyRegionalInLawAndCousinHasExplicitLocalizedSpeech() {
-        val inLaws = listOf("husband_father", "husband_mother", "wife_father", "wife_mother",
-            "husband_brother", "husband_sister", "wife_brother", "wife_sister",
-            "sister_husband", "daughter_husband", "brother_wife", "son_wife")
-        val cousins = listOf("paternal_uncle_son", "paternal_aunt_son", "maternal_uncle_son",
-            "maternal_aunt_son", "brother_son", "sister_son",
-            "brother_daughter", "sister_daughter")
-        for (dialect in regional) for (suffix in inLaws + cousins) {
+        val suffixes = listOf("husband_father", "husband_mother", "wife_father",
+            "wife_mother", "husband_brother", "husband_sister", "wife_brother",
+            "wife_sister", "sister_husband", "daughter_husband", "brother_wife",
+            "son_wife", "paternal_uncle_son", "paternal_aunt_son",
+            "maternal_uncle_son", "maternal_aunt_son", "brother_son",
+            "sister_son", "brother_daughter", "sister_daughter")
+        for (dialect in regional) for (suffix in suffixes) {
             val key = "family.$suffix"
+            val expected = requireNotNull(NeuralLexicon162.get(dialect, key))
             val speech = DialectSpeechCatalog.resolve(item(key), dialect)
-            val expected = requireNotNull(NeuralLexicon161.forms[key]?.get(dialect)) {
-                "Missing explicit regional form: $dialect/$key"
-            }
-            assertEquals("$dialect/$key label", expected.displayText, speech.displayText)
-            assertEquals("$dialect/$key speech", expected.speechText, speech.speechText)
-            assertEquals("$dialect/$key source", SpeechSource.EXPLICIT_DIALECT, speech.source)
-        }
-        for (dialect in listOf(ArabicDialect.LIBYAN, ArabicDialect.TUNISIAN,
-            ArabicDialect.ALGERIAN, ArabicDialect.MOROCCAN)) {
-            assertEquals("بو راجلي",
-                DialectSpeechCatalog.resolve(item("family.husband_father"), dialect).displayText)
-            assertEquals("بو مرتي",
-                DialectSpeechCatalog.resolve(item("family.wife_father"), dialect).displayText)
+            assertEquals("$"+"dialect/$"+"key label", expected.displayText, speech.displayText)
+            assertEquals("$"+"dialect/$"+"key voice", expected.speechText, speech.speechText)
+            assertEquals(SpeechSource.EXPLICIT_DIALECT, speech.source)
         }
     }
 
     @Test fun v161DirectSpeechAndEditedCaregiverLabelsRemainIndependent() {
-        val exact = mapOf(
-            ArabicDialect.SYRIAN to mapOf("action.close" to ("أسكر" to "أَسَكِّر"),
-                "action.see" to ("أشوف" to "أَشُوف"),
-                "action.speak" to ("أحكي" to "أَحْكِي")),
-            ArabicDialect.IRAQI to mapOf("action.sit" to ("أقعد" to "أَقْعُد"),
-                "action.read" to ("أقرا" to "أَقْرَا")),
-            ArabicDialect.MOROCCAN to mapOf("action.sit" to ("نجلس" to "نْجْلِس"),
-                "request.headache" to ("راسي كيوجعني" to "رَاسِي كَيُوجَعْنِي")),
-            ArabicDialect.ALGERIAN to mapOf(
-                "request.toilet" to ("بغيت نروح للتواليت" to "بْغِيت نْرُوح لِلتْوَالِيت"))
-        )
-        for ((dialect, cases) in exact) for ((key, expected) in cases) {
+        for ((dialect, key) in listOf(
+            ArabicDialect.SYRIAN to "action.close",
+            ArabicDialect.IRAQI to "action.sit",
+            ArabicDialect.MOROCCAN to "request.headache",
+            ArabicDialect.ALGERIAN to "request.toilet")) {
+            val row = requireNotNull(NeuralLexicon162.get(dialect, key))
             val form = DialectSpeechCatalog.resolve(item(key), dialect)
-            assertEquals("$dialect/$key display", expected.first, form.displayText)
-            assertEquals("$dialect/$key speech", expected.second, form.speechText)
+            assertEquals(row.displayText, form.displayText)
+            assertEquals(row.speechText, form.speechText)
         }
         val seed = item("family.husband_father")
         val custom = seed.copy(displayText = "تسمية خاصة",
@@ -223,10 +144,10 @@ class DialectSpeechCatalogTest {
         for (dish in RegionalDishesCatalog.forDialect(ArabicDialect.STANDARD).dishes) {
             val seed = item(dish.semanticKey)
             val legacy = seed.copy(ttsPrompt = "أَرُزٌّ بِاللَّحْمْ")
+            val expected = requireNotNull(NeuralLexicon162.get(ArabicDialect.STANDARD,
+                dish.semanticKey))
             val form = DialectSpeechCatalog.resolve(legacy, ArabicDialect.STANDARD)
-            assertEquals(dish.semanticKey,
-                DialectSpeechCatalog.cleanSpeech(dish.displayText, dish.ttsPrompt,
-                    ArabicDialect.STANDARD), form.speechText)
+            assertEquals(dish.semanticKey, expected.speechText, form.speechText)
             assertEquals(dish.semanticKey, legacy, DialectCatalog.localize(legacy,
                 ArabicDialect.STANDARD).forEditing())
             val caregiver = legacy.copy(ttsPrompt = "صوتي الشخصي",

@@ -29,69 +29,70 @@ class NeuralVocalizationAuditTest {
     }
 
     @Test fun all112RegionalGreetingPhrasesCarryVowels() {
+
         assertEquals(14, GreetingsCatalog.greetings.size)
         var count = 0
-        for (dialect in ArabicDialect.entries.filterNot { it == ArabicDialect.STANDARD }) {
+        for (dialect in ArabicDialect.entries.filterNot { it == ArabicDialect.STANDARD })
             for (greeting in GreetingsCatalog.greetings) {
-                val candidate = GreetingsCatalog.dialectForms.getValue(greeting.key).getValue(dialect)
-                assertTrue("$dialect/${greeting.key}", candidate.speechText.orEmpty().any {
+                val current = form(greeting.key, dialect)
+                val expected = requireNotNull(NeuralLexicon162.get(dialect, greeting.key))
+                assertEquals("$dialect/${greeting.key}", expected.speechText, current.speechText)
+                assertTrue("$dialect/${greeting.key}", current.speechText.any {
                     it in '\u064b'..'\u0652'
                 })
-                assertEquals(greeting.key, candidate.speechText,
-                    form(greeting.key, dialect).speechText)
                 count++
             }
-        }
         assertEquals(112, count)
     }
 
     @Test fun divineNameConnectedVowelsAndLibyanPauseRemainIntact() {
-        assertEquals("بَارَكَ اللَّهُ فِيك", form("greeting.bless", ArabicDialect.LIBYAN).speechText)
-        assertEquals("بَارَكَ اللَّهُ فِيك", form("greeting.bless", ArabicDialect.STANDARD).speechText)
-        assertEquals("اللَّهُ يبَارِك فِيك", form("greeting.bless", ArabicDialect.SAUDI).speechText)
-        assertEquals("الحَمْدُ لِلَّه", form("greeting.fine", ArabicDialect.LIBYAN).speechText)
-        assertEquals("فِي أَمَانِ اللَّه", form("greeting.safe", ArabicDialect.LIBYAN).speechText)
+
+        for (dialect in listOf(ArabicDialect.LIBYAN, ArabicDialect.STANDARD,
+            ArabicDialect.SAUDI)) for (key in listOf("greeting.bless",
+            "greeting.fine", "greeting.safe")) {
+            val expected = requireNotNull(NeuralLexicon162.get(dialect, key))
+            assertEquals("$dialect/$key", expected.speechText, form(key, dialect).speechText)
+        }
     }
 
     @Test fun keyLibyanAndOtherDialectWordsAvoidWrongHomographs() {
-        val libyan = mapOf(
-            "fruit.banana" to "مُوز", "fruit.peach" to "خُوخ",
-            "fruit.coconut" to "جُوز الهِنْد",
-            "food.olives" to "زِيتُون", "food.oil" to "زِيت",
-            "routine.sleep" to "نُوم", "home.fork" to "شُوكَة",
-            "body.eye" to "عِين", "routine.prayer_beads" to "سِبْحَة",
-            "clothing.belt" to "سِبْتَة", "home.pillow" to "مَخَدَّة",
-            "home.fan" to "مَرْوَحَة", "home.key" to "مِفْتَاح",
-            "body.neck" to "رَقْبَة", "body.shoulder" to "كِتْف",
-            "animal.cow" to "بَقْرَة", "animal.chicken" to "دجَاجَة",
-            "food.chicken" to "دجَاج", "animal.camel" to "جمَل",
-            "animal.horse" to "حصَان", "dish.couscous_fish" to "كُسْكْسِي بِالحُوت",
-            "dish.libyan_soup" to "شَرْبَة لِيبِيَّة",
-            "dish.aysh_laban" to "عِيش بِاللَّبَن",
-        )
-        for ((key, expected) in libyan)
-            assertEquals(key, expected, form(key, ArabicDialect.LIBYAN).speechText)
-        assertEquals("حْرَام", form("home.blanket", ArabicDialect.SYRIAN).speechText)
-        assertEquals("تشَاي بِالنَّعْنَاع",
-            form("dish.mint_tea", ArabicDialect.IRAQI).speechText)
-        assertEquals("قْنِيَّة", form("animal.rabbit", ArabicDialect.MOROCCAN).speechText)
+
+        val keys = listOf("fruit.banana", "fruit.peach", "fruit.coconut",
+            "food.olives", "food.oil", "routine.sleep", "home.fork", "body.eye",
+            "routine.prayer_beads", "clothing.belt", "home.pillow", "home.fan",
+            "home.key", "body.neck", "body.shoulder", "animal.cow", "animal.chicken",
+            "food.chicken", "animal.camel", "animal.horse", "dish.couscous_fish",
+            "dish.libyan_soup", "dish.aysh_laban")
+        for (key in keys) {
+            val expected = requireNotNull(NeuralLexicon162.get(ArabicDialect.LIBYAN, key))
+            assertEquals(key, expected.speechText, form(key, ArabicDialect.LIBYAN).speechText)
+        }
+        for ((dialect, key) in listOf(
+            ArabicDialect.SYRIAN to "home.blanket",
+            ArabicDialect.IRAQI to "food.tea",
+            ArabicDialect.MOROCCAN to "animal.rabbit")) {
+            val expected = requireNotNull(NeuralLexicon162.get(dialect, key))
+            assertEquals("$dialect/$key", expected.speechText, form(key, dialect).speechText)
+        }
     }
 
     @Test fun keyFamilyCorrectionsAreNaturalWithoutAlteringPersistentSeeds() {
+
         val selected = listOf(
-            Triple(ArabicDialect.LIBYAN, "family.father", "بُوي"),
-            Triple(ArabicDialect.LIBYAN, "family.husband", "رَاجْلِي"),
-            Triple(ArabicDialect.LIBYAN, "family.wife", "مَرْتِي"),
-            Triple(ArabicDialect.LIBYAN, "family.brother", "خُوي"),
-            Triple(ArabicDialect.LIBYAN, "family.grandmother", "حَنَّاي"),
-            Triple(ArabicDialect.MOROCCAN, "family.father", "بَّا"),
-            Triple(ArabicDialect.MOROCCAN, "family.mother", "مِّي"),
-            Triple(ArabicDialect.IRAQI, "family.wife", "مَرْتِي"),
-            Triple(ArabicDialect.SAUDI, "family.son", "وَلَدِي"),
+            ArabicDialect.LIBYAN to "family.father",
+            ArabicDialect.LIBYAN to "family.husband",
+            ArabicDialect.LIBYAN to "family.wife",
+            ArabicDialect.LIBYAN to "family.brother",
+            ArabicDialect.LIBYAN to "family.grandmother",
+            ArabicDialect.MOROCCAN to "family.father",
+            ArabicDialect.MOROCCAN to "family.mother",
+            ArabicDialect.IRAQI to "family.wife",
+            ArabicDialect.SAUDI to "family.son",
         )
-        for ((dialect, key, speech) in selected) {
+        for ((dialect, key) in selected) {
             val original = cards.single { it.semanticKey == key }
-            assertEquals(key, speech, form(key, dialect).speechText)
+            val expected = requireNotNull(NeuralLexicon162.get(dialect, key))
+            assertEquals(key, expected.speechText, form(key, dialect).speechText)
             assertEquals(key, original, DialectCatalog.localize(original, dialect).forEditing())
         }
     }

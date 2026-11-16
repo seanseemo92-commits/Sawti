@@ -70,7 +70,7 @@ class SpeechLifecycleTest {
         val app = RuntimeEnvironment.getApplication() as Application
         val focus = AudioFocusController(app)
         val dispatcher = AudioDispatcher(manager, AudioPlayer(focus))
-        val card = WordItem(1, "transport", "", "سيارة", "سَيَّارَة", "سَـ...", null,
+        val card = WordItem(1, "custom_transport", "", "سيارة", "سَيَّارَة", "سَـ...", null,
             null, null, "", "", semanticKey = "transport.car")
         dispatcher.play(card)
         assertTrue(dispatcher.playback.value.isSpeaking)
@@ -87,6 +87,18 @@ class SpeechLifecycleTest {
         assertFalse(dispatcher.playback.value.isSpeaking)
         assertNull(dispatcher.playback.value.activeWordId)
         manager.stop()
+    }
+
+    @Test fun builtInCardNeverFallsBackToAndroidTtsWithoutNeuralClip() {
+        val app = RuntimeEnvironment.getApplication() as Application
+        val dispatcher = AudioDispatcher(manager, AudioPlayer(AudioFocusController(app)))
+        val card = WordItem(10, "transport", "", "سيارة", "سَيَّارَة", "سَـ...", null,
+            null, null, "", "", semanticKey = "transport.car")
+        val before = engine.requests.size
+        dispatcher.play(card)
+        assertEquals(before, engine.requests.size)
+        assertFalse(dispatcher.playback.value.isSpeaking)
+        assertNotNull(dispatcher.neuralError.value)
     }
 
     @Test fun notificationDoesNotCancelTtsButTransientPhoneCallDoes() {
