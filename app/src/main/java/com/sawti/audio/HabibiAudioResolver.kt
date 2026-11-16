@@ -25,23 +25,29 @@ class HabibiAudioResolver(context: Context) {
     companion object {
         fun safeKey(key: String): Boolean =
             key.matches(Regex("[a-z0-9][a-z0-9._-]*")) && !key.contains("..")
+
+        fun acceptsManifestHeader(raw: String, dialect: ArabicDialect): Boolean =
+            runCatching {
+                val json = JSONObject(raw)
+                json.optInt("version") == 2 &&
+                    json.optString("engine") == "Habibi-TTS" &&
+                    json.optString("model") == "Unified" &&
+                    json.optString("license") == "CC-BY-NC-SA-4.0" &&
+                    json.optString("dialectId") == HabibiSpeechText.dialectTag(dialect) &&
+                    json.optInt("sampleRate") == 24000 &&
+                    json.optString("bitrate") == "96k"
+            }.getOrDefault(false)
     }
 
     private fun load(dialect: ArabicDialect): Map<String, Entry> = runCatching {
         val folder = dialect.name.lowercase(Locale.ROOT)
-        val json = assets.open("neural_tts/$folder/manifest.json")
-            .bufferedReader(Charsets.UTF_8).use { JSONObject(it.readText()) }
-        val tag = HabibiSpeechText.dialectTag(dialect)
-        if (json.optInt("version") != 2 ||
-            json.optString("engine") != "Habibi-TTS" ||
-            json.optString("model") != "Unified" ||
-            json.optString("license") != "CC-BY-NC-SA-4.0" ||
-            json.optString("dialectId") != tag ||
-            json.optInt("sampleRate") != 24000 ||
-            json.optString("bitrate") != "96k") {
+        val raw = assets.open("neural_tts/$folder/manifest.json")
+            .bufferedReader(Charsets.UTF_8).use { it.readText() }
+        if (!acceptsManifestHeader(raw, dialect)) {
             Log.e("HabibiAudio", "Reject old/invalid manifest for $folder")
             return@runCatching emptyMap()
         }
+        val json = JSONObject(raw)
         val data = json.getJSONObject("entries")
         // Libyan pack contains 271 keys; the others contain 266 each.
         val expected = if (dialect == ArabicDialect.LIBYAN) 271 else 266
