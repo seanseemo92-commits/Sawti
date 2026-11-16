@@ -65,51 +65,32 @@ object DialectSpeechCatalog {
     }
 
     /**
-     * One and only catalog projection for display, Android fallback and neural speech.
-     * Never rewrite caregiver-supplied text. Published assets are keyed by concept/dialect,
-     * rather than a fragile string comparison with this human-readable speech form.
+     * The ONLY speech projection for built-in cards: keep the regional word,
+     * remove all legacy engine-specific vowels and artificial sukun marks.
+     * The visible spelling selects the word; Habibi selects the pronunciation.
+     * Never normalize user's custom text or caregiver recordings.
      */
     fun resolve(value: WordItem, dialect: ArabicDialect): SpeechForm {
         val form = resolveUncorrected(value, dialect)
         if (form.source == SpeechSource.USER ||
             value.semanticKey?.substringBefore('.') !in builtinNamespaces) return form
-        val clean = cleanSpeech(form.displayText, form.speechText, dialect)
-        val reviewedCue = if (DialectSpeechRevisions.hasCompletedCandidate(
-                dialect, value.semanticKey.orEmpty()
-            )) PhonemicCue.derive(clean) else ""
-        val cue = reviewedCue.ifBlank { form.phonemicCue }
-        return form.copy(speechText = clean, phonemicCue = cue)
+        return form.copy(
+            speechText = HabibiSpeechText.prepare(form.speechText),
+            phonemicCue = HabibiSpeechText.prepare(form.phonemicCue),
+        )
     }
 
-    /**
-     * Habibi input is plain Arabic text selected by the same semantic/dialect
-     * dictionary. Bypass the legacy Microsoft-specific vowel/sukun cleanup;
-     * those rules must never influence Habibi audio generation.
-     */
-    fun resolveForHabibi(value: WordItem, dialect: ArabicDialect): SpeechForm {
-        val form = resolveUncorrected(value, dialect)
-        if (form.source == SpeechSource.USER ||
-            value.semanticKey?.substringBefore('.') !in builtinNamespaces) return form
-        return form.copy(speechText = HabibiSpeechText.prepare(form.speechText))
-    }
+    fun resolveForHabibi(value: WordItem, dialect: ArabicDialect): SpeechForm = resolve(value, dialect)
 
-    /** Canonical Habibi clip text for a non-customized built-in card. */
-    fun habibiTextFor(item: WordItem, dialect: ArabicDialect): String? {
-        if (item.semanticKey.isNullOrBlank() || item.categoryId.startsWith("custom_") ||
-            item.semanticKey.substringBefore('.') !in builtinNamespaces) return null
-        if (item.customTextFields and (CardDetails.LABEL or CardDetails.SPEECH) != 0)
-            return null
-        if (item.neuralDialect != null && item.neuralDialect != dialect) return null
-        return resolveForHabibi(item.forEditing(), dialect).speechText
-            .takeIf { it.isNotBlank() }
-    }
+    fun habibiTextFor(item: WordItem, dialect: ArabicDialect): String? =
+        neuralTextFor(item, dialect)
 
     /** Kept as an API alias for callers which export the voice catalog; no second pipeline. */
     fun resolveForNeural(value: WordItem, dialect: ArabicDialect): SpeechForm = resolve(value, dialect)
 
     /**
      * Eligibility lives next to the single projection, not in a competing playback policy.
-     * Users' personal labels/speech always use their recording or Android TTS.
+     * Users' personal labels and speech are not rewritten.
      */
     fun neuralTextFor(item: WordItem, dialect: ArabicDialect): String? {
         if (item.semanticKey.isNullOrBlank() || item.categoryId.startsWith("custom_") ||
@@ -122,46 +103,7 @@ object DialectSpeechCatalog {
         return form.speechText.takeIf { form.source != SpeechSource.USER && it.isNotBlank() }
     }
 
-    // Lexical diacritics stay intact; remove only pronunciation aids from built-in phrases.
-    // This function is deliberately shared by export and Android fallback.
-    internal fun cleanSpeech(display: String, spoken: String, dialect: ArabicDialect): String {
-        if (spoken.isBlank()) return spoken
-        val sounds = spoken.trim().split(Regex("""\s+"""))
-        val labels = display.trim().split(Regex("""\s+"""))
-        val aligned = sounds.size == labels.size
-        val marks = Regex("""[\u064B-\u065F\u0670]""")
-        val vowelSukun = Regex("""(?:ِّ?ي|ُّ?و|َّ?ا)ْ""")
-        val terminalTa = Regex("""(?:ة[ٌٍُْ]?|هْ?|تْ)$""")
-        return sounds.mapIndexed { i, sound ->
-            val base = sound.trimEnd('؟', '!', '،', '.', '؛', ':')
-            val punctuation = sound.substring(base.length)
-            val visible = if (aligned) labels[i].trim('(', ')', '؟', '!', '،', '.', '؛', ':')
-                .replace(marks, "") else null
-            var word = when (base) {
-                "إِمِّيَّهْ", "إِمِّيَّة" -> "مَيَّة"
-                "إِبْنْ" -> "اِبْن"
-                "أَهْلَنْ" -> "أَهْلًا"
-                "وَسَهْلَنْ" -> "وَسَهْلًا"
-                else -> base
-            }
-            if (word.startsWith("إِ") && !visible.isNullOrEmpty() &&
-                visible.first() !in "اأإآٱ") word = word.removePrefix("إِ")
-            word = word.replace("تْش", "تش")
-            // Keep lexical clusters in خَالْتِي and similar regional words.
-            if (word.startsWith("الْ")) word = word.replaceFirst("الْ", "ال")
-            else if (word.startsWith("بِالْ")) word = word.replaceFirst("بِالْ", "بِال")
-            else if (word.startsWith("لِلْ")) word = word.replaceFirst("لِلْ", "لِل")
-            word = word
-                .replace(vowelSukun) { it.value.dropLast(1) }
-            // صْبَع is a deliberate Libyan lexical cluster, not a prosthetic sukun.
-            // Explicit regional onset clusters (حْرَام، قْنِيَّة، دْجَاج)
-            // are lexical, not synthetic prefixes; keep their initial sukun.
-            if (visible?.endsWith('ة') == true) word = word.replace(terminalTa, "ة")
-            word = word.removeSuffix("ْ")
-            // Keep every deliberately specified medial vowel. In Arabic greetings
-            // these vowels control liaison and the pronunciation of 'اللَّهُ'.
-            word + punctuation
-        }.joinToString(" ")
-    }
+    /** Compatibility name: no old vowel/sukun manipulation survives. */
+    internal fun cleanSpeech(display: String, spoken: String, dialect: ArabicDialect): String =
+        HabibiSpeechText.prepare(spoken)
 }
-
