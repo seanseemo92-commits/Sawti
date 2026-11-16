@@ -58,7 +58,7 @@ class NeuralOnlyV162Test {
             val seed = requireNotNull(seeds[key])
             assertEquals(row.speech, DialectSpeechCatalog.neuralTextFor(seed, dialect))
         }
-        assertTrue(rows.any { it.speech.startsWith("نْگ") })
+        assertTrue(rows.any { it.speech.startsWith("نْق") })
         assertTrue(rows.any { it.speech.startsWith("تْش") })
         assertTrue(rows.any { it.speech.endsWith('ْ') })
         assertTrue(rows.any { it.speech.contains("حِذَاءٌ بِكَعْبٍ عَالٍ") })
