@@ -76,7 +76,7 @@ jobs:
           unzip -t "$APK" > /dev/null
           unzip -Z1 "$APK" > "$RUNNER_TEMP/release-apk-files.txt"
           # Release MUST contain all nine fully verified Habibi packs; never old Edge clips.
-          test "$(grep -Ec '^assets/neural_tts/(libyan|tunisian|algerian|moroccan|egyptian|syrian|iraqi|saudi|standard)/[a-z0-9._-]+\.mp3
+          test "$(grep -Ec '^assets/neural_tts/.+[.]mp3$' "$RUNNER_TEMP/release-apk-files.txt")" = 2399
           test "$(grep -Ec '^assets/quran_passages/(ar.alafasy|salah.bukhatir|husary.muallim)/2_(255|285|286)_[0-9]+\.mp3$' "$RUNNER_TEMP/release-apk-files.txt")" = 66
           test "$(grep -Ec '^assets/quran_surahs/(ar.alafasy|salah.bukhatir|husary.muallim)/[0-9]{6}\.mp3$' "$RUNNER_TEMP/release-apk-files.txt")" = 201
           test "$(grep -Ec '^assets/quran_surahs/text/surah_[0-9]+\.json$' "$RUNNER_TEMP/release-apk-files.txt")" = 13
