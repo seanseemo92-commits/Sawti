@@ -73,7 +73,7 @@ class NeuralVocalizationAuditTest {
         for ((key, expected) in libyan)
             assertEquals(key, expected, form(key, ArabicDialect.LIBYAN).speechText)
         assertEquals("حْرَام", form("home.blanket", ArabicDialect.SYRIAN).speechText)
-        assertEquals("تْشَاي بِالنَّعْنَاع",
+        assertEquals("تشَاي بِالنَّعْنَاع",
             form("dish.mint_tea", ArabicDialect.IRAQI).speechText)
         assertEquals("قْنِيَّة", form("animal.rabbit", ArabicDialect.MOROCCAN).speechText)
     }
