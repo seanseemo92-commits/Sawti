@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install edge-tts
-        run: python -m pip install 'edge-tts>=6.1,<9'
+        run: python -m pip install 'edge-tts>=6.1,<9' 'imageio-ffmpeg>=0.6,<1'
       - name: Generate audio variants separate from the Android app
         run: python scripts/libyan_g_listening_trials.py
       - name: Assert 7 x 4 playable candidate MP3s
