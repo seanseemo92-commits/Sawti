@@ -1,0 +1,40 @@
+name: Libyan G pronunciation listening trials (non-production)
+on:
+  push:
+    branches: [fix/libyan-g-pronunciation-20261116]
+    paths:
+      - 'scripts/libyan_g_listening_trials.py'
+      - '.github/workflows/libyan-g-listening-trials.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  samples:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install edge-tts
+        run: python -m pip install 'edge-tts>=6.1,<9'
+      - name: Generate audio variants separate from the Android app
+        run: python scripts/libyan_g_listening_trials.py
+      - name: Assert 7 x 4 playable candidate MP3s
+        run: |
+          test "$(find build/libyan-g-listening-trials -maxdepth 1 -name '*.mp3' | wc -l)" -eq 28
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('build/libyan-g-listening-trials')
+          assert len(list(p.glob('*.mp3'))) == 28
+          assert all(f.stat().st_size > 1024 for f in p.glob('*.mp3'))
+          print('28 non-empty listening trials generated; phoneme accuracy NOT automatically validated.')
+          PY
+      - name: Upload sample pack for native-speaker review
+        uses: actions/upload-artifact@v4
+        with:
+          name: sawti-libyan-hard-g-listening-trials
+          path: build/libyan-g-listening-trials/
+          if-no-files-found: error
+          retention-days: 14
