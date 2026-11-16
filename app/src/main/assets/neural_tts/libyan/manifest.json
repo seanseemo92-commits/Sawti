@@ -69,7 +69,7 @@
     },
     "animal.camel": {
       "file": "animal.camel.mp3",
-      "speechText": "جمَل"
+      "speechText": "جْمَل"
     },
     "animal.cat": {
       "file": "animal.cat.mp3",
@@ -77,7 +77,7 @@
     },
     "animal.chicken": {
       "file": "animal.chicken.mp3",
-      "speechText": "دجَاجَة"
+      "speechText": "دْجَاجَة"
     },
     "animal.cow": {
       "file": "animal.cow.mp3",
@@ -93,7 +93,7 @@
     },
     "animal.horse": {
       "file": "animal.horse.mp3",
-      "speechText": "حصَان"
+      "speechText": "حْصَان"
     },
     "animal.pigeon": {
       "file": "animal.pigeon.mp3",
@@ -165,7 +165,7 @@
     },
     "body.leg": {
       "file": "body.leg.mp3",
-      "speechText": "رِجْل"
+      "speechText": "رِجِل"
     },
     "body.mouth": {
       "file": "body.mouth.mp3",
@@ -269,7 +269,7 @@
     },
     "clothing.socks": {
       "file": "clothing.socks.mp3",
-      "speechText": "شخَاشِير"
+      "speechText": "شْخَاشِير"
     },
     "clothing.trousers": {
       "file": "clothing.trousers.mp3",
@@ -301,11 +301,11 @@
     },
     "dish.couscous_fish": {
       "file": "dish.couscous_fish.mp3",
-      "speechText": "كُسْكْسِي بِالحُوت"
+      "speechText": "كُسْكُسِي بِالحُوت"
     },
     "dish.hraymi": {
       "file": "dish.hraymi.mp3",
-      "speechText": "حَرَايْمِي"
+      "speechText": "حْرَايْمِي"
     },
     "dish.khobz_tajin": {
       "file": "dish.khobz_tajin.mp3",
@@ -321,7 +321,7 @@
     },
     "dish.mbakbaka": {
       "file": "dish.mbakbaka.mp3",
-      "speechText": "مَكَرُونَة مبَكْبَكَة"
+      "speechText": "مَكَرُونَة مْبَكْبَكَة"
     },
     "dish.mbattan": {
       "file": "dish.mbattan.mp3",
@@ -337,11 +337,11 @@
     },
     "dish.pasta_masqiya": {
       "file": "dish.pasta_masqiya.mp3",
-      "speechText": "مَكَرُونَة مَسْقِيَّة"
+      "speechText": "مَكَرُونَة مِسْقِيَّة"
     },
     "dish.potato_stew": {
       "file": "dish.potato_stew.mp3",
-      "speechText": "طبِيخَة بَطَاطَا"
+      "speechText": "طْبِيخَة بَطَاطَا"
     },
     "dish.reshda_borma": {
       "file": "dish.reshda_borma.mp3",
@@ -353,11 +353,11 @@
     },
     "dish.rice_blaw": {
       "file": "dish.rice_blaw.mp3",
-      "speechText": "رُز بِلَاو"
+      "speechText": "رُزّ بِلَاو"
     },
     "dish.sfinz": {
       "file": "dish.sfinz.mp3",
-      "speechText": "سفِنْز"
+      "speechText": "إِسْفِنْز"
     },
     "dish.zmeeta": {
       "file": "dish.zmeeta.mp3",
@@ -393,15 +393,15 @@
     },
     "family.female_in_law": {
       "file": "family.female_in_law.mp3",
-      "speechText": "نَسِيبَتِي"
+      "speechText": "نَسِيبْتِي"
     },
     "family.female_relative": {
       "file": "family.female_relative.mp3",
-      "speechText": "قَرِيبَتِي"
+      "speechText": "قَرِيبْتِي"
     },
     "family.granddaughter": {
       "file": "family.granddaughter.mp3",
-      "speechText": "حَفِيدَتِي"
+      "speechText": "حَفِيدْتِي"
     },
     "family.grandfather": {
       "file": "family.grandfather.mp3",
@@ -429,7 +429,7 @@
     },
     "family.husband_mother": {
       "file": "family.husband_mother.mp3",
-      "speechText": "أُم رَاجْلِي"
+      "speechText": "أُمّ رَاجْلِي"
     },
     "family.husband_sister": {
       "file": "family.husband_sister.mp3",
@@ -517,7 +517,7 @@
     },
     "family.son_wife": {
       "file": "family.son_wife.mp3",
-      "speechText": "مَرْت وَلْدِي"
+      "speechText": "مَرْت وِلْدِي"
     },
     "family.wife": {
       "file": "family.wife.mp3",
@@ -533,7 +533,7 @@
     },
     "family.wife_mother": {
       "file": "family.wife_mother.mp3",
-      "speechText": "أُم مَرْتِي"
+      "speechText": "أُمّ مَرْتِي"
     },
     "family.wife_sister": {
       "file": "family.wife_sister.mp3",
@@ -541,7 +541,7 @@
     },
     "food.biscuit": {
       "file": "food.biscuit.mp3",
-      "speechText": "بِسْكُوِيت"
+      "speechText": "بَسْكَوِيت"
     },
     "food.bread": {
       "file": "food.bread.mp3",
@@ -557,7 +557,7 @@
     },
     "food.chicken": {
       "file": "food.chicken.mp3",
-      "speechText": "دجَاج"
+      "speechText": "دْجَاج"
     },
     "food.coffee": {
       "file": "food.coffee.mp3",
@@ -873,7 +873,7 @@
     },
     "home.water_bottle": {
       "file": "home.water_bottle.mp3",
-      "speechText": "شِيشَة امَيَّه"
+      "speechText": "شِيشَة مَيَّة"
     },
     "home.window": {
       "file": "home.window.mp3",
@@ -949,7 +949,7 @@
     },
     "routine.walk": {
       "file": "routine.walk.mp3",
-      "speechText": "مَشْي"
+      "speechText": "مَشِي"
     },
     "transport.airplane": {
       "file": "transport.airplane.mp3",

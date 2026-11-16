@@ -165,7 +165,7 @@
     },
     "body.leg": {
       "file": "body.leg.mp3",
-      "speechText": "رِجْل"
+      "speechText": "رِجِل"
     },
     "body.mouth": {
       "file": "body.mouth.mp3",
@@ -305,7 +305,7 @@
     },
     "dish.syrian.haraq_osbao": {
       "file": "dish.syrian.haraq_osbao.mp3",
-      "speechText": "حَرَّاق أُصْبَعُو"
+      "speechText": "حَرَّاق إِصْبَعُو"
     },
     "dish.syrian.kebab": {
       "file": "dish.syrian.kebab.mp3",
@@ -373,15 +373,15 @@
     },
     "family.female_in_law": {
       "file": "family.female_in_law.mp3",
-      "speechText": "نَسِيبَتِي"
+      "speechText": "نَسِيبْتِي"
     },
     "family.female_relative": {
       "file": "family.female_relative.mp3",
-      "speechText": "قَرِيبَتِي"
+      "speechText": "قَرِيبْتِي"
     },
     "family.granddaughter": {
       "file": "family.granddaughter.mp3",
-      "speechText": "حَفِيدَتِي"
+      "speechText": "حَفِيدْتِي"
     },
     "family.grandfather": {
       "file": "family.grandfather.mp3",
@@ -397,7 +397,7 @@
     },
     "family.husband": {
       "file": "family.husband.mp3",
-      "speechText": "جَوْزِي"
+      "speechText": "جُوزِي"
     },
     "family.husband_brother": {
       "file": "family.husband_brother.mp3",
@@ -409,7 +409,7 @@
     },
     "family.husband_mother": {
       "file": "family.husband_mother.mp3",
-      "speechText": "أُم جُوزِي"
+      "speechText": "أُمّ جُوزِي"
     },
     "family.husband_sister": {
       "file": "family.husband_sister.mp3",
@@ -425,7 +425,7 @@
     },
     "family.maternal_aunt": {
       "file": "family.maternal_aunt.mp3",
-      "speechText": "خَالَتِي"
+      "speechText": "خَالْتِي"
     },
     "family.maternal_aunt_daughter": {
       "file": "family.maternal_aunt_daughter.mp3",
@@ -453,7 +453,7 @@
     },
     "family.paternal_aunt": {
       "file": "family.paternal_aunt.mp3",
-      "speechText": "عَمَّتِي"
+      "speechText": "عَمْتِي"
     },
     "family.paternal_aunt_daughter": {
       "file": "family.paternal_aunt_daughter.mp3",
@@ -513,7 +513,7 @@
     },
     "family.wife_mother": {
       "file": "family.wife_mother.mp3",
-      "speechText": "أُم مَرْتِي"
+      "speechText": "أُمّ مَرْتِي"
     },
     "family.wife_sister": {
       "file": "family.wife_sister.mp3",
@@ -521,7 +521,7 @@
     },
     "food.biscuit": {
       "file": "food.biscuit.mp3",
-      "speechText": "بِسْكُوِيت"
+      "speechText": "بَسْكَوِيت"
     },
     "food.bread": {
       "file": "food.bread.mp3",
@@ -693,7 +693,7 @@
     },
     "greeting.bless": {
       "file": "greeting.bless.mp3",
-      "speechText": "اللَّهُ يبَارِك فِيك"
+      "speechText": "اللَّه يْبَارِك فِيك"
     },
     "greeting.brighten": {
       "file": "greeting.brighten.mp3",
@@ -929,7 +929,7 @@
     },
     "routine.walk": {
       "file": "routine.walk.mp3",
-      "speechText": "مَشْي"
+      "speechText": "مَشِي"
     },
     "transport.airplane": {
       "file": "transport.airplane.mp3",

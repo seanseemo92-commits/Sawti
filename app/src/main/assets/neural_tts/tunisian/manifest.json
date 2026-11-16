@@ -297,7 +297,7 @@
     },
     "dish.tunisian.couscous_fish": {
       "file": "dish.tunisian.couscous_fish.mp3",
-      "speechText": "كُسْكْسِي بِالحُوت"
+      "speechText": "كُسْكُسِي بِالحُوت"
     },
     "dish.tunisian.fricassee": {
       "file": "dish.tunisian.fricassee.mp3",
@@ -353,7 +353,7 @@
     },
     "family.brother_son": {
       "file": "family.brother_son.mp3",
-      "speechText": "وَلْد خُويَا"
+      "speechText": "وِلْد خُويَا"
     },
     "family.brother_wife": {
       "file": "family.brother_wife.mp3",
@@ -373,15 +373,15 @@
     },
     "family.female_in_law": {
       "file": "family.female_in_law.mp3",
-      "speechText": "نَسِيبَتِي"
+      "speechText": "نْسِيبْتِي"
     },
     "family.female_relative": {
       "file": "family.female_relative.mp3",
-      "speechText": "قَرِيبَتِي"
+      "speechText": "قْرِيبْتِي"
     },
     "family.granddaughter": {
       "file": "family.granddaughter.mp3",
-      "speechText": "حَفِيدَتِي"
+      "speechText": "حَفِيدْتِي"
     },
     "family.grandfather": {
       "file": "family.grandfather.mp3",
@@ -409,7 +409,7 @@
     },
     "family.husband_mother": {
       "file": "family.husband_mother.mp3",
-      "speechText": "أُم رَاجْلِي"
+      "speechText": "أُمّ رَاجْلِي"
     },
     "family.husband_sister": {
       "file": "family.husband_sister.mp3",
@@ -417,15 +417,15 @@
     },
     "family.male_in_law": {
       "file": "family.male_in_law.mp3",
-      "speechText": "نَسِيبِي"
+      "speechText": "نْسِيبِي"
     },
     "family.male_relative": {
       "file": "family.male_relative.mp3",
-      "speechText": "قَرِيبِي"
+      "speechText": "قْرِيبِي"
     },
     "family.maternal_aunt": {
       "file": "family.maternal_aunt.mp3",
-      "speechText": "خَالَتِي"
+      "speechText": "خَالْتِي"
     },
     "family.maternal_aunt_daughter": {
       "file": "family.maternal_aunt_daughter.mp3",
@@ -433,7 +433,7 @@
     },
     "family.maternal_aunt_son": {
       "file": "family.maternal_aunt_son.mp3",
-      "speechText": "وَلْد خَالْتِي"
+      "speechText": "وِلْد خَالْتِي"
     },
     "family.maternal_uncle": {
       "file": "family.maternal_uncle.mp3",
@@ -445,7 +445,7 @@
     },
     "family.maternal_uncle_son": {
       "file": "family.maternal_uncle_son.mp3",
-      "speechText": "وَلْد خَالِي"
+      "speechText": "وِلْد خَالِي"
     },
     "family.mother": {
       "file": "family.mother.mp3",
@@ -453,7 +453,7 @@
     },
     "family.paternal_aunt": {
       "file": "family.paternal_aunt.mp3",
-      "speechText": "عَمَّتِي"
+      "speechText": "عَمْتِي"
     },
     "family.paternal_aunt_daughter": {
       "file": "family.paternal_aunt_daughter.mp3",
@@ -461,7 +461,7 @@
     },
     "family.paternal_aunt_son": {
       "file": "family.paternal_aunt_son.mp3",
-      "speechText": "وَلْد عَمْتِي"
+      "speechText": "وِلْد عَمْتِي"
     },
     "family.paternal_uncle": {
       "file": "family.paternal_uncle.mp3",
@@ -473,7 +473,7 @@
     },
     "family.paternal_uncle_son": {
       "file": "family.paternal_uncle_son.mp3",
-      "speechText": "وَلْد عَمِّي"
+      "speechText": "وِلْد عَمِّي"
     },
     "family.sister": {
       "file": "family.sister.mp3",
@@ -489,7 +489,7 @@
     },
     "family.sister_son": {
       "file": "family.sister_son.mp3",
-      "speechText": "وَلْد أُخْتِي"
+      "speechText": "وِلْد أُخْتِي"
     },
     "family.son": {
       "file": "family.son.mp3",
@@ -497,7 +497,7 @@
     },
     "family.son_wife": {
       "file": "family.son_wife.mp3",
-      "speechText": "مَرْت وَلْدِي"
+      "speechText": "مَرْت وِلْدِي"
     },
     "family.wife": {
       "file": "family.wife.mp3",
@@ -513,7 +513,7 @@
     },
     "family.wife_mother": {
       "file": "family.wife_mother.mp3",
-      "speechText": "أُم مَرْتِي"
+      "speechText": "أُمّ مَرْتِي"
     },
     "family.wife_sister": {
       "file": "family.wife_sister.mp3",
@@ -521,7 +521,7 @@
     },
     "food.biscuit": {
       "file": "food.biscuit.mp3",
-      "speechText": "بِسْكُوِيت"
+      "speechText": "بَسْكَوِيت"
     },
     "food.bread": {
       "file": "food.bread.mp3",
@@ -693,7 +693,7 @@
     },
     "greeting.bless": {
       "file": "greeting.bless.mp3",
-      "speechText": "رَبِّي يبَارِك فِيك"
+      "speechText": "رَبِّي يْبَارِك فِيك"
     },
     "greeting.brighten": {
       "file": "greeting.brighten.mp3",
@@ -725,7 +725,7 @@
     },
     "greeting.how_are_you": {
       "file": "greeting.how_are_you.mp3",
-      "speechText": "شنُوَّة أَحْوَالَك؟"
+      "speechText": "شْنُوَّة أَحْوَالَك؟"
     },
     "greeting.reply": {
       "file": "greeting.reply.mp3",
@@ -873,23 +873,23 @@
     },
     "request.medicine": {
       "file": "request.medicine.mp3",
-      "speechText": "نْحِب دْوَايَا"
+      "speechText": "نْحِبّ دْوَايَا"
     },
     "request.rest": {
       "file": "request.rest.mp3",
-      "speechText": "نْحِب نِرْتَاح"
+      "speechText": "نْحِبّ نِرْتَاح"
     },
     "request.tea": {
       "file": "request.tea.mp3",
-      "speechText": "نْحِب تَاي"
+      "speechText": "نْحِبّ تَاي"
     },
     "request.toilet": {
       "file": "request.toilet.mp3",
-      "speechText": "نْحِب نَمْشِي لِلتْوَالِيت"
+      "speechText": "نْحِبّ نِمْشِي لِلتْوَالِيت"
     },
     "request.water": {
       "file": "request.water.mp3",
-      "speechText": "نْحِب شْوَيَّة مَا"
+      "speechText": "نْحِبّ شْوَيَّة مَا"
     },
     "routine.ablution": {
       "file": "routine.ablution.mp3",
@@ -929,7 +929,7 @@
     },
     "routine.walk": {
       "file": "routine.walk.mp3",
-      "speechText": "مَشْي"
+      "speechText": "مَشِي"
     },
     "transport.airplane": {
       "file": "transport.airplane.mp3",

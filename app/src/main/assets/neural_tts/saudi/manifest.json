@@ -33,7 +33,7 @@
     },
     "action.pray": {
       "file": "action.pray.mp3",
-      "speechText": "أُصَلِّي"
+      "speechText": "أَصَلِّي"
     },
     "action.read": {
       "file": "action.read.mp3",
@@ -165,7 +165,7 @@
     },
     "body.leg": {
       "file": "body.leg.mp3",
-      "speechText": "رِجْل"
+      "speechText": "رِجِل"
     },
     "body.mouth": {
       "file": "body.mouth.mp3",
@@ -285,7 +285,7 @@
     },
     "dish.saudi.bukhari": {
       "file": "dish.saudi.bukhari.mp3",
-      "speechText": "رُز بُخَارِي"
+      "speechText": "رُزّ بُخَارِي"
     },
     "dish.saudi.haneeth": {
       "file": "dish.saudi.haneeth.mp3",
@@ -373,15 +373,15 @@
     },
     "family.female_in_law": {
       "file": "family.female_in_law.mp3",
-      "speechText": "نَسِيبَتِي"
+      "speechText": "نَسِيبْتِي"
     },
     "family.female_relative": {
       "file": "family.female_relative.mp3",
-      "speechText": "قَرِيبَتِي"
+      "speechText": "قَرِيبْتِي"
     },
     "family.granddaughter": {
       "file": "family.granddaughter.mp3",
-      "speechText": "حَفِيدَتِي"
+      "speechText": "حَفِيدْتِي"
     },
     "family.grandfather": {
       "file": "family.grandfather.mp3",
@@ -409,7 +409,7 @@
     },
     "family.husband_mother": {
       "file": "family.husband_mother.mp3",
-      "speechText": "أُم زَوْجِي"
+      "speechText": "أُمّ زَوْجِي"
     },
     "family.husband_sister": {
       "file": "family.husband_sister.mp3",
@@ -513,7 +513,7 @@
     },
     "family.wife_mother": {
       "file": "family.wife_mother.mp3",
-      "speechText": "أُم زَوْجَتِي"
+      "speechText": "أُمّ زَوْجَتِي"
     },
     "family.wife_sister": {
       "file": "family.wife_sister.mp3",
@@ -521,7 +521,7 @@
     },
     "food.biscuit": {
       "file": "food.biscuit.mp3",
-      "speechText": "بِسْكُوِيت"
+      "speechText": "بَسْكَوِيت"
     },
     "food.bread": {
       "file": "food.bread.mp3",
@@ -693,7 +693,7 @@
     },
     "greeting.bless": {
       "file": "greeting.bless.mp3",
-      "speechText": "اللَّهُ يبَارِك فِيك"
+      "speechText": "اللَّه يْبَارِك فِيك"
     },
     "greeting.brighten": {
       "file": "greeting.brighten.mp3",
@@ -865,7 +865,7 @@
     },
     "request.cold": {
       "file": "request.cold.mp3",
-      "speechText": "أَحِس بِالبَرْد"
+      "speechText": "أَحِسّ بِالبَرْد"
     },
     "request.headache": {
       "file": "request.headache.mp3",
@@ -929,7 +929,7 @@
     },
     "routine.walk": {
       "file": "routine.walk.mp3",
-      "speechText": "مَشْي"
+      "speechText": "مَشِي"
     },
     "transport.airplane": {
       "file": "transport.airplane.mp3",

@@ -5,7 +5,7 @@
   "entries": {
     "action.close": {
       "file": "action.close.mp3",
-      "speechText": "نْسَد"
+      "speechText": "نْسَدّ"
     },
     "action.dress": {
       "file": "action.dress.mp3",
@@ -45,7 +45,7 @@
     },
     "action.sit": {
       "file": "action.sit.mp3",
-      "speechText": "نْجْلِس"
+      "speechText": "نِجْلِس"
     },
     "action.sleep": {
       "file": "action.sleep.mp3",
@@ -285,15 +285,15 @@
     },
     "dish.moroccan.baghrir": {
       "file": "dish.moroccan.baghrir.mp3",
-      "speechText": "بْغْرِير"
+      "speechText": "بَغْرِير"
     },
     "dish.moroccan.chebakia": {
       "file": "dish.moroccan.chebakia.mp3",
-      "speechText": "شْبَّاكِيَّة"
+      "speechText": "شَبَّاكِيَّة"
     },
     "dish.moroccan.couscous": {
       "file": "dish.moroccan.couscous.mp3",
-      "speechText": "كْسْكْسُو سَبْع خْضَار"
+      "speechText": "كُسْكْسُو سْبَع خْضَار"
     },
     "dish.moroccan.harira": {
       "file": "dish.moroccan.harira.mp3",
@@ -373,15 +373,15 @@
     },
     "family.female_in_law": {
       "file": "family.female_in_law.mp3",
-      "speechText": "نَسِيبَتِي"
+      "speechText": "نْسِيبْتِي"
     },
     "family.female_relative": {
       "file": "family.female_relative.mp3",
-      "speechText": "قَرِيبَتِي"
+      "speechText": "قْرِيبْتِي"
     },
     "family.granddaughter": {
       "file": "family.granddaughter.mp3",
-      "speechText": "حَفِيدَتِي"
+      "speechText": "حَفِيدْتِي"
     },
     "family.grandfather": {
       "file": "family.grandfather.mp3",
@@ -409,7 +409,7 @@
     },
     "family.husband_mother": {
       "file": "family.husband_mother.mp3",
-      "speechText": "أُم رَاجْلِي"
+      "speechText": "أُمّ رَاجْلِي"
     },
     "family.husband_sister": {
       "file": "family.husband_sister.mp3",
@@ -417,15 +417,15 @@
     },
     "family.male_in_law": {
       "file": "family.male_in_law.mp3",
-      "speechText": "نَسِيبِي"
+      "speechText": "نْسِيبِي"
     },
     "family.male_relative": {
       "file": "family.male_relative.mp3",
-      "speechText": "قَرِيبِي"
+      "speechText": "قْرِيبِي"
     },
     "family.maternal_aunt": {
       "file": "family.maternal_aunt.mp3",
-      "speechText": "خَالَتِي"
+      "speechText": "خَالْتِي"
     },
     "family.maternal_aunt_daughter": {
       "file": "family.maternal_aunt_daughter.mp3",
@@ -453,7 +453,7 @@
     },
     "family.paternal_aunt": {
       "file": "family.paternal_aunt.mp3",
-      "speechText": "عَمَّتِي"
+      "speechText": "عَمْتِي"
     },
     "family.paternal_aunt_daughter": {
       "file": "family.paternal_aunt_daughter.mp3",
@@ -513,7 +513,7 @@
     },
     "family.wife_mother": {
       "file": "family.wife_mother.mp3",
-      "speechText": "أُم مَرْتِي"
+      "speechText": "أُمّ مَرْتِي"
     },
     "family.wife_sister": {
       "file": "family.wife_sister.mp3",
@@ -521,7 +521,7 @@
     },
     "food.biscuit": {
       "file": "food.biscuit.mp3",
-      "speechText": "بِسْكُوِيت"
+      "speechText": "بَسْكَوِيت"
     },
     "food.bread": {
       "file": "food.bread.mp3",
@@ -693,7 +693,7 @@
     },
     "greeting.bless": {
       "file": "greeting.bless.mp3",
-      "speechText": "اللَّهُ يبَارِك فِيك"
+      "speechText": "اللَّه يْبَارِك فِيك"
     },
     "greeting.brighten": {
       "file": "greeting.brighten.mp3",
@@ -741,7 +741,7 @@
     },
     "greeting.thanks": {
       "file": "greeting.thanks.mp3",
-      "speechText": "شُكْرًا بْزَّاف"
+      "speechText": "شُكْرًا بِزَّاف"
     },
     "greeting.welcome": {
       "file": "greeting.welcome.mp3",
@@ -929,7 +929,7 @@
     },
     "routine.walk": {
       "file": "routine.walk.mp3",
-      "speechText": "مَشْي"
+      "speechText": "مْشِي"
     },
     "transport.airplane": {
       "file": "transport.airplane.mp3",
