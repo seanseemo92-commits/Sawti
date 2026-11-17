@@ -63,6 +63,46 @@
       "file": "body.tooth.mp3",
       "speechText": "سنة",
       "sha256": "7d899ed4350d0d2da2fc66f2f3dc266b7c2d807e19685d117365380511ca80fb"
+    },
+    "clothing.coat": {
+      "file": "clothing.coat.mp3",
+      "speechText": "كبوط",
+      "sha256": "ebbe534e2b4149e634b1dc0166abdbbd31da99e06afe27f38eb7397e4938dc9c"
+    },
+    "clothing.pajamas": {
+      "file": "clothing.pajamas.mp3",
+      "speechText": "بيجامة",
+      "sha256": "cea976f9546e551025b204dd190d555ab15b9a5a0d4c21d13291a4aac943e0eb"
+    },
+    "clothing.shoes": {
+      "file": "clothing.shoes.mp3",
+      "speechText": "كندرة",
+      "sha256": "50c0bde360da0e9fd8e479950097195c486b8064d36b94a62f95131b83005219"
+    },
+    "dish.arabic_coffee": {
+      "file": "dish.arabic_coffee.mp3",
+      "speechText": "قهوة عربية",
+      "sha256": "25830fefdf770de420c5679b3c15e9e179e93694cc786e063b0d4c0c26a8df4a"
+    },
+    "dish.khobz_tajin": {
+      "file": "dish.khobz_tajin.mp3",
+      "speechText": "خبزة طاجين",
+      "sha256": "8b476f09511ce1cbb41f948d4be9b4595dff30041b61a17cf85ac7b2f4100b20"
+    },
+    "dish.osban": {
+      "file": "dish.osban.mp3",
+      "speechText": "عصبان",
+      "sha256": "b530fcc8124fbe02bf0a82f6b3c2442b9734332a32439fa1f28933cad6728cc9"
+    },
+    "dish.sfinz": {
+      "file": "dish.sfinz.mp3",
+      "speechText": "سفنز",
+      "sha256": "5f5289edac9874ac1492354915299636b115ff98b829078a6fa4c402c3a41678"
+    },
+    "family.daughter": {
+      "file": "family.daughter.mp3",
+      "speechText": "بنتي",
+      "sha256": "a0d55fa1582e30c8610f4cbf6db5953a7b5f0d98a9598330ded8a3d292bc5f00"
     }
   }
 }
