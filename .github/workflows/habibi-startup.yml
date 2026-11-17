@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 jobs:
   launch:
     runs-on: ubuntu-24.04
@@ -19,7 +20,7 @@ jobs:
       - name: Download the exact preview reported to crash
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release download habibi-preview-44035200934 --pattern Sawti-Habibi-Full-Test.apk --dir dist
+        run: gh run download 44035200934 --name Sawti-Habibi-Full-Test-44035200934 --dir dist
       - name: Enable emulator acceleration
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
