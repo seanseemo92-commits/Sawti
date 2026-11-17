@@ -1,0 +1,68 @@
+{
+  "version": 2,
+  "engine": "Habibi-TTS",
+  "pipelineVersion": 3,
+  "runtime": {
+    "habibi-tts": "0.1.1",
+    "f5-tts": "1.1.22",
+    "torch": "2.8.0+cpu",
+    "torchaudio": "2.8.0+cpu"
+  },
+  "model": "Unified",
+  "modelRevision": "3ad11a152851245c002156526c5e1d0b12f2b9d5",
+  "dialectId": "EGY",
+  "license": "CC-BY-NC-SA-4.0",
+  "referenceSha256": "5cd939e826bc42becc13a55eade1ac242f18014ddefb6e01819ec798ca7a03b0",
+  "referenceTextSha256": "3db9ea4b0d1178d5c991f6651ba4faa45c0d089c26c8d9d40ef617b8b0a28071",
+  "referenceType": "official-MSA-fallback",
+  "seed": 0,
+  "nfeStep": 32,
+  "cfgStrength": 2.0,
+  "swaySamplingCoef": -1.0,
+  "speedShort": 0.75,
+  "speedNormal": 0.88,
+  "sampleRate": 24000,
+  "bitrate": "96k",
+  "entries": {
+    "action.drink": {
+      "file": "action.drink.mp3",
+      "speechText": "أشرب",
+      "sha256": "eb99f5d678932dd22004790db52ebdc1e30dd745a402ccebf81d4c95c4bc04eb"
+    },
+    "action.read": {
+      "file": "action.read.mp3",
+      "speechText": "أقرا",
+      "sha256": "dc2b81c7277a2e26a9e39c5b0723f6803dac13cb2809763a6a44c3588d577ab8"
+    },
+    "action.walk": {
+      "file": "action.walk.mp3",
+      "speechText": "أمشي",
+      "sha256": "aa33c4b7891cf9ebd849d7653cf8e1382c98823a4893d97392cde922a7a85a44"
+    },
+    "animal.dog": {
+      "file": "animal.dog.mp3",
+      "speechText": "كلب",
+      "sha256": "17fb2482a60a869ce7d53363048b58fddcdac5e09ab66aa979bf6fa14daa76e0"
+    },
+    "animal.sheep": {
+      "file": "animal.sheep.mp3",
+      "speechText": "خروف",
+      "sha256": "c447f52fbeb6787c6894f9e95258b464f7f65027240179fb8ddc489691349238"
+    },
+    "body.eye": {
+      "file": "body.eye.mp3",
+      "speechText": "عين",
+      "sha256": "6ad28e5c6086afc9f1097c15d0357ff567993f32954c4219c267e96cc44623ae"
+    },
+    "body.heart": {
+      "file": "body.heart.mp3",
+      "speechText": "قلب",
+      "sha256": "4a98361ea710c13f43bf7b293ea3097fec2c819721d9a3675b5ec5fac8803f01"
+    },
+    "body.shoulder": {
+      "file": "body.shoulder.mp3",
+      "speechText": "كتف",
+      "sha256": "9506c1637ac7d3019dfd49b15523dc9da3d31e84d8f9ba5bea8be93889491e70"
+    }
+  }
+}
