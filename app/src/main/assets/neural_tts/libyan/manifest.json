@@ -1,0 +1,68 @@
+{
+  "version": 2,
+  "engine": "Habibi-TTS",
+  "pipelineVersion": 3,
+  "runtime": {
+    "habibi-tts": "0.1.1",
+    "f5-tts": "1.1.22",
+    "torch": "2.8.0+cpu",
+    "torchaudio": "2.8.0+cpu"
+  },
+  "model": "Unified",
+  "modelRevision": "3ad11a152851245c002156526c5e1d0b12f2b9d5",
+  "dialectId": "LBY",
+  "license": "CC-BY-NC-SA-4.0",
+  "referenceSha256": "5cd939e826bc42becc13a55eade1ac242f18014ddefb6e01819ec798ca7a03b0",
+  "referenceTextSha256": "3db9ea4b0d1178d5c991f6651ba4faa45c0d089c26c8d9d40ef617b8b0a28071",
+  "referenceType": "official-MSA-fallback",
+  "seed": 0,
+  "nfeStep": 32,
+  "cfgStrength": 2.0,
+  "swaySamplingCoef": -1.0,
+  "speedShort": 0.75,
+  "speedNormal": 0.88,
+  "sampleRate": 24000,
+  "bitrate": "96k",
+  "entries": {
+    "action.eat": {
+      "file": "action.eat.mp3",
+      "speechText": "ناكل",
+      "sha256": "43fe2098d92e524fa20a202b4c89e62c910785227777e0222d0d6ceb35a504ae"
+    },
+    "action.see": {
+      "file": "action.see.mp3",
+      "speechText": "نشوف",
+      "sha256": "c0e95faf2c42ce0ceb218ed8194caad7f3f4a425b5c9ecc44d4bd5394cbed291"
+    },
+    "action.wash": {
+      "file": "action.wash.mp3",
+      "speechText": "نغسل",
+      "sha256": "6a03cc093dc4c976827486a2121c8674acec6d9092f32065d4a377fd1850df7c"
+    },
+    "animal.duck": {
+      "file": "animal.duck.mp3",
+      "speechText": "بطة",
+      "sha256": "4d2ab5315bc3cc520d755f288bca042b756249a9148f9ebca85fd960253f2802"
+    },
+    "animal.sparrow": {
+      "file": "animal.sparrow.mp3",
+      "speechText": "عصفور",
+      "sha256": "b1b2e289fe7e80e7b50b68365c8392be3ab5af100a8c9ba973b6575a4bd3e3f1"
+    },
+    "body.face": {
+      "file": "body.face.mp3",
+      "speechText": "وجه",
+      "sha256": "e01c2f0388990d0cd54fd66deb92f55876475640cd1aa9bb786bea78cbfd18b4"
+    },
+    "body.knee": {
+      "file": "body.knee.mp3",
+      "speechText": "ركبة",
+      "sha256": "257fe81e91d13e0e5f7928a222e4d84f09c38de8a9f69c2bf6a87851caace711"
+    },
+    "body.tongue": {
+      "file": "body.tongue.mp3",
+      "speechText": "لسان",
+      "sha256": "e3161c93a87f241b6fdf3b97da81ecd5eb1d2bcbd37f3f3acecb7e97eaeac858"
+    }
+  }
+}
