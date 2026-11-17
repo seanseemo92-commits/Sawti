@@ -63,6 +63,46 @@
       "file": "body.nose.mp3",
       "speechText": "خشم",
       "sha256": "198fcd15042d4e3fa78cc1cff203925b589dc4686a672533f9abe5b0b5497496"
+    },
+    "clothing.belt": {
+      "file": "clothing.belt.mp3",
+      "speechText": "سبتة",
+      "sha256": "0558b0b091addf6fa3439ecc79d81e0f3b35a894c7a40b0b64a6206cef00fe1d"
+    },
+    "clothing.high_heels": {
+      "file": "clothing.high_heels.mp3",
+      "speechText": "كندرة كعب",
+      "sha256": "3416226d24c992cebd82ec6449c126b689b08c9177e43939e252d585defcf1ab"
+    },
+    "clothing.sandals": {
+      "file": "clothing.sandals.mp3",
+      "speechText": "صندل",
+      "sha256": "72a0a2b45ee0a506727fdb26c3c562220447f72f6ea379157acc20d9aa1b7b84"
+    },
+    "clothing.trousers": {
+      "file": "clothing.trousers.mp3",
+      "speechText": "سروال",
+      "sha256": "ea4c2d1949dec5d7262483cac93ec44c2c0334f990ebf9ba12cffc211824223e"
+    },
+    "dish.bourek": {
+      "file": "dish.bourek.mp3",
+      "speechText": "بوريك",
+      "sha256": "deb20d1467e554befa1ea06b8f5d8c0be57c6d5c94cc06acf1995620dd6bb482"
+    },
+    "dish.mbakbaka": {
+      "file": "dish.mbakbaka.mp3",
+      "speechText": "مكرونة مبكبكة",
+      "sha256": "15070fcd75a6b90825c1a1a73709c7f686354ed995ce2af935d375a221440fc2"
+    },
+    "dish.reshda_borma": {
+      "file": "dish.reshda_borma.mp3",
+      "speechText": "رشدة برمة",
+      "sha256": "aee0f196491d556005a9111a2b21c954f764257a84c092a61a67ea64ac55c888"
+    },
+    "family.brother_daughter": {
+      "file": "family.brother_daughter.mp3",
+      "speechText": "بنت خوي",
+      "sha256": "15c71c3d8a64832d8299fa5b9f8b70feffb3d3fd44718a2fe1cae727a4a46093"
     }
   }
 }
