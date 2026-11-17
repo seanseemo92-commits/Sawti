@@ -63,6 +63,36 @@
       "file": "body.shoulder.mp3",
       "speechText": "كتف",
       "sha256": "9506c1637ac7d3019dfd49b15523dc9da3d31e84d8f9ba5bea8be93889491e70"
+    },
+    "clothing.blouse": {
+      "file": "clothing.blouse.mp3",
+      "speechText": "بلوزة",
+      "sha256": "d606a6b8c41048a5df9cea294e54ca3a3a8bcd2a9e5d28bd061107d5beddafbb"
+    },
+    "clothing.hijab": {
+      "file": "clothing.hijab.mp3",
+      "speechText": "حجاب",
+      "sha256": "72362a6b8608c70ee84809361d18c50c67e75b7e6ddd21a2b907082e310e4fd6"
+    },
+    "clothing.scarf": {
+      "file": "clothing.scarf.mp3",
+      "speechText": "وشاح",
+      "sha256": "6b76194a1162ec0f16f00dadd2e9d5d3f05a137fd6045a00cd4618e5f7926ae2"
+    },
+    "clothing.tshirt": {
+      "file": "clothing.tshirt.mp3",
+      "speechText": "تيشيرت",
+      "sha256": "8fc4094258f1b050259556c514f9373b51176927d61f951d867e6b74ffb6879f"
+    },
+    "dish.egyptian.kebab_hawawshi": {
+      "file": "dish.egyptian.kebab_hawawshi.mp3",
+      "speechText": "كباب وحواوشي",
+      "sha256": "92033c20b9d16cf6e9f295a0906562dd334a58d717da9e2879d552d19ed2ffa0"
+    },
+    "dish.egyptian.potato_tray": {
+      "file": "dish.egyptian.potato_tray.mp3",
+      "speechText": "صينية بطاطس",
+      "sha256": "eb7bf632b15be23811dbde8bf59a551b3ba1504a8060bdcd68c285174425a91f"
     }
   }
 }
