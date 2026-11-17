@@ -103,6 +103,46 @@
       "file": "family.brother_son.mp3",
       "speechText": "ولد خوي",
       "sha256": "a9cfccb2880c1759667f300b11366d127d70db1d34a218d4cf1a086772d6425e"
+    },
+    "family.female_relative": {
+      "file": "family.female_relative.mp3",
+      "speechText": "قريبتي",
+      "sha256": "3b570b68266b6bb55252d1e8729a7b72bfbf7bc1fdf43d615bbef58a003d9169"
+    },
+    "family.husband_brother": {
+      "file": "family.husband_brother.mp3",
+      "speechText": "خو راجلي",
+      "sha256": "35d2ed64474c5554961ea519c3e2d42fe933fc2ddd216d6ea60a4f748666a09a"
+    },
+    "family.maternal_aunt": {
+      "file": "family.maternal_aunt.mp3",
+      "speechText": "خالتي",
+      "sha256": "291eac940114e26962a5edbc02560e484c76d31fa61d0f13aa3caff098287225"
+    },
+    "family.mother": {
+      "file": "family.mother.mp3",
+      "speechText": "أمي",
+      "sha256": "d05268a57d9c86ce5b46900f6a6f274b039a505beebc0ff128da5f1ff4b4494f"
+    },
+    "family.paternal_uncle_son": {
+      "file": "family.paternal_uncle_son.mp3",
+      "speechText": "ولد عمي",
+      "sha256": "c361477b94d28fd8c8eed66260f337045cb33f1d415713bae6cffc557ba31c55"
+    },
+    "family.son_wife": {
+      "file": "family.son_wife.mp3",
+      "speechText": "مرت ولدي",
+      "sha256": "a233405457e30c0f05619d611e1d1ca570de7ddfd188a0368c22d567c31815c7"
+    },
+    "food.biscuit": {
+      "file": "food.biscuit.mp3",
+      "speechText": "بسكويت",
+      "sha256": "359dc89b3e6fba9df06d88b84f040e525cc9789267ac99667cef6989454b06e3"
+    },
+    "food.eggs": {
+      "file": "food.eggs.mp3",
+      "speechText": "بيض",
+      "sha256": "f395d86599e626b82c913fb9372b989b7a32a3feee0463f312e84087f1e92d0d"
     }
   }
 }
