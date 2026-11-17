@@ -1,0 +1,68 @@
+{
+  "version": 2,
+  "engine": "Habibi-TTS",
+  "pipelineVersion": 3,
+  "runtime": {
+    "habibi-tts": "0.1.1",
+    "f5-tts": "1.1.22",
+    "torch": "2.8.0+cpu",
+    "torchaudio": "2.8.0+cpu"
+  },
+  "model": "Unified",
+  "modelRevision": "3ad11a152851245c002156526c5e1d0b12f2b9d5",
+  "dialectId": "LBY",
+  "license": "CC-BY-NC-SA-4.0",
+  "referenceSha256": "5cd939e826bc42becc13a55eade1ac242f18014ddefb6e01819ec798ca7a03b0",
+  "referenceTextSha256": "3db9ea4b0d1178d5c991f6651ba4faa45c0d089c26c8d9d40ef617b8b0a28071",
+  "referenceType": "official-MSA-fallback",
+  "seed": 0,
+  "nfeStep": 32,
+  "cfgStrength": 2.0,
+  "swaySamplingCoef": -1.0,
+  "speedShort": 0.75,
+  "speedNormal": 0.88,
+  "sampleRate": 24000,
+  "bitrate": "96k",
+  "entries": {
+    "action.dress": {
+      "file": "action.dress.mp3",
+      "speechText": "نلبس",
+      "sha256": "ee55dbd0d9b793c4d557548e214283a2a42623e27eea2b08e296e18ac8ce106a"
+    },
+    "action.pray": {
+      "file": "action.pray.mp3",
+      "speechText": "نصلي",
+      "sha256": "4cd94314de237520fabd20eee3abad3503cef599f8704a7ed5aaa24df4ea42e3"
+    },
+    "action.stand": {
+      "file": "action.stand.mp3",
+      "speechText": "نوقف",
+      "sha256": "8d49ce20247411816d06b2455f9e18e971ef2f3c0f9c9ec05970babe6ed6ec8a"
+    },
+    "animal.cow": {
+      "file": "animal.cow.mp3",
+      "speechText": "بقرة",
+      "sha256": "ad5b210cddafeda7c04e8808215586f32d26e08cea2101e01a08337653c3a5e2"
+    },
+    "animal.rooster": {
+      "file": "animal.rooster.mp3",
+      "speechText": "ديك",
+      "sha256": "a9b38a31a0b0ce983de9fc7c891ab6714917d3f3acdc19ecd05deeb6d056cb17"
+    },
+    "body.ear": {
+      "file": "body.ear.mp3",
+      "speechText": "وذن",
+      "sha256": "1168d8afc5a9ad5a965b14a2422def09f329bf699e9c7a55c3c7a545bb384164"
+    },
+    "body.head": {
+      "file": "body.head.mp3",
+      "speechText": "راس",
+      "sha256": "2cad2d3312f1bd8a65d71ddc33fba205945df8f5e75f63cabaa411e5fce289ba"
+    },
+    "body.nose": {
+      "file": "body.nose.mp3",
+      "speechText": "خشم",
+      "sha256": "198fcd15042d4e3fa78cc1cff203925b589dc4686a672533f9abe5b0b5497496"
+    }
+  }
+}
