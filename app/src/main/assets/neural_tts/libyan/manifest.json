@@ -63,6 +63,11 @@
       "file": "clothing.abaya.mp3",
       "speechText": "عباية",
       "sha256": "34894549d513f7ee1645b87e1c583ab0ce838ec91a82a233fd88fc88577165c3"
+    },
+    "clothing.dress": {
+      "file": "clothing.dress.mp3",
+      "speechText": "فستان",
+      "sha256": "a08277c2923dc6367161ac9af41c0bb399af4c6864f8dbd7f589d42acbef0f0c"
     }
   }
 }
