@@ -41,9 +41,6 @@ jobs:
           cd dist
           sha256sum -c Sawti-Habibi-Startup-Fixed.apk.sha256
           test "$(unzip -Z1 Sawti-Habibi-Startup-Fixed.apk | grep -Ec '^assets/neural_tts/.+[.]mp3$')" = 2399
-      - name: Keep tested repair in a draft prerelease
-        run: |
-          gh release create "habibi-startup-fixed-$VERIFIED_RUN" --draft --prerelease --target "$VERIFIED_SHA" --title 'Sawti Habibi startup fix — Android 8 and 13 verified' --notes 'Fixes the Android ICU PatternSyntaxException on startup. Full unit suite, lint, all 2399 audio clips, Android 26/33 instrumentation and cold launcher checks passed. Exact tested APK checksum included. Package com.sawti.habibipreview. Earlier preview may need uninstalling because CI debug signatures differ. Main has not been merged. Native-speaker listening review remains pending.' dist/Sawti-Habibi-Startup-Fixed.apk dist/Sawti-Habibi-Startup-Fixed.apk.sha256
       - uses: actions/upload-artifact@v4
         with:
           name: Sawti-Habibi-Startup-Fixed-Verified
