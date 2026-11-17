@@ -143,6 +143,11 @@
       "file": "food.milk.mp3",
       "speechText": "حليب",
       "sha256": "6537b113d5c6ec3ff0af8b28e11e5f723d504fad1a5c3ce6f7ce6cdea1ba9bb0"
+    },
+    "food.soup": {
+      "file": "food.soup.mp3",
+      "speechText": "حساء",
+      "sha256": "cbde6eedf5db10c4bc79959281600f31b3fe89226d9cfe769ade968aa0e589fd"
     }
   }
 }
