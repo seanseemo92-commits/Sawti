@@ -103,6 +103,41 @@
       "file": "family.brother.mp3",
       "speechText": "خوي",
       "sha256": "2b658c546acb40a15640313419b24816f49664918ab6cfb2320da70be3165771"
+    },
+    "family.father": {
+      "file": "family.father.mp3",
+      "speechText": "بوي",
+      "sha256": "f6de108f040398847f9da0a50d36028cfcebb60b46af5afff0e4c8ac82bfc30c"
+    },
+    "family.grandson": {
+      "file": "family.grandson.mp3",
+      "speechText": "حفيدي",
+      "sha256": "727e9ffa5901536b8735f2fae902edc6a2fe952efee58e44361667f7edfb33a0"
+    },
+    "family.male_in_law": {
+      "file": "family.male_in_law.mp3",
+      "speechText": "نسيبي",
+      "sha256": "98dbaee0521ba8040ec81f606cb441c4f8752bfbf5ca10afcd1d567f6ed0a9ea"
+    },
+    "family.maternal_uncle_daughter": {
+      "file": "family.maternal_uncle_daughter.mp3",
+      "speechText": "بنت خالي",
+      "sha256": "5ce32e2baf01dee2f18bb04b17bb57a112ae0ae55ec73c00eb6e8f278bd87f4a"
+    },
+    "family.paternal_uncle": {
+      "file": "family.paternal_uncle.mp3",
+      "speechText": "عمي",
+      "sha256": "2e5aeea08aee845adf2ed237548fd61288b4cc4f768562af3ce426b4ffffdc1c"
+    },
+    "family.sister_son": {
+      "file": "family.sister_son.mp3",
+      "speechText": "ولد أختي",
+      "sha256": "5ac7adb73f6a205d68c6e52a1268f57eddcba86d5f7d4c6e1f797770947c6a3c"
+    },
+    "family.wife_mother": {
+      "file": "family.wife_mother.mp3",
+      "speechText": "أم مرتي",
+      "sha256": "52ba5845c2587236807479b876a747a7b2522c29537d5ff37c3ed7f87a3bf293"
     }
   }
 }
