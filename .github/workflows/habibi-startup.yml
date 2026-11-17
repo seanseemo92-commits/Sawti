@@ -4,6 +4,8 @@ on:
     branches: [migration/habibi-tts-20261116]
     paths:
       - .github/workflows/habibi-startup.yml
+      - app/src/main/java/com/sawti/domain/model/HabibiSpeechText.kt
+      - app/src/androidTest/**
   workflow_dispatch:
 permissions:
   contents: read
