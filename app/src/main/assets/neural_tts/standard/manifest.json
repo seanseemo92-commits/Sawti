@@ -143,6 +143,21 @@
       "file": "food.juice.mp3",
       "speechText": "عصير",
       "sha256": "37c3de66e94ab512402a16edcf8feb09d515eb566cdd5a4a869352e1c10965e9"
+    },
+    "food.rice": {
+      "file": "food.rice.mp3",
+      "speechText": "أرز",
+      "sha256": "cf1de8e6d27121fc3804626d19508fdfa06f552cb269897ec063a14032e90b14"
+    },
+    "food.yogurt": {
+      "file": "food.yogurt.mp3",
+      "speechText": "زبادي",
+      "sha256": "fc8e9d5ede74573bafecd04d442f1dfc715031e3ae8e3e6daded4029f3eb390c"
+    },
+    "fruit.cherry": {
+      "file": "fruit.cherry.mp3",
+      "speechText": "كرز",
+      "sha256": "3736a6d9e7530d7e1c091d738c8f039e3b80a8f4a2bd4e50527024524effc5de"
     }
   }
 }
