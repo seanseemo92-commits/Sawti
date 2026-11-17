@@ -112,11 +112,6 @@ jobs:
         with:
           name: startup-build-${{ github.run_id }}
           path: dist
-      - name: Keep verified APK as a draft for testing
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh release create "habibi-startup-fixed-$GITHUB_RUN_ID" --draft --prerelease --target "$GITHUB_SHA" --title 'Sawti Habibi startup fix — tested on Android 8 and 13' --notes 'All 2399 audio clips preserved. Full unit suite, lint and Android 26/33 instrumentation plus launcher smoke checks passed. Test package com.sawti.habibipreview. Uninstall the earlier broken preview before installing if Android reports a signature conflict. Main remains unmerged. Native-speaker listening review remains pending.' dist/Sawti-Habibi-Startup-Fixed.apk dist/Sawti-Habibi-Startup-Fixed.apk.sha256
       - uses: actions/upload-artifact@v4
         with:
           name: Sawti-Habibi-Startup-Fixed-Verified-${{ github.run_id }}
