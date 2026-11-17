@@ -63,6 +63,11 @@
       "file": "body.tooth.mp3",
       "speechText": "سنة",
       "sha256": "17f5e3a4501130b79586912cf3ee11ddfa9faeeb0e8d04da8258c00a1003c903"
+    },
+    "clothing.coat": {
+      "file": "clothing.coat.mp3",
+      "speechText": "بالطو",
+      "sha256": "273e17a4e01b68a9402e6fbfd576e7d3bfc0a3e33289b9f51b26af57fa2355cf"
     }
   }
 }
