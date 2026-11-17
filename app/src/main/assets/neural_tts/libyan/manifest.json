@@ -1,0 +1,1707 @@
+{
+  "version": 2,
+  "engine": "Habibi-TTS",
+  "pipelineVersion": 3,
+  "runtime": {
+    "habibi-tts": "0.1.1",
+    "f5-tts": "1.1.22",
+    "torch": "2.8.0+cpu",
+    "torchaudio": "2.8.0+cpu"
+  },
+  "model": "Unified",
+  "modelRevision": "3ad11a152851245c002156526c5e1d0b12f2b9d5",
+  "dialectId": "LBY",
+  "license": "CC-BY-NC-SA-4.0",
+  "referenceSha256": "5cd939e826bc42becc13a55eade1ac242f18014ddefb6e01819ec798ca7a03b0",
+  "referenceTextSha256": "3db9ea4b0d1178d5c991f6651ba4faa45c0d089c26c8d9d40ef617b8b0a28071",
+  "referenceType": "official-MSA-fallback",
+  "seed": 0,
+  "nfeStep": 32,
+  "cfgStrength": 2.0,
+  "swaySamplingCoef": -1.0,
+  "speedShort": 0.75,
+  "speedNormal": 0.88,
+  "sampleRate": 24000,
+  "bitrate": "96k",
+  "entries": {
+    "action.close": {
+      "file": "action.close.mp3",
+      "speechText": "نسكر",
+      "sha256": "36bec2186c22b8a1eda828b31c786e7ee0f742d1689f4a9e3ffe817995281e0e"
+    },
+    "action.dress": {
+      "file": "action.dress.mp3",
+      "speechText": "نلبس",
+      "sha256": "ee55dbd0d9b793c4d557548e214283a2a42623e27eea2b08e296e18ac8ce106a"
+    },
+    "action.drink": {
+      "file": "action.drink.mp3",
+      "speechText": "نشرب",
+      "sha256": "efc5327e582847bc371110fb6af30ed21670bae9b6adbbfc7134683a4e95ab8e"
+    },
+    "action.eat": {
+      "file": "action.eat.mp3",
+      "speechText": "ناكل",
+      "sha256": "43fe2098d92e524fa20a202b4c89e62c910785227777e0222d0d6ceb35a504ae"
+    },
+    "action.hear": {
+      "file": "action.hear.mp3",
+      "speechText": "نسمع",
+      "sha256": "167ece00525bc642c82f29bdaa2936366c74c5359db3b8d0b01b8760af270173"
+    },
+    "action.laugh": {
+      "file": "action.laugh.mp3",
+      "speechText": "نضحك",
+      "sha256": "7944a5976ef8cc993422f406295e139b951f364ca30f0d2f7bb405a17a0020f4"
+    },
+    "action.open": {
+      "file": "action.open.mp3",
+      "speechText": "نفتح",
+      "sha256": "eab440fb456909049c0ed7bfd764369570fd5c3b61f7326f2276436e8bb3457b"
+    },
+    "action.pray": {
+      "file": "action.pray.mp3",
+      "speechText": "نصلي",
+      "sha256": "4cd94314de237520fabd20eee3abad3503cef599f8704a7ed5aaa24df4ea42e3"
+    },
+    "action.read": {
+      "file": "action.read.mp3",
+      "speechText": "نقرا",
+      "sha256": "defb2ee95de2d081a6ea064c76cacc566cf93f3932c8bab9ab810dd56084c665"
+    },
+    "action.see": {
+      "file": "action.see.mp3",
+      "speechText": "نشوف",
+      "sha256": "c0e95faf2c42ce0ceb218ed8194caad7f3f4a425b5c9ecc44d4bd5394cbed291"
+    },
+    "action.sit": {
+      "file": "action.sit.mp3",
+      "speechText": "نقعمز",
+      "sha256": "16de860ab45027b776decf56832618add0e0a8112433143b6a399b99086af46d"
+    },
+    "action.sleep": {
+      "file": "action.sleep.mp3",
+      "speechText": "نرقد",
+      "sha256": "9fb66a52a8061831ceb1c74b55c8ce1db9c9324ad29d561b0869b8ff5a09744a"
+    },
+    "action.speak": {
+      "file": "action.speak.mp3",
+      "speechText": "ندوي",
+      "sha256": "6c508668df99985368bd99b9acae41b1e3f28bdb6f215f9648d2668adfd4742f"
+    },
+    "action.stand": {
+      "file": "action.stand.mp3",
+      "speechText": "نوقف",
+      "sha256": "8d49ce20247411816d06b2455f9e18e971ef2f3c0f9c9ec05970babe6ed6ec8a"
+    },
+    "action.walk": {
+      "file": "action.walk.mp3",
+      "speechText": "نمشي",
+      "sha256": "5ca8e39f38720e417f290555ad9fd90c1890f218d4059c70f9f63e3f141597d7"
+    },
+    "action.wash": {
+      "file": "action.wash.mp3",
+      "speechText": "نغسل",
+      "sha256": "6a03cc093dc4c976827486a2121c8674acec6d9092f32065d4a377fd1850df7c"
+    },
+    "animal.camel": {
+      "file": "animal.camel.mp3",
+      "speechText": "جمل",
+      "sha256": "4085f6f741c339c605637a757388b721af02433027ad6afab264740b07949dcb"
+    },
+    "animal.cat": {
+      "file": "animal.cat.mp3",
+      "speechText": "قطوسة",
+      "sha256": "77db0b34abc1045cdafd7fd4966e572a742f872ce02370efd6c107c720726fdb"
+    },
+    "animal.chicken": {
+      "file": "animal.chicken.mp3",
+      "speechText": "دجاجة",
+      "sha256": "99869da65bd8b347d699f1c4d5767d95a7548fa63bcd3638810564ad7fdc2f08"
+    },
+    "animal.cow": {
+      "file": "animal.cow.mp3",
+      "speechText": "بقرة",
+      "sha256": "ad5b210cddafeda7c04e8808215586f32d26e08cea2101e01a08337653c3a5e2"
+    },
+    "animal.dog": {
+      "file": "animal.dog.mp3",
+      "speechText": "كلب",
+      "sha256": "0457dadfc61434c3f5559e675f95945be3ada848e930f4aed883b1dcbf2d02ce"
+    },
+    "animal.duck": {
+      "file": "animal.duck.mp3",
+      "speechText": "بطة",
+      "sha256": "4d2ab5315bc3cc520d755f288bca042b756249a9148f9ebca85fd960253f2802"
+    },
+    "animal.horse": {
+      "file": "animal.horse.mp3",
+      "speechText": "حصان",
+      "sha256": "0dce12cdb53693263d1f021737e8d3dbf0442a9b4a9553821fa6e15c403594cc"
+    },
+    "animal.pigeon": {
+      "file": "animal.pigeon.mp3",
+      "speechText": "حمامة",
+      "sha256": "fa9e2bfb98276fa6d8a40cc0b15f5459d17bb2bbf660d73d3c1ba45890bef3fd"
+    },
+    "animal.rabbit": {
+      "file": "animal.rabbit.mp3",
+      "speechText": "أرنب",
+      "sha256": "32af0aec86719dd7452bb9bee0e6bbbc9f8d098d658cc06c441270c27b9efdce"
+    },
+    "animal.rooster": {
+      "file": "animal.rooster.mp3",
+      "speechText": "ديك",
+      "sha256": "a9b38a31a0b0ce983de9fc7c891ab6714917d3f3acdc19ecd05deeb6d056cb17"
+    },
+    "animal.sheep": {
+      "file": "animal.sheep.mp3",
+      "speechText": "خروف",
+      "sha256": "323d105121963d8d0c76b62fa1bde8aedcab02cadd0d3fa37c374994980beb7a"
+    },
+    "animal.sparrow": {
+      "file": "animal.sparrow.mp3",
+      "speechText": "عصفور",
+      "sha256": "b1b2e289fe7e80e7b50b68365c8392be3ab5af100a8c9ba973b6575a4bd3e3f1"
+    },
+    "body.abdomen": {
+      "file": "body.abdomen.mp3",
+      "speechText": "بطن",
+      "sha256": "3be464149cc6a4d9ccf39fa707549547aeb44310895a870523840883e27916c9"
+    },
+    "body.back": {
+      "file": "body.back.mp3",
+      "speechText": "ظهر",
+      "sha256": "306e6b0fa61cf2a774ade79556238f69fa19ee68fb44da8569d0f1ca9b320814"
+    },
+    "body.chest": {
+      "file": "body.chest.mp3",
+      "speechText": "صدر",
+      "sha256": "d9531b4c90d7a5e8ee35e4f541be539d4a80b1363bfa2b84a1f357168aed9d78"
+    },
+    "body.ear": {
+      "file": "body.ear.mp3",
+      "speechText": "وذن",
+      "sha256": "1168d8afc5a9ad5a965b14a2422def09f329bf699e9c7a55c3c7a545bb384164"
+    },
+    "body.eye": {
+      "file": "body.eye.mp3",
+      "speechText": "عين",
+      "sha256": "6260e14c3d94b5f87878b3d73694dfdd515bc42033e60a2ed6e123915df69367"
+    },
+    "body.face": {
+      "file": "body.face.mp3",
+      "speechText": "وجه",
+      "sha256": "e01c2f0388990d0cd54fd66deb92f55876475640cd1aa9bb786bea78cbfd18b4"
+    },
+    "body.finger": {
+      "file": "body.finger.mp3",
+      "speechText": "صبع",
+      "sha256": "17fd33b66322726c17c71f0fd2b04a42d84ac27b3ba89670ff63927a4059dce4"
+    },
+    "body.hair": {
+      "file": "body.hair.mp3",
+      "speechText": "شعر",
+      "sha256": "b69cf00f72a9a5c5882e25a7e362ca9db3f8b17e03738c519eb88dc4bd0cf8ab"
+    },
+    "body.hand": {
+      "file": "body.hand.mp3",
+      "speechText": "يد",
+      "sha256": "1701f919b5751d0ff32cd231e6f540500dd8de2ad65129e3a28ea590a7cb1ba8"
+    },
+    "body.head": {
+      "file": "body.head.mp3",
+      "speechText": "راس",
+      "sha256": "2cad2d3312f1bd8a65d71ddc33fba205945df8f5e75f63cabaa411e5fce289ba"
+    },
+    "body.heart": {
+      "file": "body.heart.mp3",
+      "speechText": "قلب",
+      "sha256": "5b99a7f3ac1460d2f95757827e55eac28230fcc5cc5b0b99c1515038b5fc3686"
+    },
+    "body.knee": {
+      "file": "body.knee.mp3",
+      "speechText": "ركبة",
+      "sha256": "257fe81e91d13e0e5f7928a222e4d84f09c38de8a9f69c2bf6a87851caace711"
+    },
+    "body.leg": {
+      "file": "body.leg.mp3",
+      "speechText": "رجل",
+      "sha256": "5a16800db109828470601c383903d8c6315bbf352e24af8bf74e88954f035140"
+    },
+    "body.mouth": {
+      "file": "body.mouth.mp3",
+      "speechText": "فم",
+      "sha256": "18d5d9e76ba83a54a275e60728e06fb476d1d9d9b1ad557ceeccb5c8bc86f6d9"
+    },
+    "body.neck": {
+      "file": "body.neck.mp3",
+      "speechText": "رقبة",
+      "sha256": "b06ca3b2091a2a492b926bd68e20e231a2c6be7dfee14aa04b9cd682d169305f"
+    },
+    "body.nose": {
+      "file": "body.nose.mp3",
+      "speechText": "خشم",
+      "sha256": "198fcd15042d4e3fa78cc1cff203925b589dc4686a672533f9abe5b0b5497496"
+    },
+    "body.shoulder": {
+      "file": "body.shoulder.mp3",
+      "speechText": "كتف",
+      "sha256": "1531704d988870fdf0c61916b2c576719ea97a26a7d5bf7f84560ab699c17500"
+    },
+    "body.tongue": {
+      "file": "body.tongue.mp3",
+      "speechText": "لسان",
+      "sha256": "e3161c93a87f241b6fdf3b97da81ecd5eb1d2bcbd37f3f3acecb7e97eaeac858"
+    },
+    "body.tooth": {
+      "file": "body.tooth.mp3",
+      "speechText": "سنة",
+      "sha256": "7d899ed4350d0d2da2fc66f2f3dc266b7c2d807e19685d117365380511ca80fb"
+    },
+    "clothing.abaya": {
+      "file": "clothing.abaya.mp3",
+      "speechText": "عباية",
+      "sha256": "34894549d513f7ee1645b87e1c583ab0ce838ec91a82a233fd88fc88577165c3"
+    },
+    "clothing.bag": {
+      "file": "clothing.bag.mp3",
+      "speechText": "شنطة",
+      "sha256": "7b7d03a4a5f943b2d09cf02b7ddf0573264bc1193d61f512da943a6a65c1a79f"
+    },
+    "clothing.belt": {
+      "file": "clothing.belt.mp3",
+      "speechText": "سبتة",
+      "sha256": "0558b0b091addf6fa3439ecc79d81e0f3b35a894c7a40b0b64a6206cef00fe1d"
+    },
+    "clothing.blouse": {
+      "file": "clothing.blouse.mp3",
+      "speechText": "سورية",
+      "sha256": "d7692b2e5f7ad9da3e15213af74dbfd290a5de23835dae02d311637ddb555fc9"
+    },
+    "clothing.cap": {
+      "file": "clothing.cap.mp3",
+      "speechText": "طاقية",
+      "sha256": "3dfae7b42ac4cb9034173a28b28a61066f5ea9c8790233d103c2f2f21440ee79"
+    },
+    "clothing.coat": {
+      "file": "clothing.coat.mp3",
+      "speechText": "كبوط",
+      "sha256": "ebbe534e2b4149e634b1dc0166abdbbd31da99e06afe27f38eb7397e4938dc9c"
+    },
+    "clothing.dress": {
+      "file": "clothing.dress.mp3",
+      "speechText": "فستان",
+      "sha256": "a08277c2923dc6367161ac9af41c0bb399af4c6864f8dbd7f589d42acbef0f0c"
+    },
+    "clothing.glasses": {
+      "file": "clothing.glasses.mp3",
+      "speechText": "نظارة",
+      "sha256": "699606463520a86f81451e6b709515a74896cb77bf24f67d6b639136966ebe2a"
+    },
+    "clothing.high_heels": {
+      "file": "clothing.high_heels.mp3",
+      "speechText": "كندرة كعب",
+      "sha256": "3416226d24c992cebd82ec6449c126b689b08c9177e43939e252d585defcf1ab"
+    },
+    "clothing.hijab": {
+      "file": "clothing.hijab.mp3",
+      "speechText": "حجاب",
+      "sha256": "03cd2753d2d4e2ce9ed17962bc59534085c5ca7ad3dcb0997955abd1364f3606"
+    },
+    "clothing.jacket": {
+      "file": "clothing.jacket.mp3",
+      "speechText": "جاكة",
+      "sha256": "56c7408cf6d8b2ee79ff9715e7d8d755cd387b62aefee676c213285ab8721fb5"
+    },
+    "clothing.pajamas": {
+      "file": "clothing.pajamas.mp3",
+      "speechText": "بيجامة",
+      "sha256": "cea976f9546e551025b204dd190d555ab15b9a5a0d4c21d13291a4aac943e0eb"
+    },
+    "clothing.ring": {
+      "file": "clothing.ring.mp3",
+      "speechText": "خاتم",
+      "sha256": "48004e84c255fe6fea9a3085d95638db781a3b05071fcdb4edf130e1605a4f8c",
+      "synthesisAttempts": 2,
+      "fixedDurationSeconds": 9.738773333333333
+    },
+    "clothing.robe": {
+      "file": "clothing.robe.mp3",
+      "speechText": "روب",
+      "sha256": "df4a88ab4e0d6a868adbc6d2e18ff8aaba966177783bc476aa51e0f1b3c7df8a"
+    },
+    "clothing.sandals": {
+      "file": "clothing.sandals.mp3",
+      "speechText": "صندل",
+      "sha256": "72a0a2b45ee0a506727fdb26c3c562220447f72f6ea379157acc20d9aa1b7b84"
+    },
+    "clothing.scarf": {
+      "file": "clothing.scarf.mp3",
+      "speechText": "وشاح",
+      "sha256": "8eec1ddd8788fd6badab80306a805266ee460123c76a9dc120e7ab63af2888fa"
+    },
+    "clothing.shirt": {
+      "file": "clothing.shirt.mp3",
+      "speechText": "قميص",
+      "sha256": "ac396afb31df96b0c15168ad0796446eb8b046d1295a88fc83129c104e5f190d"
+    },
+    "clothing.shoes": {
+      "file": "clothing.shoes.mp3",
+      "speechText": "كندرة",
+      "sha256": "50c0bde360da0e9fd8e479950097195c486b8064d36b94a62f95131b83005219"
+    },
+    "clothing.shorts": {
+      "file": "clothing.shorts.mp3",
+      "speechText": "شورت",
+      "sha256": "7e4d6fae229949e642551a4d09412b5ffb4b3f1988d8f6edcbcee3fe1b739052",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "clothing.socks": {
+      "file": "clothing.socks.mp3",
+      "speechText": "شخاشير",
+      "sha256": "66e64571d28ff80f28d6e8cf62a2c584946137b08ee5855284f81a95eb9642c3"
+    },
+    "clothing.trousers": {
+      "file": "clothing.trousers.mp3",
+      "speechText": "سروال",
+      "sha256": "ea4c2d1949dec5d7262483cac93ec44c2c0334f990ebf9ba12cffc211824223e"
+    },
+    "clothing.tshirt": {
+      "file": "clothing.tshirt.mp3",
+      "speechText": "تيشرت",
+      "sha256": "e235a5dff0559f0d9fdbe7c816500074c91bed72b8468328dd705fbf32b5b8a8"
+    },
+    "clothing.watch": {
+      "file": "clothing.watch.mp3",
+      "speechText": "ساعة يد",
+      "sha256": "ab3f95d8025736400741fa94923a3feb0541701e01a12c24d7f7fd0d2a5b381b"
+    },
+    "dish.arabic_coffee": {
+      "file": "dish.arabic_coffee.mp3",
+      "speechText": "قهوة عربية",
+      "sha256": "25830fefdf770de420c5679b3c15e9e179e93694cc786e063b0d4c0c26a8df4a"
+    },
+    "dish.aysh_laban": {
+      "file": "dish.aysh_laban.mp3",
+      "speechText": "عيش باللبن",
+      "sha256": "6f18ad897acc62415cf37e21317345399125f81c74d44b11bc3edf9fce639f35",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "dish.bazin": {
+      "file": "dish.bazin.mp3",
+      "speechText": "بازين",
+      "sha256": "0b27abfa6d09186c6c68c595cc5d1ad9c7a1f084222dea1d07e93a75d65a3fc9"
+    },
+    "dish.bourek": {
+      "file": "dish.bourek.mp3",
+      "speechText": "بوريك",
+      "sha256": "deb20d1467e554befa1ea06b8f5d8c0be57c6d5c94cc06acf1995620dd6bb482"
+    },
+    "dish.couscous_fish": {
+      "file": "dish.couscous_fish.mp3",
+      "speechText": "كسكسي بالحوت",
+      "sha256": "e0316a40bbe83f81a4e73b850f3189fe3ce9c055fb6c704e90ca7656afb31cef"
+    },
+    "dish.hraymi": {
+      "file": "dish.hraymi.mp3",
+      "speechText": "حرايمي",
+      "sha256": "1b4361cdc202670c430bd8b6d1ffbe4b6d004e5d8417bb86b5c4c113f998509b"
+    },
+    "dish.khobz_tajin": {
+      "file": "dish.khobz_tajin.mp3",
+      "speechText": "خبزة طاجين",
+      "sha256": "8b476f09511ce1cbb41f948d4be9b4595dff30041b61a17cf85ac7b2f4100b20"
+    },
+    "dish.libyan_soup": {
+      "file": "dish.libyan_soup.mp3",
+      "speechText": "شربة ليبية",
+      "sha256": "ddf43f5de8a7308e6c7ef7d13f17810428bda07dc68eaa5472968781f1ed3db3",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "dish.maqroudh": {
+      "file": "dish.maqroudh.mp3",
+      "speechText": "مقروض",
+      "sha256": "a013b1b720a0d777d03905d94031b915e9f4e6529078a52302c7b3614b276717"
+    },
+    "dish.mbakbaka": {
+      "file": "dish.mbakbaka.mp3",
+      "speechText": "مكرونة مبكبكة",
+      "sha256": "15070fcd75a6b90825c1a1a73709c7f686354ed995ce2af935d375a221440fc2"
+    },
+    "dish.mbattan": {
+      "file": "dish.mbattan.mp3",
+      "speechText": "مبطن",
+      "sha256": "2ddd0fb0b739d37f94fcac3e4322f81a6cefedbf5ac3472c793b01c036944696"
+    },
+    "dish.mint_tea": {
+      "file": "dish.mint_tea.mp3",
+      "speechText": "شاهي بالنعناع",
+      "sha256": "022f3d2471e5044b072f3ba0b69cd530d48f6c17d2071c944414ff49bfc0763a"
+    },
+    "dish.osban": {
+      "file": "dish.osban.mp3",
+      "speechText": "عصبان",
+      "sha256": "b530fcc8124fbe02bf0a82f6b3c2442b9734332a32439fa1f28933cad6728cc9"
+    },
+    "dish.pasta_masqiya": {
+      "file": "dish.pasta_masqiya.mp3",
+      "speechText": "مكرونة مسقية",
+      "sha256": "e3c888fdbc71b6783ad1b2d7d551dfd90c1a7662992093d5da4b8ec741bdb696",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "dish.potato_stew": {
+      "file": "dish.potato_stew.mp3",
+      "speechText": "طبيخة بطاطا",
+      "sha256": "b1680c7def2698c3d933d1039984fae99d945c698f1b39e6f74fe08e4e095549"
+    },
+    "dish.reshda_borma": {
+      "file": "dish.reshda_borma.mp3",
+      "speechText": "رشدة برمة",
+      "sha256": "aee0f196491d556005a9111a2b21c954f764257a84c092a61a67ea64ac55c888"
+    },
+    "dish.reshda_kaskas": {
+      "file": "dish.reshda_kaskas.mp3",
+      "speechText": "رشدة كسكاس",
+      "sha256": "4db1d41916c097e44b342ecff71d3155af2275955a6892dac97cb528eb48a7cd"
+    },
+    "dish.rice_blaw": {
+      "file": "dish.rice_blaw.mp3",
+      "speechText": "رز بلاو",
+      "sha256": "ae9601cf9d99666a9347e861447ef8240fa3284a531f5232b17fc30d02a97944"
+    },
+    "dish.sfinz": {
+      "file": "dish.sfinz.mp3",
+      "speechText": "سفنز",
+      "sha256": "5f5289edac9874ac1492354915299636b115ff98b829078a6fa4c402c3a41678"
+    },
+    "dish.zmeeta": {
+      "file": "dish.zmeeta.mp3",
+      "speechText": "زميطة",
+      "sha256": "f8b6bb25800bd5db2fc58c7264dc7acea6559c612fca68b0788ba3ea7dc8c269",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "family.brother": {
+      "file": "family.brother.mp3",
+      "speechText": "خوي",
+      "sha256": "2b658c546acb40a15640313419b24816f49664918ab6cfb2320da70be3165771"
+    },
+    "family.brother_daughter": {
+      "file": "family.brother_daughter.mp3",
+      "speechText": "بنت خوي",
+      "sha256": "15c71c3d8a64832d8299fa5b9f8b70feffb3d3fd44718a2fe1cae727a4a46093"
+    },
+    "family.brother_son": {
+      "file": "family.brother_son.mp3",
+      "speechText": "ولد خوي",
+      "sha256": "a9cfccb2880c1759667f300b11366d127d70db1d34a218d4cf1a086772d6425e"
+    },
+    "family.brother_wife": {
+      "file": "family.brother_wife.mp3",
+      "speechText": "مرت خوي",
+      "sha256": "e9b93017cf7c59725d75aa627239cd4e6ba9f2bbb9f8551979e0f20d88039dc1",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "family.daughter": {
+      "file": "family.daughter.mp3",
+      "speechText": "بنتي",
+      "sha256": "a0d55fa1582e30c8610f4cbf6db5953a7b5f0d98a9598330ded8a3d292bc5f00"
+    },
+    "family.daughter_husband": {
+      "file": "family.daughter_husband.mp3",
+      "speechText": "راجل بنتي",
+      "sha256": "bcc16781dca438e18541f66f48d50e37e915d0e12bc16a8388c75d232273f5b3",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "family.father": {
+      "file": "family.father.mp3",
+      "speechText": "بوي",
+      "sha256": "f6de108f040398847f9da0a50d36028cfcebb60b46af5afff0e4c8ac82bfc30c"
+    },
+    "family.female_in_law": {
+      "file": "family.female_in_law.mp3",
+      "speechText": "نسيبتي",
+      "sha256": "12cfb4c34105d4ec329014e48cc003f1b78e2d32410e03db221887381c55c0f4"
+    },
+    "family.female_relative": {
+      "file": "family.female_relative.mp3",
+      "speechText": "قريبتي",
+      "sha256": "3b570b68266b6bb55252d1e8729a7b72bfbf7bc1fdf43d615bbef58a003d9169"
+    },
+    "family.granddaughter": {
+      "file": "family.granddaughter.mp3",
+      "speechText": "حفيدتي",
+      "sha256": "7ae80cb94d9a5782b475313a017ed70e3615aa5873e1a20f5e0bd76edf17109f",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "family.grandfather": {
+      "file": "family.grandfather.mp3",
+      "speechText": "جدي",
+      "sha256": "a361b58f3d08cd8375444178e001ea8f2fc0edc21af29cc1ea983131f09882bf"
+    },
+    "family.grandmother": {
+      "file": "family.grandmother.mp3",
+      "speechText": "حناي",
+      "sha256": "695fb7630ea498a4c2ef7f6220b352d60585ec7c3a7bc72c9e2eff605f93d58e",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "family.grandson": {
+      "file": "family.grandson.mp3",
+      "speechText": "حفيدي",
+      "sha256": "727e9ffa5901536b8735f2fae902edc6a2fe952efee58e44361667f7edfb33a0"
+    },
+    "family.husband": {
+      "file": "family.husband.mp3",
+      "speechText": "راجلي",
+      "sha256": "dce704591e4f27200afd8a4c94a4ada50ecae28a31f3d5ad459990d4469ff667"
+    },
+    "family.husband_brother": {
+      "file": "family.husband_brother.mp3",
+      "speechText": "خو راجلي",
+      "sha256": "35d2ed64474c5554961ea519c3e2d42fe933fc2ddd216d6ea60a4f748666a09a"
+    },
+    "family.husband_father": {
+      "file": "family.husband_father.mp3",
+      "speechText": "بو راجلي",
+      "sha256": "863806794d3099920933d9b53c4c30a8e4a54ad199c657a6e882a9e5508c5302",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "family.husband_mother": {
+      "file": "family.husband_mother.mp3",
+      "speechText": "أم راجلي",
+      "sha256": "cf38c10955d1811648a321f1740cf220d2754db2f06a07bd9e174bbe8bb1f8f9",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "family.husband_sister": {
+      "file": "family.husband_sister.mp3",
+      "speechText": "أخت راجلي",
+      "sha256": "6752667be13de2988fdeebbb65f044220fb17477bc85f16f962e53d0051bddf8",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "family.male_in_law": {
+      "file": "family.male_in_law.mp3",
+      "speechText": "نسيبي",
+      "sha256": "98dbaee0521ba8040ec81f606cb441c4f8752bfbf5ca10afcd1d567f6ed0a9ea"
+    },
+    "family.male_relative": {
+      "file": "family.male_relative.mp3",
+      "speechText": "قريبي",
+      "sha256": "eb53d3523160291fe5b85087179499dd7307da7f0f6bbefdd395552eb22db9b0",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "family.maternal_aunt": {
+      "file": "family.maternal_aunt.mp3",
+      "speechText": "خالتي",
+      "sha256": "291eac940114e26962a5edbc02560e484c76d31fa61d0f13aa3caff098287225"
+    },
+    "family.maternal_aunt_daughter": {
+      "file": "family.maternal_aunt_daughter.mp3",
+      "speechText": "بنت خالتي",
+      "sha256": "2f190a91c111ef55145ba15775ae7fc22f19dd620fdbc205ca67bed804a60dc4",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "family.maternal_aunt_son": {
+      "file": "family.maternal_aunt_son.mp3",
+      "speechText": "ولد خالتي",
+      "sha256": "b936f383ad85c30115b866f4da1dda2c5be393007cbb81018b0679fe3f536927",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "family.maternal_uncle": {
+      "file": "family.maternal_uncle.mp3",
+      "speechText": "خالي",
+      "sha256": "2cc10d961a88d851e0cb815277ae4b638d7f8446fbbaad8a61dc5e8f2327699e",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "family.maternal_uncle_daughter": {
+      "file": "family.maternal_uncle_daughter.mp3",
+      "speechText": "بنت خالي",
+      "sha256": "5ce32e2baf01dee2f18bb04b17bb57a112ae0ae55ec73c00eb6e8f278bd87f4a"
+    },
+    "family.maternal_uncle_son": {
+      "file": "family.maternal_uncle_son.mp3",
+      "speechText": "ولد خالي",
+      "sha256": "fd6657d9b7dce4bc9ea32e0d943daad2dbb1a2cf26fe2fb112a8d7b88c753641",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "family.mother": {
+      "file": "family.mother.mp3",
+      "speechText": "أمي",
+      "sha256": "d05268a57d9c86ce5b46900f6a6f274b039a505beebc0ff128da5f1ff4b4494f"
+    },
+    "family.paternal_aunt": {
+      "file": "family.paternal_aunt.mp3",
+      "speechText": "عمتي",
+      "sha256": "60c0ec5275e32da2dfb5583e587163274cb021aea59c774327a95e2a374d2f19",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "family.paternal_aunt_daughter": {
+      "file": "family.paternal_aunt_daughter.mp3",
+      "speechText": "بنت عمتي",
+      "sha256": "1bafbcf26f6c59ba91cd738d3d0b9df94e7d6bb004146fee12e20efa43d10796",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "family.paternal_aunt_son": {
+      "file": "family.paternal_aunt_son.mp3",
+      "speechText": "ولد عمتي",
+      "sha256": "0f500226cd13663b4f63812585129faca51173fb7126e8e8d91af7bc28d82d98",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "family.paternal_uncle": {
+      "file": "family.paternal_uncle.mp3",
+      "speechText": "عمي",
+      "sha256": "2e5aeea08aee845adf2ed237548fd61288b4cc4f768562af3ce426b4ffffdc1c"
+    },
+    "family.paternal_uncle_daughter": {
+      "file": "family.paternal_uncle_daughter.mp3",
+      "speechText": "بنت عمي",
+      "sha256": "ab960694b1b04eeff434dfc70b75b8206f831f21bf23ca50602086b730c8ec75",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "family.paternal_uncle_son": {
+      "file": "family.paternal_uncle_son.mp3",
+      "speechText": "ولد عمي",
+      "sha256": "c361477b94d28fd8c8eed66260f337045cb33f1d415713bae6cffc557ba31c55"
+    },
+    "family.sister": {
+      "file": "family.sister.mp3",
+      "speechText": "أختي",
+      "sha256": "5e040a4f2e9b40e6bdcc5fe8715cd9b9203f95f5872fede6250708be3e570b76",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "family.sister_daughter": {
+      "file": "family.sister_daughter.mp3",
+      "speechText": "بنت أختي",
+      "sha256": "23c3cb86728014c1096e01713e537c172c65d280613f03d2d9e611bbf5b386b6",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "family.sister_husband": {
+      "file": "family.sister_husband.mp3",
+      "speechText": "راجل أختي",
+      "sha256": "8aeb0678a25899e471a6b230e9b6397238fb986756e0626ad961e1d8976a51f2",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "family.sister_son": {
+      "file": "family.sister_son.mp3",
+      "speechText": "ولد أختي",
+      "sha256": "5ac7adb73f6a205d68c6e52a1268f57eddcba86d5f7d4c6e1f797770947c6a3c"
+    },
+    "family.son": {
+      "file": "family.son.mp3",
+      "speechText": "ولدي",
+      "sha256": "d34fec710c0a017e28421b8990dd4d613e8fbdbd16223fc21bbfcd626d4a398c",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "family.son_wife": {
+      "file": "family.son_wife.mp3",
+      "speechText": "مرت ولدي",
+      "sha256": "a233405457e30c0f05619d611e1d1ca570de7ddfd188a0368c22d567c31815c7"
+    },
+    "family.wife": {
+      "file": "family.wife.mp3",
+      "speechText": "مرتي",
+      "sha256": "69f72a3d9084053a45daf0bca599728ca2858ac552998b701f2a0f1897db5b75",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "family.wife_brother": {
+      "file": "family.wife_brother.mp3",
+      "speechText": "خو مرتي",
+      "sha256": "7ed96e8425b951b4f4209123e12cfb1d2e2e98674ee0c69de3f50628c5da4cf6",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "family.wife_father": {
+      "file": "family.wife_father.mp3",
+      "speechText": "بو مرتي",
+      "sha256": "d0428c5ba585b237e921088987cb9385cee20ae67d3ad4c8d64a9f0b4dd13f1c",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "family.wife_mother": {
+      "file": "family.wife_mother.mp3",
+      "speechText": "أم مرتي",
+      "sha256": "52ba5845c2587236807479b876a747a7b2522c29537d5ff37c3ed7f87a3bf293"
+    },
+    "family.wife_sister": {
+      "file": "family.wife_sister.mp3",
+      "speechText": "أخت مرتي",
+      "sha256": "c058752900566a14017e7c4efeee007e47993a253c8f00372881f21874c0ac5e",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "food.biscuit": {
+      "file": "food.biscuit.mp3",
+      "speechText": "بسكويت",
+      "sha256": "359dc89b3e6fba9df06d88b84f040e525cc9789267ac99667cef6989454b06e3"
+    },
+    "food.bread": {
+      "file": "food.bread.mp3",
+      "speechText": "خبزة",
+      "sha256": "6fe2c0bbb825db05a9d9685f26f55ef1cfddd6129a4176fc7396023b8215f7fe",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "food.butter": {
+      "file": "food.butter.mp3",
+      "speechText": "زبدة",
+      "sha256": "47a66e8d24cc80cf0cc0d76b14457baf1679c12dc1a545c402b7931536698989",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "food.cheese": {
+      "file": "food.cheese.mp3",
+      "speechText": "جبنة",
+      "sha256": "de496a62a72bd6f6db81551531c63f417e99b6b3b4ad0548a91d2a637eae8283",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "food.chicken": {
+      "file": "food.chicken.mp3",
+      "speechText": "دجاج",
+      "sha256": "ea092d443929779de2b5615f1b13712c367376480da554a5470806ffef22451b",
+      "synthesisAttempts": 2,
+      "fixedDurationSeconds": 9.738773333333333
+    },
+    "food.coffee": {
+      "file": "food.coffee.mp3",
+      "speechText": "قهوة",
+      "sha256": "dc9a48712c5eccdf93fc0b37b7222d779cf7fbc5bc55d5e470d32d76ef4e5114",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "food.eggs": {
+      "file": "food.eggs.mp3",
+      "speechText": "بيض",
+      "sha256": "f395d86599e626b82c913fb9372b989b7a32a3feee0463f312e84087f1e92d0d"
+    },
+    "food.fish": {
+      "file": "food.fish.mp3",
+      "speechText": "حوت",
+      "sha256": "7d0c65d75a7a28e3911d75edf4a99558ae07ccc11beb2c6a26c8f5d1ffbf6e89",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
+    },
+    "food.honey": {
+      "file": "food.honey.mp3",
+      "speechText": "عسل",
+      "sha256": "8c38cc97f3f987ce978a8de236350a004f5f7e3b3f9e265c84187a0cac193469",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
+    },
+    "food.juice": {
+      "file": "food.juice.mp3",
+      "speechText": "عصير",
+      "sha256": "df9093f1f4f46bce779aad7a70e2fb5d0665c047008ebb8e8f57a9799b69bcf5",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "food.meat": {
+      "file": "food.meat.mp3",
+      "speechText": "لحم",
+      "sha256": "e537a5109ac6066f4b182cb3c4d355f48c673e2239dc02c8989d4d2bff9833c9",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
+    },
+    "food.milk": {
+      "file": "food.milk.mp3",
+      "speechText": "حليب",
+      "sha256": "31bde4ad8c41576bdd05714c706c78e9cbf743e3d85a2be13878df442265c21c",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "food.oil": {
+      "file": "food.oil.mp3",
+      "speechText": "زيت",
+      "sha256": "7c48fd6e843369dee85b8d77ebce8f855ac857ff87eb11f21f534b830d720587"
+    },
+    "food.olives": {
+      "file": "food.olives.mp3",
+      "speechText": "زيتون",
+      "sha256": "952276acc816381c29d5d3cfcdde4b731b36962c8d0f482c9b79bd1bd541b5a6",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "food.pasta": {
+      "file": "food.pasta.mp3",
+      "speechText": "مكرونة",
+      "sha256": "f00345370d862919ebc6cdb219dd4d634f87b3dff2c3b4b8691afc2bb4a3d34b",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "food.rice": {
+      "file": "food.rice.mp3",
+      "speechText": "رز",
+      "sha256": "7b475d5cdc056468f7cfea1f6b96482a068d716087baf67762b55bb6e81c4963",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.024106666666666
+    },
+    "food.salt": {
+      "file": "food.salt.mp3",
+      "speechText": "ملح",
+      "sha256": "c74c2e9e71b7f60d7244b5192c2bbefd5bad4dcd79a00ba71d0b410887d99cdb",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
+    },
+    "food.soup": {
+      "file": "food.soup.mp3",
+      "speechText": "شوربة",
+      "sha256": "b7e4f51067d69155b77a443bcf9403070a7df4ff4ffa6a596ce992ed8d9375a0",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "food.sugar": {
+      "file": "food.sugar.mp3",
+      "speechText": "سكر",
+      "sha256": "21034fdf012887d172b7643198d6aadd4c15000ba3d40e064efa8bfe7d4108af"
+    },
+    "food.tea": {
+      "file": "food.tea.mp3",
+      "speechText": "شاهي",
+      "sha256": "2ffec24e0d24c9d0dc934bff4ecbc7a7829c0af3c51464db11b0bc840d3d0581",
+      "synthesisAttempts": 2,
+      "fixedDurationSeconds": 9.738773333333333
+    },
+    "food.water": {
+      "file": "food.water.mp3",
+      "speechText": "مية",
+      "sha256": "9a5f95ca9e7c72f337548e855f6f5a62ebb660624c0b23344c9fe9df5582adfd",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
+    },
+    "food.yogurt": {
+      "file": "food.yogurt.mp3",
+      "speechText": "زبادي",
+      "sha256": "cd565356499613da81cff0074f5d6515000b4b81db48e1a8b57f45dfb9c694ac",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "fruit.apple": {
+      "file": "fruit.apple.mp3",
+      "speechText": "تفاح",
+      "sha256": "f1fd2ad260ce0d9bcedfa55e1b4c61b3ea53eabb1c5f18b678741bb0dca90eef",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "fruit.apricot": {
+      "file": "fruit.apricot.mp3",
+      "speechText": "مشمش",
+      "sha256": "8e838aa3b24a2609d52221df10daebc56a82ce4515f878073d58ca3bc6a5ec4e",
+      "synthesisAttempts": 2,
+      "fixedDurationSeconds": 9.738773333333333
+    },
+    "fruit.avocado": {
+      "file": "fruit.avocado.mp3",
+      "speechText": "أفوكادو",
+      "sha256": "de45b1f591e6eb5816ed8f31f6a7410d61a660dd48e9fa28e6944b98c6cb33dc"
+    },
+    "fruit.banana": {
+      "file": "fruit.banana.mp3",
+      "speechText": "موز",
+      "sha256": "5742cadc18a96931bb2c97a09b9b411d4a90d7c19ca528724c0ecc2aae0a0eba",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
+    },
+    "fruit.berries": {
+      "file": "fruit.berries.mp3",
+      "speechText": "توت",
+      "sha256": "0af4b8ca48679c60812553999ed2b0bb10d97bbaa4482512686a641487e2013c",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
+    },
+    "fruit.cherry": {
+      "file": "fruit.cherry.mp3",
+      "speechText": "كرز",
+      "sha256": "db2d213ac52851be6b8c9590fb3a3c551b38ad57a778343bf1b67b91581dc73c",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
+    },
+    "fruit.coconut": {
+      "file": "fruit.coconut.mp3",
+      "speechText": "جوز الهند",
+      "sha256": "148bcfbf8dd95669e5ba8b696f4e2c9c54bf89ce14821900e622cef2cd831951",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "fruit.dates": {
+      "file": "fruit.dates.mp3",
+      "speechText": "تمر",
+      "sha256": "ef4beed4c251122d0721363ab2d4613b6c25328b58738ed6fecdbec81e34b254",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
+    },
+    "fruit.figs": {
+      "file": "fruit.figs.mp3",
+      "speechText": "كرموس",
+      "sha256": "0c1295af6099f49b68e723dc0a423e716f85ac877317eb6c644a5d88a9d0ff17",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "fruit.grapes": {
+      "file": "fruit.grapes.mp3",
+      "speechText": "عنب",
+      "sha256": "cee8e624e8a554b209a38545c7a721f72e58754f8cf971672864bb58b22a48e6",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
+    },
+    "fruit.kiwi": {
+      "file": "fruit.kiwi.mp3",
+      "speechText": "كيوي",
+      "sha256": "cc04193d81e4284d2e93e3ecc607ab9df1a2060cbfb92269c25745364610f05f",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "fruit.mandarin": {
+      "file": "fruit.mandarin.mp3",
+      "speechText": "مندرين",
+      "sha256": "94e4670eec5c3c71ec86391c09f9f6426242e193f8928c330b3bf4378e395645",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "fruit.mango": {
+      "file": "fruit.mango.mp3",
+      "speechText": "مانجو",
+      "sha256": "8b70689bfa03abebfa389be50e3f6402fc4ffc27c405ea00c2bcf31a388bf766",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "fruit.melon": {
+      "file": "fruit.melon.mp3",
+      "speechText": "قلعاوي",
+      "sha256": "6994d8038dd0daf5a79cbcf38f6df306b2cc8e6847a8be37be0534909f9c15e4",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "fruit.orange": {
+      "file": "fruit.orange.mp3",
+      "speechText": "برتقال",
+      "sha256": "419260b51ebd6eaeff0355f2d4b923fda85b2cd837efa665b11814abebf6f095",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "fruit.peach": {
+      "file": "fruit.peach.mp3",
+      "speechText": "خوخ",
+      "sha256": "766a4538020554680be0c5fd33272ff2e22afc850e8f3a210f7d27fc1ed2aaf2",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
+    },
+    "fruit.pear": {
+      "file": "fruit.pear.mp3",
+      "speechText": "كمثرى",
+      "sha256": "8c3507e81d3bf0b54b9b38b7e0eb7991e00e5ee0d98933fc03535cb2353b1a4c",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "fruit.pineapple": {
+      "file": "fruit.pineapple.mp3",
+      "speechText": "أناناس",
+      "sha256": "62d593dbe04b7f21ef7839e6ec4cb600c58bff5e281fd128081dd8532ff17e17",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "fruit.pomegranate": {
+      "file": "fruit.pomegranate.mp3",
+      "speechText": "رمان",
+      "sha256": "ef156846536eaa7626676a87998171e479801207d5e49292eb530b8ef0afd664",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "fruit.strawberry": {
+      "file": "fruit.strawberry.mp3",
+      "speechText": "فراولة",
+      "sha256": "abbb8cc55ec74077c5ede3d1a2a6cd19c3475440930004ad5098e421d1dc4127",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "fruit.watermelon": {
+      "file": "fruit.watermelon.mp3",
+      "speechText": "دلاع",
+      "sha256": "33e7a6b53d510ccb3b1901213d57870c272b34d5bd9515515ab4af1aa47e899e",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "greeting.bless": {
+      "file": "greeting.bless.mp3",
+      "speechText": "بارك الله فيك",
+      "sha256": "b07384901b8cd9ec8cffbc0d93f9cf7962fc1940cc638d5199fa22f402844e88",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "greeting.brighten": {
+      "file": "greeting.brighten.mp3",
+      "speechText": "نورت",
+      "sha256": "c8761d26946cecc16949719b31d3691addec6f541c3063fc1041735e7bcc223a",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "greeting.fine": {
+      "file": "greeting.fine.mp3",
+      "speechText": "الحمد لله",
+      "sha256": "18e301d0d68b3e9e5c4b11cd2cae4d62529154cad30839047f0397461d12e4a8",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "greeting.good_evening": {
+      "file": "greeting.good_evening.mp3",
+      "speechText": "مسا الخير",
+      "sha256": "d5128d349120ba37e31629f980541f58f50171c6754bcee2a9f5c89553cf4f5a",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "greeting.good_health": {
+      "file": "greeting.good_health.mp3",
+      "speechText": "يعطيك الصحة",
+      "sha256": "a5bd67c9ce37da5ec31fd4214baef779f0db56097b23187b80736dbc2ab64f0f",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "greeting.good_morning": {
+      "file": "greeting.good_morning.mp3",
+      "speechText": "صباح الخير",
+      "sha256": "3c7139661d91e6702d7f7a48703fc6e4374b3f7a31287d9dbe25f3a5c456eabc",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "greeting.goodbye": {
+      "file": "greeting.goodbye.mp3",
+      "speechText": "مع السلامة",
+      "sha256": "f80c0b82bc3c78f89687172929ecf0514e46da897afda557dbedcf8a896845b4",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "greeting.hello": {
+      "file": "greeting.hello.mp3",
+      "speechText": "هلا بيك",
+      "sha256": "7ba3bd6a20afd89bd32a6a4c8c98322c38198fb345db6c884a984a07a340a0db",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "greeting.how_are_you": {
+      "file": "greeting.how_are_you.mp3",
+      "speechText": "شن حالك؟",
+      "sha256": "4a07a393c3dbc10837326eff43b0b14db20f2228597db2acfd7239cceab974b8",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "greeting.reply": {
+      "file": "greeting.reply.mp3",
+      "speechText": "وعليكم السلام",
+      "sha256": "e0b650309b69aaa8edb7996a52c2c000cdd9eb6667d2d1fee79960eb41cdc8f6",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "greeting.safe": {
+      "file": "greeting.safe.mp3",
+      "speechText": "في أمان الله",
+      "sha256": "cce15f172526caf019768c77d6238fe80b7caf6f75d7a1bd33a409b92f043119",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "greeting.salam": {
+      "file": "greeting.salam.mp3",
+      "speechText": "السلام عليكم",
+      "sha256": "4f527f29567d99e71d04565611305c97ce3357d49de1a51a9398aaca5cfe1ce3",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "greeting.thanks": {
+      "file": "greeting.thanks.mp3",
+      "speechText": "شكرا ليك",
+      "sha256": "fdbf0fe7c53e24dd3a94cfbb31b5d77e11db0b4ab9e05c417fa5989fa8e5ebb8",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "greeting.welcome": {
+      "file": "greeting.welcome.mp3",
+      "speechText": "أهلا وسهلا",
+      "sha256": "dcc8abd175427f04c02fcbc5befdecf55763c74a800b21dbdcbaa880fc310467",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "home.air_conditioner": {
+      "file": "home.air_conditioner.mp3",
+      "speechText": "مكيف",
+      "sha256": "de5d63aeec59568192ebdad81158cfd7f05c5dcc026629ab67738e836d1db4bb",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "home.bed": {
+      "file": "home.bed.mp3",
+      "speechText": "سرير",
+      "sha256": "ff5c8c065f909b34c9d2e4a9be17981f669f2fd6ffccd46129d1f061cc56e6e6",
+      "synthesisAttempts": 2,
+      "fixedDurationSeconds": 9.738773333333333
+    },
+    "home.blanket": {
+      "file": "home.blanket.mp3",
+      "speechText": "ورغان",
+      "sha256": "72f5061d37798323808b6ac21811ef22a42c511fb419cf0b28fd1a5c4a6c8485",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "home.carpet": {
+      "file": "home.carpet.mp3",
+      "speechText": "بساط",
+      "sha256": "d98ffc05bfd593ba67995e696941f098cb71a390b103641b380f09793687a186",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "home.chair": {
+      "file": "home.chair.mp3",
+      "speechText": "كرسي",
+      "sha256": "fcf15a50924ce19a3143a608615daf0e2b2732c447dea4d34b34f998ffec30fd",
+      "synthesisAttempts": 2,
+      "fixedDurationSeconds": 9.738773333333333
+    },
+    "home.clock": {
+      "file": "home.clock.mp3",
+      "speechText": "ساعة",
+      "sha256": "e4587ae5da3657ceef9579944396e7967948dafe694d74c619605953bca0730e",
+      "synthesisAttempts": 2,
+      "fixedDurationSeconds": 9.738773333333333
+    },
+    "home.cup": {
+      "file": "home.cup.mp3",
+      "speechText": "طاسة",
+      "sha256": "0eea274169db40dfd504dc96266869e5a3055784f1dfed527349a808914f43df",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "home.door": {
+      "file": "home.door.mp3",
+      "speechText": "باب",
+      "sha256": "fd7e68403dbdf414bcc102f8c3062611c8457edb38659ad47ab4134defa343d2",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
+    },
+    "home.fan": {
+      "file": "home.fan.mp3",
+      "speechText": "مروحة",
+      "sha256": "a0492a328fac97ffb67be58675e2981c9b1c18a5bc6860bcc69f4dcb9b1d70ad",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "home.fork": {
+      "file": "home.fork.mp3",
+      "speechText": "شوكة",
+      "sha256": "790e8e80b80bfbcfa911a009128adfa20567174f9957c1a4c4f5804ca91107a0",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "home.fridge": {
+      "file": "home.fridge.mp3",
+      "speechText": "ثلاجة",
+      "sha256": "415ee42b41f63237fd7a7bfa4ce2428482cceea890fe165be158bdc316583b02",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "home.key": {
+      "file": "home.key.mp3",
+      "speechText": "مفتاح",
+      "sha256": "f0c726b9555c2e3b1684871b8c29ad5a9f3f1356911815f784bbfae6ee4713c0",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "home.kitchen": {
+      "file": "home.kitchen.mp3",
+      "speechText": "كوجينة",
+      "sha256": "31c0d94a301e20379d5d25b65dd069ffbea8c2e26fe193932beb395bdb2196d1",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "home.knife": {
+      "file": "home.knife.mp3",
+      "speechText": "موس",
+      "sha256": "0bec4d669ee23d74cb43383818191b67c5d7ffc5e2dc36338546fb963e913608",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
+    },
+    "home.oven": {
+      "file": "home.oven.mp3",
+      "speechText": "كوشة",
+      "sha256": "399ff3e0f7c635825cbffa145b0d26a044cac8e26ccd2eb54b87d0940f6f532d",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "home.pillow": {
+      "file": "home.pillow.mp3",
+      "speechText": "مخدة",
+      "sha256": "a1a37a0b3d16aeb94147b342111bbdd17d2773164e8771ad0c4df53bb37961d3",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "home.pot": {
+      "file": "home.pot.mp3",
+      "speechText": "طنجرة",
+      "sha256": "77deb9b8012c4796dc993b7f773404c9bda67d84c92b8a9c1081b2e1a5b47bca",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "home.sofa": {
+      "file": "home.sofa.mp3",
+      "speechText": "صالون",
+      "sha256": "081d4700797a6c9bd40621669e03ac99414440b2f91033a45289ba4a35b5fd74",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "home.spoon": {
+      "file": "home.spoon.mp3",
+      "speechText": "كاشيك",
+      "sha256": "a9b7ff35e8f1baca08d12cce46c944c1e1b88682bfdc86c47eb3c53f6f1b109a",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "home.stove": {
+      "file": "home.stove.mp3",
+      "speechText": "غاز",
+      "sha256": "d500e98b288c4700fc89c6794a26ee329c26b5c602ef297abb1a54497cf37d78",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
+    },
+    "home.table": {
+      "file": "home.table.mp3",
+      "speechText": "طاولة",
+      "sha256": "c2a6c511d08b0e52ccf0cd315e85f1813f5e8ff4faae0816aefb01eb60ec9c93",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "home.teapot": {
+      "file": "home.teapot.mp3",
+      "speechText": "براد",
+      "sha256": "2b150105de02043a857c3266f909c419808e871fcdb6f96e6f540cd446dfd660",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "home.television": {
+      "file": "home.television.mp3",
+      "speechText": "تلفزيون",
+      "sha256": "0088ac72b10aeed728b38cbfde26133ec91f8ccf3dcbb5f8a9455f36453b0a24",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "home.tray": {
+      "file": "home.tray.mp3",
+      "speechText": "صونية",
+      "sha256": "4ab9bd1395d89f786ce8a7bb8e9c5007619830defc94beeccd1523a28af3fdb8",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "home.wardrobe": {
+      "file": "home.wardrobe.mp3",
+      "speechText": "دولاب",
+      "sha256": "695f002fd6adae564df4134dab61549d8caa865a08d7e6543bb0de7fb76fea30",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "home.washing_machine": {
+      "file": "home.washing_machine.mp3",
+      "speechText": "غسالة",
+      "sha256": "ad6e734bbb15b30b112c0a4f81c8bfef95ae07434a4276e3484220a40906a74b",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "home.water_bottle": {
+      "file": "home.water_bottle.mp3",
+      "speechText": "شيشة اميه",
+      "sha256": "950c15c8d2e54434d5e88a20b5426e8afa1b2160c48e1c7b0c3591149d882cf9",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "home.window": {
+      "file": "home.window.mp3",
+      "speechText": "روشن",
+      "sha256": "cf9ecb9d94c245459d3a0ff8518a1a85010356c21ba2cc9e1f815a695ad8d822",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "request.adjust_pillow": {
+      "file": "request.adjust_pillow.mp3",
+      "speechText": "عدل لي المخدة",
+      "sha256": "4a8bccd75ed81a745da129d0ada6a88507e0bd59207d28d6855c697fb71fc101",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "request.cold": {
+      "file": "request.cold.mp3",
+      "speechText": "نحس بالبرد",
+      "sha256": "bbd1a88b3eb3491a6bd1fd5ec1d112cbe532403810df8b581512dc3a69a00a01",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "request.headache": {
+      "file": "request.headache.mp3",
+      "speechText": "راسي يوجع فيا",
+      "sha256": "67f9f32a363cd9376e2c1e60135d0b834a48d60ba3e007cbf517faa4a2760dad",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "request.medicine": {
+      "file": "request.medicine.mp3",
+      "speechText": "نبي دوايا",
+      "sha256": "bb2325e6abbb6262f1ce378f7e11716039822ec0f13a054dab0d85d0095f6f9b",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "request.rest": {
+      "file": "request.rest.mp3",
+      "speechText": "نبي نرتاح",
+      "sha256": "a1e73a7de2fa0b9405e08bb11602dacf50e860d37bd1a1321fcd0697470c4365",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "request.tea": {
+      "file": "request.tea.mp3",
+      "speechText": "نبي شاهي",
+      "sha256": "351f28ce51edc58c8794b812242f47cd21b2b52209bf4208b19ee4e93f1b1bba",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "request.toilet": {
+      "file": "request.toilet.mp3",
+      "speechText": "نبي الحمام",
+      "sha256": "25414a654e1231f59dae12772b9f965802fa357110d9240e7b6f4e499bd57930",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "request.water": {
+      "file": "request.water.mp3",
+      "speechText": "نبي مية",
+      "sha256": "f49c4fe138aa7a78e78dc5dfda381b5c19c0fc4ac34f3cb60ffb714bc94ee753",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "routine.ablution": {
+      "file": "routine.ablution.mp3",
+      "speechText": "وضوء",
+      "sha256": "e7d0a34b6cae40b2fcc82c454dd866f96952d06df4834212a4ca1a7e1e37ba41",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "routine.call_to_prayer": {
+      "file": "routine.call_to_prayer.mp3",
+      "speechText": "أذان",
+      "sha256": "06f05f06c7a286baac9257ded6fbfeb553b556dd78c5fbe4acfaadfda02a7394",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "routine.evening_coffee": {
+      "file": "routine.evening_coffee.mp3",
+      "speechText": "قهوة العشية",
+      "sha256": "c086c3472a506e86a86aace12731839fd6202f87461b9c46cf75418f259361cf",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "routine.prayer": {
+      "file": "routine.prayer.mp3",
+      "speechText": "صلاة",
+      "sha256": "796276fb29554a0cbc4422ae897f587ed98bfe21bc8e2d24781e4c6523566b71",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "routine.prayer_beads": {
+      "file": "routine.prayer_beads.mp3",
+      "speechText": "سبحة",
+      "sha256": "37235013c45556ea50bb2769f90b7c5abaf3c0728a373dc678cb02239593aa83",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "routine.prayer_rug": {
+      "file": "routine.prayer_rug.mp3",
+      "speechText": "سجادة",
+      "sha256": "8f5bf0ca2e2308bdb42e1356b6defb25103e88673e7ae91cb4d63f1f20a1afd3",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "routine.quran": {
+      "file": "routine.quran.mp3",
+      "speechText": "مصحف",
+      "sha256": "679cb0c0ed90b1a511eb270109cd1699ffb1522f1b52080e297f45d3ba89b354",
+      "synthesisAttempts": 2,
+      "fixedDurationSeconds": 9.738773333333333
+    },
+    "routine.rest": {
+      "file": "routine.rest.mp3",
+      "speechText": "راحة",
+      "sha256": "fb64454d93d4eb9db9b66c5a6a057b9e043de7f9ac94511443c7fb265c5708cb",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "routine.sleep": {
+      "file": "routine.sleep.mp3",
+      "speechText": "نوم",
+      "sha256": "d6727d954c75e7db832f805d090f69222dc81ad800da00099e4de8917c1feb0d",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
+    },
+    "routine.walk": {
+      "file": "routine.walk.mp3",
+      "speechText": "مشي",
+      "sha256": "aa28fb090deb849adfe1ec52be4dfaee4f1f9b565808c99afa589cd2ba6a9b51",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
+    },
+    "transport.airplane": {
+      "file": "transport.airplane.mp3",
+      "speechText": "طيارة",
+      "sha256": "c5c4780416351bf0a14ff4d52f1a5848535c79c8905d0afb61826eed5d74a0c5",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "transport.bicycle": {
+      "file": "transport.bicycle.mp3",
+      "speechText": "دراجة",
+      "sha256": "c44f5bed0da65c1b3ec99079415d21b99ffe81a78eee89283448a058cfc9e20b",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "transport.boat": {
+      "file": "transport.boat.mp3",
+      "speechText": "قارب",
+      "sha256": "213afecddcd8697650aeade8b69e591ad3349984e2b9b2540b9f62c231be0560",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "transport.bus": {
+      "file": "transport.bus.mp3",
+      "speechText": "باص",
+      "sha256": "c888f12f17dbaa14fce8d92e5a6e2f7a592576d7607d190304e548ee22c5e2f6",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
+    },
+    "transport.car": {
+      "file": "transport.car.mp3",
+      "speechText": "سيارة",
+      "sha256": "23a1d46ea5c7c5a4987299456609582ecea6852943018281382d5ddaf18149c0",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "transport.helicopter": {
+      "file": "transport.helicopter.mp3",
+      "speechText": "هليكوبتر",
+      "sha256": "c6ac0c58a420cd279e62a1cb9d515ceaea6854e8d1bc10c542d7436d9328f93f",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "transport.minibus": {
+      "file": "transport.minibus.mp3",
+      "speechText": "ميكروباص",
+      "sha256": "12eaa7c324fb5eba23cab02df986fc36938260ef60297174f2d681fc38c7e700",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "transport.motorcycle": {
+      "file": "transport.motorcycle.mp3",
+      "speechText": "دراجة نارية",
+      "sha256": "211f297f5a3511a0bf86d69a81d90724e0a0eecc82544e00aa5fa75c8ea42d08",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "transport.ship": {
+      "file": "transport.ship.mp3",
+      "speechText": "باخرة",
+      "sha256": "f3a70dc2cc5d0d3bb57ff37d2c858f2ee3b8539f9476251564b567a091310603",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "transport.taxi": {
+      "file": "transport.taxi.mp3",
+      "speechText": "تاكسي",
+      "sha256": "7b8c2a2b3d6bd1a318152baab98b49118819cc7dbb9cde5bfd99137813109371",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "transport.train": {
+      "file": "transport.train.mp3",
+      "speechText": "قطار",
+      "sha256": "6f8a2779509e6f3234dfaf5e8fa7730bb7ff5841fffb0658ca303a6acd760986",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "transport.truck": {
+      "file": "transport.truck.mp3",
+      "speechText": "شاحنة",
+      "sha256": "eafa6fd9954652dc78398d6242be86ada45d1fea83de5d3f563163f35498f57f",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "vegetable.broccoli": {
+      "file": "vegetable.broccoli.mp3",
+      "speechText": "بروكلي",
+      "sha256": "c10a0eda70d10c31a880b3dc2a252047cc93f78f4dea3045e36ee80ff21adafc",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "vegetable.carrot": {
+      "file": "vegetable.carrot.mp3",
+      "speechText": "جزر",
+      "sha256": "4c92d47f2a24a6069d38993cff2d754a3010ef225372cfa9761a055f9fdf22f9",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
+    },
+    "vegetable.cauliflower": {
+      "file": "vegetable.cauliflower.mp3",
+      "speechText": "قرنبيط",
+      "sha256": "44feaec46f065fc3ef4a97e5a275f28d38a16b2269a4468e2de07a13ea5b77f9",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "vegetable.coriander": {
+      "file": "vegetable.coriander.mp3",
+      "speechText": "قصبر",
+      "sha256": "7a84c65814b02cb34e52251d3bd0db0a3f63354621438fc8ed6b03ec454611ef",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "vegetable.corn": {
+      "file": "vegetable.corn.mp3",
+      "speechText": "ذرة",
+      "sha256": "f1dd797ff4e1bbe59b4cac9315c053daecf6304ac096939acd93cfe50c9473fc",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
+    },
+    "vegetable.cucumber": {
+      "file": "vegetable.cucumber.mp3",
+      "speechText": "خيار",
+      "sha256": "64cefdf632467b9f5c45eabc53a455e0ab30d770d9ac96b0cb2c038c5a795383",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "vegetable.eggplant": {
+      "file": "vegetable.eggplant.mp3",
+      "speechText": "باذنجان",
+      "sha256": "6f8c850781f40a4afa6cc2781fa2391991f8cad9e25e6022e5ab9096439ec676",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "vegetable.garlic": {
+      "file": "vegetable.garlic.mp3",
+      "speechText": "ثوم",
+      "sha256": "91555128e8c4eaccc119f25982ebaeca60bd228a14018f7b8811e6fe4c4313c4",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
+    },
+    "vegetable.green_beans": {
+      "file": "vegetable.green_beans.mp3",
+      "speechText": "فاصوليا",
+      "sha256": "fc8f6a0a81539938557459b3b6f4bfb0c92ccfd1ec7d8b396dc74e7e55a41bd8",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "vegetable.lemon": {
+      "file": "vegetable.lemon.mp3",
+      "speechText": "ليمون",
+      "sha256": "b4bdb2cd791d0d4c6ee3742333a3de9a0654b3a1aa41aa5e6cbad8d0b6ef6402",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "vegetable.lettuce": {
+      "file": "vegetable.lettuce.mp3",
+      "speechText": "خس",
+      "sha256": "8ecd82805b0bb5ae04be835de58d8b0fe5f34e6078560085c7d98dc93fcc154b",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.024106666666666
+    },
+    "vegetable.mint": {
+      "file": "vegetable.mint.mp3",
+      "speechText": "نعناع",
+      "sha256": "c5c7d3462c45eefd279a41024f71d29cca92fc9bb2fcf4e197879af8dfef716f",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "vegetable.onion": {
+      "file": "vegetable.onion.mp3",
+      "speechText": "بصل",
+      "sha256": "d71cec6b71dc78e0727a85be1355ea91180f909964b45140def18be29cfbd719",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
+    },
+    "vegetable.parsley": {
+      "file": "vegetable.parsley.mp3",
+      "speechText": "معدنوس",
+      "sha256": "29b3bff53b738ab99262577729ed0b5c056a40329873da8905a62ea7434d7650",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "vegetable.peas": {
+      "file": "vegetable.peas.mp3",
+      "speechText": "بازيلية",
+      "sha256": "9cefd8763a2538d650c5db74c00dc3e13951dfdaa529bdc512cae100c0e99523",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "vegetable.pepper": {
+      "file": "vegetable.pepper.mp3",
+      "speechText": "فلفل",
+      "sha256": "e7cb13b39b1f9b00881d4de49ef8ca69d22e942939e12c395b0cdfed6656f3a8",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "vegetable.potato": {
+      "file": "vegetable.potato.mp3",
+      "speechText": "بطاطا",
+      "sha256": "1fd1e0960f7f34e3d50e47fbb76ed857bafdde90e8f9a2ed917ec4bd21cb84d7",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "vegetable.pumpkin": {
+      "file": "vegetable.pumpkin.mp3",
+      "speechText": "قرعة",
+      "sha256": "d8491e3e5c7d20ef3f4398aad39223dec93dfd0a3408f9e3851f36b36f00f99d",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    },
+    "vegetable.radish": {
+      "file": "vegetable.radish.mp3",
+      "speechText": "فجل",
+      "sha256": "42c6e81157272ee3508b7f2f913758e616b7e9acefacb3346a510062649cbecb",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
+    },
+    "vegetable.spinach": {
+      "file": "vegetable.spinach.mp3",
+      "speechText": "سبانخ",
+      "sha256": "b432ad3156d2031c206e4313906f63a3fca09f38b27b0039586bc6ba7cfa0007",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "vegetable.tomato": {
+      "file": "vegetable.tomato.mp3",
+      "speechText": "طماطم",
+      "sha256": "55bc231d79f17078afe6d6f0d682fa71af3a37455f106f3d487f9386569ee510",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
+    },
+    "vegetable.zucchini": {
+      "file": "vegetable.zucchini.mp3",
+      "speechText": "كوسة",
+      "sha256": "8585675e6f2098d60d8dc04e9de62948a809c7c2fcf075a34fbc9fac3155d6f2",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
+    }
+  }
+}
