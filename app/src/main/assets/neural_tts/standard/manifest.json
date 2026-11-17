@@ -103,6 +103,46 @@
       "file": "family.daughter_husband.mp3",
       "speechText": "زوج ابنتي",
       "sha256": "00ae70c6c0ca4e5f1ff79074ec1393c691d587d5b663ab64a079a594de8953e0"
+    },
+    "family.grandmother": {
+      "file": "family.grandmother.mp3",
+      "speechText": "جدتي",
+      "sha256": "16b3bf9c009f7e74c1404eb4778d24b3c421750f3bfc728b271f888271126bf4"
+    },
+    "family.husband_sister": {
+      "file": "family.husband_sister.mp3",
+      "speechText": "أخت زوجي",
+      "sha256": "93b539ee6b1aa58fbb4843e490a4d2cb81e8acad414141c2c52920a265b2a637"
+    },
+    "family.maternal_uncle": {
+      "file": "family.maternal_uncle.mp3",
+      "speechText": "خالي",
+      "sha256": "52dab840a99c69c639ebf4061d248cbc1724fbe80b9da862f338f4e3e887dfa8"
+    },
+    "family.paternal_aunt_son": {
+      "file": "family.paternal_aunt_son.mp3",
+      "speechText": "ابن عمتي",
+      "sha256": "9002862e668b53c548b07d93c2aff17f20866ed3e657843621fcafd24f8ff332"
+    },
+    "family.sister_husband": {
+      "file": "family.sister_husband.mp3",
+      "speechText": "زوج أختي",
+      "sha256": "d3f7e73fae6822693f2cc729ff6162ee51de481574990346d5b294dce35cb487"
+    },
+    "family.wife_father": {
+      "file": "family.wife_father.mp3",
+      "speechText": "أبو زوجتي",
+      "sha256": "1568cf77aa21ead8c90c76415533ca164fa971a3662cc7d4e2c976d0998fc9ba"
+    },
+    "food.cheese": {
+      "file": "food.cheese.mp3",
+      "speechText": "جبن",
+      "sha256": "e0169b40dc4c5b7425fb8448a595ffbe107f02ff0c8daeafb88e5ec7dfb7f9be"
+    },
+    "food.juice": {
+      "file": "food.juice.mp3",
+      "speechText": "عصير",
+      "sha256": "37c3de66e94ab512402a16edcf8feb09d515eb566cdd5a4a869352e1c10965e9"
     }
   }
 }
