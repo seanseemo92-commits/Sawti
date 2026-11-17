@@ -36,7 +36,7 @@ jobs:
           script: |
             mkdir -p diagnostics
             adb install "$(find dist -name Sawti-Habibi-Full-Test.apk -print -quit)"
-            adb logcat -c
+            adb logcat -c || true
             adb shell am start -W -n com.sawti.habibipreview/com.sawti.MainActivity > diagnostics/launch.txt
             sleep 20
             adb logcat -d > diagnostics/logcat.txt
