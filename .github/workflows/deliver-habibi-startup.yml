@@ -1,0 +1,53 @@
+name: Deliver verified Habibi startup repair
+on:
+  push:
+    branches: [migration/habibi-tts-20261116]
+    paths: [.github/workflows/deliver-habibi-startup.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  deliver:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    env:
+      GH_TOKEN: ${{ github.token }}
+      VERIFIED_RUN: '44084963845'
+      VERIFIED_SHA: '9b19536718c0f756df5838f086c921677545eb08'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require successful build and both actual Android test steps
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$VERIFIED_RUN" > run.json
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$VERIFIED_RUN/jobs?per_page=100" > jobs.json
+          python3 - <<'PY'
+          import json, os
+          run = json.load(open('run.json'))
+          assert run['head_sha'] == os.environ['VERIFIED_SHA']
+          jobs = {j['name']: j for j in json.load(open('jobs.json'))['jobs']}
+          assert jobs['build']['conclusion'] == 'success'
+          for api in (26, 33):
+              steps = {s['name']: s for s in jobs[f'launch ({api})']['steps']}
+              step = steps['Verify startup and regressions on Android']
+              assert step['conclusion'] == 'success', (api, step)
+              print(f'Android API {api}: instrumentation and cold-launch checks passed')
+          # The original runner's later diagnostic command waited for an already-stopped
+          # emulator. It is not part of the successful on-device verification step.
+          PY
+      - name: Download the exact tested bytes and verify checksum
+        run: |
+          gh run download "$VERIFIED_RUN" --name "startup-build-$VERIFIED_RUN" --dir dist
+          cd dist
+          sha256sum -c Sawti-Habibi-Startup-Fixed.apk.sha256
+          test "$(unzip -Z1 Sawti-Habibi-Startup-Fixed.apk | grep -Ec '^assets/neural_tts/.+[.]mp3$')" = 2399
+      - name: Keep tested repair in a draft prerelease
+        run: |
+          gh release create "habibi-startup-fixed-$VERIFIED_RUN" --draft --prerelease --target "$VERIFIED_SHA" --title 'Sawti Habibi startup fix — Android 8 and 13 verified' --notes 'Fixes the Android ICU PatternSyntaxException on startup. Full unit suite, lint, all 2399 audio clips, Android 26/33 instrumentation and cold launcher checks passed. Exact tested APK checksum included. Package com.sawti.habibipreview. Earlier preview may need uninstalling because CI debug signatures differ. Main has not been merged. Native-speaker listening review remains pending.' dist/Sawti-Habibi-Startup-Fixed.apk dist/Sawti-Habibi-Startup-Fixed.apk.sha256
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Sawti-Habibi-Startup-Fixed-Verified
+          path: |
+            dist/Sawti-Habibi-Startup-Fixed.apk
+            dist/Sawti-Habibi-Startup-Fixed.apk.sha256
+            jobs.json
