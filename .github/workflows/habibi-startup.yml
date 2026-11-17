@@ -78,7 +78,7 @@ jobs:
             mkdir -p diagnostics
             adb install dist/Sawti-Habibi-Startup-Fixed.apk
             adb install dist/startup-tests.apk
-            adb logcat -c
+            adb logcat -c || true
             adb shell am instrument -w -r -e class com.sawti.HabibiStartupTest,com.sawti.SawtiIntegrationTest com.sawti.habibipreview.test/androidx.test.runner.AndroidJUnitRunner > diagnostics/instrumentation.txt
             cat diagnostics/instrumentation.txt
             grep -q '^OK (' diagnostics/instrumentation.txt
