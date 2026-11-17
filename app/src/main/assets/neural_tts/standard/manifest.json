@@ -63,6 +63,31 @@
       "file": "body.nose.mp3",
       "speechText": "أنف",
       "sha256": "81c0ce7bcca52a7184bd8db45c44158c44917a30c83000a1ca44b415e5c00336"
+    },
+    "clothing.belt": {
+      "file": "clothing.belt.mp3",
+      "speechText": "حزام",
+      "sha256": "1d0d5c6905633eb25a650b657841fddd67128c7af647e04e1d1c0d86fd0c43bf"
+    },
+    "clothing.high_heels": {
+      "file": "clothing.high_heels.mp3",
+      "speechText": "حذاء بكعب عال",
+      "sha256": "9fab5f0955b1e4fbb059ab102a88d7ff9ea81094ee67848f5768873bed2dfaf1"
+    },
+    "clothing.sandals": {
+      "file": "clothing.sandals.mp3",
+      "speechText": "صندل",
+      "sha256": "ecb830a64d02abba836a9838948dda59cf7a780cbab988ec0c50a8b3df99ab64"
+    },
+    "clothing.trousers": {
+      "file": "clothing.trousers.mp3",
+      "speechText": "سروال",
+      "sha256": "a0c468d95834f8612db17e9c7e49a5fb06b9e3f9bae902e17e21ca7bc96a0fff"
+    },
+    "dish.arabic.boiled_eggs": {
+      "file": "dish.arabic.boiled_eggs.mp3",
+      "speechText": "بيض مسلوق",
+      "sha256": "a7e9a3451376085a5cb1862a285f43acfe77774c5ad24fb5ae320d7e403203c7"
     }
   }
 }
