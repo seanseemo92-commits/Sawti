@@ -63,6 +63,46 @@
       "file": "body.shoulder.mp3",
       "speechText": "كتف",
       "sha256": "e50b9499599f7fede3df173182059dfb5ca4aa395d10de3c228efc635f9849d2"
+    },
+    "clothing.blouse": {
+      "file": "clothing.blouse.mp3",
+      "speechText": "بلوزة",
+      "sha256": "e57e58367daa59753e868041425b5944ceb8b3525c10dea8718137a100807cb8"
+    },
+    "clothing.hijab": {
+      "file": "clothing.hijab.mp3",
+      "speechText": "حجاب",
+      "sha256": "575fa14d357482aa0303a28eb5f18db27e8691497fd0c81b9cd1f24af6cc82c3"
+    },
+    "clothing.scarf": {
+      "file": "clothing.scarf.mp3",
+      "speechText": "وشاح",
+      "sha256": "585da6017ed73db899b809a0607355c32873b2ccd3d159c17d0a7accfe6a849e"
+    },
+    "clothing.tshirt": {
+      "file": "clothing.tshirt.mp3",
+      "speechText": "قميص قصير الأكمام",
+      "sha256": "e72fc458224bef8403d2f30442269ee9d988f372a4c04ee850b17f9bed17f751"
+    },
+    "dish.arabic.boiled_meat": {
+      "file": "dish.arabic.boiled_meat.mp3",
+      "speechText": "لحم مسلوق",
+      "sha256": "36fbac531a288ab14567a44c36aa02fe4178b8bc3c3d5322fb53e1c6f90d3599"
+    },
+    "dish.arabic.lentil_soup": {
+      "file": "dish.arabic.lentil_soup.mp3",
+      "speechText": "حساء العدس",
+      "sha256": "b7f49df24db36ea218562f32a8c20c149d68f3101ef20631abbf2074fcfafb61"
+    },
+    "family.brother_daughter": {
+      "file": "family.brother_daughter.mp3",
+      "speechText": "بنت أخي",
+      "sha256": "3842094a6c0d3e398bde3a0878addaf69eae070df44f40cf9b79a9a903be17e1"
+    },
+    "family.female_in_law": {
+      "file": "family.female_in_law.mp3",
+      "speechText": "نسيبتي",
+      "sha256": "e3c0a4ab0b7087313bf663b0116c3a90c73810fc8dfed995c3e8324bd0beea71"
     }
   }
 }
