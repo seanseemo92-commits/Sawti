@@ -63,6 +63,41 @@
       "file": "body.tongue.mp3",
       "speechText": "لسان",
       "sha256": "e3161c93a87f241b6fdf3b97da81ecd5eb1d2bcbd37f3f3acecb7e97eaeac858"
+    },
+    "clothing.cap": {
+      "file": "clothing.cap.mp3",
+      "speechText": "طاقية",
+      "sha256": "3dfae7b42ac4cb9034173a28b28a61066f5ea9c8790233d103c2f2f21440ee79"
+    },
+    "clothing.jacket": {
+      "file": "clothing.jacket.mp3",
+      "speechText": "جاكة",
+      "sha256": "56c7408cf6d8b2ee79ff9715e7d8d755cd387b62aefee676c213285ab8721fb5"
+    },
+    "clothing.shirt": {
+      "file": "clothing.shirt.mp3",
+      "speechText": "قميص",
+      "sha256": "ac396afb31df96b0c15168ad0796446eb8b046d1295a88fc83129c104e5f190d"
+    },
+    "clothing.watch": {
+      "file": "clothing.watch.mp3",
+      "speechText": "ساعة يد",
+      "sha256": "ab3f95d8025736400741fa94923a3feb0541701e01a12c24d7f7fd0d2a5b381b"
+    },
+    "dish.hraymi": {
+      "file": "dish.hraymi.mp3",
+      "speechText": "حرايمي",
+      "sha256": "1b4361cdc202670c430bd8b6d1ffbe4b6d004e5d8417bb86b5c4c113f998509b"
+    },
+    "dish.mint_tea": {
+      "file": "dish.mint_tea.mp3",
+      "speechText": "شاهي بالنعناع",
+      "sha256": "022f3d2471e5044b072f3ba0b69cd530d48f6c17d2071c944414ff49bfc0763a"
+    },
+    "dish.rice_blaw": {
+      "file": "dish.rice_blaw.mp3",
+      "speechText": "رز بلاو",
+      "sha256": "ae9601cf9d99666a9347e861447ef8240fa3284a531f5232b17fc30d02a97944"
     }
   }
 }
