@@ -25,9 +25,9 @@ jobs:
           sudo apt-get install -y ffmpeg
           python3 scripts/verify_repository_baseline.py
           python3 scripts/verify_release.py
-          python3 scripts/verify_habibi_packs.py --verify-codec
           chmod +x gradlew
           ./gradlew --no-daemon -Pkotlin.compiler.execution.strategy=in-process :app:testDebugUnitTest
+          python3 scripts/verify_habibi_packs.py --verify-codec
           git diff --exit-code -- app/schemas
       - name: Build isolated preview and on-device regression tests
         run: |
