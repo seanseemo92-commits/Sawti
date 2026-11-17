@@ -63,6 +63,46 @@
       "file": "body.neck.mp3",
       "speechText": "رقبة",
       "sha256": "1f71cd76af1af20ce70f641c6d7da26b26ce4b4c144cdebab2d1927ece85bdc0"
+    },
+    "clothing.bag": {
+      "file": "clothing.bag.mp3",
+      "speechText": "حقيبة",
+      "sha256": "4b8e98822192449e37593adfea86acc1bac43bba59cba2cb987810db26e5fa6f"
+    },
+    "clothing.glasses": {
+      "file": "clothing.glasses.mp3",
+      "speechText": "نظارات",
+      "sha256": "9805a1d7fa762834b41aa15073840c8bc75543632c097dfb1d3ad2aa775a9014"
+    },
+    "clothing.robe": {
+      "file": "clothing.robe.mp3",
+      "speechText": "رداء",
+      "sha256": "263b52dec6672499ca9052527400dfac698e5388eaea3f5f21b1c841866158ae"
+    },
+    "clothing.socks": {
+      "file": "clothing.socks.mp3",
+      "speechText": "جوارب",
+      "sha256": "c280df91481fa719c1cb5f2f7483285024cb15d40feb77c39e227eb9b734c8b8"
+    },
+    "dish.arabic.baked_pastries": {
+      "file": "dish.arabic.baked_pastries.mp3",
+      "speechText": "فطائر مخبوزة",
+      "sha256": "fc7b88538d55f0a1afcb761e47ffd01d517973d254a9a3f3636b4cce889f7400"
+    },
+    "dish.arabic.green_salad": {
+      "file": "dish.arabic.green_salad.mp3",
+      "speechText": "سلطة خضراء",
+      "sha256": "5ab8e212db252c2739c1488e195b61463a43c627863e0fc08be287553fea9a0f"
+    },
+    "dish.arabic.vegetable_stew": {
+      "file": "dish.arabic.vegetable_stew.mp3",
+      "speechText": "يخنة خضار",
+      "sha256": "67d519b386a7aa99a836204a33d89428031d03f5190cac7a99bce47a0c54f76b"
+    },
+    "family.daughter_husband": {
+      "file": "family.daughter_husband.mp3",
+      "speechText": "زوج ابنتي",
+      "sha256": "00ae70c6c0ca4e5f1ff79074ec1393c691d587d5b663ab64a079a594de8953e0"
     }
   }
 }
