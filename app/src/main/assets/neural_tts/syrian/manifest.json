@@ -1,0 +1,58 @@
+{
+  "version": 2,
+  "engine": "Habibi-TTS",
+  "pipelineVersion": 3,
+  "runtime": {
+    "habibi-tts": "0.1.1",
+    "f5-tts": "1.1.22",
+    "torch": "2.8.0+cpu",
+    "torchaudio": "2.8.0+cpu"
+  },
+  "model": "Unified",
+  "modelRevision": "3ad11a152851245c002156526c5e1d0b12f2b9d5",
+  "dialectId": "LEV",
+  "license": "CC-BY-NC-SA-4.0",
+  "referenceSha256": "5cd939e826bc42becc13a55eade1ac242f18014ddefb6e01819ec798ca7a03b0",
+  "referenceTextSha256": "3db9ea4b0d1178d5c991f6651ba4faa45c0d089c26c8d9d40ef617b8b0a28071",
+  "referenceType": "official-MSA-fallback",
+  "seed": 0,
+  "nfeStep": 32,
+  "cfgStrength": 2.0,
+  "swaySamplingCoef": -1.0,
+  "speedShort": 0.75,
+  "speedNormal": 0.88,
+  "sampleRate": 24000,
+  "bitrate": "96k",
+  "entries": {
+    "action.close": {
+      "file": "action.close.mp3",
+      "speechText": "أسكر",
+      "sha256": "cff8ad8da19fb0bab9dd0a6c4062fa4583401272771df307aad5d64951c5c280"
+    },
+    "action.open": {
+      "file": "action.open.mp3",
+      "speechText": "أفتح",
+      "sha256": "45eb63a0c5b50759e0cc6ee3394083aa15bec242e44b552f3d2f40399cd45c1a"
+    },
+    "action.speak": {
+      "file": "action.speak.mp3",
+      "speechText": "أحكي",
+      "sha256": "621c38f3c3a2d5ae54e27326ccd6e4e22f9c3635a89818daf3c9e2dd5656fdc1"
+    },
+    "animal.chicken": {
+      "file": "animal.chicken.mp3",
+      "speechText": "جاجة",
+      "sha256": "30b742819b3afecc2f9dfb05b1e827585ba8f6a16ada309e5d160bbdce4bbe03"
+    },
+    "animal.rabbit": {
+      "file": "animal.rabbit.mp3",
+      "speechText": "أرنب",
+      "sha256": "1b98b5fc2e63ed87c9a18e386092742981476ca440f44690cd91558bc308b75c"
+    },
+    "body.chest": {
+      "file": "body.chest.mp3",
+      "speechText": "صدر",
+      "sha256": "754180ca324b3820fc1e1982bfe73ff906696cc84153e0483595469e71917fcc"
+    }
+  }
+}
