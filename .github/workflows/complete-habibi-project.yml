@@ -38,6 +38,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Install codec tools for real audio tests
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
       - name: Validate source, database and the complete real corpus
         run: |
           python scripts/verify_repository_baseline.py
@@ -147,6 +151,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Install codec tools for full-pack verification
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
       - name: Recover exact validated catalog and assemble all 54 checkpoints
         run: |
           set -euo pipefail
