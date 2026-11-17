@@ -103,6 +103,41 @@
       "file": "family.female_in_law.mp3",
       "speechText": "نسيبتي",
       "sha256": "d4e133f670610f98d6937b6ce00b83af2768d617ca45b7ff3747fab3684870c5"
+    },
+    "family.husband": {
+      "file": "family.husband.mp3",
+      "speechText": "زوجي",
+      "sha256": "748f43d1de840d0dd85eec5d2ed7ce9e321274427e2185aecf81fab91ecff45a"
+    },
+    "family.male_relative": {
+      "file": "family.male_relative.mp3",
+      "speechText": "قريبي",
+      "sha256": "dad13cde9c01675d3a4d0eadc7d21bde7892ba7a6fb8052d979c2d728e74a1f3"
+    },
+    "family.maternal_uncle_son": {
+      "file": "family.maternal_uncle_son.mp3",
+      "speechText": "ولد خالي",
+      "sha256": "5619aa20a8907c9c8500386198c3f23626e11ac8c2e9ed966326f6cbea04bd66"
+    },
+    "family.paternal_uncle_daughter": {
+      "file": "family.paternal_uncle_daughter.mp3",
+      "speechText": "بنت عمي",
+      "sha256": "e37479a0a01f65071faf0b91c8e2eee8e22e419d6f9d632cda531ecf7816c85b"
+    },
+    "family.son": {
+      "file": "family.son.mp3",
+      "speechText": "ولدي",
+      "sha256": "18b755e2a6c1c21038e5c7b7e2d60c9498d3c21858e98ce0b8c956938f3975a4"
+    },
+    "family.wife_sister": {
+      "file": "family.wife_sister.mp3",
+      "speechText": "أخت زوجتي",
+      "sha256": "352167dcdd5624d2ceae28bf6b6adfe634a1a19d9834633523db714f1c642a23"
+    },
+    "food.coffee": {
+      "file": "food.coffee.mp3",
+      "speechText": "قهوة",
+      "sha256": "dba38fc9712e9e6e7e6230991e4cb2afa7a8bad7290964ce404ba12e39b355fd"
     }
   }
 }
