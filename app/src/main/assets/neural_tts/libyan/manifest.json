@@ -63,6 +63,46 @@
       "file": "body.shoulder.mp3",
       "speechText": "كتف",
       "sha256": "1531704d988870fdf0c61916b2c576719ea97a26a7d5bf7f84560ab699c17500"
+    },
+    "clothing.blouse": {
+      "file": "clothing.blouse.mp3",
+      "speechText": "سورية",
+      "sha256": "d7692b2e5f7ad9da3e15213af74dbfd290a5de23835dae02d311637ddb555fc9"
+    },
+    "clothing.hijab": {
+      "file": "clothing.hijab.mp3",
+      "speechText": "حجاب",
+      "sha256": "03cd2753d2d4e2ce9ed17962bc59534085c5ca7ad3dcb0997955abd1364f3606"
+    },
+    "clothing.scarf": {
+      "file": "clothing.scarf.mp3",
+      "speechText": "وشاح",
+      "sha256": "8eec1ddd8788fd6badab80306a805266ee460123c76a9dc120e7ab63af2888fa"
+    },
+    "clothing.tshirt": {
+      "file": "clothing.tshirt.mp3",
+      "speechText": "تيشرت",
+      "sha256": "e235a5dff0559f0d9fdbe7c816500074c91bed72b8468328dd705fbf32b5b8a8"
+    },
+    "dish.couscous_fish": {
+      "file": "dish.couscous_fish.mp3",
+      "speechText": "كسكسي بالحوت",
+      "sha256": "e0316a40bbe83f81a4e73b850f3189fe3ce9c055fb6c704e90ca7656afb31cef"
+    },
+    "dish.mbattan": {
+      "file": "dish.mbattan.mp3",
+      "speechText": "مبطن",
+      "sha256": "2ddd0fb0b739d37f94fcac3e4322f81a6cefedbf5ac3472c793b01c036944696"
+    },
+    "dish.reshda_kaskas": {
+      "file": "dish.reshda_kaskas.mp3",
+      "speechText": "رشدة كسكاس",
+      "sha256": "4db1d41916c097e44b342ecff71d3155af2275955a6892dac97cb528eb48a7cd"
+    },
+    "family.brother_son": {
+      "file": "family.brother_son.mp3",
+      "speechText": "ولد خوي",
+      "sha256": "a9cfccb2880c1759667f300b11366d127d70db1d34a218d4cf1a086772d6425e"
     }
   }
 }
