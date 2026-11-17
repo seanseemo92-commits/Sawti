@@ -63,6 +63,46 @@
       "file": "body.tongue.mp3",
       "speechText": "لسان",
       "sha256": "4a3e47078509e8e72a2588c2a98467b5ae40662290a48feae9af6bd6d903fd30"
+    },
+    "clothing.cap": {
+      "file": "clothing.cap.mp3",
+      "speechText": "طاقية",
+      "sha256": "0110614d6ee7c7ec517c3eea07387bc3884349a33c951a2465482b8f3d4fbcd8"
+    },
+    "clothing.jacket": {
+      "file": "clothing.jacket.mp3",
+      "speechText": "جاكيت",
+      "sha256": "f3c502ce2b3b6873e56fe5e59b851d92f39a101c582182831e0ef33c9467b2ff"
+    },
+    "clothing.shirt": {
+      "file": "clothing.shirt.mp3",
+      "speechText": "قميص",
+      "sha256": "6e50b256fe59377f7e55e25de47fe4da0898d9453806de2c9612b3e1efbaafa0"
+    },
+    "clothing.watch": {
+      "file": "clothing.watch.mp3",
+      "speechText": "ساعة يد",
+      "sha256": "c81734de3ab382a5176186f1b103bb25770a79dccafb28df092a0990d8f6e01a"
+    },
+    "dish.saudi.liver": {
+      "file": "dish.saudi.liver.mp3",
+      "speechText": "كبدة حاشي",
+      "sha256": "1fb624c8c89aff68aee6591a7ebf884dcd526787d2f7a27c0a46073aeba48c5b"
+    },
+    "dish.saudi.masoub": {
+      "file": "dish.saudi.masoub.mp3",
+      "speechText": "معصوب",
+      "sha256": "3d126472d925b09139e4e6ed5e93517c91d3ece0b19944a32eedb17c5dea9494"
+    },
+    "family.brother_son": {
+      "file": "family.brother_son.mp3",
+      "speechText": "ولد أخوي",
+      "sha256": "1c373bc1572ef47f1db4c2c485b2c92df44dafb91107d3ced05ad432233baaa8"
+    },
+    "family.female_relative": {
+      "file": "family.female_relative.mp3",
+      "speechText": "قريبتي",
+      "sha256": "225925743cedf507e011e89f4a3909e93b837095ef360f8535187d9efb52193b"
     }
   }
 }
