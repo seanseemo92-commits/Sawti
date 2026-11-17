@@ -63,6 +63,46 @@
       "file": "body.tongue.mp3",
       "speechText": "لسان",
       "sha256": "89a7428d4795a10b906080cbf2af1a17b8d8db8dee04be5420345279c4f71cdd"
+    },
+    "clothing.cap": {
+      "file": "clothing.cap.mp3",
+      "speechText": "قبعة",
+      "sha256": "2ed8dbeec01fab11de0532a446b3db7bfe0c2d17a6a8934113b6d23eab483927"
+    },
+    "clothing.jacket": {
+      "file": "clothing.jacket.mp3",
+      "speechText": "سترة",
+      "sha256": "31e791663de099ed6dfacda1a8e3d932e5bcc93a9f21770e457d1a72d7fbc6ad"
+    },
+    "clothing.shirt": {
+      "file": "clothing.shirt.mp3",
+      "speechText": "قميص",
+      "sha256": "1f294ea72c46ac9bfae06923ffa95271462bfd968e1e20bbf80ab4a1388dd91a"
+    },
+    "clothing.watch": {
+      "file": "clothing.watch.mp3",
+      "speechText": "ساعة يد",
+      "sha256": "a13974097446e4d00a43155ceecbe860adfcfdf0fb3284589f57421ab189c5c0"
+    },
+    "dish.arabic.cooked_fish": {
+      "file": "dish.arabic.cooked_fish.mp3",
+      "speechText": "سمك مطهو",
+      "sha256": "812f2f07fd1b88055cc245d791506932cc6a0c6528b510ed9464d13d15b82d67"
+    },
+    "dish.arabic.mixed_grill": {
+      "file": "dish.arabic.mixed_grill.mp3",
+      "speechText": "مشويات مشكلة",
+      "sha256": "a1bd7ffc54236d1c7c7ce007e92676149f0597fd19511ba2cafb96b1b74e772c"
+    },
+    "family.brother_son": {
+      "file": "family.brother_son.mp3",
+      "speechText": "ابن أخي",
+      "sha256": "888e6063992c3d75d0776c297a629f83718ea6f351e636780a071c05fe7fa3c1"
+    },
+    "family.female_relative": {
+      "file": "family.female_relative.mp3",
+      "speechText": "قريبتي",
+      "sha256": "023d7d7e0b90bc681a86c14b61476754c8726fb2abc4e2fffb5532632ecf5728"
     }
   }
 }
