@@ -63,6 +63,46 @@
       "file": "body.neck.mp3",
       "speechText": "رقبة",
       "sha256": "b06ca3b2091a2a492b926bd68e20e231a2c6be7dfee14aa04b9cd682d169305f"
+    },
+    "clothing.bag": {
+      "file": "clothing.bag.mp3",
+      "speechText": "شنطة",
+      "sha256": "7b7d03a4a5f943b2d09cf02b7ddf0573264bc1193d61f512da943a6a65c1a79f"
+    },
+    "clothing.glasses": {
+      "file": "clothing.glasses.mp3",
+      "speechText": "نظارة",
+      "sha256": "699606463520a86f81451e6b709515a74896cb77bf24f67d6b639136966ebe2a"
+    },
+    "clothing.robe": {
+      "file": "clothing.robe.mp3",
+      "speechText": "روب",
+      "sha256": "df4a88ab4e0d6a868adbc6d2e18ff8aaba966177783bc476aa51e0f1b3c7df8a"
+    },
+    "clothing.socks": {
+      "file": "clothing.socks.mp3",
+      "speechText": "شخاشير",
+      "sha256": "66e64571d28ff80f28d6e8cf62a2c584946137b08ee5855284f81a95eb9642c3"
+    },
+    "dish.bazin": {
+      "file": "dish.bazin.mp3",
+      "speechText": "بازين",
+      "sha256": "0b27abfa6d09186c6c68c595cc5d1ad9c7a1f084222dea1d07e93a75d65a3fc9"
+    },
+    "dish.maqroudh": {
+      "file": "dish.maqroudh.mp3",
+      "speechText": "مقروض",
+      "sha256": "a013b1b720a0d777d03905d94031b915e9f4e6529078a52302c7b3614b276717"
+    },
+    "dish.potato_stew": {
+      "file": "dish.potato_stew.mp3",
+      "speechText": "طبيخة بطاطا",
+      "sha256": "b1680c7def2698c3d933d1039984fae99d945c698f1b39e6f74fe08e4e095549"
+    },
+    "family.brother": {
+      "file": "family.brother.mp3",
+      "speechText": "خوي",
+      "sha256": "2b658c546acb40a15640313419b24816f49664918ab6cfb2320da70be3165771"
     }
   }
 }
