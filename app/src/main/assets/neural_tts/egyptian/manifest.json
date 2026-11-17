@@ -1,0 +1,68 @@
+{
+  "version": 2,
+  "engine": "Habibi-TTS",
+  "pipelineVersion": 3,
+  "runtime": {
+    "habibi-tts": "0.1.1",
+    "f5-tts": "1.1.22",
+    "torch": "2.8.0+cpu",
+    "torchaudio": "2.8.0+cpu"
+  },
+  "model": "Unified",
+  "modelRevision": "3ad11a152851245c002156526c5e1d0b12f2b9d5",
+  "dialectId": "EGY",
+  "license": "CC-BY-NC-SA-4.0",
+  "referenceSha256": "5cd939e826bc42becc13a55eade1ac242f18014ddefb6e01819ec798ca7a03b0",
+  "referenceTextSha256": "3db9ea4b0d1178d5c991f6651ba4faa45c0d089c26c8d9d40ef617b8b0a28071",
+  "referenceType": "official-MSA-fallback",
+  "seed": 0,
+  "nfeStep": 32,
+  "cfgStrength": 2.0,
+  "swaySamplingCoef": -1.0,
+  "speedShort": 0.75,
+  "speedNormal": 0.88,
+  "sampleRate": 24000,
+  "bitrate": "96k",
+  "entries": {
+    "action.hear": {
+      "file": "action.hear.mp3",
+      "speechText": "أسمع",
+      "sha256": "37e326da127d812c1c1b9fc9bcf64bf7947a6bd8bffe7be1ac45c0b07de58402"
+    },
+    "action.sit": {
+      "file": "action.sit.mp3",
+      "speechText": "أقعد",
+      "sha256": "8ae6bdd73940b9c364445341f4a95d174e3b3fddfc043be31232cfbfc678419c"
+    },
+    "animal.camel": {
+      "file": "animal.camel.mp3",
+      "speechText": "جمل",
+      "sha256": "ba95a7487842a4dc1d60131b6ac451b920a925d8ad85eabca79659e0cdd1d6da"
+    },
+    "animal.horse": {
+      "file": "animal.horse.mp3",
+      "speechText": "حصان",
+      "sha256": "3f271fc1c8955ea93fb0ccb93f8c806ac359e6c2428d2d50e851d88e02b70f05"
+    },
+    "body.abdomen": {
+      "file": "body.abdomen.mp3",
+      "speechText": "بطن",
+      "sha256": "a49ace90ac012ca85fc4f19e7bbc6e431726a9dffc46889f736eb0c06968afcf"
+    },
+    "body.finger": {
+      "file": "body.finger.mp3",
+      "speechText": "صباع",
+      "sha256": "293f8f680e9e8c17ba4323ccbba8b371420965af152133015a50a28562ab3a1a"
+    },
+    "body.leg": {
+      "file": "body.leg.mp3",
+      "speechText": "رجل",
+      "sha256": "1781281567962176117d8ab9b02ba1b1b17a6850cfaa016fc05761a231fb6cc8"
+    },
+    "body.tooth": {
+      "file": "body.tooth.mp3",
+      "speechText": "سنة",
+      "sha256": "17f5e3a4501130b79586912cf3ee11ddfa9faeeb0e8d04da8258c00a1003c903"
+    }
+  }
+}
