@@ -63,6 +63,16 @@
       "file": "body.nose.mp3",
       "speechText": "خشم",
       "sha256": "2e8fbd9eaf05a71d4405e6ef1a383131e23af447df471efd90309b856ccaf9df"
+    },
+    "clothing.belt": {
+      "file": "clothing.belt.mp3",
+      "speechText": "حزام",
+      "sha256": "f89322f3d30bd41d5c25fca502916ac4bf3511fb76675cae4e593ce5c4de42f1"
+    },
+    "clothing.high_heels": {
+      "file": "clothing.high_heels.mp3",
+      "speechText": "جزمة كعب",
+      "sha256": "9cc11266b7f74b51b507fa9163a6bd6ebab4453c98ed17b9426e47203a73c80a"
     }
   }
 }
