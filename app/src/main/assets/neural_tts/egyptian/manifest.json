@@ -63,6 +63,21 @@
       "file": "body.neck.mp3",
       "speechText": "رقبة",
       "sha256": "4dee5e1fe635c42bb060af47a25b9c6e0b636e8a442dd748d837390bd8f706b1"
+    },
+    "clothing.bag": {
+      "file": "clothing.bag.mp3",
+      "speechText": "شنطة",
+      "sha256": "626ffd87f9e2c33fe666245e737c96abc059f1e25b09baa02afb5ecd77395a2b"
+    },
+    "clothing.glasses": {
+      "file": "clothing.glasses.mp3",
+      "speechText": "نضارة",
+      "sha256": "3f16b1e0b70e893508147ee8ee2adee874edb56c36cae9aba6e8f7cd29eec67b"
+    },
+    "clothing.robe": {
+      "file": "clothing.robe.mp3",
+      "speechText": "روب",
+      "sha256": "4f873ca260c9b0737ad3bb4ee69a4536f430b3ebb5737af7a848ccafcf75f263"
     }
   }
 }
