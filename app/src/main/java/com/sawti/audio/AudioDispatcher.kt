@@ -163,7 +163,13 @@ class AudioDispatcher(
         speech.speak(PhonemicCue.forSpeech(cue))
     }
 
-    fun say(text: String) { stopAll(); speech.speak(text) }
+    fun say(text: String) {
+        // Settings previews the built-in water card through this existing API.
+        // It must obey the same local-only policy even when its asset is absent.
+        val preview = DialectPreview.matching(text, speech.activeDialect)
+        if (preview != null) play(preview)
+        else { stopAll(); speech.speak(text) } // Dynamic questions, not card audio.
+    }
     fun playFile(path: String): Boolean { stopAll(); return player.play(path) }
     fun stop() = stopAll()
 

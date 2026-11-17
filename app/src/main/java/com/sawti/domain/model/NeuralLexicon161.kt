@@ -179,37 +179,37 @@ internal object NeuralLexicon161 {
             olives|زيتون
             oil|زيت
         """)
-        register(all.filter { it != ArabicDialect.TUNISIAN }, "food", "eggs|بيض|بيض")
-        regional(ArabicDialect.TUNISIAN, "food", "eggs|عظم|عظم")
+        register(all.filter { it != ArabicDialect.TUNISIAN }, "food", "eggs|بيض")
+        regional(ArabicDialect.TUNISIAN, "food", "eggs|عظم")
         register(all, "fruit", """
             peach|خوخ
             coconut|جوز الهند
         """)
         register(all.filter { it !in listOf(ArabicDialect.ALGERIAN, ArabicDialect.MOROCCAN) },
-            "fruit", "banana|موز|موز")
+            "fruit", "banana|موز")
         register(listOf(ArabicDialect.ALGERIAN, ArabicDialect.MOROCCAN),
-            "fruit", "banana|بنان|بنان")
-        register(all, "vegetable", "pepper|فلفل|فلفل")
+            "fruit", "banana|بنان")
+        register(all, "vegetable", "pepper|فلفل")
         register(all.filter { it !in listOf(ArabicDialect.EGYPTIAN, ArabicDialect.SYRIAN,
-            ArabicDialect.SAUDI, ArabicDialect.IRAQI) }, "vegetable", "garlic|ثوم|توم")
+            ArabicDialect.SAUDI, ArabicDialect.IRAQI) }, "vegetable", "garlic|ثوم")
         register(listOf(ArabicDialect.EGYPTIAN, ArabicDialect.SYRIAN),
-            "vegetable", "garlic|توم|توم")
+            "vegetable", "garlic|توم")
         register(listOf(ArabicDialect.SAUDI, ArabicDialect.IRAQI),
-            "vegetable", "garlic|ثوم|ثوم")
+            "vegetable", "garlic|ثوم")
 
         register(all.filter { it !in listOf(ArabicDialect.TUNISIAN, ArabicDialect.ALGERIAN,
-            ArabicDialect.MOROCCAN) }, "routine", "sleep|نوم|نوم")
+            ArabicDialect.MOROCCAN) }, "routine", "sleep|نوم")
         register(listOf(ArabicDialect.TUNISIAN, ArabicDialect.ALGERIAN),
-            "routine", "sleep|رقاد|رقاد")
-        regional(ArabicDialect.MOROCCAN, "routine", "sleep|نعاس|نعاس")
-        register(maghreb, "routine", "evening_coffee|قهوة العشية|قهوة العشية")
+            "routine", "sleep|رقاد")
+        regional(ArabicDialect.MOROCCAN, "routine", "sleep|نعاس")
+        register(maghreb, "routine", "evening_coffee|قهوة العشية")
         register(listOf(ArabicDialect.EGYPTIAN, ArabicDialect.SYRIAN),
-            "routine", "evening_coffee|قهوة المسا|قهوة المسا")
-        regional(ArabicDialect.IRAQI, "routine", "evening_coffee|قهوة العصر|قهوة العصر")
-        regional(ArabicDialect.SAUDI, "routine", "evening_coffee|قهوة العصر|قهوة العصر")
+            "routine", "evening_coffee|قهوة المسا")
+        regional(ArabicDialect.IRAQI, "routine", "evening_coffee|قهوة العصر")
+        regional(ArabicDialect.SAUDI, "routine", "evening_coffee|قهوة العصر")
 
-        register(all.filter { it !in west }, "home", "fork|شوكة|شوكة")
-        register(west, "home", "fork|فرشيطة|فرشيطة")
+        register(all.filter { it !in west }, "home", "fork|شوكة")
+        register(west, "home", "fork|فرشيطة")
         regional(ArabicDialect.LIBYAN, "home", """
             water_bottle|شيشة اميه
             sofa|صالون
@@ -250,11 +250,11 @@ internal object NeuralLexicon161 {
             sofa|كنب
             stove|فرن غاز
         """)
-        register(all, "home", "fan|مروحة|مروحة")
-        register(maghreb + ArabicDialect.SYRIAN, "home", "pot|طنجرة|طنجرة")
-        regional(ArabicDialect.EGYPTIAN, "home", "pot|حلة|حلة")
-        regional(ArabicDialect.IRAQI, "home", "pot|جدر|جدر")
-        regional(ArabicDialect.SAUDI, "home", "pot|قدر|قدر")
+        register(all, "home", "fan|مروحة")
+        register(maghreb + ArabicDialect.SYRIAN, "home", "pot|طنجرة")
+        regional(ArabicDialect.EGYPTIAN, "home", "pot|حلة")
+        regional(ArabicDialect.IRAQI, "home", "pot|جدر")
+        regional(ArabicDialect.SAUDI, "home", "pot|قدر")
 
         register(all, "clothing", """
             robe|روب
@@ -265,13 +265,13 @@ internal object NeuralLexicon161 {
             shoulder|كتف
             neck|رقبة
         """)
-        register(maghreb, "body", "ear|وذن|وذن")
-        regional(ArabicDialect.EGYPTIAN, "body", "ear|ودن|ودن")
+        register(maghreb, "body", "ear|وذن")
+        regional(ArabicDialect.EGYPTIAN, "body", "ear|ودن")
         register(listOf(ArabicDialect.SYRIAN, ArabicDialect.IRAQI),
-            "body", "ear|إذن|إذن")
-        regional(ArabicDialect.SAUDI, "body", "ear|إذن|إذن")
+            "body", "ear|إذن")
+        regional(ArabicDialect.SAUDI, "body", "ear|إذن")
 
-        regional(ArabicDialect.SYRIAN, "animal", "chicken|جاجة|جاجة")
+        regional(ArabicDialect.SYRIAN, "animal", "chicken|جاجة")
         regional(ArabicDialect.SYRIAN, "action", """
             close|أسكر
             see|أشوف
@@ -281,11 +281,11 @@ internal object NeuralLexicon161 {
             sit|أقعد
             read|أقرا
         """)
-        regional(ArabicDialect.SAUDI, "action", "read|أقرا|أقرا")
-        regional(ArabicDialect.MOROCCAN, "action", "sit|نجلس|نجلس")
-        regional(ArabicDialect.MOROCCAN, "request", "headache|راسي كيوجعني|راسي كيوجعني")
+        regional(ArabicDialect.SAUDI, "action", "read|أقرا")
+        regional(ArabicDialect.MOROCCAN, "action", "sit|نجلس")
+        regional(ArabicDialect.MOROCCAN, "request", "headache|راسي كيوجعني")
         regional(ArabicDialect.ALGERIAN, "request",
-            "toilet|بغيت نروح للتواليت|بغيت نروح للتواليت")
+            "toilet|بغيت نروح للتواليت")
         entries
     }
 }

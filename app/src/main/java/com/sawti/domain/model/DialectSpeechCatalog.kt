@@ -74,8 +74,10 @@ object DialectSpeechCatalog {
         val form = resolveUncorrected(value, dialect)
         if (form.source == SpeechSource.USER ||
             value.semanticKey?.substringBefore('.') !in builtinNamespaces) return form
+        val plainDisplay = HabibiSpeechText.prepare(form.displayText)
         return form.copy(
-            speechText = HabibiSpeechText.prepare(form.speechText),
+            displayText = plainDisplay,
+            speechText = plainDisplay,
             phonemicCue = HabibiSpeechText.prepare(form.phonemicCue),
         )
     }

@@ -21,7 +21,7 @@ assert {key(row) for row in rows} == before.keys()
 assert len({row['dialect'] for row in rows}) == 9
 assert all(row['speech'].strip() and row['native_review'] == row['tts_listening'] == 'PENDING' for row in rows)
 assert not any(row['source'] == 'UNVOCALIZED_FALLBACK' for row in rows)
-assert not any(re.search(r'ة[ً-ٟ]*[؟!،.\s]*$', row['speech']) for row in rows)
+assert not any(re.search(r'[\u064B-\u0652\u0670\u0640\d]', row['speech']) for row in rows)
 changes = [(row['dialect'], row['semantic_key'], before[key(row)], row['speech'])
            for row in rows if before[key(row)] != row['speech']]
 output = Path('app/build/reports/speech-review'); output.mkdir(exist_ok=True)

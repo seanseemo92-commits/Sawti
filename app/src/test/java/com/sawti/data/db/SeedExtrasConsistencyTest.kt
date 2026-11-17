@@ -17,7 +17,7 @@ class SeedExtrasConsistencyTest {
         val shahi = WordSeed.itemEntities().single {
             it.semanticKey == "request.tea"
         }
-        assertEquals("نَشْرَبُ الـ...", shahi.sentencePrompt)
+        assertEquals("نشرب ال...", shahi.sentencePrompt)
     }
 
     @Test fun noUngrammaticalActionPromptAndMelonGlyph() {

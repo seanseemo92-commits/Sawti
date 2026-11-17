@@ -1,0 +1,7 @@
+# Keep PyTorch/torchaudio paired. Install CPU wheels first on hosted runners.
+habibi-tts==0.1.1
+f5-tts==1.1.22
+torch==2.8.0
+torchaudio==2.8.0
+soundfile==0.14.0
+pydub==0.25.1

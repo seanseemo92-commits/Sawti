@@ -10,6 +10,7 @@ import com.sawti.audio.AudioFocusController
 import com.sawti.audio.AudioDispatcher
 import com.sawti.audio.AudioPlayer
 import com.sawti.domain.model.WordItem
+import com.sawti.data.db.toDomain
 import java.util.Locale
 import org.junit.Assert.*
 import org.junit.Before
@@ -71,7 +72,7 @@ class SpeechLifecycleTest {
         val focus = AudioFocusController(app)
         val dispatcher = AudioDispatcher(manager, AudioPlayer(focus))
         val card = WordItem(1, "transport", "", "سيارة", "سَيَّارَة", "سَـ...", null,
-            null, null, "", "", semanticKey = "transport.car")
+            null, null, "", "", semanticKey = null)
         dispatcher.play(card)
         assertTrue(dispatcher.playback.value.isSpeaking)
         val first = engine.requests.last()
@@ -87,6 +88,24 @@ class SpeechLifecycleTest {
         assertFalse(dispatcher.playback.value.isSpeaking)
         assertNull(dispatcher.playback.value.activeWordId)
         manager.stop()
+    }
+
+    @Test fun missingBuiltinAndSettingsPreviewAudioNeverCallsDeviceTts() {
+        val app = RuntimeEnvironment.getApplication() as Application
+        val dispatcher = AudioDispatcher(manager, AudioPlayer(AudioFocusController(app)))
+        val card = WordItem(1, "transport", "", "سيارة", "سيارة", "سي...", null,
+            null, null, "", "", semanticKey = "transport.car")
+        dispatcher.play(card)
+        assertTrue(engine.requests.isEmpty())
+        assertFalse(dispatcher.playback.value.isSpeaking)
+        val source = com.sawti.data.db.WordSeed.itemEntities()
+            .single { it.semanticKey == "request.water" }
+        val dialect = manager.activeDialect
+        val preview = com.sawti.domain.model.DialectSpeechCatalog.resolveForHabibi(
+            source.toDomain(), dialect).speechText
+        dispatcher.say(preview)
+        assertTrue(engine.requests.isEmpty())
+        assertFalse(dispatcher.playback.value.isSpeaking)
     }
 
     @Test fun notificationDoesNotCancelTtsButTransientPhoneCallDoes() {

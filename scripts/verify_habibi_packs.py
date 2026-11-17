@@ -14,9 +14,9 @@ from habibi_contract import (
     DIALECT_IDS, EXPECTED_CLIPS, EXPECTED_KEYS, file_sha256, load_catalog,
 )
 from generate_habibi_tts import (
-    MANIFEST_VERSION, PROVIDER, LICENSE, MODEL, SAMPLE_RATE, BITRATE,
+    MANIFEST_VERSION, PROVIDER, LICENSE, MODEL, MODEL_REVISION, SAMPLE_RATE, BITRATE,
     SEED, NFE_STEP, CFG_STRENGTH, SWAY_SAMPLING_COEF,
-    SPEED_SHORT, SPEED_NORMAL, clean_for_habibi,
+    SPEED_SHORT, SPEED_NORMAL, PIPELINE_VERSION, clean_for_habibi,
 )
 
 
@@ -40,18 +40,22 @@ def inspect_mp3(path: Path):
         raise ValueError(f"Unexpected MP3 bitrate: {path} ({rate})")
 
 
-def verify(catalog: Path, root: Path, dialect: str, check_codec: bool):
+def verify(catalog: Path, root: Path, dialect: str, check_codec: bool, allow_partial: bool = False):
     groups = load_catalog(catalog)
     selected = list(DIALECT_IDS) if dialect == "ALL" else [dialect]
     counted = 0
     for name in selected:
         folder = root / name.lower()
-        data = json.loads((folder / "manifest.json").read_text(encoding="utf-8"))
+        manifest = folder / "manifest.json"
+        if allow_partial and not manifest.is_file():
+            continue
+        data = json.loads(manifest.read_text(encoding="utf-8"))
         tag = DIALECT_IDS[name]
         expected = groups[name]
         required = {
             "version": MANIFEST_VERSION, "engine": PROVIDER,
-            "model": MODEL, "license": LICENSE, "dialectId": tag,
+            "pipelineVersion": PIPELINE_VERSION,
+            "model": MODEL, "modelRevision": MODEL_REVISION, "license": LICENSE, "dialectId": tag,
             "sampleRate": SAMPLE_RATE, "bitrate": BITRATE,
             "seed": SEED, "nfeStep": NFE_STEP,
             "cfgStrength": CFG_STRENGTH,
@@ -63,18 +67,22 @@ def verify(catalog: Path, root: Path, dialect: str, check_codec: bool):
                 raise ValueError(f"{name}: invalid {key}: {data.get(key)!r}")
         for field in ("referenceSha256", "referenceTextSha256"):
             value = data.get(field, "")
-            if not isinstance(value, str) or len(value) != 64:
+            import re
+            if not isinstance(value, str) or not re.fullmatch(r"[0-9a-f]{64}", value):
                 raise ValueError(f"{name}: missing {field}")
         entries = data.get("entries")
-        if not isinstance(entries, dict) or set(entries) != set(expected):
+        if (not isinstance(entries, dict) or not set(entries).issubset(expected) or
+                (not allow_partial and set(entries) != set(expected))):
             missing = set(expected) - set(entries or {})
             extra = set(entries or {}) - set(expected)
             raise ValueError(f"{name}: incomplete pack; missing={len(missing)}, extra={len(extra)}")
         actual_files = {p.name for p in folder.glob("*.mp3")}
-        expected_files = {key + ".mp3" for key in expected}
-        if actual_files != expected_files:
+        expected_files = {key + ".mp3" for key in entries}
+        if (not expected_files.issubset(actual_files) or
+                (not allow_partial and actual_files != expected_files)):
             raise ValueError(f"{name}: unexpected legacy/missing MP3 files")
-        for key, spoken in expected.items():
+        for key in entries:
+            spoken = expected[key]
             row = entries[key]
             file = folder / (key + ".mp3")
             if (row.get("file") != key + ".mp3" or
@@ -86,13 +94,14 @@ def verify(catalog: Path, root: Path, dialect: str, check_codec: bool):
             if check_codec:
                 inspect_mp3(file)
             counted += 1
-        print(f"{name}/{tag}: verified {len(expected)} Habibi clips")
-    if dialect == "ALL":
+        print(f"{name}/{tag}: verified {len(entries)}/{len(expected)} Habibi clips")
+    if dialect == "ALL" and not allow_partial:
         if counted != EXPECTED_CLIPS or len({
             key for group in groups.values() for key in group
         }) != EXPECTED_KEYS:
             raise ValueError(f"Corpus coverage mismatch: {counted}")
-    print(f"Verification passed: {counted} clips. Listening review is separate.")
+    scope = "PARTIAL batch (not release-ready)" if allow_partial else "COMPLETE pack"
+    print(f"Verification passed: {counted} clips; {scope}. Listening review is separate.")
 
 
 def main():
@@ -103,8 +112,10 @@ def main():
                         default=Path("app/src/main/assets/neural_tts"))
     parser.add_argument("--dialect", choices=["ALL", *DIALECT_IDS.keys()], default="ALL")
     parser.add_argument("--verify-codec", action="store_true")
+    parser.add_argument("--allow-partial", action="store_true",
+                        help="Verify only completed manifest entries; NEVER use for releases")
     args = parser.parse_args()
-    verify(args.catalog, args.root, args.dialect, args.verify_codec)
+    verify(args.catalog, args.root, args.dialect, args.verify_codec, args.allow_partial)
 
 
 if __name__ == "__main__":

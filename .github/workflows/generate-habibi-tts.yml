@@ -4,42 +4,21 @@ on:
   workflow_dispatch:
     inputs:
       dialect:
-        description: 'Generate ALL or one Sawti dialect'
+        description: Generate ALL or one Sawti dialect
         required: true
         default: LIBYAN
         type: choice
-        options:
-          - LIBYAN
-          - TUNISIAN
-          - ALGERIAN
-          - MOROCCAN
-          - EGYPTIAN
-          - SYRIAN
-          - IRAQI
-          - SAUDI
-          - STANDARD
-          - ALL
+        options: [ALL, LIBYAN, TUNISIAN, ALGERIAN, MOROCCAN, EGYPTIAN, SYRIAN, IRAQI, SAUDI, STANDARD]
       max_new:
-        description: 'Maximum newly synthesized clips PER dialect this run; 0 = all'
+        description: 'Maximum new clips per dialect this run; 0 = all (time budget still applies)'
         required: true
         type: number
         default: 16
       skip_existing:
-        description: 'Reuse ONLY matching Habibi v2 clips by text/hash/model/reference'
+        description: Reuse only verified Habibi clips with matching text, settings and reference
         required: true
         type: boolean
         default: true
-      device:
-        description: 'GitHub-hosted runners have CPU only'
-        required: true
-        type: choice
-        default: cpu
-        options: [cpu]
-      ack_noncommercial:
-        description: 'I confirm this run has authorization for Habibi Unified CC-BY-NC-SA-4.0'
-        required: true
-        type: boolean
-        default: false
 
 permissions:
   contents: write
@@ -50,15 +29,19 @@ concurrency:
 
 jobs:
   generate:
-    if: ${{ github.ref == 'refs/heads/migration/habibi-tts-20261116' && inputs.ack_noncommercial }}
-    runs-on: ubuntu-latest
+    # Write only to the branch explicitly selected by workflow_dispatch.
+    if: ${{ github.ref_type == 'branch' }}
+    runs-on: ubuntu-24.04
     timeout-minutes: 350
+    env:
+      HF_HUB_DISABLE_XET: '1'
+      OMP_NUM_THREADS: '4'
+      MKL_NUM_THREADS: '4'
     steps:
       - uses: actions/checkout@v4
         with:
-          persist-credentials: true
-      - name: Install JDK 21
-        uses: actions/setup-java@v4
+          fetch-depth: 0
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
@@ -66,53 +49,68 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install ffmpeg, CPU PyTorch, Habibi-TTS
+          cache: pip
+          cache-dependency-path: scripts/requirements-habibi.txt
+      - name: Cache downloaded model and vocoder
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/huggingface
+            ~/.cache/cached_path
+          key: habibi-unified-v1-${{ runner.os }}-${{ hashFiles('scripts/requirements-habibi.txt') }}
+      - name: Install CPU inference dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg
           python -m pip install --upgrade pip
-          python -m pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
-          python -m pip install habibi-tts soundfile pydub
-      - name: Export exact unvowelized Kotlin speech corpus
+          python -m pip install torch==2.8.0 torchaudio==2.8.0 --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -r scripts/requirements-habibi.txt
+          python -m pip check
+      - name: Export and test the exact clean Kotlin speech corpus
         run: |
           chmod +x gradlew
-          ./gradlew --no-daemon :app:testDebugUnitTest --tests 'com.sawti.domain.model.ExportSpeechCatalogTest'
-          test -s app/build/speech_catalog.json
-      - name: Validate generator contracts
-        run: python -m unittest discover -s scripts -p 'test_habibi_contract.py'
-      - name: Synthesize a resumable Habibi batch
+          ./gradlew --no-daemon :app:testDebugUnitTest --tests 'com.sawti.domain.model.ExportSpeechCatalogTest' --tests 'com.sawti.domain.model.HabibiSpeechTextTest'
+          python -m unittest discover -s scripts -p 'test_habibi*.py'
+      - name: Synthesize resumable CPU batch
+        id: synthesize
+        timeout-minutes: 305
         env:
           DIALECT: ${{ inputs.dialect }}
-          DEVICE: ${{ inputs.device }}
           MAX_NEW: ${{ inputs.max_new }}
           SKIP_EXISTING: ${{ inputs.skip_existing }}
         run: |
           set -euo pipefail
           FLAGS=()
-          if [ "$SKIP_EXISTING" = "true" ]; then FLAGS+=(--skip-existing); fi
-          python scripts/generate_habibi_tts.py \
-            --dialect "$DIALECT" \
-            --device "$DEVICE" \
-            --max-new "$MAX_NEW" \
-            --ack-noncommercial "${FLAGS[@]}"
-      - name: Save generated Habibi MP3s and manifest in this branch
+          if [ "$SKIP_EXISTING" = 'true' ]; then FLAGS+=(--skip-existing); fi
+          python scripts/generate_habibi_tts.py --dialect "$DIALECT" --device cpu \
+            --max-new "$MAX_NEW" --max-seconds 17400 "${FLAGS[@]}"
+      - name: Verify and save completed clips, including after an interrupted batch
+        if: ${{ always() && steps.synthesize.outcome != 'skipped' }}
+        env:
+          DIALECT: ${{ inputs.dialect }}
         run: |
           set -euo pipefail
+          if [ ! -d app/src/main/assets/neural_tts ]; then exit 0; fi
+          python scripts/verify_habibi_packs.py --dialect "$DIALECT" --allow-partial --verify-codec
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add app/src/main/assets/neural_tts/
-          if git diff --cached --quiet; then
-            echo 'All requested Habibi recordings were already verified.'
-            exit 0
-          fi
-          git commit -m "feat(habibi): generate ${{ inputs.dialect }} offline voice batch"
+          python - <<'PYADD'
+          import json, subprocess
+          from pathlib import Path
+          for manifest in Path('app/src/main/assets/neural_tts').glob('*/manifest.json'):
+              entries = json.loads(manifest.read_text())['entries']
+              paths = [str(manifest), *(str(manifest.parent / row['file']) for row in entries.values())]
+              subprocess.run(['git', 'add', '--', *paths], check=True)
+          PYADD
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "feat(habibi): generate $DIALECT offline voice batch"
           git pull --rebase origin "$GITHUB_REF_NAME"
           git push origin "HEAD:$GITHUB_REF_NAME"
-      - name: Snapshot generated manifests
+      - name: Preserve generated clips if repository push is unavailable
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: habibi-manifests-${{ inputs.dialect }}-${{ github.run_id }}
-          path: app/src/main/assets/neural_tts/**/manifest.json
+          name: habibi-${{ inputs.dialect }}-${{ github.run_id }}
+          path: app/src/main/assets/neural_tts/
           if-no-files-found: warn
           retention-days: 7

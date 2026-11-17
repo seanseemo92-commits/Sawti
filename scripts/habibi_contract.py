@@ -11,29 +11,14 @@ DIALECT_IDS = {
     "EGYPTIAN": "EGY", "SYRIAN": "LEV", "IRAQI": "IRQ",
     "TUNISIAN": "TUN", "MOROCCAN": "MAR", "ALGERIAN": "ALG",
 }
-# From SWivid/Habibi-TTS model card. SAU/UAE and Unified are NC.
-APACHE_SPECIALIZED = frozenset(("MSA", "ALG", "EGY", "MAR", "IRQ"))
 PROVIDER = "Habibi-TTS"
 MANIFEST_VERSION = 2
 EXPECTED_CLIPS = 2399
 EXPECTED_KEYS = 391
 SAFE_KEY = re.compile(r"^[a-z0-9][a-z0-9._-]*$")
 ARABIC_DIACRITICS = re.compile(r"[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640]")
-DIGITS = re.compile(r"[0-9\u0660-\u0669\u06F0-\u06F9]")
-
-
-def license_policy(dialect: str, requested: str = "auto"):
-    if dialect not in DIALECT_IDS:
-        raise ValueError("Unknown dialect: " + dialect)
-    tag = DIALECT_IDS[dialect]
-    if requested not in ("auto", "unified", "specialized"):
-        raise ValueError("Model must be auto|unified|specialized")
-    model = ("Specialized" if requested == "specialized" or
-             (requested == "auto" and tag in APACHE_SPECIALIZED) else "Unified")
-    if model == "Specialized" and tag not in APACHE_SPECIALIZED:
-        raise ValueError(f"Specialized Apache model not available for {tag}")
-    license_id = "Apache-2.0" if model == "Specialized" else "CC-BY-NC-SA-4.0"
-    return tag, model, license_id
+DIGITS = re.compile(r"\d", re.UNICODE)
+EXPECTED_BY_DIALECT = {name: 271 if name == "LIBYAN" else 266 for name in DIALECT_IDS}
 
 
 def file_sha256(path: Path) -> str:
@@ -66,8 +51,19 @@ def load_catalog(path: Path):
         if key in groups[dialect]:
             raise ValueError(f"Duplicate Habibi key {dialect}/{key}")
         groups[dialect][key] = spoken
-    if any(not group for group in groups.values()):
-        raise ValueError("Each of the nine dialects must contain words")
+    for name, group in groups.items():
+        if len(group) != EXPECTED_BY_DIALECT[name]:
+            raise ValueError(f"{name}: expected {EXPECTED_BY_DIALECT[name]} entries, got {len(group)}")
+    # 251 shared concepts in all nine dialects, plus 140 regional dishes:
+    # 20 Libyan dishes and 15 in each of the other eight dialects.
+    common = {name: {k for k in group if not k.startswith("dish.")}
+              for name, group in groups.items()}
+    shared = common["STANDARD"]
+    if len(shared) != 251 or any(keys != shared for keys in common.values()):
+        raise ValueError("All 251 common semantic keys must exist in every dialect")
+    regional = [k for group in groups.values() for k in group if k.startswith("dish.")]
+    if len(regional) != 140 or len(set(regional)) != 140:
+        raise ValueError("All 140 regional dish keys must occur in their own dialect")
     if sum(map(len, groups.values())) != EXPECTED_CLIPS:
         raise ValueError("Speech catalog cardinality changed; review before generating")
     if len({key for group in groups.values() for key in group}) != EXPECTED_KEYS:

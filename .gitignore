@@ -45,3 +45,7 @@ secrets.properties
 /scripts/ref_voices/*.mp3
 /scripts/ref_voices/*.flac
 /scripts/ref_voices/*.m4a
+
+# Python caches from generation and contract tests
+__pycache__/
+*.pyc

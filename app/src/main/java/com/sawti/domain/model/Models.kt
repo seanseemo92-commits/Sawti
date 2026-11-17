@@ -5,7 +5,7 @@ package com.sawti.domain.model
  *  displayText – friendly label shown on screen ("نبي مية", "مثال")
  *  ttsPrompt   – stored speech text. Habibi uses the clean dialect label for built-in cards.
  *  phonemicCue – short written prompt for word retrieval ("اس...")
- *  sentencePrompt – cloze carrier phrase ("نَأْكُلُ ال...") for the 💬 cue; null = none
+ *  sentencePrompt – cloze carrier phrase ("نأكل ال...") for the 💬 cue; null = none
  *  audioPath   – caregiver recording; when present it replaces TTS
  *  photoPath   – photo attached from the gallery
  *  emoji       – built-in picture used until a photo is attached
