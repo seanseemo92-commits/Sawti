@@ -30,16 +30,25 @@ class SawtiIntegrationTest {
             .allowMainThreadQueries()
             .build()
 
+    private fun withDatabase(name: String, action: (AppDatabase) -> Unit) {
+        val db = newDatabase(name)
+        try {
+            action(db)
+        } finally {
+            db.close()
+        }
+    }
+
     @Test fun roomPersistsAcrossCloseAndReopen() {
         val name = "sawti_instrumentation_" + System.nanoTime() + ".db"
         try {
-            newDatabase(name).use { db ->
+            withDatabase(name) { db ->
                 db.openHelper.writableDatabase.execSQL(
                     "INSERT INTO categories(id,title,palette,previewOnTap,sortOrder) " +
                         "VALUES('family','patient card',0,1,0)"
                 )
             }
-            newDatabase(name).use { db ->
+            withDatabase(name) { db ->
                 db.openHelper.readableDatabase.query(
                     "SELECT title FROM categories WHERE id='family'"
                 ).use { cursor ->
