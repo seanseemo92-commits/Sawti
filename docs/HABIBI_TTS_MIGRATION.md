@@ -66,3 +66,11 @@ Release verification requires all 2,399 real MP3s, exact text/key coverage, matc
 The requested deliverables are full source files, reference configuration, workflow and tests. The branch is not a complete audio release until all 2,399 clips have been generated and reviewed. The earlier migration branch removed old engine recordings; they are not relabelled as Habibi recordings. Do not build a distributable silent app from an incomplete corpus.
 
 Upstream code is MIT; Unified model weights are CC-BY-NC-SA-4.0. Reference audio has its own provenance. See the [official repository](https://github.com/SWivid/Habibi-TTS#license).
+
+## Completing the entire audio corpus automatically
+
+`.github/workflows/complete-habibi-project.yml` runs on its own workflow-file push to the migration branch, or by manual dispatch. It validates the Kotlin source and Room schema, pins the actual exported corpus in a temporary checkpoint branch, then divides each dialect into six disjoint semantic-key partitions. The 54 CPU jobs run with a maximum concurrency of 18; each partition contains at most 46 clips and retains all requested inference settings. Completed clips are checksum/codec verified and pushed to a run-specific checkpoint branch every eight new clips and at worker exit, including after inference errors. Rerunning failed jobs resumes their saved files.
+
+The assembly job requires every partition, compatible model/reference/runtime metadata and exact key coverage. It verifies all 2,399 MP3s before committing the full corpus to the migration branch. It then reruns Android tests, builds Debug and R8 Release, runs Release lint, and verifies that the installable test APK contains exactly 2,399 neural assets. The test APK uses `com.sawti.habibipreview`, so the existing installed application and its data remain separate. It is uploaded as an Actions artifact and attached to a **draft** prerelease. No public release or merge into main is performed.
+
+Temporary checkpoints are removed only after complete successful delivery. Failed or interrupted runs keep their checkpoints for recovery. Generation takes hours on CPU; workflow progress is distinct from completed delivery. Native-speaker listening and a real-device usability check remain necessary before a public application release.

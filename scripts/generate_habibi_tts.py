@@ -12,6 +12,8 @@ import hashlib
 import json
 import math
 import os
+import subprocess
+import sys
 import time
 import warnings
 from importlib.metadata import version
@@ -289,10 +291,26 @@ def generate_one_dialect(args, dialect, grouped, model, vocoder, mel_type):
         }
         # Persist progress atomically: --skip-existing works after interruption.
         atomic_json(manifest_path, {**meta, "entries": result})
+        if not reusable:
+            print(f"Completed {dialect}/{key}: {len(result)}/{len(grouped[dialect])} shard clips", flush=True)
+            if getattr(args, "checkpoint_run_id", None) and generated % args.checkpoint_every == 0:
+                subprocess.run([
+                    sys.executable, str(Path(__file__).with_name("habibi_ci.py")), "save",
+                    "--catalog", str(args.catalog), "--root", str(args.output),
+                    "--dialect", dialect, "--run-id", args.checkpoint_run_id,
+                    "--shard-index", str(args.shard_index), "--shard-count", str(args.shard_count),
+                ], check=True)
     if (set(result) != set(grouped[dialect]) and args.max_new == 0
             and time.monotonic() < args.deadline):
         raise RuntimeError(f"Missing output from {dialect} voice pack")
     print(f"Batch: {dialect}/{tag} newly generated={generated}, verified={len(result)} of {len(grouped[dialect])}")
+
+
+def shard_items(items: dict, index: int, count: int) -> dict:
+    """Stable disjoint partitions; each semantic key keeps its own seed and path."""
+    if count < 1 or not 0 <= index < count:
+        raise ValueError("Require shard-count >=1 and 0 <= shard-index < shard-count")
+    return {key: items[key] for n, key in enumerate(sorted(items)) if n % count == index}
 
 
 def dialect_arg(value: str) -> str:
@@ -313,6 +331,10 @@ def main():
     parser.add_argument("--dialect", type=dialect_arg, default="ALL",
                         metavar="DIALECT_CODE")
     parser.add_argument("--skip-existing", action="store_true")
+    parser.add_argument("--shard-index", type=int, default=0)
+    parser.add_argument("--shard-count", type=int, default=1)
+    parser.add_argument("--checkpoint-run-id", help="GitHub run ID for durable CI checkpoints")
+    parser.add_argument("--checkpoint-every", type=int, default=8)
     parser.add_argument("--max-new", type=int, default=0,
                         help="Maximum new clips per selected dialect per run; zero means ALL")
     parser.add_argument("--device", choices=["cuda", "cpu"], default="cpu")
@@ -329,6 +351,11 @@ def main():
     if args.max_seconds < 0:
         parser.error("--max-seconds must be >= 0")
     args.deadline = time.monotonic() + args.max_seconds if args.max_seconds else math.inf
+    if args.shard_count < 1 or not 0 <= args.shard_index < args.shard_count:
+        parser.error("Require shard-count >=1 and 0 <= shard-index < shard-count")
+    if args.checkpoint_every < 1 or (args.checkpoint_run_id is not None and
+                                   not re.fullmatch(r"[0-9]+", args.checkpoint_run_id)):
+        parser.error("checkpoint interval must be positive and run ID numeric")
     grouped = load_catalog(args.catalog)
     if sum(map(len, grouped.values())) != EXPECTED_CLIPS:
         raise RuntimeError("The exact 2399-card corpus must pass first")
@@ -342,7 +369,8 @@ def main():
     for dialect in dialects:
         if time.monotonic() >= args.deadline:
             break
-        generate_one_dialect(args, dialect, grouped, model, vocoder, mel_type)
+        selected = {dialect: shard_items(grouped[dialect], args.shard_index, args.shard_count)}
+        generate_one_dialect(args, dialect, selected, model, vocoder, mel_type)
 
 
 if __name__ == "__main__":

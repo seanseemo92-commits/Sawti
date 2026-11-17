@@ -73,7 +73,9 @@ class HabibiGeneratorTest(unittest.TestCase):
             reference = root / 'ref.wav'
             reference.write_bytes(b'ref')
             args = types.SimpleNamespace(ref_config=root / 'config.json', output=root / 'out',
-                                         skip_existing=True, max_new=0, deadline=math.inf, device='cpu')
+                                         skip_existing=True, max_new=0, deadline=math.inf, device='cpu',
+                                         checkpoint_run_id='123', checkpoint_every=2, catalog=root/'catalog.json',
+                                         shard_index=0, shard_count=1)
             grouped = {'LIBYAN': {'a': 'أمي', 'b': 'بقرة', 'c': 'نبي الحمام'}}
             infer = Mock(return_value=([.1], 24000, None))
             modules = {
@@ -89,9 +91,13 @@ class HabibiGeneratorTest(unittest.TestCase):
             with patch.dict('sys.modules', modules), \
                  patch.object(gen, 'load_references', return_value=(str(reference), 'نص مرجعي.', 'custom')), \
                  patch.object(gen, 'version', return_value='test'), \
-                 patch.object(gen, 'set_seed'), patch.object(gen, 'mp3_output', side_effect=encode):
+                 patch.object(gen, 'set_seed'), patch.object(gen, 'mp3_output', side_effect=encode), \
+                 patch.object(gen.subprocess, 'run') as checkpoint:
                 gen.generate_one_dialect(args, 'LIBYAN', grouped, None, None, 'vocos')
                 self.assertEqual(3, infer.call_count)
+                checkpoint.assert_called_once()
+                self.assertIn('123', checkpoint.call_args.args[0])
+                checkpoint.reset_mock()
                 self.assertEqual('أمي', infer.call_args_list[0].args[2])
                 self.assertEqual(.75, infer.call_args_list[0].kwargs['speed'])
                 self.assertEqual('⑫', infer.call_args_list[0].kwargs['dialect_id'])
@@ -99,6 +105,7 @@ class HabibiGeneratorTest(unittest.TestCase):
                 infer.reset_mock()
                 gen.generate_one_dialect(args, 'LIBYAN', grouped, None, None, 'vocos')
                 infer.assert_not_called()
+                checkpoint.assert_not_called()
                 # Damage an early clip, then crash during its regeneration.
                 (args.output / 'libyan/a.mp3').write_bytes(b'corrupt')
                 infer.side_effect = RuntimeError('interrupted')
