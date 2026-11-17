@@ -103,6 +103,16 @@
       "file": "family.brother_daughter.mp3",
       "speechText": "بنت خوي",
       "sha256": "15c71c3d8a64832d8299fa5b9f8b70feffb3d3fd44718a2fe1cae727a4a46093"
+    },
+    "family.female_in_law": {
+      "file": "family.female_in_law.mp3",
+      "speechText": "نسيبتي",
+      "sha256": "12cfb4c34105d4ec329014e48cc003f1b78e2d32410e03db221887381c55c0f4"
+    },
+    "family.husband": {
+      "file": "family.husband.mp3",
+      "speechText": "راجلي",
+      "sha256": "dce704591e4f27200afd8a4c94a4ada50ecae28a31f3d5ad459990d4469ff667"
     }
   }
 }
