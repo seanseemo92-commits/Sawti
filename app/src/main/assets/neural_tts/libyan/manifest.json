@@ -103,6 +103,11 @@
       "file": "family.daughter.mp3",
       "speechText": "بنتي",
       "sha256": "a0d55fa1582e30c8610f4cbf6db5953a7b5f0d98a9598330ded8a3d292bc5f00"
+    },
+    "family.grandfather": {
+      "file": "family.grandfather.mp3",
+      "speechText": "جدي",
+      "sha256": "a361b58f3d08cd8375444178e001ea8f2fc0edc21af29cc1ea983131f09882bf"
     }
   }
 }
