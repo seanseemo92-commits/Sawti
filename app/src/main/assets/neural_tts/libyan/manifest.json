@@ -1,0 +1,68 @@
+{
+  "version": 2,
+  "engine": "Habibi-TTS",
+  "pipelineVersion": 3,
+  "runtime": {
+    "habibi-tts": "0.1.1",
+    "f5-tts": "1.1.22",
+    "torch": "2.8.0+cpu",
+    "torchaudio": "2.8.0+cpu"
+  },
+  "model": "Unified",
+  "modelRevision": "3ad11a152851245c002156526c5e1d0b12f2b9d5",
+  "dialectId": "LBY",
+  "license": "CC-BY-NC-SA-4.0",
+  "referenceSha256": "5cd939e826bc42becc13a55eade1ac242f18014ddefb6e01819ec798ca7a03b0",
+  "referenceTextSha256": "3db9ea4b0d1178d5c991f6651ba4faa45c0d089c26c8d9d40ef617b8b0a28071",
+  "referenceType": "official-MSA-fallback",
+  "seed": 0,
+  "nfeStep": 32,
+  "cfgStrength": 2.0,
+  "swaySamplingCoef": -1.0,
+  "speedShort": 0.75,
+  "speedNormal": 0.88,
+  "sampleRate": 24000,
+  "bitrate": "96k",
+  "entries": {
+    "action.laugh": {
+      "file": "action.laugh.mp3",
+      "speechText": "نضحك",
+      "sha256": "7944a5976ef8cc993422f406295e139b951f364ca30f0d2f7bb405a17a0020f4"
+    },
+    "action.sleep": {
+      "file": "action.sleep.mp3",
+      "speechText": "نرقد",
+      "sha256": "9fb66a52a8061831ceb1c74b55c8ce1db9c9324ad29d561b0869b8ff5a09744a"
+    },
+    "animal.cat": {
+      "file": "animal.cat.mp3",
+      "speechText": "قطوسة",
+      "sha256": "77db0b34abc1045cdafd7fd4966e572a742f872ce02370efd6c107c720726fdb"
+    },
+    "animal.pigeon": {
+      "file": "animal.pigeon.mp3",
+      "speechText": "حمامة",
+      "sha256": "fa9e2bfb98276fa6d8a40cc0b15f5459d17bb2bbf660d73d3c1ba45890bef3fd"
+    },
+    "body.back": {
+      "file": "body.back.mp3",
+      "speechText": "ظهر",
+      "sha256": "306e6b0fa61cf2a774ade79556238f69fa19ee68fb44da8569d0f1ca9b320814"
+    },
+    "body.hair": {
+      "file": "body.hair.mp3",
+      "speechText": "شعر",
+      "sha256": "b69cf00f72a9a5c5882e25a7e362ca9db3f8b17e03738c519eb88dc4bd0cf8ab"
+    },
+    "body.mouth": {
+      "file": "body.mouth.mp3",
+      "speechText": "فم",
+      "sha256": "18d5d9e76ba83a54a275e60728e06fb476d1d9d9b1ad557ceeccb5c8bc86f6d9"
+    },
+    "clothing.abaya": {
+      "file": "clothing.abaya.mp3",
+      "speechText": "عباية",
+      "sha256": "34894549d513f7ee1645b87e1c583ab0ce838ec91a82a233fd88fc88577165c3"
+    }
+  }
+}
