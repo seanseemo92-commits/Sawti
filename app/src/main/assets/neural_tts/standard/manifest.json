@@ -103,6 +103,46 @@
       "file": "family.female_relative.mp3",
       "speechText": "قريبتي",
       "sha256": "023d7d7e0b90bc681a86c14b61476754c8726fb2abc4e2fffb5532632ecf5728"
+    },
+    "family.husband_brother": {
+      "file": "family.husband_brother.mp3",
+      "speechText": "أخو زوجي",
+      "sha256": "e87a39beb2165a1966fbd5b14218315d49afa84eae1fdcdb388619e27045cebd"
+    },
+    "family.maternal_aunt": {
+      "file": "family.maternal_aunt.mp3",
+      "speechText": "خالتي",
+      "sha256": "73631741e6ca19078470ed55c53cdb003e39418df7b5b41b3a7a01729ab56724"
+    },
+    "family.mother": {
+      "file": "family.mother.mp3",
+      "speechText": "أمي",
+      "sha256": "9d77d34bb631872d46afd1842f3c0689af3e0f5fd2ef800476e5ed806e458e46"
+    },
+    "family.paternal_uncle_son": {
+      "file": "family.paternal_uncle_son.mp3",
+      "speechText": "ابن عمي",
+      "sha256": "bbcf9b11a6dc38ad5d4650f2d0938801203f657ff9320990b9e6533d7691a8d9"
+    },
+    "family.son_wife": {
+      "file": "family.son_wife.mp3",
+      "speechText": "زوجة ابني",
+      "sha256": "25c7d8d778617c62d7984efd625cc9e79d2a6b8a68170614c17749ab5abfb46a"
+    },
+    "food.biscuit": {
+      "file": "food.biscuit.mp3",
+      "speechText": "بسكويت",
+      "sha256": "5b7dc3b72f690d4d49a5c75e486f9d93f280bbb42fed6e9fb2efe6883111a234"
+    },
+    "food.eggs": {
+      "file": "food.eggs.mp3",
+      "speechText": "بيض",
+      "sha256": "2c5a05efb2e2ca580554fe03cbd83f3107b480cc3424f5bbf057c76e74d54375"
+    },
+    "food.oil": {
+      "file": "food.oil.mp3",
+      "speechText": "زيت",
+      "sha256": "98791358fcbec0c54ff102706d59e75139a8ba8228cb46f056765e69cff56d4c"
     }
   }
 }
