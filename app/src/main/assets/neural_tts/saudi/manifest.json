@@ -63,6 +63,46 @@
       "file": "body.shoulder.mp3",
       "speechText": "كتف",
       "sha256": "7b629175d361928bfbea8a9ce16e1cfc3e0c67ab5911f0ed8f14ea9ff2ca1491"
+    },
+    "clothing.blouse": {
+      "file": "clothing.blouse.mp3",
+      "speechText": "بلوزة",
+      "sha256": "a2cc802f0f7ee79f345c89d67dd099bdaac42a56748b9fd5853cb22d83a34ccb"
+    },
+    "clothing.hijab": {
+      "file": "clothing.hijab.mp3",
+      "speechText": "حجاب",
+      "sha256": "657e70fad1c14c30b3ae00fe715e4918eb9d7bc473cc68667c476debf955dbab"
+    },
+    "clothing.scarf": {
+      "file": "clothing.scarf.mp3",
+      "speechText": "وشاح",
+      "sha256": "61f27c7a0713f354dc0f449d16d179a9094f6fc418f361eedbb3b38a01e1e58b"
+    },
+    "clothing.tshirt": {
+      "file": "clothing.tshirt.mp3",
+      "speechText": "تيشيرت",
+      "sha256": "34ba03df6bb0d80ad3bdcdc11bd354247c3b802c5287b017b976033a52bd6320"
+    },
+    "dish.saudi.kabsa": {
+      "file": "dish.saudi.kabsa.mp3",
+      "speechText": "كبسة لحم",
+      "sha256": "544a0a278ab29deccab5eaa434fce3e674bfeb7b9bd4f7cd5612f0a99b723ddc"
+    },
+    "dish.saudi.marqooq": {
+      "file": "dish.saudi.marqooq.mp3",
+      "speechText": "مرقوق",
+      "sha256": "771de0c104be7fb77157f147a86670ca7d5d7137e661893ab30d58b1034379e7"
+    },
+    "family.brother_daughter": {
+      "file": "family.brother_daughter.mp3",
+      "speechText": "بنت أخوي",
+      "sha256": "ff18ea2cb291a54407ab6e035697569bde73a25adc3caddc2ae96618250e3a28"
+    },
+    "family.female_in_law": {
+      "file": "family.female_in_law.mp3",
+      "speechText": "نسيبتي",
+      "sha256": "d4e133f670610f98d6937b6ce00b83af2768d617ca45b7ff3747fab3684870c5"
     }
   }
 }
