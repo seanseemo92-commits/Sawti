@@ -3,7 +3,6 @@ on:
   push:
     branches: [migration/habibi-tts-20261116]
     paths:
-      - .github/workflows/habibi-startup.yml
       - app/src/main/java/com/sawti/domain/model/HabibiSpeechText.kt
       - app/src/androidTest/**
   workflow_dispatch:
@@ -96,7 +95,7 @@ jobs:
         if: always()
         run: |
           mkdir -p diagnostics
-          adb logcat -d > diagnostics/logcat-final.txt || true
+          timeout 5s adb logcat -d > diagnostics/logcat-final.txt || true
       - uses: actions/upload-artifact@v4
         if: always()
         with:
