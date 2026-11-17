@@ -44,6 +44,14 @@ SAMPLE_RATE = 24000
 BITRATE = "96k"
 PIPELINE_VERSION = 3
 REFERENCE_FALLBACK = "MSA.mp3"
+SHORT_RECOVERY_MIN_SECONDS = 0.9
+SHORT_RECOVERY_STEP_SECONDS = 0.5
+MAX_SHORT_ATTEMPTS = 3
+
+
+class GeneratedAudioError(ValueError):
+    """The model returned audio which failed the existing output quality gate."""
+
 # Exact unvowelized transcript of upstream src/habibi_tts/assets/MSA.mp3.
 REFERENCE_TEXT = ("كان اللعيب حاضرا في العديد من الأنشطة والفعاليات "
                   "المرتبطة بكأس العالم، مما سمح للجماهير بالتفاعل معه "
@@ -176,10 +184,10 @@ def mp3_output(wave, rate: int, destination: Path):
     destination.parent.mkdir(parents=True, exist_ok=True)
     samples = np.asarray(wave, dtype=np.float32)
     if samples.ndim != 1 or not samples.size or not np.isfinite(samples).all():
-        raise ValueError(f"Invalid/non-finite mono model output: {destination}")
+        raise GeneratedAudioError(f"Invalid/non-finite mono model output: {destination}")
     peak = float(np.max(np.abs(samples)))
     if peak == 0:
-        raise ValueError(f"Silent model output: {destination}")
+        raise GeneratedAudioError(f"Silent model output: {destination}")
     # Normalize BEFORE integer PCM conversion so amplitudes >1 cannot clip.
     samples = samples * (10 ** (-1.5 / 20) / peak)
     with tempfile.TemporaryDirectory(prefix=".sawti-habibi-", dir=destination.parent) as temp:
@@ -189,25 +197,59 @@ def mp3_output(wave, rate: int, destination: Path):
         with raw.open("rb") as stream:
             audio = AudioSegment.from_wav(stream).set_channels(1).set_frame_rate(SAMPLE_RATE)
         if len(audio) < 150 or audio.dBFS == float("-inf"):
-            raise ValueError(f"Empty or silent synthesized speech: {destination}")
+            raise GeneratedAudioError(f"Empty or silent synthesized speech: {destination}")
         # Remove only outer silence, never gaps needed between syllables.
         ranges = detect_nonsilent(audio, min_silence_len=80,
                                   silence_thresh=max(-52.0, audio.dBFS - 30))
         if not ranges:
-            raise ValueError(f"Generated audio contains no audible speech: {destination}")
+            raise GeneratedAudioError(f"Generated audio contains no audible speech: {destination}")
         begin = max(0, ranges[0][0] - 80)
         finish = min(len(audio), ranges[-1][1] + 100)
         audio = audio[begin:finish]
         if audio.max_dBFS > float("-inf"):
             audio = audio.apply_gain(-1.5 - audio.max_dBFS)
         if len(audio) < 150:
-            raise ValueError(f"Audio unexpectedly truncated: {destination}")
+            raise GeneratedAudioError(f"Audio unexpectedly truncated: {destination}")
         with encoded.open("wb+") as stream:
             audio.export(stream, format="mp3", bitrate=BITRATE,
                          parameters=["-ac", "1", "-ar", str(SAMPLE_RATE)])
         if encoded.stat().st_size < 1024:
-            raise ValueError(f"MP3 encode produced too few bytes: {destination}")
+            raise GeneratedAudioError(f"MP3 encode produced too few bytes: {destination}")
         encoded.replace(destination)
+
+
+def synthesize_clip(infer, target: Path, text: str, speed: float,
+                    first_duration: float | None, ref_frames: int, ref_rate: int,
+                    ref_text: str) -> dict:
+    """Retry rejected short-word outputs with more generation time, never padding audio.
+
+    Seed, dialect, text, steps, CFG and speed remain unchanged. The first attempt
+    exactly preserves existing successful outputs and compatible checkpoints.
+    Only a rejected output permits a longer TOTAL ref+generated duration.
+    """
+    short_word = speed == SPEED_SHORT and len(text.split()) == 1
+    ref_len = math.ceil(ref_frames * SAMPLE_RATE / ref_rate) // 256
+    prompt = ref_text + " " if len(ref_text[-1].encode("utf-8")) == 1 else ref_text
+    estimated = ref_len / len(prompt.encode("utf-8")) * len(text.encode("utf-8")) / speed
+    for attempt in range(MAX_SHORT_ATTEMPTS if short_word else 1):
+        duration = first_duration
+        if attempt:
+            extra_frames = math.ceil(max(
+                SHORT_RECOVERY_MIN_SECONDS + (attempt - 1) * SHORT_RECOVERY_STEP_SECONDS,
+                estimated * 256 / SAMPLE_RATE + attempt * SHORT_RECOVERY_STEP_SECONDS,
+            ) * SAMPLE_RATE / 256)
+            duration = (ref_len + extra_frames + .01) * 256 / SAMPLE_RATE
+        set_seed()
+        wave, rate, _ = infer(duration)
+        try:
+            mp3_output(wave, rate, target)
+        except GeneratedAudioError:
+            if not short_word or attempt + 1 == MAX_SHORT_ATTEMPTS:
+                raise
+            print(f"Rejected short-word audio for {text!r}; retrying with more synthesis time", flush=True)
+            continue
+        return {"synthesisAttempts": attempt + 1, "fixedDurationSeconds": duration}
+    raise RuntimeError("Inference ended without validated audio")
 
 
 def generate_one_dialect(args, dialect, grouped, model, vocoder, mel_type):
@@ -271,24 +313,25 @@ def generate_one_dialect(args, dialect, grouped, model, vocoder, mel_type):
                              or time.monotonic() >= args.deadline):
             continue
         if not reusable:
-            set_seed()  # repeated per key for reproducibility independent of batch order
             clip_speed = speed_for_text(text)
-            duration = short_duration(ref_frames, ref_rate, prepared_ref_text,
-                                      text, clip_speed)
-            wave, rate, _ = infer_process(
-                prepared_ref_audio, prepared_ref_text, text,
-                model, vocoder, mel_spec_type=mel_type,
-                nfe_step=NFE_STEP, cfg_strength=CFG_STRENGTH,
-                sway_sampling_coef=SWAY_SAMPLING_COEF, speed=clip_speed,
-                device=args.device, dialect_id=dialect_id_map[tag],
-                fix_duration=duration,
-            )
-            mp3_output(wave, rate, target)
+            duration = short_duration(ref_frames, ref_rate, prepared_ref_text, text, clip_speed)
+            def infer_at(fixed_duration):
+                return infer_process(
+                    prepared_ref_audio, prepared_ref_text, text,
+                    model, vocoder, mel_spec_type=mel_type,
+                    nfe_step=NFE_STEP, cfg_strength=CFG_STRENGTH,
+                    sway_sampling_coef=SWAY_SAMPLING_COEF, speed=clip_speed,
+                    device=args.device, dialect_id=dialect_id_map[tag],
+                    fix_duration=fixed_duration,
+                )
+            timing = synthesize_clip(infer_at, target, text, clip_speed, duration,
+                                     ref_frames, ref_rate, prepared_ref_text)
             generated += 1
-        result[key] = {
-            "file": key + ".mp3", "speechText": text,
-            "sha256": file_sha256(target),
-        }
+        if not reusable:
+            result[key] = {
+                "file": key + ".mp3", "speechText": text,
+                "sha256": file_sha256(target), **timing,
+            }
         # Persist progress atomically: --skip-existing works after interruption.
         atomic_json(manifest_path, {**meta, "entries": result})
         if not reusable:

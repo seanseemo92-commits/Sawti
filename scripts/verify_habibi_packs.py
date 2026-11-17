@@ -7,6 +7,7 @@ for release and should only be resumed through the generation workflow.
 """
 import argparse
 import json
+import math
 import subprocess
 from pathlib import Path
 
@@ -91,6 +92,13 @@ def verify(catalog: Path, root: Path, dialect: str, check_codec: bool, allow_par
                 not file.is_file() or file.stat().st_size < 1024 or
                 row.get("sha256") != file_sha256(file)):
                 raise ValueError(f"{name}/{key}: stale/missing/corrupted clip")
+            if "synthesisAttempts" in row or "fixedDurationSeconds" in row:
+                attempts, duration = row.get("synthesisAttempts"), row.get("fixedDurationSeconds")
+                if (type(attempts) is not int or not 1 <= attempts <= 3 or
+                        (duration is not None and (type(duration) not in (int, float) or
+                         not math.isfinite(duration) or duration <= 0)) or
+                        (attempts > 1 and duration is None)):
+                    raise ValueError(f"{name}/{key}: invalid synthesis timing provenance")
             if check_codec:
                 inspect_mp3(file)
             counted += 1

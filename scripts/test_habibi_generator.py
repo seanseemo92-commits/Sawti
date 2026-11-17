@@ -20,6 +20,30 @@ class HabibiGeneratorTest(unittest.TestCase):
             with self.subTest(text=text), self.assertRaises(ValueError):
                 gen.clean_for_habibi(text)
 
+    def test_rejected_short_word_is_resynthesized_without_accepting_bad_audio(self):
+        infer = Mock(return_value=([.1], 24000, None))
+        with patch.object(gen, 'set_seed'), patch.object(gen, 'mp3_output',
+                side_effect=[gen.GeneratedAudioError('too short'), None]):
+            info = gen.synthesize_clip(infer, Path('unused.mp3'), 'أنام', .75,
+                                       6.4, 144000, 24000, 'النص المرجعي المطابق.')
+        self.assertEqual(2, info['synthesisAttempts'])
+        self.assertEqual(6.4, infer.call_args_list[0].args[0])
+        self.assertGreaterEqual(infer.call_args_list[1].args[0], 6.9)
+
+    def test_synthesis_retries_are_bounded_and_do_not_hide_disk_errors(self):
+        infer = Mock(return_value=([.1], 24000, None))
+        with patch.object(gen, 'set_seed'), patch.object(gen, 'mp3_output',
+                side_effect=gen.GeneratedAudioError('silent')), self.assertRaises(gen.GeneratedAudioError):
+            gen.synthesize_clip(infer, Path('unused.mp3'), 'أجلس', .75,
+                                6.4, 144000, 24000, 'النص المرجعي المطابق.')
+        self.assertEqual(3, infer.call_count)
+        infer.reset_mock()
+        with patch.object(gen, 'set_seed'), patch.object(gen, 'mp3_output',
+                side_effect=OSError('disk full')), self.assertRaises(OSError):
+            gen.synthesize_clip(infer, Path('unused.mp3'), 'أجلس', .75,
+                                6.4, 144000, 24000, 'النص المرجعي المطابق.')
+        self.assertEqual(1, infer.call_count)
+
     def test_dialect_names_habibi_tags_and_locales(self):
         for name, tag in gen.DIALECT_IDS.items():
             self.assertEqual(name, gen.dialect_arg(name.lower()))

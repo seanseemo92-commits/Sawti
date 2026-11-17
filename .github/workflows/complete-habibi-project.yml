@@ -5,16 +5,22 @@ on:
     branches: [migration/habibi-tts-20261116]
     paths: [.github/workflows/complete-habibi-project.yml]
   workflow_dispatch:
+    inputs:
+      recover_run_id:
+        description: 'Earlier compatible run whose verified clips should be reused'
+        type: string
+        default: '44029527505'
 
 permissions:
   contents: write
 
 concurrency:
   group: sawti-complete-habibi-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 env:
   SHARD_COUNT: '6'
+  RECOVER_RUN_ID: ${{ inputs.recover_run_id || '44029527505' }}
   HF_HUB_DISABLE_XET: '1'
   OMP_NUM_THREADS: '4'
   MKL_NUM_THREADS: '4'
@@ -96,6 +102,13 @@ jobs:
           if git ls-remote --exit-code origin "refs/heads/$CHECKPOINT" >/dev/null 2>&1; then
             git fetch origin "$CHECKPOINT"
             git checkout --detach FETCH_HEAD
+          elif [[ "$RECOVER_RUN_ID" =~ ^[0-9]+$ ]] && [ "$RECOVER_RUN_ID" != "$GITHUB_RUN_ID" ]; then
+            PRIOR="habibi-checkpoints/$RECOVER_RUN_ID/${DIALECT,,}-$SHARD"
+            if git ls-remote --exit-code origin "refs/heads/$PRIOR" >/dev/null 2>&1; then
+              git fetch origin "$PRIOR"
+              # Import only verified audio state, retaining the repaired source.
+              git checkout FETCH_HEAD -- "app/src/main/assets/neural_tts/${DIALECT,,}"
+            fi
           fi
       - uses: actions/setup-python@v5
         with:
@@ -133,7 +146,7 @@ jobs:
 
   assemble-and-build:
     needs: [prepare, generate]
-    if: ${{ always() && needs.prepare.result == 'success' }}
+    if: ${{ always() && !cancelled() && needs.prepare.result == 'success' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 80
     env:

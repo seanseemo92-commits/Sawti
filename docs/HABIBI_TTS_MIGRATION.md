@@ -74,3 +74,12 @@ Upstream code is MIT; Unified model weights are CC-BY-NC-SA-4.0. Reference audio
 The assembly job requires every partition, compatible model/reference/runtime metadata and exact key coverage. It verifies all 2,399 MP3s before committing the full corpus to the migration branch. It then reruns Android tests, builds Debug and R8 Release, runs Release lint, and verifies that the installable test APK contains exactly 2,399 neural assets. The test APK uses `com.sawti.habibipreview`, so the existing installed application and its data remain separate. It is uploaded as an Actions artifact and attached to a **draft** prerelease. No public release or merge into main is performed.
 
 Temporary checkpoints are removed only after complete successful delivery. Failed or interrupted runs keep their checkpoints for recovery. Generation takes hours on CPU; workflow progress is distinct from completed delivery. Native-speaker listening and a real-device usability check remain necessary before a public application release.
+
+
+## Recovery of short-word failures
+
+A few short words (including أنام and أجلس) produced almost silent ~0.38-second model output with the duration estimate. The quality gate correctly rejected them; its thresholds remain unchanged. The generator now keeps the identical first attempt and only resynthesizes rejected short words with extra generation time (at least .9 seconds, then .5 seconds more), capped at three attempts. Seed=0, native dialect, plain text, 32 steps, CFG, sway and the speed argument remain unchanged. No silence is appended and no existing waveform is stretched. The accepted entry records the attempt count and fixed duration. Already verified first-attempt clips retain their original hashes and timing provenance.
+
+The replacement completion run can import verified audio-only checkpoints from run `44029527505`, keeping the repaired source. It cancels superseded generation runs, leaves their saved checkpoints available, and resumes compatible clips rather than discarding them. `recover_run_id` selects this source when manually dispatching recovery.
+
+Real CPU validation reproduced the original nearly silent outputs for SAU/أنام and MSA/أجلس. Resynthesis with a .9-second generation budget passed the unchanged quality gate for SAU/أنام (626 ms after trimming), MSA/أجلس (664 ms), and SAU/شنطة (666 ms). All three retained seed 0, 32 steps, CFG 2, sway -1 and speed .75. Sixteen Python tests pass, including bounded retry behavior and propagation of disk failures.
