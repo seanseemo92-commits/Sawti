@@ -143,6 +143,21 @@
       "file": "food.eggs.mp3",
       "speechText": "بيض",
       "sha256": "f395d86599e626b82c913fb9372b989b7a32a3feee0463f312e84087f1e92d0d"
+    },
+    "food.oil": {
+      "file": "food.oil.mp3",
+      "speechText": "زيت",
+      "sha256": "7c48fd6e843369dee85b8d77ebce8f855ac857ff87eb11f21f534b830d720587"
+    },
+    "food.sugar": {
+      "file": "food.sugar.mp3",
+      "speechText": "سكر",
+      "sha256": "21034fdf012887d172b7643198d6aadd4c15000ba3d40e064efa8bfe7d4108af"
+    },
+    "fruit.avocado": {
+      "file": "fruit.avocado.mp3",
+      "speechText": "أفوكادو",
+      "sha256": "de45b1f591e6eb5816ed8f31f6a7410d61a660dd48e9fa28e6944b98c6cb33dc"
     }
   }
 }
