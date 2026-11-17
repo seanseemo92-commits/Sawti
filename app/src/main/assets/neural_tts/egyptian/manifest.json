@@ -63,6 +63,26 @@
       "file": "body.nose.mp3",
       "speechText": "مناخير",
       "sha256": "bc279f84320cfb55fe2ad9ca1a7b2cfccfbdb18170c631a08c7ecdac0708e72e"
+    },
+    "clothing.belt": {
+      "file": "clothing.belt.mp3",
+      "speechText": "حزام",
+      "sha256": "9d26ea3cd6a854b26c48427f839fed4094b61c2a047dab2b194125b512bedd42"
+    },
+    "clothing.high_heels": {
+      "file": "clothing.high_heels.mp3",
+      "speechText": "جزمة بكعب",
+      "sha256": "8f0f40e598d283bd68e7796203c29c8b75126001cb2f5c9aff3fc4dd83dfd957"
+    },
+    "clothing.sandals": {
+      "file": "clothing.sandals.mp3",
+      "speechText": "صندل",
+      "sha256": "318b03fcd31586b1a5fa01ba9fdbad695a5b6d3459391361f5523e8617d18c67"
+    },
+    "clothing.trousers": {
+      "file": "clothing.trousers.mp3",
+      "speechText": "بنطلون",
+      "sha256": "58b96857be7b4e11833a67d2df42d957a8bb0cfc380931206e94751407d6abc2"
     }
   }
 }
