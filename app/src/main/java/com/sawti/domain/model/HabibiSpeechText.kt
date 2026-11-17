@@ -16,7 +16,9 @@ object HabibiSpeechText {
 
     private val marks = Regex("[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640]")
     private val numbers = Regex("[\\p{Nd}]")
-    private val spaces = Regex("(?U)\\s+")
+    // Explicit Unicode White_Space works with both Android ICU and JVM Pattern.
+    // Android rejects the JVM-only embedded (?U) flag during object initialization.
+    private val spaces = Regex("[\\p{Z}\\u0009-\\u000D\\u0085]+")
 
     fun dialectTag(dialect: ArabicDialect) = dialectTags.getValue(dialect)
 
