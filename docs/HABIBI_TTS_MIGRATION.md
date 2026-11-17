@@ -52,7 +52,7 @@ Cache reuse requires the same model revision, runtime versions, reference hashes
 
 ## GitHub Actions
 
-`generate-habibi-tts.yml` supports manual dialect selection, batch size and verified cache reuse on the branch selected by workflow dispatch. It uses CPU wheels, caches the model, budgets synthesis time and saves verified completed clips to that branch, including after synthesis failure. An artifact preserves output if a push fails. It has no hard-coded branch name.
+`generate-neural-voices.yml` now runs Habibi exclusively and supports manual dialect selection, batch size and verified cache reuse on the branch selected by workflow dispatch. It uses CPU wheels, caches the model, budgets synthesis time and saves verified completed clips to that branch, including after synthesis failure. An artifact preserves output if a push fails. It has no hard-coded branch name. The existing workflow filename is retained so the default branch can discover the workflow while the Habibi implementation is still on the migration branch; no legacy engine code remains in that workflow. Dispatch with the migration ref.
 
 ```sh
 python -m unittest discover -s scripts -p 'test_habibi*.py'
