@@ -18,7 +18,7 @@ from generate_habibi_tts import (
     MANIFEST_VERSION, PROVIDER, LICENSE, MODEL, MODEL_REVISION, SAMPLE_RATE, BITRATE,
     SEED, NFE_STEP, CFG_STRENGTH, SWAY_SAMPLING_COEF,
     SPEED_SHORT, SPEED_NORMAL, PIPELINE_VERSION, clean_for_habibi,
-    duration_policy, minimum_speech_seconds,
+    duration_policy, minimum_speech_seconds, model_text_for,
 )
 
 
@@ -101,20 +101,22 @@ def verify(catalog: Path, root: Path, dialect: str, check_codec: bool, allow_par
             raise ValueError(f"{name}: unexpected legacy/missing MP3 files")
         for key in entries:
             spoken = expected[key]
+            model_text = model_text_for(name, key, spoken)
             row = entries[key]
             file = folder / (key + ".mp3")
             if (row.get("file") != key + ".mp3" or
                 row.get("speechText") != spoken or
+                row.get("modelText", spoken) != model_text or
                 clean_for_habibi(spoken) != spoken or
                 not file.is_file() or file.stat().st_size < 1024 or
                 row.get("sha256") != file_sha256(file)):
                 raise ValueError(f"{name}/{key}: stale/missing/corrupted clip")
             try:
-                validate_timing(row, spoken)
+                validate_timing(row, model_text)
             except ValueError as error:
                 raise ValueError(f"{name}/{key}: {error}") from error
             if check_codec:
-                inspect_mp3(file, minimum_seconds=minimum_speech_seconds(spoken))
+                inspect_mp3(file, minimum_seconds=minimum_speech_seconds(model_text))
             counted += 1
         print(f"{name}/{tag}: verified {len(entries)}/{len(expected)} Habibi clips")
     if dialect == "ALL" and not allow_partial:

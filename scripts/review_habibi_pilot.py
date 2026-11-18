@@ -9,7 +9,7 @@ import itertools
 import json
 from pathlib import Path
 
-from generate_habibi_tts import PIPELINE_VERSION, minimum_speech_seconds, atomic_json
+from generate_habibi_tts import PIPELINE_VERSION, minimum_speech_seconds, atomic_json, model_text_for
 from habibi_contract import file_sha256
 from verify_habibi_packs import inspect_mp3, validate_timing
 
@@ -54,16 +54,19 @@ def review(root: Path, catalog: Path, baseline: Path, report: Path):
     for key in PILOT_KEYS:
         entry = manifest['entries'][key]
         path = root / 'libyan' / (key + '.mp3')
-        if entry['speechText'] != expected[key] or entry['sha256'] != file_sha256(path):
+        model_text = model_text_for('LIBYAN', key, expected[key])
+        if (entry['speechText'] != expected[key]
+                or entry.get('modelText', expected[key]) != model_text
+                or entry['sha256'] != file_sha256(path)):
             raise ValueError(f'Pilot text/hash mismatch: {key}')
-        validate_timing(entry, expected[key])
+        validate_timing(entry, model_text)
         inspect_mp3(path)
         wave, duration = waveform(path)
-        if duration < minimum_speech_seconds(expected[key]):
+        if duration < minimum_speech_seconds(model_text):
             raise ValueError(f'Pilot remains implausibly short: {key}')
         waves[key] = wave
         old = baseline / 'libyan' / (key + '.mp3')
-        clips[key] = {'speechText': expected[key], 'durationSeconds': duration,
+        clips[key] = {'speechText': expected[key], 'modelText': model_text, 'durationSeconds': duration,
                       'sha256': entry['sha256']}
         if old.is_file():
             clips[key]['previousDurationSeconds'] = waveform(old)[1]
