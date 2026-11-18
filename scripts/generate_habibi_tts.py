@@ -262,6 +262,8 @@ def generate_one_dialect(args, dialect, grouped, model, vocoder, mel_type):
     import torchaudio
 
     tag = DIALECT_IDS[dialect]
+    preview = getattr(args, "libyan_preview", False)
+    model_texts = {"animal.cow": "بگرة"} if preview else {}
     if tag not in dialect_id_map:
         raise ValueError(f"Habibi Unified has no dialect tag: {tag}")
     path, reference_text, reference_type = load_references(args.ref_config, dialect)
@@ -284,6 +286,9 @@ def generate_one_dialect(args, dialect, grouped, model, vocoder, mel_type):
         "durationPolicy": duration_policy(),
         "sampleRate": SAMPLE_RATE, "bitrate": BITRATE,
     }
+    if preview:
+        meta["previewOnly"] = True
+        meta["modelTextOverrides"] = model_texts
     previous = {}
     if manifest_path.is_file():
         try:
@@ -316,11 +321,12 @@ def generate_one_dialect(args, dialect, grouped, model, vocoder, mel_type):
                              or time.monotonic() >= args.deadline):
             continue
         if not reusable:
-            clip_speed = speed_for_text(text)
-            duration = synthesis_duration(ref_frames, ref_rate, prepared_ref_text, text, clip_speed)
+            model_text = model_texts.get(key, text)
+            clip_speed = speed_for_text(model_text)
+            duration = synthesis_duration(ref_frames, ref_rate, prepared_ref_text, model_text, clip_speed)
             def infer_at(fixed_duration):
                 return infer_process(
-                    prepared_ref_audio, prepared_ref_text, text,
+                    prepared_ref_audio, prepared_ref_text, model_text,
                     model, vocoder, mel_spec_type=mel_type,
                     nfe_step=NFE_STEP, cfg_strength=CFG_STRENGTH,
                     sway_sampling_coef=SWAY_SAMPLING_COEF, speed=clip_speed,
@@ -388,6 +394,8 @@ def main():
     parser.add_argument("--dialect", type=dialect_arg, default="ALL",
                         metavar="DIALECT_CODE")
     parser.add_argument("--skip-existing", action="store_true")
+    parser.add_argument("--libyan-preview", action="store_true",
+                        help="Allow the bundled reference in an isolated Libyan preview")
     parser.add_argument("--semantic-key", action="append", dest="semantic_keys",
                         help="Generate a named pilot key (repeatable); requires a separate --output")
     parser.add_argument("--shard-index", type=int, default=0)
@@ -417,6 +425,8 @@ def main():
         parser.error("checkpoint interval must be positive and run ID numeric")
     assets = Path("app/src/main/assets/neural_tts").resolve()
     production_output = args.output.resolve().is_relative_to(assets)
+    if args.libyan_preview and (args.dialect != "LIBYAN" or production_output or args.checkpoint_run_id):
+        parser.error("Libyan preview requires LIBYAN and an isolated output without Git checkpoints")
     if args.semantic_keys and (production_output or args.checkpoint_run_id):
         parser.error("Pilot keys require an output outside production assets and no corpus checkpoint")
     if production_output and not args.checkpoint_run_id and (args.max_new or args.max_seconds):
@@ -429,7 +439,7 @@ def main():
         grouped = selected_items(grouped, dialects, args.semantic_keys)
     except ValueError as error:
         parser.error(str(error))
-    if "LIBYAN" in dialects and not args.semantic_keys:
+    if "LIBYAN" in dialects and not args.semantic_keys and not args.libyan_preview:
         _, _, reference_type = load_references(args.ref_config, "LIBYAN")
         if reference_type != "custom":
             parser.error("Libyan batches require a Libyan reference; use named pilot keys for MSA diagnostics")

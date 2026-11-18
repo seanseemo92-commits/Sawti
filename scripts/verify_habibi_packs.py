@@ -57,7 +57,10 @@ def validate_timing(row: dict, text: str):
         raise ValueError('Missing/invalid repaired synthesis timing or short decoded speech')
 
 
-def verify(catalog: Path, root: Path, dialect: str, check_codec: bool, allow_partial: bool = False):
+def verify(catalog: Path, root: Path, dialect: str, check_codec: bool, allow_partial: bool = False,
+           libyan_preview: bool = False):
+    if libyan_preview and (dialect != "LIBYAN" or allow_partial):
+        raise ValueError("Preview verification requires the complete Libyan pack")
     groups = load_catalog(catalog)
     selected = list(DIALECT_IDS) if dialect == "ALL" else [dialect]
     counted = 0
@@ -83,7 +86,11 @@ def verify(catalog: Path, root: Path, dialect: str, check_codec: bool, allow_par
         for key, value in required.items():
             if data.get(key) != value:
                 raise ValueError(f"{name}: invalid {key}: {data.get(key)!r}")
-        if name == "LIBYAN" and not allow_partial and data.get("referenceType") != "custom":
+        if (data.get("previewOnly") is True) != libyan_preview:
+            raise ValueError(f"{name}: audio pack scope differs from the requested verification scope")
+        if libyan_preview and data.get("modelTextOverrides") != {"animal.cow": "بگرة"}:
+            raise ValueError("LIBYAN: missing the preview pronunciation correction")
+        if name == "LIBYAN" and not allow_partial and not libyan_preview and data.get("referenceType") != "custom":
             raise ValueError("LIBYAN: MSA diagnostic audio cannot enter a complete pack")
         for field in ("referenceSha256", "referenceTextSha256"):
             value = data.get(field, "")
@@ -124,7 +131,8 @@ def verify(catalog: Path, root: Path, dialect: str, check_codec: bool, allow_par
             key for group in groups.values() for key in group
         }) != EXPECTED_KEYS:
             raise ValueError(f"Corpus coverage mismatch: {counted}")
-    scope = "PARTIAL batch (not release-ready)" if allow_partial else "COMPLETE pack"
+    scope = ("PREVIEW ONLY" if libyan_preview else
+             "PARTIAL batch (not release-ready)" if allow_partial else "COMPLETE pack")
     print(f"Verification passed: {counted} clips; {scope}. Listening review is separate.")
 
 
@@ -136,10 +144,11 @@ def main():
                         default=Path("app/src/main/assets/neural_tts"))
     parser.add_argument("--dialect", choices=["ALL", *DIALECT_IDS.keys()], default="ALL")
     parser.add_argument("--verify-codec", action="store_true")
+    parser.add_argument("--libyan-preview", action="store_true")
     parser.add_argument("--allow-partial", action="store_true",
                         help="Verify only completed manifest entries; NEVER use for releases")
     args = parser.parse_args()
-    verify(args.catalog, args.root, args.dialect, args.verify_codec, args.allow_partial)
+    verify(args.catalog, args.root, args.dialect, args.verify_codec, args.allow_partial, args.libyan_preview)
 
 
 if __name__ == "__main__":

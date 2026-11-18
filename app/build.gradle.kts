@@ -34,7 +34,11 @@ android {
     }
     buildTypes {
         debug {
-            if (providers.gradleProperty("habibiPreview").orNull == "true") {
+            if (providers.gradleProperty("libyanPreview").orNull == "true") {
+                applicationIdSuffix = ".libyanpreview"
+                versionNameSuffix = "-libyan-test"
+                manifestPlaceholders["appLabel"] = "صوتي — اختبار الليبي"
+            } else if (providers.gradleProperty("habibiPreview").orNull == "true") {
                 applicationIdSuffix = ".habibipreview"
                 versionNameSuffix = "-habibi-test"
                 manifestPlaceholders["appLabel"] = "صوتي — اختبار Habibi"
