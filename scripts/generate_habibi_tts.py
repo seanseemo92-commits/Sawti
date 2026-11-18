@@ -186,6 +186,11 @@ def minimum_speech_seconds(text: str) -> float:
     return .8 + .12 * (len(words) - 2)
 
 
+def duration_policy() -> dict:
+    return {"scale": DURATION_SCALE, "minimumWordSeconds": MIN_WORD_SECONDS,
+            "minimumPhraseSeconds": MIN_PHRASE_SECONDS, "retryStepSeconds": RECOVERY_STEP_SECONDS}
+
+
 def mp3_output(wave, rate: int, destination: Path, minimum_seconds: float = .15):
     import numpy as np
     import soundfile as sf
@@ -276,9 +281,7 @@ def generate_one_dialect(args, dialect, grouped, model, vocoder, mel_type):
         "referenceType": reference_type, "seed": SEED, "nfeStep": NFE_STEP,
         "cfgStrength": CFG_STRENGTH, "swaySamplingCoef": SWAY_SAMPLING_COEF,
         "speedShort": SPEED_SHORT, "speedNormal": SPEED_NORMAL,
-        "durationPolicy": {"scale": DURATION_SCALE, "minimumWordSeconds": MIN_WORD_SECONDS,
-                           "minimumPhraseSeconds": MIN_PHRASE_SECONDS,
-                           "retryStepSeconds": RECOVERY_STEP_SECONDS},
+        "durationPolicy": duration_policy(),
         "sampleRate": SAMPLE_RATE, "bitrate": BITRATE,
     }
     previous = {}

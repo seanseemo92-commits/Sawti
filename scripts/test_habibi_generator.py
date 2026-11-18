@@ -4,6 +4,8 @@ import math
 import tempfile
 import types
 import unittest
+import subprocess
+import sys
 from pathlib import Path
 from unittest.mock import Mock, patch
 
@@ -11,6 +13,13 @@ import generate_habibi_tts as gen
 
 
 class HabibiGeneratorTest(unittest.TestCase):
+    def test_pilot_cli_refuses_to_replace_the_production_pack(self):
+        result = subprocess.run([sys.executable, str(Path(gen.__file__)),
+                                 '--dialect', 'LIBYAN', '--semantic-key', 'family.mother'],
+                                capture_output=True, text=True)
+        self.assertEqual(2, result.returncode)
+        self.assertIn('outside production assets', result.stderr)
+
     def test_strict_cleaning_without_changing_arabic_letters(self):
         self.assertEqual('نبي الحمام', gen.clean_for_habibi('  نِبِّيْ\n الحَمَّامـ  '))
         self.assertEqual('أمي بقرة نقعمز', gen.clean_for_habibi('أمي بقرة نقعمز'))

@@ -11,7 +11,7 @@ from pathlib import Path
 
 from generate_habibi_tts import PIPELINE_VERSION, minimum_speech_seconds, atomic_json
 from habibi_contract import file_sha256
-from verify_habibi_packs import inspect_mp3
+from verify_habibi_packs import inspect_mp3, validate_timing
 
 PILOT_KEYS = (
     'family.mother', 'family.father', 'family.husband',
@@ -56,6 +56,7 @@ def review(root: Path, catalog: Path, baseline: Path, report: Path):
         path = root / 'libyan' / (key + '.mp3')
         if entry['speechText'] != expected[key] or entry['sha256'] != file_sha256(path):
             raise ValueError(f'Pilot text/hash mismatch: {key}')
+        validate_timing(entry, expected[key])
         inspect_mp3(path)
         wave, duration = waveform(path)
         if duration < minimum_speech_seconds(expected[key]):

@@ -18,13 +18,14 @@ from generate_habibi_tts import (
     MANIFEST_VERSION, PROVIDER, LICENSE, MODEL, MODEL_REVISION, SAMPLE_RATE, BITRATE,
     SEED, NFE_STEP, CFG_STRENGTH, SWAY_SAMPLING_COEF,
     SPEED_SHORT, SPEED_NORMAL, PIPELINE_VERSION, clean_for_habibi,
+    duration_policy, minimum_speech_seconds,
 )
 
 
-def inspect_mp3(path: Path):
+def inspect_mp3(path: Path, minimum_seconds: float = 0.):
     result = subprocess.run(
         ["ffprobe", "-v", "error", "-select_streams", "a:0",
-         "-show_entries", "stream=codec_name,sample_rate,channels,bit_rate",
+         "-show_entries", "stream=codec_name,sample_rate,channels,bit_rate,duration",
          "-of", "json", str(path)], capture_output=True, text=True, check=True,
         timeout=20,
     )
@@ -39,6 +40,21 @@ def inspect_mp3(path: Path):
     rate = int(info.get("bit_rate", 0))
     if not (64000 <= rate <= 100000):
         raise ValueError(f"Unexpected MP3 bitrate: {path} ({rate})")
+    if minimum_seconds:
+        duration = float(info.get('duration', 0))
+        if not math.isfinite(duration) or duration < minimum_seconds:
+            raise ValueError(f"Implausibly short MP3: {path} ({duration}s)")
+
+
+def validate_timing(row: dict, text: str):
+    attempts, duration = row.get('synthesisAttempts'), row.get('fixedDurationSeconds')
+    decoded = row.get('decodedDurationSeconds')
+    minimum = minimum_speech_seconds(text)
+    if (type(attempts) is not int or not 1 <= attempts <= 3 or
+            type(duration) not in (int, float) or not math.isfinite(duration) or duration <= 0 or
+            type(decoded) not in (int, float) or not math.isfinite(decoded) or decoded < minimum or
+            row.get('minimumDurationSeconds') != minimum):
+        raise ValueError('Missing/invalid repaired synthesis timing or short decoded speech')
 
 
 def verify(catalog: Path, root: Path, dialect: str, check_codec: bool, allow_partial: bool = False):
@@ -62,6 +78,7 @@ def verify(catalog: Path, root: Path, dialect: str, check_codec: bool, allow_par
             "cfgStrength": CFG_STRENGTH,
             "swaySamplingCoef": SWAY_SAMPLING_COEF,
             "speedShort": SPEED_SHORT, "speedNormal": SPEED_NORMAL,
+            "durationPolicy": duration_policy(),
         }
         for key, value in required.items():
             if data.get(key) != value:
@@ -92,15 +109,12 @@ def verify(catalog: Path, root: Path, dialect: str, check_codec: bool, allow_par
                 not file.is_file() or file.stat().st_size < 1024 or
                 row.get("sha256") != file_sha256(file)):
                 raise ValueError(f"{name}/{key}: stale/missing/corrupted clip")
-            if "synthesisAttempts" in row or "fixedDurationSeconds" in row:
-                attempts, duration = row.get("synthesisAttempts"), row.get("fixedDurationSeconds")
-                if (type(attempts) is not int or not 1 <= attempts <= 3 or
-                        (duration is not None and (type(duration) not in (int, float) or
-                         not math.isfinite(duration) or duration <= 0)) or
-                        (attempts > 1 and duration is None)):
-                    raise ValueError(f"{name}/{key}: invalid synthesis timing provenance")
+            try:
+                validate_timing(row, spoken)
+            except ValueError as error:
+                raise ValueError(f"{name}/{key}: {error}") from error
             if check_codec:
-                inspect_mp3(file)
+                inspect_mp3(file, minimum_seconds=minimum_speech_seconds(spoken))
             counted += 1
         print(f"{name}/{tag}: verified {len(entries)}/{len(expected)} Habibi clips")
     if dialect == "ALL" and not allow_partial:

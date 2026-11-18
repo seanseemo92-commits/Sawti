@@ -50,6 +50,10 @@ jobs:
         run: |
           test -s app/schemas/com.sawti.data.db.AppDatabase/1.json
           git diff --exit-code -- app/schemas
+      - name: Install codec tools required by the real audio checks
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
       - name: Verify all nine Habibi-TTS v2 packs (no Edge audio)
         run: python3 scripts/verify_habibi_packs.py --verify-codec
       - name: Build debug and R8 release APKs and run Android lint (full path only)
