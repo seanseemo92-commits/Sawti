@@ -42,11 +42,13 @@ SPEED_SHORT = 0.75
 SPEED_NORMAL = 0.88
 SAMPLE_RATE = 24000
 BITRATE = "96k"
-PIPELINE_VERSION = 3
+PIPELINE_VERSION = 4
 REFERENCE_FALLBACK = "MSA.mp3"
-SHORT_RECOVERY_MIN_SECONDS = 0.9
-SHORT_RECOVERY_STEP_SECONDS = 0.5
-MAX_SHORT_ATTEMPTS = 3
+DURATION_SCALE = 2.0
+MIN_WORD_SECONDS = 1.2
+MIN_PHRASE_SECONDS = 1.4
+RECOVERY_STEP_SECONDS = 0.5
+MAX_SYNTHESIS_ATTEMPTS = 3
 
 
 class GeneratedAudioError(ValueError):
@@ -158,24 +160,33 @@ def speed_for_text(text: str) -> float:
     return SPEED_SHORT if len(text.split()) == 1 and letters < 10 else SPEED_NORMAL
 
 
-def short_duration(ref_frames: int, ref_rate: int, ref_text: str,
-                   text: str, speed: float) -> float | None:
-    """Preserve requested speed despite upstream's <10-UTF8-byte speed=.3 override.
+def synthesis_duration(ref_frames: int, ref_rate: int, ref_text: str,
+                       text: str, speed: float) -> float:
+    """Budget actual model frames for complete words, including short phrases.
 
-    infer_process accepts fix_duration in seconds for the TOTAL ref+new audio.
-    Match its frame-based duration formula, without modifying the spoken text.
-    The small fraction of a frame avoids floating-point floor rounding below
-    the desired integer frame count in upstream int(duration*24000/256).
+    The upstream reference-byte ratio alone yielded 0.29-second family words
+    and truncated requests. Allocate extra generation frames before sampling;
+    changing playback speed or padding the encoded audio cannot restore speech.
+    fix_duration includes BOTH reference and generation. The fractional frame
+    prevents upstream's floating-point floor from removing a requested frame.
     """
-    if len(text.encode("utf-8")) >= 10:
-        return None
     prompt = ref_text + " " if len(ref_text[-1].encode("utf-8")) == 1 else ref_text
     ref_len = math.ceil(ref_frames * SAMPLE_RATE / ref_rate) // 256
-    gen_len = int(ref_len / len(prompt.encode("utf-8")) * len(text.encode("utf-8")) / speed)
+    estimated = ref_len / len(prompt.encode("utf-8")) * len(text.encode("utf-8")) / speed
+    floor_seconds = MIN_WORD_SECONDS if len(text.split()) == 1 else MIN_PHRASE_SECONDS
+    gen_len = math.ceil(max(estimated * DURATION_SCALE, floor_seconds * SAMPLE_RATE / 256))
     return (ref_len + gen_len + .01) * 256 / SAMPLE_RATE
 
 
-def mp3_output(wave, rate: int, destination: Path):
+def minimum_speech_seconds(text: str) -> float:
+    """Conservative rejection floor, NOT a pronunciation/completeness verdict."""
+    words = text.split()
+    if len(words) == 1:
+        return .3 if sum(ch.isalpha() for ch in text) < 3 else .5
+    return .8 + .12 * (len(words) - 2)
+
+
+def mp3_output(wave, rate: int, destination: Path, minimum_seconds: float = .15):
     import numpy as np
     import soundfile as sf
     from pydub import AudioSegment
@@ -208,7 +219,7 @@ def mp3_output(wave, rate: int, destination: Path):
         audio = audio[begin:finish]
         if audio.max_dBFS > float("-inf"):
             audio = audio.apply_gain(-1.5 - audio.max_dBFS)
-        if len(audio) < 150:
+        if len(audio) < minimum_seconds * 1000:
             raise GeneratedAudioError(f"Audio unexpectedly truncated: {destination}")
         with encoded.open("wb+") as stream:
             audio.export(stream, format="mp3", bitrate=BITRATE,
@@ -216,39 +227,25 @@ def mp3_output(wave, rate: int, destination: Path):
         if encoded.stat().st_size < 1024:
             raise GeneratedAudioError(f"MP3 encode produced too few bytes: {destination}")
         encoded.replace(destination)
+        return {"decodedDurationSeconds": len(audio) / 1000,
+                "minimumDurationSeconds": minimum_seconds}
 
 
-def synthesize_clip(infer, target: Path, text: str, speed: float,
-                    first_duration: float | None, ref_frames: int, ref_rate: int,
-                    ref_text: str) -> dict:
-    """Retry rejected short-word outputs with more generation time, never padding audio.
-
-    Seed, dialect, text, steps, CFG and speed remain unchanged. The first attempt
-    exactly preserves existing successful outputs and compatible checkpoints.
-    Only a rejected output permits a longer TOTAL ref+generated duration.
-    """
-    short_word = speed == SPEED_SHORT and len(text.split()) == 1
-    ref_len = math.ceil(ref_frames * SAMPLE_RATE / ref_rate) // 256
-    prompt = ref_text + " " if len(ref_text[-1].encode("utf-8")) == 1 else ref_text
-    estimated = ref_len / len(prompt.encode("utf-8")) * len(text.encode("utf-8")) / speed
-    for attempt in range(MAX_SHORT_ATTEMPTS if short_word else 1):
-        duration = first_duration
-        if attempt:
-            extra_frames = math.ceil(max(
-                SHORT_RECOVERY_MIN_SECONDS + (attempt - 1) * SHORT_RECOVERY_STEP_SECONDS,
-                estimated * 256 / SAMPLE_RATE + attempt * SHORT_RECOVERY_STEP_SECONDS,
-            ) * SAMPLE_RATE / 256)
-            duration = (ref_len + extra_frames + .01) * 256 / SAMPLE_RATE
+def synthesize_clip(infer, target: Path, text: str, first_duration: float) -> dict:
+    """Retry rejected words AND requests with extra model time, without padding."""
+    for attempt in range(MAX_SYNTHESIS_ATTEMPTS):
+        extra_frames = math.ceil(attempt * RECOVERY_STEP_SECONDS * SAMPLE_RATE / 256)
+        duration = first_duration + extra_frames * 256 / SAMPLE_RATE
         set_seed()
         wave, rate, _ = infer(duration)
         try:
-            mp3_output(wave, rate, target)
+            quality = mp3_output(wave, rate, target, minimum_seconds=minimum_speech_seconds(text))
         except GeneratedAudioError:
-            if not short_word or attempt + 1 == MAX_SHORT_ATTEMPTS:
+            if attempt + 1 == MAX_SYNTHESIS_ATTEMPTS:
                 raise
-            print(f"Rejected short-word audio for {text!r}; retrying with more synthesis time", flush=True)
+            print(f"Rejected incomplete/invalid audio for {text!r}; retrying with more synthesis time", flush=True)
             continue
-        return {"synthesisAttempts": attempt + 1, "fixedDurationSeconds": duration}
+        return {"synthesisAttempts": attempt + 1, "fixedDurationSeconds": duration, **(quality or {})}
     raise RuntimeError("Inference ended without validated audio")
 
 
@@ -279,6 +276,9 @@ def generate_one_dialect(args, dialect, grouped, model, vocoder, mel_type):
         "referenceType": reference_type, "seed": SEED, "nfeStep": NFE_STEP,
         "cfgStrength": CFG_STRENGTH, "swaySamplingCoef": SWAY_SAMPLING_COEF,
         "speedShort": SPEED_SHORT, "speedNormal": SPEED_NORMAL,
+        "durationPolicy": {"scale": DURATION_SCALE, "minimumWordSeconds": MIN_WORD_SECONDS,
+                           "minimumPhraseSeconds": MIN_PHRASE_SECONDS,
+                           "retryStepSeconds": RECOVERY_STEP_SECONDS},
         "sampleRate": SAMPLE_RATE, "bitrate": BITRATE,
     }
     previous = {}
@@ -314,7 +314,7 @@ def generate_one_dialect(args, dialect, grouped, model, vocoder, mel_type):
             continue
         if not reusable:
             clip_speed = speed_for_text(text)
-            duration = short_duration(ref_frames, ref_rate, prepared_ref_text, text, clip_speed)
+            duration = synthesis_duration(ref_frames, ref_rate, prepared_ref_text, text, clip_speed)
             def infer_at(fixed_duration):
                 return infer_process(
                     prepared_ref_audio, prepared_ref_text, text,
@@ -324,8 +324,7 @@ def generate_one_dialect(args, dialect, grouped, model, vocoder, mel_type):
                     device=args.device, dialect_id=dialect_id_map[tag],
                     fix_duration=fixed_duration,
                 )
-            timing = synthesize_clip(infer_at, target, text, clip_speed, duration,
-                                     ref_frames, ref_rate, prepared_ref_text)
+            timing = synthesize_clip(infer_at, target, text, duration)
             generated += 1
         if not reusable:
             result[key] = {
@@ -369,11 +368,25 @@ def dialect_arg(value: str) -> str:
     return code
 
 
+def selected_items(grouped: dict, dialects: list[str], keys: list[str] | None) -> dict:
+    """Filter only AFTER the complete canonical 2399-entry contract passes."""
+    if not keys:
+        return {d: grouped[d] for d in dialects}
+    requested = set(keys)
+    for dialect in dialects:
+        missing = requested - grouped[dialect].keys()
+        if missing:
+            raise ValueError(f"Unknown semantic keys for {dialect}: {sorted(missing)}")
+    return {d: {k: grouped[d][k] for k in sorted(requested)} for d in dialects}
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dialect", type=dialect_arg, default="ALL",
                         metavar="DIALECT_CODE")
     parser.add_argument("--skip-existing", action="store_true")
+    parser.add_argument("--semantic-key", action="append", dest="semantic_keys",
+                        help="Generate a named pilot key (repeatable); requires a separate --output")
     parser.add_argument("--shard-index", type=int, default=0)
     parser.add_argument("--shard-count", type=int, default=1)
     parser.add_argument("--checkpoint-run-id", help="GitHub run ID for durable CI checkpoints")
@@ -399,16 +412,24 @@ def main():
     if args.checkpoint_every < 1 or (args.checkpoint_run_id is not None and
                                    not re.fullmatch(r"[0-9]+", args.checkpoint_run_id)):
         parser.error("checkpoint interval must be positive and run ID numeric")
+    assets = Path("app/src/main/assets/neural_tts").resolve()
+    if args.semantic_keys and (args.output.resolve() == assets or assets in args.output.resolve().parents
+                               or args.checkpoint_run_id):
+        parser.error("Pilot keys require an output outside production assets and no corpus checkpoint")
     grouped = load_catalog(args.catalog)
     if sum(map(len, grouped.values())) != EXPECTED_CLIPS:
         raise RuntimeError("The exact 2399-card corpus must pass first")
+    dialects = list(DIALECT_IDS) if args.dialect == "ALL" else [args.dialect]
+    try:
+        grouped = selected_items(grouped, dialects, args.semantic_keys)
+    except ValueError as error:
+        parser.error(str(error))
     if args.device == "cuda":
         import torch
         if not torch.cuda.is_available():
             parser.error("CUDA requested but unavailable")
     set_seed()
     model, vocoder, mel_type = build_model(args.device)
-    dialects = list(DIALECT_IDS) if args.dialect == "ALL" else [args.dialect]
     for dialect in dialects:
         if time.monotonic() >= args.deadline:
             break

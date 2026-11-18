@@ -35,6 +35,17 @@ class HabibiAudioTest(unittest.TestCase):
                     mp3_output(wave, 24000, path)
                 self.assertEqual(b'previous-clip', path.read_bytes())
 
+    def test_padding_cannot_hide_an_implausibly_short_utterance(self):
+        import numpy as np
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / 'clip.mp3'
+            path.write_bytes(b'previous-clip')
+            tone = .5 * np.sin(2 * np.pi * 300 * np.arange(4800) / 24000)
+            wave = np.concatenate((np.zeros(24000), tone, np.zeros(24000)))
+            with self.assertRaises(ValueError):
+                mp3_output(wave, 24000, path, minimum_seconds=.8)
+            self.assertEqual(b'previous-clip', path.read_bytes())
+
 
 if __name__ == '__main__':
     unittest.main()

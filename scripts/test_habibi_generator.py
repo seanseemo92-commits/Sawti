@@ -24,8 +24,7 @@ class HabibiGeneratorTest(unittest.TestCase):
         infer = Mock(return_value=([.1], 24000, None))
         with patch.object(gen, 'set_seed'), patch.object(gen, 'mp3_output',
                 side_effect=[gen.GeneratedAudioError('too short'), None]):
-            info = gen.synthesize_clip(infer, Path('unused.mp3'), 'أنام', .75,
-                                       6.4, 144000, 24000, 'النص المرجعي المطابق.')
+            info = gen.synthesize_clip(infer, Path('unused.mp3'), 'أنام', 6.4)
         self.assertEqual(2, info['synthesisAttempts'])
         self.assertEqual(6.4, infer.call_args_list[0].args[0])
         self.assertGreaterEqual(infer.call_args_list[1].args[0], 6.9)
@@ -34,14 +33,12 @@ class HabibiGeneratorTest(unittest.TestCase):
         infer = Mock(return_value=([.1], 24000, None))
         with patch.object(gen, 'set_seed'), patch.object(gen, 'mp3_output',
                 side_effect=gen.GeneratedAudioError('silent')), self.assertRaises(gen.GeneratedAudioError):
-            gen.synthesize_clip(infer, Path('unused.mp3'), 'أجلس', .75,
-                                6.4, 144000, 24000, 'النص المرجعي المطابق.')
+            gen.synthesize_clip(infer, Path('unused.mp3'), 'أجلس', 6.4)
         self.assertEqual(3, infer.call_count)
         infer.reset_mock()
         with patch.object(gen, 'set_seed'), patch.object(gen, 'mp3_output',
                 side_effect=OSError('disk full')), self.assertRaises(OSError):
-            gen.synthesize_clip(infer, Path('unused.mp3'), 'أجلس', .75,
-                                6.4, 144000, 24000, 'النص المرجعي المطابق.')
+            gen.synthesize_clip(infer, Path('unused.mp3'), 'أجلس', 6.4)
         self.assertEqual(1, infer.call_count)
 
     def test_dialect_names_habibi_tags_and_locales(self):
@@ -59,15 +56,36 @@ class HabibiGeneratorTest(unittest.TestCase):
         self.assertEqual(.88, gen.speed_for_text('نبي مية'))
         self.assertEqual(.88, gen.speed_for_text('المستشفيات'))
 
-    def test_short_duration_matches_upstream_frames_without_text_padding(self):
+    def test_duration_reserves_generation_frames_for_words_and_requests(self):
         prompt = 'هذا نص المرجع.'
-        for text in ('أب', 'أمي', 'أختي'):
-            rate = .75
-            duration = gen.short_duration(144000, 24000, prompt, text, rate)
-            expected = 144000 // 256
-            expected += int(expected / len((prompt + ' ').encode()) * len(text.encode()) / rate)
-            self.assertEqual(expected, int(duration * 24000 / 256))
-        self.assertIsNone(gen.short_duration(144000, 24000, prompt, 'الحمام', .75))
+        for sample_rate in (24000, 44100):
+            for text in ('أب', 'أمي', 'أختي', 'الحمام', 'نبي مية', 'عدل لي المخدة'):
+                with self.subTest(text=text, sample_rate=sample_rate):
+                    frames = sample_rate * 6
+                    speed = gen.speed_for_text(text)
+                    duration = gen.synthesis_duration(frames, sample_rate, prompt, text, speed)
+                    ref = math.ceil(frames * 24000 / sample_rate) // 256
+                    generated = int(duration * 24000 / 256) - ref
+                    original = int(ref / len((prompt + ' ').encode()) * len(text.encode()) / speed)
+                    self.assertGreaterEqual(generated, original * 2)
+                    minimum = gen.MIN_WORD_SECONDS if len(text.split()) == 1 else gen.MIN_PHRASE_SECONDS
+                    self.assertGreaterEqual(generated * 256 / 24000, minimum)
+
+    def test_rejected_request_gets_more_model_time_too(self):
+        infer = Mock(return_value=([.1], 24000, None))
+        with patch.object(gen, 'set_seed'), patch.object(gen, 'mp3_output',
+                side_effect=[gen.GeneratedAudioError('incomplete request'), {'decodedDurationSeconds': 1.4}]):
+            info = gen.synthesize_clip(infer, Path('unused.mp3'), 'نبي الحمام', 8.)
+        self.assertEqual(2, info['synthesisAttempts'])
+        self.assertGreater(infer.call_args_list[1].args[0], infer.call_args_list[0].args[0])
+        self.assertEqual(1.4, info['decodedDurationSeconds'])
+
+    def test_pilot_selection_rejects_missing_keys_before_any_inference(self):
+        groups = {'LIBYAN': {'family.mother': 'أمي', 'family.father': 'بوي'}}
+        self.assertEqual({'LIBYAN': {'family.mother': 'أمي'}},
+                         gen.selected_items(groups, ['LIBYAN'], ['family.mother']))
+        with self.assertRaises(ValueError):
+            gen.selected_items(groups, ['LIBYAN'], ['family.mother', 'not.a.card'])
 
     def test_missing_reference_falls_back_to_official_matching_pair(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -109,7 +127,7 @@ class HabibiGeneratorTest(unittest.TestCase):
                 'habibi_tts.model.utils': types.SimpleNamespace(dialect_id_map={'LBY': '⑫'}),
                 'torchaudio': types.SimpleNamespace(load=lambda _: (types.SimpleNamespace(shape=(1, 144000)), 24000)),
             }
-            def encode(wave, rate, path):
+            def encode(wave, rate, path, **kwargs):
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(b'generated' * 200)
             with patch.dict('sys.modules', modules), \
@@ -149,6 +167,14 @@ class HabibiGeneratorTest(unittest.TestCase):
                 gen.generate_one_dialect(args, 'LIBYAN', grouped, None, None, 'vocos')
                 self.assertEqual(1, infer.call_count)
                 self.assertEqual('نبي نشرب مية', infer.call_args.args[2])
+                # Old pipeline outputs cannot be silently accepted as repaired.
+                document = json.loads(manifest.read_text())
+                document['pipelineVersion'] = 3
+                manifest.write_text(json.dumps(document))
+                infer.reset_mock()
+                args.max_new = 0
+                gen.generate_one_dialect(args, 'LIBYAN', grouped, None, None, 'vocos')
+                self.assertEqual(3, infer.call_count)
 
 
 if __name__ == '__main__':
