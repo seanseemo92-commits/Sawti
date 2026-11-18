@@ -127,7 +127,7 @@ class HabibiGeneratorTest(unittest.TestCase):
                                          skip_existing=True, max_new=0, deadline=math.inf, device='cpu',
                                          checkpoint_run_id='123', checkpoint_every=2, catalog=root/'catalog.json',
                                          shard_index=0, shard_count=1)
-            grouped = {'LIBYAN': {'a': 'أمي', 'b': 'بقرة', 'request.toilet': 'نبي الحمام'}}
+            grouped = {'LIBYAN': {'a': 'أمي', 'b': 'بقرة', 'c': 'نبي الحمام'}}
             infer = Mock(return_value=([.1], 24000, None))
             modules = {
                 'f5_tts.infer.utils_infer': types.SimpleNamespace(
@@ -153,17 +153,6 @@ class HabibiGeneratorTest(unittest.TestCase):
                 self.assertEqual(.75, infer.call_args_list[0].kwargs['speed'])
                 self.assertEqual('⑫', infer.call_args_list[0].kwargs['dialect_id'])
                 self.assertIsNotNone(infer.call_args_list[0].kwargs['fix_duration'])
-                self.assertEqual('نبي إلحمام', infer.call_args_list[-1].args[2])
-                manifest = args.output / 'libyan/manifest.json'
-                document = json.loads(manifest.read_text())
-                toilet = document['entries']['request.toilet']
-                self.assertEqual('نبي الحمام', toilet['speechText'])
-                self.assertEqual('نبي إلحمام', toilet.pop('modelText'))
-                manifest.write_text(json.dumps(document))
-                infer.reset_mock()
-                gen.generate_one_dialect(args, 'LIBYAN', grouped, None, None, 'vocos')
-                self.assertEqual(1, infer.call_count)
-                self.assertEqual('نبي إلحمام', infer.call_args.args[2])
                 infer.reset_mock()
                 gen.generate_one_dialect(args, 'LIBYAN', grouped, None, None, 'vocos')
                 infer.assert_not_called()
@@ -173,19 +162,20 @@ class HabibiGeneratorTest(unittest.TestCase):
                 infer.side_effect = RuntimeError('interrupted')
                 with self.assertRaises(RuntimeError):
                     gen.generate_one_dialect(args, 'LIBYAN', grouped, None, None, 'vocos')
-                self.assertEqual({'b', 'request.toilet'}, set(json.loads(manifest.read_text())['entries']))
+                manifest = args.output / 'libyan/manifest.json'
+                self.assertEqual({'b', 'c'}, set(json.loads(manifest.read_text())['entries']))
                 infer.side_effect = None
                 infer.reset_mock()
                 args.max_new = 1
                 gen.generate_one_dialect(args, 'LIBYAN', grouped, None, None, 'vocos')
                 self.assertEqual(1, infer.call_count)
-                self.assertEqual({'a', 'b', 'request.toilet'}, set(json.loads(manifest.read_text())['entries']))
+                self.assertEqual({'a', 'b', 'c'}, set(json.loads(manifest.read_text())['entries']))
                 # A text change invalidates only the affected clip.
                 infer.reset_mock()
-                grouped['LIBYAN']['request.toilet'] = 'نبي ندخل للحمام'
+                grouped['LIBYAN']['c'] = 'نبي نشرب مية'
                 gen.generate_one_dialect(args, 'LIBYAN', grouped, None, None, 'vocos')
                 self.assertEqual(1, infer.call_count)
-                self.assertEqual('نبي ندخل للحمام', infer.call_args.args[2])
+                self.assertEqual('نبي نشرب مية', infer.call_args.args[2])
                 # Old pipeline outputs cannot be silently accepted as repaired.
                 document = json.loads(manifest.read_text())
                 document['pipelineVersion'] = 3

@@ -50,13 +50,6 @@ MIN_PHRASE_SECONDS = 1.4
 RECOVERY_STEP_SECONDS = 0.5
 MAX_SYNTHESIS_ATTEMPTS = 3
 
-# Model inputs for these specific Libyan cards. The catalog text still matches
-# the visible label and is used by the Android asset resolver.
-MODEL_TEXT_OVERRIDES = {
-    ("LIBYAN", "request.water", "نبي مية"): "نبي نشرب إميه",
-    ("LIBYAN", "request.toilet", "نبي الحمام"): "نبي إلحمام",
-}
-
 
 class GeneratedAudioError(ValueError):
     """The model returned audio which failed the existing output quality gate."""
@@ -80,10 +73,6 @@ def clean_for_habibi(text: str) -> str:
 
 def hash_string(value: str) -> str:
     return hashlib.sha256(value.encode("utf-8")).hexdigest()
-
-
-def model_text_for(dialect: str, key: str, speech_text: str) -> str:
-    return clean_for_habibi(MODEL_TEXT_OVERRIDES.get((dialect, key, speech_text), speech_text))
 
 
 def atomic_json(path: Path, obj: dict) -> None:
@@ -309,9 +298,7 @@ def generate_one_dialect(args, dialect, grouped, model, vocoder, mel_type):
             target = outdir / (key + ".mp3")
             old = completed.get(key, {})
             if (isinstance(old, dict) and old.get("file") == key + ".mp3"
-                    and old.get("speechText") == text
-                    and old.get("modelText", text) == model_text_for(dialect, key, text)
-                    and target.is_file()
+                    and old.get("speechText") == text and target.is_file()
                     and target.stat().st_size >= 1024
                     and old.get("sha256") == file_sha256(target)):
                 result[key] = old
@@ -329,27 +316,24 @@ def generate_one_dialect(args, dialect, grouped, model, vocoder, mel_type):
                              or time.monotonic() >= args.deadline):
             continue
         if not reusable:
-            model_text = model_text_for(dialect, key, text)
-            clip_speed = speed_for_text(model_text)
-            duration = synthesis_duration(ref_frames, ref_rate, prepared_ref_text, model_text, clip_speed)
+            clip_speed = speed_for_text(text)
+            duration = synthesis_duration(ref_frames, ref_rate, prepared_ref_text, text, clip_speed)
             def infer_at(fixed_duration):
                 return infer_process(
-                    prepared_ref_audio, prepared_ref_text, model_text,
+                    prepared_ref_audio, prepared_ref_text, text,
                     model, vocoder, mel_spec_type=mel_type,
                     nfe_step=NFE_STEP, cfg_strength=CFG_STRENGTH,
                     sway_sampling_coef=SWAY_SAMPLING_COEF, speed=clip_speed,
                     device=args.device, dialect_id=dialect_id_map[tag],
                     fix_duration=fixed_duration,
                 )
-            timing = synthesize_clip(infer_at, target, model_text, duration)
+            timing = synthesize_clip(infer_at, target, text, duration)
             generated += 1
         if not reusable:
             result[key] = {
                 "file": key + ".mp3", "speechText": text,
                 "sha256": file_sha256(target), **timing,
             }
-            if model_text != text:
-                result[key]["modelText"] = model_text
         # Persist progress atomically: --skip-existing works after interruption.
         atomic_json(manifest_path, {**meta, "entries": result})
         if not reusable:
