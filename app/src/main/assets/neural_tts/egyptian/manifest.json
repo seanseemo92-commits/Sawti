@@ -1,1071 +1,1764 @@
 {
-  "version": 1,
-  "voice": "ar-EG-SalmaNeural",
-  "rate": "-18%",
+  "version": 2,
+  "engine": "Habibi-TTS",
+  "pipelineVersion": 3,
+  "runtime": {
+    "habibi-tts": "0.1.1",
+    "f5-tts": "1.1.22",
+    "torch": "2.8.0+cpu",
+    "torchaudio": "2.8.0+cpu"
+  },
+  "model": "Unified",
+  "modelRevision": "3ad11a152851245c002156526c5e1d0b12f2b9d5",
+  "dialectId": "EGY",
+  "license": "CC-BY-NC-SA-4.0",
+  "referenceSha256": "5cd939e826bc42becc13a55eade1ac242f18014ddefb6e01819ec798ca7a03b0",
+  "referenceTextSha256": "3db9ea4b0d1178d5c991f6651ba4faa45c0d089c26c8d9d40ef617b8b0a28071",
+  "referenceType": "official-MSA-fallback",
+  "seed": 0,
+  "nfeStep": 32,
+  "cfgStrength": 2.0,
+  "swaySamplingCoef": -1.0,
+  "speedShort": 0.75,
+  "speedNormal": 0.88,
+  "sampleRate": 24000,
+  "bitrate": "96k",
   "entries": {
     "action.close": {
       "file": "action.close.mp3",
-      "speechText": "أَقْفِل"
+      "speechText": "أقفل",
+      "sha256": "712e5d45730e5d98409d1c101067325e18b3a177c94c94a956a9a1805aa94321"
     },
     "action.dress": {
       "file": "action.dress.mp3",
-      "speechText": "أَلْبِس"
+      "speechText": "ألبس",
+      "sha256": "d076b00ca5af069bfea45118882c6a81cff6f2f6dede111110c51acef387b6a3"
     },
     "action.drink": {
       "file": "action.drink.mp3",
-      "speechText": "أَشْرَب"
+      "speechText": "أشرب",
+      "sha256": "eb99f5d678932dd22004790db52ebdc1e30dd745a402ccebf81d4c95c4bc04eb"
     },
     "action.eat": {
       "file": "action.eat.mp3",
-      "speechText": "آكُل"
+      "speechText": "آكل",
+      "sha256": "bfbd10989dc0bf473ecd14b60f539712a2a0802a890aa4a4ce24dfa184b7ab62"
     },
     "action.hear": {
       "file": "action.hear.mp3",
-      "speechText": "أَسْمَع"
+      "speechText": "أسمع",
+      "sha256": "37e326da127d812c1c1b9fc9bcf64bf7947a6bd8bffe7be1ac45c0b07de58402"
     },
     "action.laugh": {
       "file": "action.laugh.mp3",
-      "speechText": "أَضْحَك"
+      "speechText": "أضحك",
+      "sha256": "4553a460f8d9ab5b3b334b6ae8c11e5d06ab9b1a1bf883861fbeb2cc3332ca16"
     },
     "action.open": {
       "file": "action.open.mp3",
-      "speechText": "أَفْتَح"
+      "speechText": "أفتح",
+      "sha256": "a26146f334c4dbe7687d94fe7eaee6319552626b26c9f6e33a8ab12cb6965465"
     },
     "action.pray": {
       "file": "action.pray.mp3",
-      "speechText": "أُصَلِّي"
+      "speechText": "أصلي",
+      "sha256": "6fe8d962d8d499a7f14db3c17b6d07817e12bbe8a3549fef94747e3eff8a5b67"
     },
     "action.read": {
       "file": "action.read.mp3",
-      "speechText": "أَقْرَا"
+      "speechText": "أقرا",
+      "sha256": "dc2b81c7277a2e26a9e39c5b0723f6803dac13cb2809763a6a44c3588d577ab8"
     },
     "action.see": {
       "file": "action.see.mp3",
-      "speechText": "أَشُوف"
+      "speechText": "أشوف",
+      "sha256": "bccb6a02b7a39311e9e8c7a5dbe5564d31bd18b78eb3e85fdcaae26ce533727c"
     },
     "action.sit": {
       "file": "action.sit.mp3",
-      "speechText": "أَقْعُد"
+      "speechText": "أقعد",
+      "sha256": "8ae6bdd73940b9c364445341f4a95d174e3b3fddfc043be31232cfbfc678419c"
     },
     "action.sleep": {
       "file": "action.sleep.mp3",
-      "speechText": "أَنَام"
+      "speechText": "أنام",
+      "sha256": "f82fcf3ecf6dcc7cf0a3cbc02acd95f7540d1075c1b280eaa38e3b78fa626e50"
     },
     "action.speak": {
       "file": "action.speak.mp3",
-      "speechText": "أَتْكَلِّم"
+      "speechText": "أتكلم",
+      "sha256": "40abeb79c58a1599484176c3a63ff2a5e1e19fdb36d9deaa7c0e35c4cde45baf"
     },
     "action.stand": {
       "file": "action.stand.mp3",
-      "speechText": "أَقَف"
+      "speechText": "أقف",
+      "sha256": "6f0ab02030298324ac738ed230dd574258a2c98ed4327401dca1fd1e3b485bd7"
     },
     "action.walk": {
       "file": "action.walk.mp3",
-      "speechText": "أَمْشِي"
+      "speechText": "أمشي",
+      "sha256": "aa33c4b7891cf9ebd849d7653cf8e1382c98823a4893d97392cde922a7a85a44"
     },
     "action.wash": {
       "file": "action.wash.mp3",
-      "speechText": "أَغْسِل"
+      "speechText": "أغسل",
+      "sha256": "7a45c80e7a3f9de0b1f9084d2189928c832fd20313fc502736782c4ce904a843"
     },
     "animal.camel": {
       "file": "animal.camel.mp3",
-      "speechText": "جَمَل"
+      "speechText": "جمل",
+      "sha256": "ba95a7487842a4dc1d60131b6ac451b920a925d8ad85eabca79659e0cdd1d6da"
     },
     "animal.cat": {
       "file": "animal.cat.mp3",
-      "speechText": "قِطَّة"
+      "speechText": "قطة",
+      "sha256": "0349cc7a1613995db86293fcfb4946e06ea35786c760cadc46d63a0af316dc4c"
     },
     "animal.chicken": {
       "file": "animal.chicken.mp3",
-      "speechText": "فَرْخَة"
+      "speechText": "فرخة",
+      "sha256": "5c333774714b5a968e949891bbb4ad77a8dfc1ed71bd8ba0bebf8f833f087527"
     },
     "animal.cow": {
       "file": "animal.cow.mp3",
-      "speechText": "بَقَرَة"
+      "speechText": "بقرة",
+      "sha256": "be5b8dad7acfa180f03305cfc8d8f741c54f82cac2c779d6c7a7a649fa969ed3"
     },
     "animal.dog": {
       "file": "animal.dog.mp3",
-      "speechText": "كَلْب"
+      "speechText": "كلب",
+      "sha256": "17fb2482a60a869ce7d53363048b58fddcdac5e09ab66aa979bf6fa14daa76e0"
     },
     "animal.duck": {
       "file": "animal.duck.mp3",
-      "speechText": "بَطَّة"
+      "speechText": "بطة",
+      "sha256": "740ba60496e0b50515a2a1cbf33590e7dc9b5746f06bb57129ecb1883d5bfb03"
     },
     "animal.horse": {
       "file": "animal.horse.mp3",
-      "speechText": "حِصَان"
+      "speechText": "حصان",
+      "sha256": "3f271fc1c8955ea93fb0ccb93f8c806ac359e6c2428d2d50e851d88e02b70f05"
     },
     "animal.pigeon": {
       "file": "animal.pigeon.mp3",
-      "speechText": "حَمَامَة"
+      "speechText": "حمامة",
+      "sha256": "28a86f58ab9e053ff75adf295d3a231924b0a643d392c9ca7b840f321551d413"
     },
     "animal.rabbit": {
       "file": "animal.rabbit.mp3",
-      "speechText": "أَرْنَب"
+      "speechText": "أرنب",
+      "sha256": "ab12155cc6342e810a25f513bd9a6ea38cb308bce65fa842522b8e4c40cb01d2"
     },
     "animal.rooster": {
       "file": "animal.rooster.mp3",
-      "speechText": "دِيك"
+      "speechText": "ديك",
+      "sha256": "795c124dbee257dffef958df630cedd43001b74b28ffb47c758912a8105b4ecd"
     },
     "animal.sheep": {
       "file": "animal.sheep.mp3",
-      "speechText": "خَرُوف"
+      "speechText": "خروف",
+      "sha256": "c447f52fbeb6787c6894f9e95258b464f7f65027240179fb8ddc489691349238"
     },
     "animal.sparrow": {
       "file": "animal.sparrow.mp3",
-      "speechText": "عُصْفُور"
+      "speechText": "عصفور",
+      "sha256": "1ca9c000aaf9dc555bbbb5ed240ea80b38108b8472d64be45ff8eb5b833db756"
     },
     "body.abdomen": {
       "file": "body.abdomen.mp3",
-      "speechText": "بَطْن"
+      "speechText": "بطن",
+      "sha256": "a49ace90ac012ca85fc4f19e7bbc6e431726a9dffc46889f736eb0c06968afcf"
     },
     "body.back": {
       "file": "body.back.mp3",
-      "speechText": "ظَهْر"
+      "speechText": "ظهر",
+      "sha256": "a155185bac33ddf729de52f68cec6c4d5b9875401ce2142a14e069acc1d26d95"
     },
     "body.chest": {
       "file": "body.chest.mp3",
-      "speechText": "صَدْر"
+      "speechText": "صدر",
+      "sha256": "88d10e7ad022e543a4a8a3e111324487669cc04b695e71a340cbe292ed09654e"
     },
     "body.ear": {
       "file": "body.ear.mp3",
-      "speechText": "وِدْن"
+      "speechText": "ودن",
+      "sha256": "429c999715892005a8d0a9b795f4da7d6e709fd1cad668ad9e967f54d6cbb047"
     },
     "body.eye": {
       "file": "body.eye.mp3",
-      "speechText": "عِين"
+      "speechText": "عين",
+      "sha256": "6ad28e5c6086afc9f1097c15d0357ff567993f32954c4219c267e96cc44623ae"
     },
     "body.face": {
       "file": "body.face.mp3",
-      "speechText": "وِشّ"
+      "speechText": "وش",
+      "sha256": "1637ab456086caf39f65875a05c4264017c6fd0e9bffca6ce3423d9d73278260"
     },
     "body.finger": {
       "file": "body.finger.mp3",
-      "speechText": "صُبَاع"
+      "speechText": "صباع",
+      "sha256": "293f8f680e9e8c17ba4323ccbba8b371420965af152133015a50a28562ab3a1a"
     },
     "body.hair": {
       "file": "body.hair.mp3",
-      "speechText": "شَعْر"
+      "speechText": "شعر",
+      "sha256": "caf8bccc4e62174405a69ea01ae1748e662c9aad08650a0f3d3c32e7e80f9a83"
     },
     "body.hand": {
       "file": "body.hand.mp3",
-      "speechText": "يَد"
+      "speechText": "يد",
+      "sha256": "196ce9b09d671d5aff3c3a6ad792750871e6b31c8d2988579e7b7da1cda9dc03"
     },
     "body.head": {
       "file": "body.head.mp3",
-      "speechText": "رَاس"
+      "speechText": "راس",
+      "sha256": "cd8377034c760a404eb12bf24bfbf7f460766b13927a94c7cbae85bb992c5ddd"
     },
     "body.heart": {
       "file": "body.heart.mp3",
-      "speechText": "قَلْب"
+      "speechText": "قلب",
+      "sha256": "4a98361ea710c13f43bf7b293ea3097fec2c819721d9a3675b5ec5fac8803f01"
     },
     "body.knee": {
       "file": "body.knee.mp3",
-      "speechText": "رُكْبَة"
+      "speechText": "ركبة",
+      "sha256": "300e2f3164153af308cab35da2e680a1fed457e17c589e33329bd559da7e5774"
     },
     "body.leg": {
       "file": "body.leg.mp3",
-      "speechText": "رِجْل"
+      "speechText": "رجل",
+      "sha256": "1781281567962176117d8ab9b02ba1b1b17a6850cfaa016fc05761a231fb6cc8"
     },
     "body.mouth": {
       "file": "body.mouth.mp3",
-      "speechText": "بُقّ"
+      "speechText": "بق",
+      "sha256": "152c02048f551ecdaa128d43cf5f18a8559f71b3c4dc979169a8d376719d5bb7"
     },
     "body.neck": {
       "file": "body.neck.mp3",
-      "speechText": "رَقْبَة"
+      "speechText": "رقبة",
+      "sha256": "4dee5e1fe635c42bb060af47a25b9c6e0b636e8a442dd748d837390bd8f706b1"
     },
     "body.nose": {
       "file": "body.nose.mp3",
-      "speechText": "مَنَاخِير"
+      "speechText": "مناخير",
+      "sha256": "bc279f84320cfb55fe2ad9ca1a7b2cfccfbdb18170c631a08c7ecdac0708e72e"
     },
     "body.shoulder": {
       "file": "body.shoulder.mp3",
-      "speechText": "كِتْف"
+      "speechText": "كتف",
+      "sha256": "9506c1637ac7d3019dfd49b15523dc9da3d31e84d8f9ba5bea8be93889491e70"
     },
     "body.tongue": {
       "file": "body.tongue.mp3",
-      "speechText": "لِسَان"
+      "speechText": "لسان",
+      "sha256": "3f93ec8983290f4b6df79b86bad8e0144d40d6946fd7bf90e5cd5ecd7aa9a4d7"
     },
     "body.tooth": {
       "file": "body.tooth.mp3",
-      "speechText": "سِنَّة"
+      "speechText": "سنة",
+      "sha256": "17f5e3a4501130b79586912cf3ee11ddfa9faeeb0e8d04da8258c00a1003c903"
     },
     "clothing.abaya": {
       "file": "clothing.abaya.mp3",
-      "speechText": "عَبَايَة"
+      "speechText": "عباية",
+      "sha256": "b118e4f812e82808c0c16be0ac3dfe13f0ce86f695b7bfb89adccec37b266c36"
     },
     "clothing.bag": {
       "file": "clothing.bag.mp3",
-      "speechText": "شَنْطَة"
+      "speechText": "شنطة",
+      "sha256": "626ffd87f9e2c33fe666245e737c96abc059f1e25b09baa02afb5ecd77395a2b"
     },
     "clothing.belt": {
       "file": "clothing.belt.mp3",
-      "speechText": "حِزَام"
+      "speechText": "حزام",
+      "sha256": "9d26ea3cd6a854b26c48427f839fed4094b61c2a047dab2b194125b512bedd42"
     },
     "clothing.blouse": {
       "file": "clothing.blouse.mp3",
-      "speechText": "بْلُوزَة"
+      "speechText": "بلوزة",
+      "sha256": "d606a6b8c41048a5df9cea294e54ca3a3a8bcd2a9e5d28bd061107d5beddafbb"
     },
     "clothing.cap": {
       "file": "clothing.cap.mp3",
-      "speechText": "كَاب"
+      "speechText": "كاب",
+      "sha256": "3a1bb3ddfa793995aca7f6447d6755f509ce6197840f29f3aba9317eb2d53f93",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "clothing.coat": {
       "file": "clothing.coat.mp3",
-      "speechText": "بَالْطُو"
+      "speechText": "بالطو",
+      "sha256": "273e17a4e01b68a9402e6fbfd576e7d3bfc0a3e33289b9f51b26af57fa2355cf"
     },
     "clothing.dress": {
       "file": "clothing.dress.mp3",
-      "speechText": "فُسْتَان"
+      "speechText": "فستان",
+      "sha256": "b81eb4c17e95e9c2a1dbf95ae68ec5031bd67bf5660b8ac8aa268ba9e7d5c185"
     },
     "clothing.glasses": {
       "file": "clothing.glasses.mp3",
-      "speechText": "نَضَّارَة"
+      "speechText": "نضارة",
+      "sha256": "3f16b1e0b70e893508147ee8ee2adee874edb56c36cae9aba6e8f7cd29eec67b"
     },
     "clothing.high_heels": {
       "file": "clothing.high_heels.mp3",
-      "speechText": "جَزْمَة بِكَعْب"
+      "speechText": "جزمة بكعب",
+      "sha256": "8f0f40e598d283bd68e7796203c29c8b75126001cb2f5c9aff3fc4dd83dfd957"
     },
     "clothing.hijab": {
       "file": "clothing.hijab.mp3",
-      "speechText": "حِجَاب"
+      "speechText": "حجاب",
+      "sha256": "72362a6b8608c70ee84809361d18c50c67e75b7e6ddd21a2b907082e310e4fd6"
     },
     "clothing.jacket": {
       "file": "clothing.jacket.mp3",
-      "speechText": "جَاكِيت"
+      "speechText": "جاكيت",
+      "sha256": "b656cff67ddd4e6596cb848fccaf8cc816738f6045a5c3c37b7cbdb66235d3ab",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "clothing.pajamas": {
       "file": "clothing.pajamas.mp3",
-      "speechText": "بِيجَامَة"
+      "speechText": "بيجامة",
+      "sha256": "52a1675ed5c5e9af7fe124139e2f954c6ea029933b7828111651e6f336760f47",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "clothing.ring": {
       "file": "clothing.ring.mp3",
-      "speechText": "خَاتَم"
+      "speechText": "خاتم",
+      "sha256": "e7cc249b3fa02345f7ae13c45d14424899554bcae60f06793839b3b0b64fa547",
+      "synthesisAttempts": 2,
+      "fixedDurationSeconds": 9.738773333333333
     },
     "clothing.robe": {
       "file": "clothing.robe.mp3",
-      "speechText": "رُوب"
+      "speechText": "روب",
+      "sha256": "4f873ca260c9b0737ad3bb4ee69a4536f430b3ebb5737af7a848ccafcf75f263"
     },
     "clothing.sandals": {
       "file": "clothing.sandals.mp3",
-      "speechText": "صَنْدَل"
+      "speechText": "صندل",
+      "sha256": "318b03fcd31586b1a5fa01ba9fdbad695a5b6d3459391361f5523e8617d18c67"
     },
     "clothing.scarf": {
       "file": "clothing.scarf.mp3",
-      "speechText": "وِشَاح"
+      "speechText": "وشاح",
+      "sha256": "6b76194a1162ec0f16f00dadd2e9d5d3f05a137fd6045a00cd4618e5f7926ae2"
     },
     "clothing.shirt": {
       "file": "clothing.shirt.mp3",
-      "speechText": "قَمِيص"
+      "speechText": "قميص",
+      "sha256": "a5d28a871d2669ae3933ea7f749f33be595170b0ff3cb95980c5347ec9cabe41",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "clothing.shoes": {
       "file": "clothing.shoes.mp3",
-      "speechText": "جَزْمَة"
+      "speechText": "جزمة",
+      "sha256": "696d0f27a8d5f83928fdb27cd98d7e5df5f1dc3306c71d124d136a9fe54ac4a6",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "clothing.shorts": {
       "file": "clothing.shorts.mp3",
-      "speechText": "شُورْت"
+      "speechText": "شورت",
+      "sha256": "b124488cb909c1f6346e11e7b6b887fdaa9969e324340d7d42284eef2e91f91f",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "clothing.socks": {
       "file": "clothing.socks.mp3",
-      "speechText": "شَرَابَات"
+      "speechText": "شرابات",
+      "sha256": "0ef8fa95ed14b4a8fe1e654301e010c04f3c50665a9e7e886152924cfe5b1838",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "clothing.trousers": {
       "file": "clothing.trousers.mp3",
-      "speechText": "بَنْطَلُون"
+      "speechText": "بنطلون",
+      "sha256": "58b96857be7b4e11833a67d2df42d957a8bb0cfc380931206e94751407d6abc2"
     },
     "clothing.tshirt": {
       "file": "clothing.tshirt.mp3",
-      "speechText": "تِيشِيرْت"
+      "speechText": "تيشيرت",
+      "sha256": "8fc4094258f1b050259556c514f9373b51176927d61f951d867e6b74ffb6879f"
     },
     "clothing.watch": {
       "file": "clothing.watch.mp3",
-      "speechText": "سَاعَة يَد"
+      "speechText": "ساعة يد",
+      "sha256": "b77a0410aae0cc0b733a072362c0192dbbbf4f778f5508c5057563ca32d03b2c",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "dish.egyptian.bird_tongue_soup": {
       "file": "dish.egyptian.bird_tongue_soup.mp3",
-      "speechText": "شُورْبِة لِسَان عَصْفُور"
+      "speechText": "شربة لسان عصفور",
+      "sha256": "2a96d825b00c8ca0c00658da2302e7cfa1caefa4e85381ad2b9e16fc21253f8c",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "dish.egyptian.fattah": {
       "file": "dish.egyptian.fattah.mp3",
-      "speechText": "فَتَّة بِالخَلِّ وَالتُّوم"
+      "speechText": "فتة بالخل والتوم",
+      "sha256": "3ddb17c91b9731823ea5d3283ebf76f61fe1708a65b7f0db8576f7f9b7ea7052",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "dish.egyptian.ful": {
       "file": "dish.egyptian.ful.mp3",
-      "speechText": "فُول مِدَمِّس"
+      "speechText": "فول مدمس",
+      "sha256": "81ce6a02f841325992f056df6cb8bb13a02c2505c7d9add2727c02c4e9f2620a",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "dish.egyptian.hawawshi": {
       "file": "dish.egyptian.hawawshi.mp3",
-      "speechText": "حَوَاوْشِي"
+      "speechText": "حواوشي",
+      "sha256": "93e8fbb42d27015942b811387b8ed209666ba173a07308321c94d60261d310a6",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "dish.egyptian.kebab_hawawshi": {
       "file": "dish.egyptian.kebab_hawawshi.mp3",
-      "speechText": "كَبَاب وَحَوَاوْشِي"
+      "speechText": "كباب وحواوشي",
+      "sha256": "92033c20b9d16cf6e9f295a0906562dd334a58d717da9e2879d552d19ed2ffa0"
     },
     "dish.egyptian.koshari": {
       "file": "dish.egyptian.koshari.mp3",
-      "speechText": "كُشَرِي"
+      "speechText": "كشري",
+      "sha256": "d5003f2bb264275c6cebbec1b0398287c61d8f29cf9a7963cc243fc9fc734f66",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "dish.egyptian.mahshi": {
       "file": "dish.egyptian.mahshi.mp3",
-      "speechText": "مَحْشِي مِشَكِّل"
+      "speechText": "محشي مشكل",
+      "sha256": "dc86e0c2b3fcb7948f820a0e44fb192a8989e45aec0738bf8d2f85d492263eb6",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "dish.egyptian.meat_ruqaq": {
       "file": "dish.egyptian.meat_ruqaq.mp3",
-      "speechText": "رُقَاق بِاللَّحْمَة"
+      "speechText": "رقاق باللحمة",
+      "sha256": "fc57f14efaac545abcda282cdc47e8d67b533b02032c08e152bbcd347428ec33",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "dish.egyptian.molokhia": {
       "file": "dish.egyptian.molokhia.mp3",
-      "speechText": "مُلُوخِيَّة بِالتَّقْلِيَة"
+      "speechText": "ملوخية بالتقلية",
+      "sha256": "3cba136eb18058c6e1b6bf920ae4e87befd2d9442821b9092cca3971845adf50",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "dish.egyptian.moussaka": {
       "file": "dish.egyptian.moussaka.mp3",
-      "speechText": "مِسَقَّعَة بَلَدِي"
+      "speechText": "مسقعة بلدي",
+      "sha256": "51ef0d6f2b94f33ac4a7ce5bcd72533870b121bd9bc00a528e46571d76270d46",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "dish.egyptian.potato_tray": {
       "file": "dish.egyptian.potato_tray.mp3",
-      "speechText": "صِينِيِّة بَطَاطِس"
+      "speechText": "صينية بطاطس",
+      "sha256": "eb7bf632b15be23811dbde8bf59a551b3ba1504a8060bdcd68c285174425a91f"
     },
     "dish.egyptian.stuffed_pigeon": {
       "file": "dish.egyptian.stuffed_pigeon.mp3",
-      "speechText": "حَمَام مَحْشِي"
+      "speechText": "حمام محشي",
+      "sha256": "82e5bb6ed9fff05eae86877f89c196ec45d54ce980d05f75812381cd62a21296",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "dish.egyptian.taamiya": {
       "file": "dish.egyptian.taamiya.mp3",
-      "speechText": "طَعْمِيَّة"
+      "speechText": "طعمية",
+      "sha256": "d4bb10ea79c6cd3fe25f76b26eed900ee6d2d756974eab0ea520b7bb2788a9ce",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "dish.egyptian.trotters_fattah": {
       "file": "dish.egyptian.trotters_fattah.mp3",
-      "speechText": "كَوَارِع وَفَتَّة"
+      "speechText": "كوارع وفتة",
+      "sha256": "7dd8fd23f65af4671bdb6e93e226e6b3e91692a478890c7494f9338f3aa1e210",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "dish.egyptian.umm_ali": {
       "file": "dish.egyptian.umm_ali.mp3",
-      "speechText": "أُمّ عَلِي"
+      "speechText": "أم علي",
+      "sha256": "6aad8a13d06f23165c3a7e44cbfcb68737076555563b1d8d42489569680dd9de",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.brother": {
       "file": "family.brother.mp3",
-      "speechText": "أَخُويَا"
+      "speechText": "أخويا",
+      "sha256": "93c3a543c2658e93ac71ae69a5f3f8a76bbfe8904ad2448c22ea83f611c953dd",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.brother_daughter": {
       "file": "family.brother_daughter.mp3",
-      "speechText": "بِنْت أَخُويَا"
+      "speechText": "بنت أخويا",
+      "sha256": "990102652302b307e2034e7c4e1d5b1c661a41e0f16c8aefa9d85fbb54eae5fd",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.brother_son": {
       "file": "family.brother_son.mp3",
-      "speechText": "اِبْن أَخُويَا"
+      "speechText": "ابن أخويا",
+      "sha256": "ab1e98cad68151fc7440629a016d8495cc0a0731429e6801d118de651eb3c23f",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.brother_wife": {
       "file": "family.brother_wife.mp3",
-      "speechText": "مِرَات أَخُويَا"
+      "speechText": "مرات أخويا",
+      "sha256": "f070638f80d5d466c27dd74b2ae57a1412510450ff48f2aeb2a70e0bfcfd574d",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.daughter": {
       "file": "family.daughter.mp3",
-      "speechText": "بِنْتِي"
+      "speechText": "بنتي",
+      "sha256": "46c4bd115c9067711d487d13c6f20393d402aeb1b2562781a0cd8c5397c8ce4f",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "family.daughter_husband": {
       "file": "family.daughter_husband.mp3",
-      "speechText": "جُوز بِنْتِي"
+      "speechText": "جوز بنتي",
+      "sha256": "7d20c96773f39b49aa23bc30c869344ab7761f30e6dc2003976feeb34a968c27",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.father": {
       "file": "family.father.mp3",
-      "speechText": "أَبُويَا"
+      "speechText": "أبويا",
+      "sha256": "dd400f82dc584d03ccb3b2c56deec9a672ce11516354750512230c877d5ad3dc",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.female_in_law": {
       "file": "family.female_in_law.mp3",
-      "speechText": "نَسِيبَتِي"
+      "speechText": "نسيبتي",
+      "sha256": "dad8ad630839caf538e78443329150227b805a50b38418f5cd0f12703562595c",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.female_relative": {
       "file": "family.female_relative.mp3",
-      "speechText": "قَرِيبَتِي"
+      "speechText": "قريبتي",
+      "sha256": "f2162332c3d6260554c3e198c6e08c7f2eec8a07e281f8d010a8f840b022c1a3",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.granddaughter": {
       "file": "family.granddaughter.mp3",
-      "speechText": "حَفِيدَتِي"
+      "speechText": "حفيدتي",
+      "sha256": "732fc487a58ab5bdf3adeb7bad75fd2f5e294290b2794a154900c0524c3a19ac",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.grandfather": {
       "file": "family.grandfather.mp3",
-      "speechText": "جَدِّي"
+      "speechText": "جدي",
+      "sha256": "7c6692c77151400e6afcb35f7102d480c4d19a92c7e2e166b5e3d2f3931d7bb7",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "family.grandmother": {
       "file": "family.grandmother.mp3",
-      "speechText": "جَدَّتِي"
+      "speechText": "جدتي",
+      "sha256": "d5f81e770b806622d9ca37edbf2366bbefbe415c6760194db2e587c36339955c",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "family.grandson": {
       "file": "family.grandson.mp3",
-      "speechText": "حَفِيدِي"
+      "speechText": "حفيدي",
+      "sha256": "da19d32083102ab2febba585fae03beccd2f0443c24d291ea7993b0d474edc73",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.husband": {
       "file": "family.husband.mp3",
-      "speechText": "جُوزِي"
+      "speechText": "جوزي",
+      "sha256": "938418a5824617d9052d1807110b74202ceb09bb96224674313d7025bcf59506",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "family.husband_brother": {
       "file": "family.husband_brother.mp3",
-      "speechText": "أَخُو جُوزِي"
+      "speechText": "أخو جوزي",
+      "sha256": "c9595e9d9d790f9ce7c6a621c1dc4d0c4af9a25a87a76047e9c910918fb71fd2",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.husband_father": {
       "file": "family.husband_father.mp3",
-      "speechText": "أَبُو جُوزِي"
+      "speechText": "أبو جوزي",
+      "sha256": "036cf06020a00d86fd0502657aac3131488ed5491f46765881b20d559a29ef71",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.husband_mother": {
       "file": "family.husband_mother.mp3",
-      "speechText": "أُم جُوزِي"
+      "speechText": "أم جوزي",
+      "sha256": "bb155b74d9a11d536026f632e633d76228d2e1b1b0683235ab077f1bbe5ca077",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.husband_sister": {
       "file": "family.husband_sister.mp3",
-      "speechText": "أُخْت جُوزِي"
+      "speechText": "أخت جوزي",
+      "sha256": "6a609be69d0bcb023f98e1390865b82c8970eeb83dfe7aa517c133381c2e0c76",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.male_in_law": {
       "file": "family.male_in_law.mp3",
-      "speechText": "نَسِيبِي"
+      "speechText": "نسيبي",
+      "sha256": "9edb83f461702ad3c10fa5ecadd6a2101495ee3b5f4c0c1d9bc871b0d8f5dff9",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.male_relative": {
       "file": "family.male_relative.mp3",
-      "speechText": "قَرِيبِي"
+      "speechText": "قريبي",
+      "sha256": "2178179aaf61f07ff680e39372e05cf9c2a8e54e28cf20462d1d6af02cbf7d9c",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.maternal_aunt": {
       "file": "family.maternal_aunt.mp3",
-      "speechText": "خَالَتِي"
+      "speechText": "خالتي",
+      "sha256": "b4dfe4312e400efee94dbf2fe93cbe645ebe86627f26915a94a6c45fb05ba4ee",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.maternal_aunt_daughter": {
       "file": "family.maternal_aunt_daughter.mp3",
-      "speechText": "بِنْت خَالْتِي"
+      "speechText": "بنت خالتي",
+      "sha256": "772e24b558a940846609d95763dac4484db27e6c6ac544aa62201ae3034a3988",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.maternal_aunt_son": {
       "file": "family.maternal_aunt_son.mp3",
-      "speechText": "اِبْن خَالْتِي"
+      "speechText": "ابن خالتي",
+      "sha256": "0bd9a2e3477020124bc9bcd5bcf0427afd74d7c98d2477f69d518602622a6cea",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.maternal_uncle": {
       "file": "family.maternal_uncle.mp3",
-      "speechText": "خَالِي"
+      "speechText": "خالي",
+      "sha256": "922b0b0750c38b3eda7da02cd8e14b156fb567113551bc45a5e5a1a091b16e15",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "family.maternal_uncle_daughter": {
       "file": "family.maternal_uncle_daughter.mp3",
-      "speechText": "بِنْت خَالِي"
+      "speechText": "بنت خالي",
+      "sha256": "ea442ecf20fe4de08a8c87aacab09a9eb0554725bea92c1bbddbcd0e783eb094",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.maternal_uncle_son": {
       "file": "family.maternal_uncle_son.mp3",
-      "speechText": "اِبْن خَالِي"
+      "speechText": "ابن خالي",
+      "sha256": "fa5b66df41410598dbec2d67d9cc4e11eef59763913ec83171d259089fce117f",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.mother": {
       "file": "family.mother.mp3",
-      "speechText": "أُمِّي"
+      "speechText": "أمي",
+      "sha256": "ed92833d0fc09f42f6fe1b0ede2d48b03d2b42298b474c3e80701c67c0de4266",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "family.paternal_aunt": {
       "file": "family.paternal_aunt.mp3",
-      "speechText": "عَمَّتِي"
+      "speechText": "عمتي",
+      "sha256": "875376223413d9ead0b50ec422a8a3321ed0c59b1d5da2c7eaa9eb67d4e08e9c",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "family.paternal_aunt_daughter": {
       "file": "family.paternal_aunt_daughter.mp3",
-      "speechText": "بِنْت عَمِّتِي"
+      "speechText": "بنت عمتي",
+      "sha256": "8ac7b35914db9282938cb01268683a23202ab5781c31170840cd4992f6f48f93",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.paternal_aunt_son": {
       "file": "family.paternal_aunt_son.mp3",
-      "speechText": "اِبْن عَمِّتِي"
+      "speechText": "ابن عمتي",
+      "sha256": "52dd1fe4d52b49e20f7637bec6c3f2f345b4cf66be3d97ed4500df77232d8376",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.paternal_uncle": {
       "file": "family.paternal_uncle.mp3",
-      "speechText": "عَمِّي"
+      "speechText": "عمي",
+      "sha256": "f4bd6a540d0d36fee9a9500096502fd57d793144054da2cf4bf36ac6350b739e",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "family.paternal_uncle_daughter": {
       "file": "family.paternal_uncle_daughter.mp3",
-      "speechText": "بِنْت عَمِّي"
+      "speechText": "بنت عمي",
+      "sha256": "90b93f2c65410da3392a35ea7fc4cd726bce8053e744059319e5a16722140dd8",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.paternal_uncle_son": {
       "file": "family.paternal_uncle_son.mp3",
-      "speechText": "اِبْن عَمِّي"
+      "speechText": "ابن عمي",
+      "sha256": "0229623b8fa640f6f0b1049f8c3359f108aef0ee0e0f62737e25a4a11fa017a0",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.sister": {
       "file": "family.sister.mp3",
-      "speechText": "أُخْتِي"
+      "speechText": "أختي",
+      "sha256": "04b4a4eba46c41c888f1f09502bd78a29ec9eaa937d4860e359859883108f661",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "family.sister_daughter": {
       "file": "family.sister_daughter.mp3",
-      "speechText": "بِنْت أُخْتِي"
+      "speechText": "بنت أختي",
+      "sha256": "260dc9dff7fc64ba3d446959cc6e9094034cf47110a38b659f45645eb101cfce",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.sister_husband": {
       "file": "family.sister_husband.mp3",
-      "speechText": "جُوز أُخْتِي"
+      "speechText": "جوز أختي",
+      "sha256": "fc133ece2ab36cea9d1b0603b796af3bf938ab12ecbeebd47a514abab5cdad16",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.sister_son": {
       "file": "family.sister_son.mp3",
-      "speechText": "اِبْن أُخْتِي"
+      "speechText": "ابن أختي",
+      "sha256": "a18a36558028919a641f0b26507fce72bbcb8f2dd28f0ae54b4b4f908ecd3562",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.son": {
       "file": "family.son.mp3",
-      "speechText": "اِبْنِي"
+      "speechText": "ابني",
+      "sha256": "ab0ccce5db4960d951598a38ab8978993ede8357911a680bad97a7e786798336",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "family.son_wife": {
       "file": "family.son_wife.mp3",
-      "speechText": "مِرَات اِبْنِي"
+      "speechText": "مرات ابني",
+      "sha256": "057e1f569cd5251c2bf3adc62ed01da78b5f50e899020118c65819ececfd28f4",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.wife": {
       "file": "family.wife.mp3",
-      "speechText": "مِرَاتِي"
+      "speechText": "مراتي",
+      "sha256": "e58b4d8fc0fb491e3f4a5d473827fd13b2194b512f9dfe71768622e94f1e2c93",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.wife_brother": {
       "file": "family.wife_brother.mp3",
-      "speechText": "أَخُو مِرَاتِي"
+      "speechText": "أخو مراتي",
+      "sha256": "47653970224b07e1aa1dbe1fe96fd42262678d20cd1b25ff4ef5cc3426789f82",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.wife_father": {
       "file": "family.wife_father.mp3",
-      "speechText": "أَبُو مِرَاتِي"
+      "speechText": "أبو مراتي",
+      "sha256": "954b4911b964dda7bd12ad8f862b6d71185a431775e45390439b255ad3807813",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.wife_mother": {
       "file": "family.wife_mother.mp3",
-      "speechText": "أُم مِرَاتِي"
+      "speechText": "أم مراتي",
+      "sha256": "98cd3c8b72228fcaaffa665b2bf452066462c9ded4dfce307e084f304a6ec133",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "family.wife_sister": {
       "file": "family.wife_sister.mp3",
-      "speechText": "أُخْت مِرَاتِي"
+      "speechText": "أخت مراتي",
+      "sha256": "d418b48c3f11108006467dd254e659574d9669780af9499eb8fb5a8fb70e2783",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "food.biscuit": {
       "file": "food.biscuit.mp3",
-      "speechText": "بِسْكُوِيت"
+      "speechText": "بسكويت",
+      "sha256": "86e43ce7a813b1e29c75fe0774088e37799ec8f5533c545f902fe7eccf981c58",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "food.bread": {
       "file": "food.bread.mp3",
-      "speechText": "عِيش"
+      "speechText": "عيش",
+      "sha256": "0ab5202f1a99c474e0873170a16ff24875db1d76a9c8ca23e45407fec9238e46",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "food.butter": {
       "file": "food.butter.mp3",
-      "speechText": "زُبْدَة"
+      "speechText": "زبدة",
+      "sha256": "640d5a748f45d217d28a8ad4574be2b2ee4f944f939987027cfe9aeb236a29f8",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "food.cheese": {
       "file": "food.cheese.mp3",
-      "speechText": "جِبْنَة"
+      "speechText": "جبنة",
+      "sha256": "92eaff3ca17a05062ec8494b63465ce8f6d0a47b2b3177e2e5616867a0e7a477",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "food.chicken": {
       "file": "food.chicken.mp3",
-      "speechText": "فِرَاخ"
+      "speechText": "فراخ",
+      "sha256": "7e3e17624f841441818f9e6b8a7b0b5d4a058c65460ee6a57350d5958291c56d",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "food.coffee": {
       "file": "food.coffee.mp3",
-      "speechText": "قَهْوَة"
+      "speechText": "قهوة",
+      "sha256": "39f81412fe7115517132c607ca8041d585f79be699822136bb48b6263c903d48",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "food.eggs": {
       "file": "food.eggs.mp3",
-      "speechText": "بِيض"
+      "speechText": "بيض",
+      "sha256": "413d45390b3c8bc57cb94a5cd917f55c08039e9242d65cb0c2d2a4650d6bc5b9",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "food.fish": {
       "file": "food.fish.mp3",
-      "speechText": "سَمَك"
+      "speechText": "سمك",
+      "sha256": "127e98a9049bbc6ab3d7e1c8d704f7fc34a37bed6ccf92d29a690e43a33d6088",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "food.honey": {
       "file": "food.honey.mp3",
-      "speechText": "عَسَل"
+      "speechText": "عسل",
+      "sha256": "b4b29c29828e400386c90f8e52e031a987975ad7051c9435de944c55be4829f1",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "food.juice": {
       "file": "food.juice.mp3",
-      "speechText": "عَصِير"
+      "speechText": "عصير",
+      "sha256": "c3ed09cd9efcefdb97fc1b0b5bc105a8c42f4b2f2d257107d85333cfb8829d16",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "food.meat": {
       "file": "food.meat.mp3",
-      "speechText": "لَحْم"
+      "speechText": "لحم",
+      "sha256": "a081b48b7dd9b6172ee78bfa85a9e95d8b632dc999caef64d96668853da864b0",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "food.milk": {
       "file": "food.milk.mp3",
-      "speechText": "لَبَن"
+      "speechText": "لبن",
+      "sha256": "7b6f50e3f2b3d6c9724a2aa64471a37c86fefb1c52d3d78397e2a8d2d657bef2",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "food.oil": {
       "file": "food.oil.mp3",
-      "speechText": "زِيت"
+      "speechText": "زيت",
+      "sha256": "354da3bec938f4a816c45ff32fbabc5457b3c26a2a8ff62d5cf2f9f6b02a9b3f",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "food.olives": {
       "file": "food.olives.mp3",
-      "speechText": "زِيتُون"
+      "speechText": "زيتون",
+      "sha256": "65315a921c4b6f57ea37d4ff66fe8a8b005e422194bc4849c2f03a0597d85166",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "food.pasta": {
       "file": "food.pasta.mp3",
-      "speechText": "مَكَرُونَة"
+      "speechText": "مكرونة",
+      "sha256": "1b63769b92e55f9f0806dcde7fb09657a6623ff9faf39d5c4df118602eba0e97",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "food.rice": {
       "file": "food.rice.mp3",
-      "speechText": "رُزّ"
+      "speechText": "رز",
+      "sha256": "5f5d25b92a48a41d7d51517fa145650d4878a35ac8bc77119727f8e01610f160",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.024106666666666
     },
     "food.salt": {
       "file": "food.salt.mp3",
-      "speechText": "مِلْح"
+      "speechText": "ملح",
+      "sha256": "679933ea828532bec3fc86683a8a348ab9e9687cccd3c4e0b13936ccec2d16bd",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "food.soup": {
       "file": "food.soup.mp3",
-      "speechText": "شُورْبَة"
+      "speechText": "شوربة",
+      "sha256": "6bc7f59944f64ff95d6c0282efc0d96a26969aa7507c78587ad4b8dbb1a39603",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "food.sugar": {
       "file": "food.sugar.mp3",
-      "speechText": "سُكَّر"
+      "speechText": "سكر",
+      "sha256": "6bb08fbde226de4fd9652b9f1241e600008e75025993d68f2e1376ec3228e7d4",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "food.tea": {
       "file": "food.tea.mp3",
-      "speechText": "شَاي"
+      "speechText": "شاي",
+      "sha256": "22c0a222c0747962c7cb0d46c89d4079d55d2cc74ceb168a38ecc2dc52891b52",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "food.water": {
       "file": "food.water.mp3",
-      "speechText": "مَيَّة"
+      "speechText": "مية",
+      "sha256": "84751c3cbb88e701fdc4263c43ae80be2ff5c83d1c1c091636210dccb0b77405",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "food.yogurt": {
       "file": "food.yogurt.mp3",
-      "speechText": "زَبَادِي"
+      "speechText": "زبادي",
+      "sha256": "17ffadddeabb8b067c97a7068d230ce953d0ed2a1f211ae00651486979d32c50",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "fruit.apple": {
       "file": "fruit.apple.mp3",
-      "speechText": "تُفَّاح"
+      "speechText": "تفاح",
+      "sha256": "ff82e612b4c74d7e4bfa7d87506f51ca23fd21e9fa8a2e021fd4dcdcee093a27",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "fruit.apricot": {
       "file": "fruit.apricot.mp3",
-      "speechText": "مِشْمِش"
+      "speechText": "مشمش",
+      "sha256": "3cc504c3189838fae46b06d8852b500e3fdaa6b4ec89bf445334968b3c569544",
+      "synthesisAttempts": 2,
+      "fixedDurationSeconds": 9.738773333333333
     },
     "fruit.avocado": {
       "file": "fruit.avocado.mp3",
-      "speechText": "أَفُوكَادُو"
+      "speechText": "أفوكادو",
+      "sha256": "141c551a64c4c57f24662d8a96d2c50b690f1f32fe12cae1402954e1e3244cf1",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "fruit.banana": {
       "file": "fruit.banana.mp3",
-      "speechText": "مُوز"
+      "speechText": "موز",
+      "sha256": "b1833838cc97d73bd07695bb47553324e407070c3048ef3ebfb82079b0c62b19",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "fruit.berries": {
       "file": "fruit.berries.mp3",
-      "speechText": "تُوت"
+      "speechText": "توت",
+      "sha256": "3114ff35758df311cf068eae6a92e1c4770eb950d0f0c84b811d791960333d57",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "fruit.cherry": {
       "file": "fruit.cherry.mp3",
-      "speechText": "كَرَز"
+      "speechText": "كرز",
+      "sha256": "02874ce77b5ec705eab1d8fc9c3b4c41733b685c49d259b18beac919d69694bf",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "fruit.coconut": {
       "file": "fruit.coconut.mp3",
-      "speechText": "جُوز الهِنْد"
+      "speechText": "جوز الهند",
+      "sha256": "a3d7c015583100e6b0381ce2d6b047d2e4e0ff555fc1f3c56c13cafc7adaa9fa",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "fruit.dates": {
       "file": "fruit.dates.mp3",
-      "speechText": "تَمْر"
+      "speechText": "تمر",
+      "sha256": "341e9073e4a741408fcd27f44f544bca25819ec5fb3330a8aca422e5ad2087d8",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "fruit.figs": {
       "file": "fruit.figs.mp3",
-      "speechText": "تِين"
+      "speechText": "تين",
+      "sha256": "0a1de8e30ee5892a9ab3243b71681441949082a67b4ce37c16104efaf7eb0d0e",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "fruit.grapes": {
       "file": "fruit.grapes.mp3",
-      "speechText": "عِنَب"
+      "speechText": "عنب",
+      "sha256": "b62bcbaf7afd18ef18adc5d5c445c230141cc17482fd34fead621f06c7a6e3c9",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "fruit.kiwi": {
       "file": "fruit.kiwi.mp3",
-      "speechText": "كِيوِي"
+      "speechText": "كيوي",
+      "sha256": "bc1ded8eae8401196e2cc9e9dec1a2b179a0c46571a383e90ca98985ba098bfa",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "fruit.mandarin": {
       "file": "fruit.mandarin.mp3",
-      "speechText": "يُوسَفِي"
+      "speechText": "يوسفي",
+      "sha256": "b86f53cfdb30d9c7b4f857fe6a05a59c16b99ebd54184de6c91ea974f5b733bc",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "fruit.mango": {
       "file": "fruit.mango.mp3",
-      "speechText": "مَانْجُو"
+      "speechText": "مانجو",
+      "sha256": "3f18d79106dd2f3bbfb56165ca3de78bcd10c404409a0536787d0e6c56ffc891",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "fruit.melon": {
       "file": "fruit.melon.mp3",
-      "speechText": "شَمَّام"
+      "speechText": "شمام",
+      "sha256": "2ee66d81dd440907b9ed7e784fe64c01969c83717f8f3fe28db88810f237d545",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "fruit.orange": {
       "file": "fruit.orange.mp3",
-      "speechText": "بُرْتُقَان"
+      "speechText": "برتقان",
+      "sha256": "587d13ce680bb7fdfff2d5a46a8eb0a7bf623f811bb102a8940764561ae1e532",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "fruit.peach": {
       "file": "fruit.peach.mp3",
-      "speechText": "خُوخ"
+      "speechText": "خوخ",
+      "sha256": "bb5918cfd915828d452c32c9de5467447632327e29ecc9d2716a704c990c8893",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "fruit.pear": {
       "file": "fruit.pear.mp3",
-      "speechText": "كُمِّتْرَى"
+      "speechText": "كمثرى",
+      "sha256": "61f8819a1a7f89eaf21a56a7d6ad79bf7963895715f03f29a1b0176fa8b379f2",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "fruit.pineapple": {
       "file": "fruit.pineapple.mp3",
-      "speechText": "أَنَانَاس"
+      "speechText": "أناناس",
+      "sha256": "01e67e3672cc53b6cbd31d9574dc0c4d4ec953805a36578ac42c0ae8121d360d",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "fruit.pomegranate": {
       "file": "fruit.pomegranate.mp3",
-      "speechText": "رُمَّان"
+      "speechText": "رمان",
+      "sha256": "9ae1a5726fcc34a37bcb8d5f8e16354b789c8a1e005a82d303b11c9cf4ac91f8",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "fruit.strawberry": {
       "file": "fruit.strawberry.mp3",
-      "speechText": "فَرَاوْلَة"
+      "speechText": "فراولة",
+      "sha256": "b7f21c76102b676866813d276c5b92bfa2af3f4664075c7451996cbfe29af5b9",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "fruit.watermelon": {
       "file": "fruit.watermelon.mp3",
-      "speechText": "بَطِّيخ"
+      "speechText": "بطيخ",
+      "sha256": "dc690227596c1a8fcbc09839c78f47a422f755a61b1dc3fefccb5ba73d5bd2fc",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "greeting.bless": {
       "file": "greeting.bless.mp3",
-      "speechText": "رَبِّنَا يبَارِك فِيك"
+      "speechText": "ربنا يبارك فيك",
+      "sha256": "9a2eb4195122ac1d34ceb116815144f2033fc74c00c81a2e1daaf55a343fe101",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "greeting.brighten": {
       "file": "greeting.brighten.mp3",
-      "speechText": "نَوَّرْت"
+      "speechText": "نورت",
+      "sha256": "b204e4ac3c8aca6317e17ff2399cccf6a1a0ab5448f4f01c95920c159b861c13",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "greeting.fine": {
       "file": "greeting.fine.mp3",
-      "speechText": "الحَمْدُ لِلَّه"
+      "speechText": "الحمد لله",
+      "sha256": "a57b26cd450f148de2f5804e1c48cbee61bc457b713059354c46948d6c8d1c8d",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "greeting.good_evening": {
       "file": "greeting.good_evening.mp3",
-      "speechText": "مَسَا الخِير"
+      "speechText": "مسا الخير",
+      "sha256": "575bdfb629c386a873f60c4a8533de854a0baee9e7f845a52267eb76b1db8731",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "greeting.good_health": {
       "file": "greeting.good_health.mp3",
-      "speechText": "تِسْلَم"
+      "speechText": "تسلم",
+      "sha256": "bb6a6a278cf7e5e30656e40927cdeb22c5f5b1459d671ad75e99f1fd012ba67d",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "greeting.good_morning": {
       "file": "greeting.good_morning.mp3",
-      "speechText": "صَبَاح الخِير"
+      "speechText": "صباح الخير",
+      "sha256": "8be0bc7650614c8156dd9619b8216d6521dbb366090146e00f51e313a0af5adb",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "greeting.goodbye": {
       "file": "greeting.goodbye.mp3",
-      "speechText": "مَعَ السَّلَامَة"
+      "speechText": "مع السلامة",
+      "sha256": "25d5bd2b8c770b5ddce409ecd13223c05c82d858d8533e0d6dbfcfc774bf615f",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "greeting.hello": {
       "file": "greeting.hello.mp3",
-      "speechText": "أَهْلًا"
+      "speechText": "أهلا",
+      "sha256": "6e5a290bde47c8e6323d79d9c1f223c68f1e5dd9015724ef86170c9dc00406f6",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "greeting.how_are_you": {
       "file": "greeting.how_are_you.mp3",
-      "speechText": "أَخْبَارَك إِيه؟"
+      "speechText": "أخبارك إيه؟",
+      "sha256": "c96ee3b972217c197ea5ad6a98efa69be984be67ce3f1ebe14688dfbfccc40c2",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "greeting.reply": {
       "file": "greeting.reply.mp3",
-      "speechText": "وَعَلَيْكُمُ السَّلَام"
+      "speechText": "وعليكم السلام",
+      "sha256": "53e9a52dace3e6f7b5e1d157a849a002772ffc874e9e6c6a4721fa5974cbb3d8",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "greeting.safe": {
       "file": "greeting.safe.mp3",
-      "speechText": "فِي أَمَانِ اللَّه"
+      "speechText": "في أمان الله",
+      "sha256": "d9cf510c587804606044d7ab09e44817a52c773cb9964d4f43e41f413f446cee",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "greeting.salam": {
       "file": "greeting.salam.mp3",
-      "speechText": "السَّلَامُ عَلَيْكُم"
+      "speechText": "السلام عليكم",
+      "sha256": "df5d05b8deddaa18bd55d7162a719aa9abdfeb2731dd8fac3e5be13a2f99bed9",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "greeting.thanks": {
       "file": "greeting.thanks.mp3",
-      "speechText": "شُكْرًا لِيك"
+      "speechText": "شكرا ليك",
+      "sha256": "fd527d46a1c1965bed8e417b15bec5ca93363164b52e161eba908f6854b3547e",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "greeting.welcome": {
       "file": "greeting.welcome.mp3",
-      "speechText": "أَهْلًا وَسَهْلًا"
+      "speechText": "أهلا وسهلا",
+      "sha256": "f5a570c780bc73e691045cb7d4b42a730c3ed34ecfeca145179e60a9b57a04e7",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "home.air_conditioner": {
       "file": "home.air_conditioner.mp3",
-      "speechText": "مُكَيِّف"
+      "speechText": "مكيف",
+      "sha256": "15a757e95cda852133073664b6d8f21fc5a55558d43e1483694da96ab4e7c32c",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "home.bed": {
       "file": "home.bed.mp3",
-      "speechText": "سَرِير"
+      "speechText": "سرير",
+      "sha256": "8ae547e8879c93f5d035740338c4c9449aa4448c3c37861ff2bc5fbf28267f6c",
+      "synthesisAttempts": 2,
+      "fixedDurationSeconds": 9.738773333333333
     },
     "home.blanket": {
       "file": "home.blanket.mp3",
-      "speechText": "بَطَّانِيَّة"
+      "speechText": "بطانية",
+      "sha256": "430f7f6f8cff33f54bc91f3d10f6e9415aff345764a99ff139b79ae592100330",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "home.carpet": {
       "file": "home.carpet.mp3",
-      "speechText": "سِجَّادَة"
+      "speechText": "سجادة",
+      "sha256": "ce9d67a6e7d92b5aa89bdf2859ba84978a65238b8812db3fcabfb5465f2226d9",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "home.chair": {
       "file": "home.chair.mp3",
-      "speechText": "كُرْسِي"
+      "speechText": "كرسي",
+      "sha256": "042520742e9b6d5ff182abbaa8ebe498ab6e2b8784c9517643d6ac32500dda18",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "home.clock": {
       "file": "home.clock.mp3",
-      "speechText": "سَاعَة"
+      "speechText": "ساعة",
+      "sha256": "2a1619bf280dad1b01eea0924c366191e4bcf51c1840e402de81f195008f4ac1",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "home.cup": {
       "file": "home.cup.mp3",
-      "speechText": "كُوبَّايَة"
+      "speechText": "كوباية",
+      "sha256": "01a195bb1d444d02e75c13a6c82bb55ad3e25085971989a4609496a831999237",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "home.door": {
       "file": "home.door.mp3",
-      "speechText": "بَاب"
+      "speechText": "باب",
+      "sha256": "1cfd4db040ba7362606ac422d0288f4d5b9f15cd251d90ccefc3169cce56ade9",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "home.fan": {
       "file": "home.fan.mp3",
-      "speechText": "مَرْوَحَة"
+      "speechText": "مروحة",
+      "sha256": "50ece19a70e55381b10bbd2ed9f64fda4c76234ac3dfa0a7b1a878267d32dcf0",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "home.fork": {
       "file": "home.fork.mp3",
-      "speechText": "شُوكَة"
+      "speechText": "شوكة",
+      "sha256": "ce2f7f0bef15f3a6cf25ee66fe502d59ed0a04dc3ce4f6d60d0a33451b5a79e7",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "home.fridge": {
       "file": "home.fridge.mp3",
-      "speechText": "ثَلَّاجَة"
+      "speechText": "ثلاجة",
+      "sha256": "2d5fb2e308062aab6728b39c72046890aeeb3ed64622d606441ba9c586262bff",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "home.key": {
       "file": "home.key.mp3",
-      "speechText": "مِفْتَاح"
+      "speechText": "مفتاح",
+      "sha256": "ae7f5cb34244ba64f24dfb4cc519fb3d44e3cf76998050acbc74edcb7fa55339",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "home.kitchen": {
       "file": "home.kitchen.mp3",
-      "speechText": "مَطْبَخ"
+      "speechText": "مطبخ",
+      "sha256": "67781383b48ba174c622fd2882f28adaf947ed8c3e96f33d339f2496c1564d8e",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "home.knife": {
       "file": "home.knife.mp3",
-      "speechText": "سِكِّينَة"
+      "speechText": "سكينة",
+      "sha256": "51826d5fbe2dcef8b8db3e7bfa6b9f947729fefb6da6ec142a51d4fcc2ec1719",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "home.oven": {
       "file": "home.oven.mp3",
-      "speechText": "فُرْن"
+      "speechText": "فرن",
+      "sha256": "049acd288b4fad52b880f62813435062c992cd406dc2a46fad41704ecf3021b9",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "home.pillow": {
       "file": "home.pillow.mp3",
-      "speechText": "مَخَدَّة"
+      "speechText": "مخدة",
+      "sha256": "54ae324f4773806e19db8c41ea606540c66607337a8be84ec65672260171941f",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "home.pot": {
       "file": "home.pot.mp3",
-      "speechText": "حَلَّة"
+      "speechText": "حلة",
+      "sha256": "021c34d5a721110f7d54ee5875140a3f4d2a17e12c9b82c90bb4cfcf926cf55c",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "home.sofa": {
       "file": "home.sofa.mp3",
-      "speechText": "كَنَبَة"
+      "speechText": "كنبة",
+      "sha256": "a594d49498a93b839a79d56812a9b80b248ae9bd291be90477c6d339c92d040c",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "home.spoon": {
       "file": "home.spoon.mp3",
-      "speechText": "مَعْلَقَة"
+      "speechText": "معلقة",
+      "sha256": "b3db8982d623e2084335ddbf5c3f45e46c0205072c2ca796f2eb136c6c1c956b",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "home.stove": {
       "file": "home.stove.mp3",
-      "speechText": "بُوتَاجَاز"
+      "speechText": "بوتاجاز",
+      "sha256": "d8a746ac864800897ec31062d64e56bee2adcc62582eed17fd2d0ab4c367e0e9",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "home.table": {
       "file": "home.table.mp3",
-      "speechText": "طَاوِلَة"
+      "speechText": "طاولة",
+      "sha256": "abcfc41d5c008b1151713a2cf86eff7f40738aa601d279ff00bcc2ade17c584e",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "home.teapot": {
       "file": "home.teapot.mp3",
-      "speechText": "بَرَّاد"
+      "speechText": "براد",
+      "sha256": "caf664af300e56404c297d889714dd861463e4de122bef3208e5d52ddefe6028",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "home.television": {
       "file": "home.television.mp3",
-      "speechText": "تِلِفِزْيُون"
+      "speechText": "تلفزيون",
+      "sha256": "921a6bfa10add057ca9434e92eac7a91a935033d1a3e180ea523b18ccd12acf2",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "home.tray": {
       "file": "home.tray.mp3",
-      "speechText": "صِينِيَّة"
+      "speechText": "صينية",
+      "sha256": "7eaf2a215b813132992295b533d065ce0eebad4cb6caacda4d2c49cf58f6fb89",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "home.wardrobe": {
       "file": "home.wardrobe.mp3",
-      "speechText": "دُولَاب"
+      "speechText": "دولاب",
+      "sha256": "becdbdb7971a559aa72d8bcbcb3d14b7bb90ca645eed76242e20f85d7788e9e9",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "home.washing_machine": {
       "file": "home.washing_machine.mp3",
-      "speechText": "غَسَّالَة"
+      "speechText": "غسالة",
+      "sha256": "79239943f66bb57809abf09120c614b65f676814d8278d9bcda8ade1ae0b72a7",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "home.water_bottle": {
       "file": "home.water_bottle.mp3",
-      "speechText": "إِزَازَة مَيَّة"
+      "speechText": "إزازة مية",
+      "sha256": "fe4b19f205200d5e90f4934956b8442918847a06b66eaddafe0c9f9a49096316",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "home.window": {
       "file": "home.window.mp3",
-      "speechText": "شُبَّاك"
+      "speechText": "شباك",
+      "sha256": "641550edd6d30234db01febc466bfeba53ea638737908a8e3ec490fea89f1cd8",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "request.adjust_pillow": {
       "file": "request.adjust_pillow.mp3",
-      "speechText": "ظَبَّطْلِي المَخَدَّة"
+      "speechText": "ظبطلي المخدة",
+      "sha256": "88faf8ead5ac18acb19ca7444b95c7a9675f9394e50466ff2bd2228fde92ec63",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "request.cold": {
       "file": "request.cold.mp3",
-      "speechText": "أَنَا سَقْعَان"
+      "speechText": "أنا سقعان",
+      "sha256": "5e149b4624fe044f5b5d6b2a89ba42d4d5489d982a7c9ab19703aefd5794edc2",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "request.headache": {
       "file": "request.headache.mp3",
-      "speechText": "دِمَاغِي بِتِوجَعْنِي"
+      "speechText": "دماغي بتوجعني",
+      "sha256": "8b7368d25a033a52a35477539377cd9a86bcdd0fda37d11075447dca39277e9b",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "request.medicine": {
       "file": "request.medicine.mp3",
-      "speechText": "مُمْكِن دَوَايَا"
+      "speechText": "ممكن دوايا",
+      "sha256": "04d51bcc7c8219e555a8e30a5a1483c60232fb5c81229a6cb4dc71932bb7cf37",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "request.rest": {
       "file": "request.rest.mp3",
-      "speechText": "مُمْكِن أَرْتَاح شْوَيَّة"
+      "speechText": "ممكن أرتاح شوية",
+      "sha256": "f931ff8fac6293c995be16449b1ecd787d839b9c2c2f12342b9cb50853b2cbc8",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "request.tea": {
       "file": "request.tea.mp3",
-      "speechText": "مُمْكِن شَاي"
+      "speechText": "ممكن شاي",
+      "sha256": "e67e4e354f0f695dc40b0fdf907ee1234a25063d107070fd60ee166e62d9367a",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "request.toilet": {
       "file": "request.toilet.mp3",
-      "speechText": "مُمْكِن أَدْخُل الحَمَّام"
+      "speechText": "ممكن أدخل الحمام",
+      "sha256": "8123b6d2bb9b13ce2437638eb0a332483c50eb2ce546667d39803e5669f4fc81",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "request.water": {
       "file": "request.water.mp3",
-      "speechText": "عَايِز مَيَّة"
+      "speechText": "عايز مية",
+      "sha256": "ce50e709ce490f22f20c64470ab490cc5c7e615aaada304e798e1619e69d16c9",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "routine.ablution": {
       "file": "routine.ablution.mp3",
-      "speechText": "وُضُوء"
+      "speechText": "وضوء",
+      "sha256": "f8f04468937486d1a6a44d37522fb543e485b21224b207b480e29ed775d5c02e",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "routine.call_to_prayer": {
       "file": "routine.call_to_prayer.mp3",
-      "speechText": "أَذَان"
+      "speechText": "أذان",
+      "sha256": "39351320c87e09b4b7e66a54d7ef8698657db22ff9401bfbf633e84d3f223a6f",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "routine.evening_coffee": {
       "file": "routine.evening_coffee.mp3",
-      "speechText": "قَهْوَة المَسَا"
+      "speechText": "قهوة المسا",
+      "sha256": "2ee4249732353a379d38c9a7aa8e8f453954c7bb9eab802f7280871460e744fe",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "routine.prayer": {
       "file": "routine.prayer.mp3",
-      "speechText": "صَلَاة"
+      "speechText": "صلاة",
+      "sha256": "5a04dd382ceb5b8dfdf1b4e366fe5bb22be1d63b1d3ffbe76bbc177920841d55",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "routine.prayer_beads": {
       "file": "routine.prayer_beads.mp3",
-      "speechText": "مِسْبَحَة"
+      "speechText": "مسبحة",
+      "sha256": "48358a5b8fe7143722290a55c8a18b2fecf772c4c98b20080f6ba55e55f250ec",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "routine.prayer_rug": {
       "file": "routine.prayer_rug.mp3",
-      "speechText": "سَجَّادَة صَلَاة"
+      "speechText": "سجادة صلاة",
+      "sha256": "083af32b139a547bb71b77a03d98e46f1c4bdb88fce7e2faf45ec0ead6d273a8",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "routine.quran": {
       "file": "routine.quran.mp3",
-      "speechText": "مُصْحَف"
+      "speechText": "مصحف",
+      "sha256": "e364458aac3190e2e630b49bf14f9f3e7e722f3227c4598d49f638fd0783391d",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "routine.rest": {
       "file": "routine.rest.mp3",
-      "speechText": "رَاحَة"
+      "speechText": "راحة",
+      "sha256": "7330cc7b301b75ee93bc8714474377999609dce14c82451fae1e01e29c27a403",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "routine.sleep": {
       "file": "routine.sleep.mp3",
-      "speechText": "نُوم"
+      "speechText": "نوم",
+      "sha256": "09f607f7d5c3e95ee7e2cc30f8dd3f3824fbe549767c540db1f7dadaae8fb196",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "routine.walk": {
       "file": "routine.walk.mp3",
-      "speechText": "مَشْي"
+      "speechText": "مشي",
+      "sha256": "b04421872e20a9fa48463391db503b4f228496b075f2683fec2a6d59a86cfedf",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "transport.airplane": {
       "file": "transport.airplane.mp3",
-      "speechText": "طَيَّارَة"
+      "speechText": "طيارة",
+      "sha256": "29c362cede8c2eabafbebcc1ed3cd200dba2634c46a7f0bacd7b32d71acdaa90",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "transport.bicycle": {
       "file": "transport.bicycle.mp3",
-      "speechText": "عَجَلَة"
+      "speechText": "عجلة",
+      "sha256": "5554544ed27326315de6f7e191729506c67f1f836a3447e1a5247f722857dbcb",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "transport.boat": {
       "file": "transport.boat.mp3",
-      "speechText": "مَرْكِب"
+      "speechText": "مركب",
+      "sha256": "e335d1ad5bd7e6a7f8e11f9639679d8b8ef759d80215a561a2d704c1b523033a",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "transport.bus": {
       "file": "transport.bus.mp3",
-      "speechText": "أُتُوبِيس"
+      "speechText": "أتوبيس",
+      "sha256": "b11488b6f240c43d42f661b6a8e092cd453d013296a16cb10108f6388d31dd27",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "transport.car": {
       "file": "transport.car.mp3",
-      "speechText": "عَرَبِيَّة"
+      "speechText": "عربية",
+      "sha256": "61e884dba2f03f6e078f49aedd56a5e05f7e8c99dc1618f9a4d53bd4a8a740cf",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "transport.helicopter": {
       "file": "transport.helicopter.mp3",
-      "speechText": "هِلِيكُوبْتَر"
+      "speechText": "هليكوبتر",
+      "sha256": "a6150cfb9592704f2e7fc0ab2afb5dd49f10f8a5833c3c30c409f75645350eb7",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "transport.minibus": {
       "file": "transport.minibus.mp3",
-      "speechText": "مِيكْرُوبَاص"
+      "speechText": "ميكروباص",
+      "sha256": "c8e192736753ad3b7a5e2ad446c1b07c4256a9f7716da4ecf75cdec98383dd4f",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "transport.motorcycle": {
       "file": "transport.motorcycle.mp3",
-      "speechText": "مُوتُوسِيكِل"
+      "speechText": "موتوسيكل",
+      "sha256": "0ad98537f5ea6035e7b4072c46b8d2939ba80ef076ff57f69b0769b0b8d0abb9",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "transport.ship": {
       "file": "transport.ship.mp3",
-      "speechText": "مَرْكِب كِبِير"
+      "speechText": "مركب كبير",
+      "sha256": "033115b1d6857708b5a974e742f9fb8feaf1b8cb35609ba51ef0b4183a8f7cbb",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "transport.taxi": {
       "file": "transport.taxi.mp3",
-      "speechText": "تَاكْسِي"
+      "speechText": "تاكسي",
+      "sha256": "9f6162d3fcc4a818cd72f92f1caad456f95878f7841232774c768f056eaab213",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "transport.train": {
       "file": "transport.train.mp3",
-      "speechText": "قَطْر"
+      "speechText": "قطر",
+      "sha256": "0654b6309ead5f2dffcc1960c92c2cfc29834fc02ab2be8728b741cf562ce928",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "transport.truck": {
       "file": "transport.truck.mp3",
-      "speechText": "عَرَبِيَّة نَقْل"
+      "speechText": "عربية نقل",
+      "sha256": "ff9fbf3dd8e72600478e974a0e4c5f007a3c857d7a70333e837277b87bc54191",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "vegetable.broccoli": {
       "file": "vegetable.broccoli.mp3",
-      "speechText": "بُرُوكْلِي"
+      "speechText": "بروكلي",
+      "sha256": "42ed07e2e5edc8962840183bb6a5ebfa585e15307f6df4192a190fc5393c89d9",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "vegetable.carrot": {
       "file": "vegetable.carrot.mp3",
-      "speechText": "جَزَر"
+      "speechText": "جزر",
+      "sha256": "f3c6e41d5721ad5b783485c67e29cd1f1133cddf279cd585041b144c4bf6004f",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "vegetable.cauliflower": {
       "file": "vegetable.cauliflower.mp3",
-      "speechText": "قَرْنَبِيط"
+      "speechText": "قرنبيط",
+      "sha256": "f51d4671445b9057bfe6b0ba18d199ccc4d16488591b161f1ddb26eeae3a4dd4",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "vegetable.coriander": {
       "file": "vegetable.coriander.mp3",
-      "speechText": "كُزْبَرَة"
+      "speechText": "كزبرة",
+      "sha256": "f2e16eb89ceda38a3b8d6976924a8bb32be28488ce46e4717b7ab325a4f124ee",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "vegetable.corn": {
       "file": "vegetable.corn.mp3",
-      "speechText": "ذُرَّة"
+      "speechText": "ذرة",
+      "sha256": "1b2f69ec0957c10b95fee3f2bf54854e475a21d0d17942b5e0e6b5588919def2",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "vegetable.cucumber": {
       "file": "vegetable.cucumber.mp3",
-      "speechText": "خِيَار"
+      "speechText": "خيار",
+      "sha256": "ab6f1439d6b4c28b132f94006b35efea2062b08aa98fb93057941390f6a7b753",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "vegetable.eggplant": {
       "file": "vegetable.eggplant.mp3",
-      "speechText": "بِتِنْجَان"
+      "speechText": "بتنجان",
+      "sha256": "9150414fc76f9e17942d6771ee1c77c8be218b5ff728d1c2871cce13d18e9d8a",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "vegetable.garlic": {
       "file": "vegetable.garlic.mp3",
-      "speechText": "تُوم"
+      "speechText": "توم",
+      "sha256": "13d0da6d081b425535dcdb9c8547750383817cfd769a9855145c11ee06a689af",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "vegetable.green_beans": {
       "file": "vegetable.green_beans.mp3",
-      "speechText": "فَاصُولْيَا خَضْرَا"
+      "speechText": "فاصوليا خضرا",
+      "sha256": "f7fe63cce927eed7f482199bd8b321cbc4b4338bfa9bf341d747b5b65ac93687",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "vegetable.lemon": {
       "file": "vegetable.lemon.mp3",
-      "speechText": "لَمُون"
+      "speechText": "لمون",
+      "sha256": "959487561ed613841a65f43b1618db1ea79049b5b1d0dded5ff392b5efade985",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "vegetable.lettuce": {
       "file": "vegetable.lettuce.mp3",
-      "speechText": "خَسّ"
+      "speechText": "خس",
+      "sha256": "02b7ff58818641b89aa646748cd7d78030a54f9bff9b93b4f04cbb4efb46dd77",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.024106666666666
     },
     "vegetable.mint": {
       "file": "vegetable.mint.mp3",
-      "speechText": "نَعْنَاع"
+      "speechText": "نعناع",
+      "sha256": "99ccef0354c9aa92d3ca7ba6cc8b5d61cb0d4f15a4a4b56b23c12e4836877ad7",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "vegetable.onion": {
       "file": "vegetable.onion.mp3",
-      "speechText": "بَصَل"
+      "speechText": "بصل",
+      "sha256": "8227cb0c3ddf0f37509dfad4829b2d8409761885ebd10a6819b929b239fab826",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "vegetable.parsley": {
       "file": "vegetable.parsley.mp3",
-      "speechText": "بَقْدُونِس"
+      "speechText": "بقدونس",
+      "sha256": "ce1d4d9f70a731318a9afee5c2620851d09dce29ea1b55a5d87a6547947a1d87",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "vegetable.peas": {
       "file": "vegetable.peas.mp3",
-      "speechText": "بِسِلَّة"
+      "speechText": "بسلة",
+      "sha256": "9884d140a460fda83fd79dbbdd800d39d313704b92dbbc8d0f1472872a6a0aa8",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "vegetable.pepper": {
       "file": "vegetable.pepper.mp3",
-      "speechText": "فِلْفِل"
+      "speechText": "فلفل",
+      "sha256": "f608f9f9f9ade41b94a98a7152b6f79d8bb8f1b0077194a658f63fb5aa8ae598",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     },
     "vegetable.potato": {
       "file": "vegetable.potato.mp3",
-      "speechText": "بَطَاطِس"
+      "speechText": "بطاطس",
+      "sha256": "31828f67d3c34cd6c4cb301583be2f015046835c22e6e09ed3f6bb411ea4f7c6",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "vegetable.pumpkin": {
       "file": "vegetable.pumpkin.mp3",
-      "speechText": "قَرَع"
+      "speechText": "قرع",
+      "sha256": "bc1e7719dcd0d4b5044a7444c1f8ab85f2186838571e9b7351ae19d4b1ece872",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "vegetable.radish": {
       "file": "vegetable.radish.mp3",
-      "speechText": "فِجِل"
+      "speechText": "فجل",
+      "sha256": "97fc7a40d3440384ca206f4ca3fed3f4a990ee2819d68468447b665be8379534",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.130773333333334
     },
     "vegetable.spinach": {
       "file": "vegetable.spinach.mp3",
-      "speechText": "سَبَانِخ"
+      "speechText": "سبانخ",
+      "sha256": "3ca76328630f108c56f820b434762a7794b46c7d20185e3a1ce9af4a52d4750e",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "vegetable.tomato": {
       "file": "vegetable.tomato.mp3",
-      "speechText": "طَمَاطِم"
+      "speechText": "طماطم",
+      "sha256": "845580445761f6c6a45511bacea9f83f9e134bae13400a09f015c81addf9f22f",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": null
     },
     "vegetable.zucchini": {
       "file": "vegetable.zucchini.mp3",
-      "speechText": "كُوسَة"
+      "speechText": "كوسة",
+      "sha256": "3e2cc3eebfa47c28c2d5001bacb4a58f8f5ffe0ad3abdcc5666a777cfd0a1ebb",
+      "synthesisAttempts": 1,
+      "fixedDurationSeconds": 9.226773333333334
     }
   }
 }

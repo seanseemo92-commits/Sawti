@@ -21,7 +21,8 @@ class TransportCatalogTest {
             for (dialect in ArabicDialect.entries) {
                 val written = vehicle.forms.getValue(dialect)
                 assertTrue(written.displayText.isNotBlank())
-                assertTrue(requireNotNull(written.speechText).any { it in '\u064B'..'\u0652' })
+                assertEquals(written.displayText, written.speechText)
+                assertFalse(HabibiSpeechText.hasForbiddenMarksOrNumbers(requireNotNull(written.speechText)))
                 val speech = DialectSpeechCatalog.resolve(card, dialect)
                 val localized = DialectCatalog.localize(card, dialect)
                 assertEquals(written.displayText, localized.displayText)

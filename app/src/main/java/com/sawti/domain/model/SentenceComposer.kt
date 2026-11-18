@@ -11,6 +11,7 @@ data class SentencePiece(
     val semanticKey: String? = null,
     val neuralSpeechText: String? = null,
     val neuralDialect: ArabicDialect? = null,
+    val isCustom: Boolean = semanticKey == null,
 )
 
 object SentenceComposer {
@@ -25,8 +26,10 @@ object SentenceComposer {
         emoji = word.emoji,
         audioPath = word.audioPath,
         semanticKey = word.semanticKey,
-        neuralSpeechText = word.neuralDialect?.let { DialectSpeechCatalog.neuralTextFor(word, it) },
+        neuralSpeechText = word.neuralDialect?.let { DialectSpeechCatalog.habibiTextFor(word, it) },
         neuralDialect = word.neuralDialect,
+        isCustom = word.semanticKey == null || word.categoryId.startsWith("custom_") ||
+            word.customTextFields and (CardDetails.LABEL or CardDetails.SPEECH) != 0,
     )
 
     fun add(current: List<SentencePiece>, word: WordItem): List<SentencePiece> {
@@ -37,7 +40,7 @@ object SentenceComposer {
 
     /** Plain spoken pieces: stable indexes, no engine-specific word-range or time offsets. */
     data class SpokenPiece(val pieceIndex: Int, val sourceId: Long, val speech: String, val audioPath: String? = null, val semanticKey: String? = null, val sourceSpeech: String = speech, val neuralSpeechText: String? = null,
-        val neuralDialect: ArabicDialect? = null)
+        val neuralDialect: ArabicDialect? = null, val isCustom: Boolean = semanticKey == null)
 
     private fun spokenWord(piece: SentencePiece): String =
         piece.spokenText.trim().trimEnd('،', '.', '!', '؟')
@@ -48,7 +51,7 @@ object SentenceComposer {
             if (text.isBlank()) null
             else SpokenPiece(pieceIndex = index, sourceId = part.sourceId, speech = text, audioPath = part.audioPath, semanticKey = part.semanticKey, sourceSpeech = part.spokenText.trim(),
                 neuralSpeechText = part.neuralSpeechText,
-                neuralDialect = part.neuralDialect)
+                neuralDialect = part.neuralDialect, isCustom = part.isCustom)
         }
 
     /** A single TTS request preserves sentence context and natural engine pacing. */

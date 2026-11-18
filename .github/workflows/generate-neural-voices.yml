@@ -1,54 +1,44 @@
-name: Generate regional neural voices
+name: Generate Habibi-TTS voice packs
+
 on:
-  push:
-    branches: [main, fix/sawti-v161-neural-lexicon-20261115]
-    paths:
-      - 'app/src/main/java/com/sawti/domain/model/NeuralSpeechNormalizer.kt'
-      - 'app/src/main/java/com/sawti/domain/model/DialectSpeechCatalog.kt'
-      - 'app/src/main/java/com/sawti/domain/model/DialectCatalog.kt'
-      - 'app/src/main/java/com/sawti/domain/model/DialectSpeechRevisions.kt'
-      - 'app/src/main/java/com/sawti/domain/model/NeuralLexicon161.kt'
-      - 'app/src/main/java/com/sawti/domain/model/GreetingsCatalog.kt'
-      - 'app/src/main/java/com/sawti/domain/model/TransportCatalog.kt'
-      - 'app/src/main/java/com/sawti/data/db/WordSeed.kt'
-      - 'app/build.gradle.kts'
-      - 'app/src/main/java/com/sawti/domain/model/RegionalDishesCatalog.kt'
-      - 'scripts/generate_neural_voices.py'
-      - '.github/workflows/generate-neural-voices.yml'
   workflow_dispatch:
     inputs:
-      dialects:
-        description: 'LIBYAN, ALL, or a comma-separated list of dialects'
+      dialect:
+        description: Generate ALL or one Sawti dialect
         required: true
-        default: ALL
-        type: string
-      voice_gender:
-        description: 'Voice gender for selected dialects'
-        required: true
-        default: female
+        default: LIBYAN
         type: choice
-        options: [female, male]
-      commit_to_branch:
-        description: 'Commit audio packs to the selected branch'
+        options: [ALL, LIBYAN, TUNISIAN, ALGERIAN, MOROCCAN, EGYPTIAN, SYRIAN, IRAQI, SAUDI, STANDARD]
+      max_new:
+        description: 'Maximum new clips per dialect this run; 0 = all (time budget still applies)'
         required: true
-        default: true
+        type: number
+        default: 16
+      libyan_listening_passed:
+        description: The Libyan pilot passed listening with the configured Libyan reference
         type: boolean
+        default: false
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: neural-voice-pack-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+  group: sawti-habibi-voice-pack-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   generate:
-    runs-on: ubuntu-latest
-    timeout-minutes: 120
+    if: ${{ github.ref_type == 'branch' && ((inputs.dialect != 'LIBYAN' && inputs.dialect != 'ALL') || inputs.libyan_listening_passed) }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    env:
+      HF_HUB_DISABLE_XET: '1'
+      OMP_NUM_THREADS: '4'
+      MKL_NUM_THREADS: '4'
     steps:
       - uses: actions/checkout@v4
         with:
-          persist-credentials: true
+          fetch-depth: 0
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -56,34 +46,53 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-      - name: Export exact Kotlin catalog speech forms
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: scripts/requirements-habibi.txt
+      - name: Cache downloaded model and vocoder
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/huggingface
+            ~/.cache/cached_path
+          key: habibi-unified-v1-${{ runner.os }}-${{ hashFiles('scripts/requirements-habibi.txt') }}
+      - name: Install CPU inference dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          python -m pip install --upgrade pip
+          python -m pip install torch==2.8.0 torchaudio==2.8.0 --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -r scripts/requirements-habibi.txt
+          python -m pip check
+      - name: Export and test the exact clean Kotlin speech corpus
         run: |
           chmod +x gradlew
-          ./gradlew --no-daemon :app:testDebugUnitTest --tests 'com.sawti.domain.model.ExportSpeechCatalogTest'
-          test -s app/build/speech_catalog.json
-      - name: Install Edge TTS
-        run: python -m pip install 'edge-tts>=6.1,<9'
-      - name: Generate selected dialect pack
+          ./gradlew --no-daemon :app:testDebugUnitTest --tests 'com.sawti.domain.model.ExportSpeechCatalogTest' --tests 'com.sawti.domain.model.HabibiSpeechTextTest'
+          python -m unittest discover -s scripts -p 'test_habibi*.py'
+      - name: Synthesize a staged CPU batch
+        id: synthesize
+        timeout-minutes: 305
         env:
-          DIALECTS: ${{ inputs.dialects || 'ALL' }}
-          GENDER: ${{ inputs.voice_gender || 'female' }}
+          DIALECT: ${{ inputs.dialect }}
+          MAX_NEW: ${{ inputs.max_new }}
         run: |
-          python scripts/generate_neural_voices.py --dialects "$DIALECTS" --gender "$GENDER" --force --rate=-18%
-      - name: Upload voice pack
+          python scripts/generate_habibi_tts.py --dialect "$DIALECT" --device cpu \
+            --output build/habibi-batch --max-new "$MAX_NEW" --max-seconds 17400
+      - name: Validate completed clips without replacing app assets
+        id: verify_batch
+        if: ${{ always() && steps.synthesize.outcome != 'skipped' }}
+        env:
+          DIALECT: ${{ inputs.dialect }}
+        run: |
+          if [ ! -d build/habibi-batch ]; then exit 0; fi
+          python scripts/verify_habibi_packs.py --root build/habibi-batch \
+            --dialect "$DIALECT" --allow-partial --verify-codec
+          git diff --exit-code -- app/src/main/assets/neural_tts
+      - name: Preserve outputs for review
+        if: ${{ always() && steps.verify_batch.outcome == 'success' }}
         uses: actions/upload-artifact@v4
         with:
-          name: sawti-neural-voices-${{ github.run_id }}
-          path: app/src/main/assets/neural_tts/
-          if-no-files-found: error
+          name: habibi-${{ inputs.dialect }}-${{ github.run_id }}
+          path: build/habibi-batch/
+          if-no-files-found: warn
           retention-days: 7
-      - name: Commit generated audio to this branch
-        if: ${{ (github.event_name == 'push' || inputs.commit_to_branch) && github.ref_type == 'branch' }}
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add app/src/main/assets/neural_tts/
-          if git diff --cached --quiet; then exit 0; fi
-          git commit -m 'feat(audio): regenerate all nine v1.6.1 neural voice packs'
-          git pull --rebase origin "${GITHUB_REF_NAME}"
-          git push origin HEAD:"${GITHUB_REF_NAME}"

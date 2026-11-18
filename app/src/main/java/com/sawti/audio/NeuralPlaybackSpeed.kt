@@ -1,9 +1,8 @@
 package com.sawti.audio
 
 /**
- * Clips are synthesized at -18% by the neural service itself.
- * Normal playback must not stretch or distort this recording.
- * Slow mode is an explicit accessibility preference.
+ * Habibi MP3s are synthesized at 0.75 (short words) or 0.88 (sentences).
+ * Normal playback is unchanged; optional accessibility slow mode is independent.
  */
 object NeuralPlaybackSpeed {
     const val NORMAL = 1.0f

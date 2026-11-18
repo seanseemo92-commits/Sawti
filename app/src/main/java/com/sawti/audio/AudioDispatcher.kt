@@ -1,5 +1,7 @@
 package com.sawti.audio
 
+import android.util.Log
+import com.sawti.domain.model.CardDetails
 import com.sawti.domain.model.DialectSpeechCatalog
 import com.sawti.domain.model.PhonemicCue
 import com.sawti.domain.model.SentenceComposer
@@ -17,11 +19,18 @@ data class PlaybackVisual(
     val isSpeaking: Boolean = false,
 )
 
-/** Priority: caregiver recording -> keyed neural clip -> dialect-aware Android TTS. */
+/**
+ * Bundled cards: caregiver recording -> verified local Habibi MP3 -> STOP.
+ * Custom cards: caregiver recording -> Android SpeechManager.
+ * Dynamic questions/hints: Android SpeechManager (not bundled cards).
+ *
+ * A missing/corrupt Habibi clip NEVER invokes Android TTS, Microsoft Edge
+ * or a generated fallback, including during sentence-strip playback.
+ */
 class AudioDispatcher(
     private val speech: SpeechManager,
     private val player: AudioPlayer,
-    private val neural: NeuralAudioResolver? = null,
+    private val habibi: HabibiAudioResolver? = null,
 ) {
     private val _playback = MutableStateFlow(PlaybackVisual())
     val playback: StateFlow<PlaybackVisual> = _playback.asStateFlow()
@@ -33,21 +42,19 @@ class AudioDispatcher(
         if (quranStopper === stopper) quranStopper = null
     }
 
-    private fun playNeural(key: String?, text: String, done: () -> Unit,
-        canceled: () -> Unit, failed: () -> Unit): Boolean {
-        val resolver = neural ?: return false
+    private fun playHabibi(
+        key: String?,
+        text: String?,
+        done: () -> Unit,
+        canceled: () -> Unit,
+        failed: () -> Unit,
+    ): Boolean {
+        val resolver = habibi ?: return false
+        val prepared = text?.takeIf { it.isNotBlank() } ?: return false
+        val afd = resolver.open(speech.activeDialect, key, prepared) ?: return false
         val speed = NeuralPlaybackSpeed.forTtsRate(speech.activeSpeechRate)
-        return when (val clip = resolver.resolve(speech.activeDialect, key, text)) {
-            is NeuralClip.Downloaded ->
-                player.play(clip.file.path, onDone = done, onCanceled = canceled,
-                    onFailed = failed, speed = speed)
-            is NeuralClip.Bundled -> {
-                val afd = resolver.openBundled(clip) ?: return false
-                player.playAsset(afd, onDone = done, onCanceled = canceled,
-                    onFailed = failed, speed = speed)
-            }
-            null -> false
-        }
+        return player.playAsset(afd, onDone = done, onCanceled = canceled,
+            onFailed = failed, speed = speed)
     }
 
     fun play(item: WordItem) {
@@ -55,29 +62,45 @@ class AudioDispatcher(
         val current = generation
         val done = { if (current == generation) _playback.value = PlaybackVisual() }
         val canceled = { if (current == generation) _playback.value = PlaybackVisual() }
-        val mark = { if (current == generation)
-            _playback.value = PlaybackVisual(activeWordId = item.id, isSpeaking = true) }
-        val fallback = {
+        val mark = {
             if (current == generation) {
-                mark()
-                speech.speak(item.speechText, onDone = done, onCanceled = canceled)
+                _playback.value = PlaybackVisual(activeWordId = item.id, isSpeaking = true)
             }
         }
-        // Personal speech/labels are ineligible. No fragile text equality with old manifests.
-        val neuralText = DialectSpeechCatalog.neuralTextFor(item, speech.activeDialect)
-        val startNeural = {
-            current == generation && neuralText != null &&
-                playNeural(item.semanticKey, neuralText, done, canceled, fallback)
+        val isCustom = item.semanticKey == null || item.categoryId.startsWith("custom_") ||
+            item.customTextFields and (CardDetails.LABEL or CardDetails.SPEECH) != 0
+        val onMissing = {
+            if (current == generation) {
+                Log.e("SawtiHabibi", "Built-in audio missing/invalid: " +
+                    speech.activeDialect.name + "/" + item.semanticKey)
+                canceled()
+            }
         }
-        val recording = item.audioPath?.takeIf { File(it).isFile }
-        if (recording != null && player.play(recording,
-                onDone = done, onCanceled = canceled,
-                onFailed = { if (!startNeural()) fallback() })) {
+        val startHabibi = {
+            if (current != generation) false
+            else playHabibi(
+                item.semanticKey,
+                DialectSpeechCatalog.habibiTextFor(item, speech.activeDialect),
+                done, canceled, onMissing,
+            )
+        }
+        val recorded = item.audioPath?.takeIf { File(it).isFile }
+        if (recorded != null && player.play(
+                recorded, onDone = done, onCanceled = canceled,
+                onFailed = {
+                    if (isCustom) {
+                        speech.speak(item.speechText, onDone = done, onCanceled = canceled)
+                    } else if (!startHabibi()) onMissing()
+                })) {
             mark()
             return
         }
-        if (startNeural()) { mark(); return }
-        fallback()
+        if (isCustom) {
+            mark()
+            speech.speak(item.speechText, onDone = done, onCanceled = canceled)
+            return
+        }
+        if (startHabibi()) mark() else onMissing()
     }
 
     fun speakSentence(pieces: List<SentencePiece>) {
@@ -93,39 +116,60 @@ class AudioDispatcher(
             }
             val piece = speakable[position]
             _playback.value = PlaybackVisual(
-                activeWordId = piece.sourceId,
-                sentenceIndex = piece.pieceIndex,
+                activeWordId = piece.sourceId, sentenceIndex = piece.pieceIndex,
                 isSpeaking = true,
             )
             val done = { if (current == generation) playPiece(position + 1) }
             val canceled = { if (current == generation) _playback.value = PlaybackVisual() }
-            val fallback = {
-                if (current == generation) speech.speak(piece.speech,
-                    onDone = done, onCanceled = canceled)
+            val onMissing = {
+                Log.e("SawtiHabibi", "Sentence contains missing/invalid audio: " +
+                    speech.activeDialect.name + "/" + piece.semanticKey)
+                canceled()
             }
-            val startNeural = {
-                current == generation && piece.neuralDialect == speech.activeDialect &&
-                    piece.neuralSpeechText != null &&
-                    playNeural(piece.semanticKey, piece.neuralSpeechText,
-                        done, canceled, fallback)
+            val fallbackCustom = {
+                if (current == generation) speech.speak(
+                    piece.speech, onDone = done, onCanceled = canceled)
             }
-            val recording = piece.audioPath?.takeIf { File(it).isFile }
-            if (recording != null && player.play(recording,
-                    onDone = done, onCanceled = canceled,
-                    onFailed = { if (!startNeural()) fallback() })) return
-            if (startNeural()) return
-            fallback()
+            val playNative = {
+                if (current != generation) false
+                else if (piece.isCustom) false
+                else playHabibi(
+                    piece.semanticKey,
+                    piece.neuralSpeechText.takeIf {
+                        piece.neuralDialect == speech.activeDialect
+                    },
+                    done, canceled, onMissing,
+                )
+            }
+            val recorded = piece.audioPath?.takeIf { File(it).isFile }
+            if (recorded != null && player.play(
+                    recorded, onDone = done, onCanceled = canceled,
+                    onFailed = {
+                        if (piece.isCustom) fallbackCustom()
+                        else if (!playNative()) onMissing()
+                    })) return
+            if (piece.isCustom) fallbackCustom()
+            else if (!playNative()) onMissing()
         }
         playPiece(0)
     }
 
+    /** Spoken hints/questions are dynamic, not built-in card playback. */
     fun hint(item: WordItem) {
         stopAll()
-        val cue = item.phonemicCue.ifBlank { PhonemicCue.derive(item.speechText.ifBlank { item.ttsPrompt }) }
+        val cue = item.phonemicCue.ifBlank {
+            PhonemicCue.derive(item.speechText.ifBlank { item.ttsPrompt })
+        }
         speech.speak(PhonemicCue.forSpeech(cue))
     }
 
-    fun say(text: String) { stopAll(); speech.speak(text) }
+    fun say(text: String) {
+        // Settings previews the built-in water card through this existing API.
+        // It must obey the same local-only policy even when its asset is absent.
+        val preview = DialectPreview.matching(text, speech.activeDialect)
+        if (preview != null) play(preview)
+        else { stopAll(); speech.speak(text) } // Dynamic questions, not card audio.
+    }
     fun playFile(path: String): Boolean { stopAll(); return player.play(path) }
     fun stop() = stopAll()
 

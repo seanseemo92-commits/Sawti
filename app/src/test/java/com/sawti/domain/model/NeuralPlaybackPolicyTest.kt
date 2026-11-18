@@ -15,7 +15,7 @@ class NeuralPlaybackPolicyTest {
         for (dialect in ArabicDialect.entries) {
             val view = DialectCatalog.localize(original, dialect)
             val expected = DialectSpeechCatalog.resolve(original, dialect).speechText
-            assertEquals(dialect.name, expected, DialectSpeechCatalog.neuralTextFor(view, dialect))
+            assertEquals(dialect.name, expected, DialectSpeechCatalog.habibiTextFor(view, dialect))
             assertEquals(dialect.name, expected, view.neuralSpeechText)
             assertEquals(original, view.forEditing())
         }
@@ -24,26 +24,26 @@ class NeuralPlaybackPolicyTest {
     @Test fun wrongDialectAndPersonalEditsAlwaysRejectBundledNeuralSound() {
         val original = source("request.water")
         val view = DialectCatalog.localize(original, ArabicDialect.LIBYAN)
-        assertNull(DialectSpeechCatalog.neuralTextFor(view, ArabicDialect.EGYPTIAN))
+        assertNull(DialectSpeechCatalog.habibiTextFor(view, ArabicDialect.EGYPTIAN))
         for (flag in listOf(CardDetails.LABEL, CardDetails.SPEECH,
                            CardDetails.LABEL or CardDetails.SPEECH)) {
             val edited = DialectCatalog.localize(
                 original.copy(customTextFields = flag, ttsPrompt = "صوت خاص"),
                 ArabicDialect.LIBYAN)
-            assertNull(DialectSpeechCatalog.neuralTextFor(edited, ArabicDialect.LIBYAN))
+            assertNull(DialectSpeechCatalog.habibiTextFor(edited, ArabicDialect.LIBYAN))
             assertNull(SentenceComposer.piece(edited).neuralSpeechText)
         }
-        assertNull(DialectSpeechCatalog.neuralTextFor(original.copy(categoryId = "custom_personal"),
+        assertNull(DialectSpeechCatalog.habibiTextFor(original.copy(categoryId = "custom_personal"),
             ArabicDialect.LIBYAN))
-        assertNull(DialectSpeechCatalog.neuralTextFor(original.copy(semanticKey = null),
+        assertNull(DialectSpeechCatalog.habibiTextFor(original.copy(semanticKey = null),
             ArabicDialect.LIBYAN))
     }
 
-    @Test fun purelyChangedVowelsDoNotRejectBuiltInCardSelection() {
+    @Test fun rebindingAnUnchangedBuiltinCardKeepsTheHabibiKey() {
         val view = DialectCatalog.localize(source("request.water"), ArabicDialect.LIBYAN)
-        val altered = view.copy(ttsPrompt = "نِبِّي مَيّه")
-        assertEquals(DialectSpeechCatalog.neuralTextFor(view, ArabicDialect.LIBYAN),
-            DialectSpeechCatalog.neuralTextFor(altered, ArabicDialect.LIBYAN))
+        val altered = view.copy(ttsPrompt = "نبي ميه")
+        assertEquals(DialectSpeechCatalog.habibiTextFor(view, ArabicDialect.LIBYAN),
+            DialectSpeechCatalog.habibiTextFor(altered, ArabicDialect.LIBYAN))
     }
 
     @Test fun personalFallbackSpeechRemainsPersonalInSentence() {

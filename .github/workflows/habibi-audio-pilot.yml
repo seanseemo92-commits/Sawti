@@ -1,0 +1,73 @@
+name: Review Libyan Habibi pilot clips
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: habibi-audio-pilot-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  HF_HUB_DISABLE_XET: '1'
+  OMP_NUM_THREADS: '4'
+  MKL_NUM_THREADS: '4'
+
+jobs:
+  pilot:
+    if: github.ref == 'refs/heads/migration/habibi-tts-20261116'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: scripts/requirements-habibi.txt
+      - name: Export and check the complete canonical speech catalog
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon -Pkotlin.compiler.execution.strategy=in-process :app:testDebugUnitTest --tests '*ExportSpeechCatalogTest'
+          git diff --exit-code -- app/schemas
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: habibi-unified-cpu-${{ runner.os }}-${{ hashFiles('scripts/requirements-habibi.txt') }}
+      - name: Install real CPU inference and codec dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          python -m pip install torch==2.8.0 torchaudio==2.8.0 --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -r scripts/requirements-habibi.txt
+          python -m pip check
+      - name: Run audio, duration, cache and corpus regressions
+        run: python -m unittest discover -s scripts -p 'test_habibi*.py'
+      - name: Generate the seeded section samples outside production assets
+        run: |
+          set -euo pipefail
+          keys=$(python scripts/review_habibi_pilot.py --list-keys --include-controls)
+          args=()
+          while IFS= read -r key; do args+=(--semantic-key "$key"); done <<< "$keys"
+          python -u scripts/generate_habibi_tts.py --dialect LIBYAN --device cpu \
+            --output build/habibi-pilot "${args[@]}"
+      - name: Check timing, integrity and distinct waveforms
+        run: |
+          python scripts/review_habibi_pilot.py --root build/habibi-pilot --include-controls \
+            --report build/habibi-pilot/technical-review.json
+          cp app/build/speech_catalog.json build/habibi-pilot/catalog.json
+          git rev-parse HEAD > build/habibi-pilot/source-commit.txt
+          git diff --exit-code -- app/src/main/assets/neural_tts app/schemas
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Sawti-Habibi-Libyan-Pilot-${{ github.run_id }}
+          path: build/habibi-pilot
+          if-no-files-found: error
+          retention-days: 30

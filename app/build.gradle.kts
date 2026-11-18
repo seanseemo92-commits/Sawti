@@ -34,7 +34,11 @@ android {
     }
     buildTypes {
         debug {
-            if (providers.gradleProperty("quranPreview").orNull == "true") {
+            if (providers.gradleProperty("habibiPreview").orNull == "true") {
+                applicationIdSuffix = ".habibipreview"
+                versionNameSuffix = "-habibi-test"
+                manifestPlaceholders["appLabel"] = "صوتي — اختبار Habibi"
+            } else if (providers.gradleProperty("quranPreview").orNull == "true") {
                 applicationIdSuffix = ".quranpreview"
                 versionNameSuffix = "-quran-test"
                 manifestPlaceholders["appLabel"] = "صوتي — اختبار القرآن"

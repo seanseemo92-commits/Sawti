@@ -1,8 +1,6 @@
 name: Sawti final APK validation and signing
 
 on:
-  push:
-    branches: [feature/quran-full-recitation-cache-20261111]
   workflow_dispatch:
 
 permissions:
@@ -16,9 +14,7 @@ jobs:
   verified-apk:
     permissions:
       contents: write
-    if: >-
-      github.ref == 'refs/heads/feature/quran-full-recitation-cache-20261111' &&
-      (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deliver-rc]'))
+    if: github.ref == 'refs/heads/feature/quran-full-recitation-cache-20261111'
     runs-on: ubuntu-latest
     environment: production-release
     timeout-minutes: 35
@@ -62,6 +58,12 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Make Gradle wrapper executable
         run: chmod +x gradlew
+      - name: Verify the current Habibi packs before assembling the candidate
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          ./gradlew --no-daemon :app:testDebugUnitTest --tests '*ExportSpeechCatalogTest'
+          python3 scripts/verify_habibi_packs.py --verify-codec
       - name: Verify every bundled Quran file and decode its audio
         run: |
           set -euo pipefail

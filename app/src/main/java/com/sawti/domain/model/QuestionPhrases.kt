@@ -1,6 +1,6 @@
 package com.sawti.domain.model
 
-/** Spoken question for the receptive game: "أَيْنَ التُّفَّاحَة؟" / family: "وَيْنْ إِسْمَاعِيلْ؟". */
+/** Spoken question for the receptive game: "أين التفاحة؟" / family: "وين إسماعيل؟". */
 object QuestionPhrases {
     private const val SHADDA = '\u0651'
     private val SUN_LETTERS = "تثدذرزسشصضطظلن".toSet()
@@ -8,8 +8,8 @@ object QuestionPhrases {
     private fun isMark(c: Char) = c in '\u064B'..'\u065F' || c == '\u0670'
 
     fun where(item: WordItem): String =
-        if (item.categoryId == CategoryIds.FAMILY) "وَيْنْ ${item.ttsPrompt}؟"
-        else "أَيْنَ ${withArticle(item.ttsPrompt)}؟"
+        if (item.categoryId == CategoryIds.FAMILY) "وين ${item.ttsPrompt}؟"
+        else "أين ${withArticle(item.ttsPrompt)}؟"
 
     /** Adds "ال" with the right assimilation: sun letters get a shadda, moon letters a sukun on the lam. */
     fun withArticle(word: String): String {
@@ -21,7 +21,7 @@ object QuestionPhrases {
             while (i < w.length && isMark(w[i])) i++
             "ال" + first + SHADDA + w.substring(1, i) + w.substring(i)
         } else {
-            "الْ$w"
+            "ال$w"
         }
     }
 }

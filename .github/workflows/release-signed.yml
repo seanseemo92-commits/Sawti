@@ -1,10 +1,6 @@
 name: Sawti signed release
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: ["Generate regional neural voices"]
-    types: [completed]
-    branches: [main]
 permissions:
   contents: read
 concurrency:
@@ -15,7 +11,7 @@ jobs:
     permissions:
       contents: write
       actions: read
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success')
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: production-release
     timeout-minutes: 40
@@ -38,6 +34,12 @@ jobs:
           set -euo pipefail
           python3 scripts/verify_quran_passages.py
           python3 scripts/verify_quran_surahs.py
+      - name: Verify the current Habibi packs before loading signing keys
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          ./gradlew --no-daemon :app:testDebugUnitTest --tests '*ExportSpeechCatalogTest'
+          python3 scripts/verify_habibi_packs.py --verify-codec
       - name: Load publisher key from protected secrets (fail closed)
         env:
           KEYSTORE_BASE64: ${{ secrets.SAWTI_RELEASE_KEYSTORE_BASE64 }}
@@ -68,8 +70,6 @@ jobs:
           echo "::add-mask::$KEY_PASSWORD"
       - name: Build signed Release APK and AAB
         run: ./gradlew --no-daemon :app:assembleRelease :app:bundleRelease :app:testDebugUnitTest :app:lintRelease
-      - name: Verify every neural voice MP3 and manifest matches current speech text
-        run: python3 scripts/validate_neural_packs.py
       - name: Verify identity, version, publisher certificate and release files
         shell: bash
         run: |
@@ -79,6 +79,8 @@ jobs:
           AAB=app/build/outputs/bundle/release/app-release.aab
           unzip -t "$APK" > /dev/null
           unzip -Z1 "$APK" > "$RUNNER_TEMP/release-apk-files.txt"
+          # Release MUST contain all nine fully verified Habibi packs; never old Edge clips.
+          test "$(grep -Ec '^assets/neural_tts/.+[.]mp3$' "$RUNNER_TEMP/release-apk-files.txt")" = 2399
           test "$(grep -Ec '^assets/quran_passages/(ar.alafasy|salah.bukhatir|husary.muallim)/2_(255|285|286)_[0-9]+\.mp3$' "$RUNNER_TEMP/release-apk-files.txt")" = 66
           test "$(grep -Ec '^assets/quran_surahs/(ar.alafasy|salah.bukhatir|husary.muallim)/[0-9]{6}\.mp3$' "$RUNNER_TEMP/release-apk-files.txt")" = 201
           test "$(grep -Ec '^assets/quran_surahs/text/surah_[0-9]+\.json$' "$RUNNER_TEMP/release-apk-files.txt")" = 13
@@ -127,4 +129,3 @@ jobs:
         if: always()
         run: |
           rm -f "$RUNNER_TEMP/sawti-release.jks"
-
