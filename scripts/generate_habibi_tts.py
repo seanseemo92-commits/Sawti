@@ -416,9 +416,11 @@ def main():
                                    not re.fullmatch(r"[0-9]+", args.checkpoint_run_id)):
         parser.error("checkpoint interval must be positive and run ID numeric")
     assets = Path("app/src/main/assets/neural_tts").resolve()
-    if args.semantic_keys and (args.output.resolve() == assets or assets in args.output.resolve().parents
-                               or args.checkpoint_run_id):
+    production_output = args.output.resolve().is_relative_to(assets)
+    if args.semantic_keys and (production_output or args.checkpoint_run_id):
         parser.error("Pilot keys require an output outside production assets and no corpus checkpoint")
+    if production_output and not args.checkpoint_run_id and (args.max_new or args.max_seconds):
+        parser.error("Budgeted batches require an output outside production assets")
     grouped = load_catalog(args.catalog)
     if sum(map(len, grouped.values())) != EXPECTED_CLIPS:
         raise RuntimeError("The exact 2399-card corpus must pass first")
@@ -427,6 +429,10 @@ def main():
         grouped = selected_items(grouped, dialects, args.semantic_keys)
     except ValueError as error:
         parser.error(str(error))
+    if "LIBYAN" in dialects and not args.semantic_keys:
+        _, _, reference_type = load_references(args.ref_config, "LIBYAN")
+        if reference_type != "custom":
+            parser.error("Libyan batches require a Libyan reference; use named pilot keys for MSA diagnostics")
     if args.device == "cuda":
         import torch
         if not torch.cuda.is_available():

@@ -1219,9 +1219,7 @@ object DialectCatalog {
             else RegionalDishesCatalog.variant(key, dialect)
         fun custom(flag: Int) = item.customTextFields and flag != 0
         val form = DialectSpeechCatalog.resolve(item, dialect)
-        val neuralForm = DialectSpeechCatalog.resolveForHabibi(item, dialect)
-        val neuralSpeech = if (custom(CardDetails.SPEECH) || custom(CardDetails.LABEL))
-            null else neuralForm.speechText
+        val neuralSpeech = form.speechText.takeIf { form.source != SpeechSource.USER }
         val projected = item.copy(
             displayText = form.displayText,
             ttsPrompt = form.speechText,

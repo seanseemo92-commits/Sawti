@@ -14,14 +14,13 @@ on:
         required: true
         type: number
         default: 16
-      skip_existing:
-        description: Reuse only verified Habibi clips with matching text, settings and reference
-        required: true
+      libyan_listening_passed:
+        description: The Libyan pilot passed listening with the configured Libyan reference
         type: boolean
-        default: true
+        default: false
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: sawti-habibi-voice-pack-${{ github.ref }}
@@ -29,8 +28,7 @@ concurrency:
 
 jobs:
   generate:
-    # Write only to the branch explicitly selected by workflow_dispatch.
-    if: ${{ github.ref_type == 'branch' }}
+    if: ${{ github.ref_type == 'branch' && ((inputs.dialect != 'LIBYAN' && inputs.dialect != 'ALL') || inputs.libyan_listening_passed) }}
     runs-on: ubuntu-24.04
     timeout-minutes: 350
     env:
@@ -48,7 +46,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
           cache: pip
           cache-dependency-path: scripts/requirements-habibi.txt
       - name: Cache downloaded model and vocoder
@@ -71,46 +69,30 @@ jobs:
           chmod +x gradlew
           ./gradlew --no-daemon :app:testDebugUnitTest --tests 'com.sawti.domain.model.ExportSpeechCatalogTest' --tests 'com.sawti.domain.model.HabibiSpeechTextTest'
           python -m unittest discover -s scripts -p 'test_habibi*.py'
-      - name: Synthesize resumable CPU batch
+      - name: Synthesize a staged CPU batch
         id: synthesize
         timeout-minutes: 305
         env:
           DIALECT: ${{ inputs.dialect }}
           MAX_NEW: ${{ inputs.max_new }}
-          SKIP_EXISTING: ${{ inputs.skip_existing }}
         run: |
-          set -euo pipefail
-          FLAGS=()
-          if [ "$SKIP_EXISTING" = 'true' ]; then FLAGS+=(--skip-existing); fi
           python scripts/generate_habibi_tts.py --dialect "$DIALECT" --device cpu \
-            --max-new "$MAX_NEW" --max-seconds 17400 "${FLAGS[@]}"
-      - name: Verify and save completed clips, including after an interrupted batch
+            --output build/habibi-batch --max-new "$MAX_NEW" --max-seconds 17400
+      - name: Validate completed clips without replacing app assets
+        id: verify_batch
         if: ${{ always() && steps.synthesize.outcome != 'skipped' }}
         env:
           DIALECT: ${{ inputs.dialect }}
         run: |
-          set -euo pipefail
-          if [ ! -d app/src/main/assets/neural_tts ]; then exit 0; fi
-          python scripts/verify_habibi_packs.py --dialect "$DIALECT" --allow-partial --verify-codec
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          python - <<'PYADD'
-          import json, subprocess
-          from pathlib import Path
-          for manifest in Path('app/src/main/assets/neural_tts').glob('*/manifest.json'):
-              entries = json.loads(manifest.read_text())['entries']
-              paths = [str(manifest), *(str(manifest.parent / row['file']) for row in entries.values())]
-              subprocess.run(['git', 'add', '--', *paths], check=True)
-          PYADD
-          if git diff --cached --quiet; then exit 0; fi
-          git commit -m "feat(habibi): generate $DIALECT offline voice batch"
-          git pull --rebase origin "$GITHUB_REF_NAME"
-          git push origin "HEAD:$GITHUB_REF_NAME"
-      - name: Preserve generated clips if repository push is unavailable
-        if: always()
+          if [ ! -d build/habibi-batch ]; then exit 0; fi
+          python scripts/verify_habibi_packs.py --root build/habibi-batch \
+            --dialect "$DIALECT" --allow-partial --verify-codec
+          git diff --exit-code -- app/src/main/assets/neural_tts
+      - name: Preserve outputs for review
+        if: ${{ always() && steps.verify_batch.outcome == 'success' }}
         uses: actions/upload-artifact@v4
         with:
           name: habibi-${{ inputs.dialect }}-${{ github.run_id }}
-          path: app/src/main/assets/neural_tts/
+          path: build/habibi-batch/
           if-no-files-found: warn
           retention-days: 7

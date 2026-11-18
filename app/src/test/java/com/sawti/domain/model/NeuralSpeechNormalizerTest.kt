@@ -14,8 +14,8 @@ class NeuralSpeechNormalizerTest {
             assertEquals(dialect.name + "/" + word.semanticKey,
                 DialectSpeechCatalog.resolve(word, dialect),
                 DialectSpeechCatalog.resolveForHabibi(word, dialect))
-            assertEquals(DialectSpeechCatalog.resolve(word, dialect),
-                DialectSpeechCatalog.resolveForNeural(word, dialect))
+            assertEquals(DialectSpeechCatalog.resolveForHabibi(word, dialect).speechText,
+                DialectCatalog.localize(word, dialect).ttsPrompt)
         }
     }
 
@@ -24,6 +24,7 @@ class NeuralSpeechNormalizerTest {
             "request.water" to "نبي مية",
             "request.medicine" to "نبي دوايا",
             "food.water" to "مية",
+            "home.water_bottle" to "شيشة مية",
             "action.drink" to "نشرب",
             "action.walk" to "نمشي",
             "action.close" to "نسكر",

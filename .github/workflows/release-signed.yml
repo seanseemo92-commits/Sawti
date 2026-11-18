@@ -34,6 +34,12 @@ jobs:
           set -euo pipefail
           python3 scripts/verify_quran_passages.py
           python3 scripts/verify_quran_surahs.py
+      - name: Verify the current Habibi packs before loading signing keys
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          ./gradlew --no-daemon :app:testDebugUnitTest --tests '*ExportSpeechCatalogTest'
+          python3 scripts/verify_habibi_packs.py --verify-codec
       - name: Load publisher key from protected secrets (fail closed)
         env:
           KEYSTORE_BASE64: ${{ secrets.SAWTI_RELEASE_KEYSTORE_BASE64 }}
@@ -64,8 +70,6 @@ jobs:
           echo "::add-mask::$KEY_PASSWORD"
       - name: Build signed Release APK and AAB
         run: ./gradlew --no-daemon :app:assembleRelease :app:bundleRelease :app:testDebugUnitTest :app:lintRelease
-      - name: Verify all 2399 Habibi-TTS MP3s, manifests and codec metadata
-        run: python3 scripts/verify_habibi_packs.py --verify-codec
       - name: Verify identity, version, publisher certificate and release files
         shell: bash
         run: |

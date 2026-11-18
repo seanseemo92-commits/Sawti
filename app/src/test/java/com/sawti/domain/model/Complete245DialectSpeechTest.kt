@@ -48,10 +48,8 @@ class Complete245DialectSpeechTest {
             // v1.6.1 forms intentionally supersede their old expected spellings.
             val upgrade = NeuralLexicon161.forms[row.key]?.get(row.dialect)
             val expectedDisplay = upgrade?.displayText ?: row.display
-            val expectedSpeech = expectedDisplay
             assertEquals("$context display", expectedDisplay, form.displayText)
-            val clean = DialectSpeechCatalog.cleanSpeech(expectedDisplay,
-                requireNotNull(expectedSpeech), row.dialect)
+            val clean = HabibiSpeechText.prepare(expectedDisplay)
             assertEquals("$context speech", clean, form.speechText)
             assertTrue("$context did not use a built-in regional word", form.source != SpeechSource.USER)
             assertTrue("$context cue is empty", form.phonemicCue.isNotBlank())

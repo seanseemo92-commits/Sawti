@@ -211,7 +211,7 @@ internal object NeuralLexicon161 {
         register(all.filter { it !in west }, "home", "fork|شوكة")
         register(west, "home", "fork|فرشيطة")
         regional(ArabicDialect.LIBYAN, "home", """
-            water_bottle|شيشة اميه
+            water_bottle|شيشة مية
             sofa|صالون
             stove|غاز
         """)

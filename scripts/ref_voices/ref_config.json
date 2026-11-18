@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "description": "Each dialect may supply a licensed four-to-eight-second female reference. Null pair falls back to Habibi's bundled assets/MSA.mp3 with its official matching transcript.",
+  "description": "Each dialect may supply a licensed four-to-eight-second reference and matching transcript. For Libyan, a null pair uses bundled MSA only in named diagnostic samples. The Libyan batch requires a native reference.",
   "dialects": {
     "STANDARD": {
       "ref_audio": null,

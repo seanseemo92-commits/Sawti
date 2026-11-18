@@ -26,7 +26,7 @@ object SentenceComposer {
         emoji = word.emoji,
         audioPath = word.audioPath,
         semanticKey = word.semanticKey,
-        neuralSpeechText = word.neuralDialect?.let { DialectSpeechCatalog.neuralTextFor(word, it) },
+        neuralSpeechText = word.neuralDialect?.let { DialectSpeechCatalog.habibiTextFor(word, it) },
         neuralDialect = word.neuralDialect,
         isCustom = word.semanticKey == null || word.categoryId.startsWith("custom_") ||
             word.customTextFields and (CardDetails.LABEL or CardDetails.SPEECH) != 0,

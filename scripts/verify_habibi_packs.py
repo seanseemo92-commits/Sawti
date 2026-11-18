@@ -83,6 +83,8 @@ def verify(catalog: Path, root: Path, dialect: str, check_codec: bool, allow_par
         for key, value in required.items():
             if data.get(key) != value:
                 raise ValueError(f"{name}: invalid {key}: {data.get(key)!r}")
+        if name == "LIBYAN" and not allow_partial and data.get("referenceType") != "custom":
+            raise ValueError("LIBYAN: MSA diagnostic audio cannot enter a complete pack")
         for field in ("referenceSha256", "referenceTextSha256"):
             value = data.get(field, "")
             import re

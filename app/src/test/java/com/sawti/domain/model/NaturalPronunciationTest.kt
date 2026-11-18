@@ -13,8 +13,7 @@ class NaturalPronunciationTest {
     @Test fun cleanSpeechRemovesMarksWithoutChangingLetters() {
         val fatha = 0x064E.toChar()
         val sukun = 0x0652.toChar()
-        assertEquals("بقرة", DialectSpeechCatalog.cleanSpeech(
-            "بقرة", "ب" + fatha + "ق" + sukun + "رة", ArabicDialect.LIBYAN))
+        assertEquals("بقرة", HabibiSpeechText.prepare("ب" + fatha + "ق" + sukun + "رة"))
         assertEquals("نبي الحمام", HabibiSpeechText.prepare("نبي  الحمام"))
     }
 

@@ -1,9 +1,6 @@
-name: Review six repaired Libyan Habibi clips
+name: Review Libyan Habibi pilot clips
 
 on:
-  push:
-    branches: [migration/habibi-tts-20261116]
-    paths: [.github/workflows/habibi-audio-pilot.yml]
   workflow_dispatch:
 
 permissions:
@@ -53,24 +50,24 @@ jobs:
           python -m pip check
       - name: Run audio, duration, cache and corpus regressions
         run: python -m unittest discover -s scripts -p 'test_habibi*.py'
-      - name: Generate exactly the six approved pilot clips outside production assets
+      - name: Generate the seeded section samples outside production assets
         run: |
           set -euo pipefail
+          keys=$(python scripts/review_habibi_pilot.py --list-keys --include-controls)
+          args=()
+          while IFS= read -r key; do args+=(--semantic-key "$key"); done <<< "$keys"
           python -u scripts/generate_habibi_tts.py --dialect LIBYAN --device cpu \
-            --output build/habibi-pilot \
-            --semantic-key family.mother --semantic-key family.father \
-            --semantic-key family.husband --semantic-key request.water \
-            --semantic-key request.toilet --semantic-key request.adjust_pillow
-      - name: Reject short, corrupt, cached or near-identical pilot recordings
+            --output build/habibi-pilot "${args[@]}"
+      - name: Check timing, integrity and distinct waveforms
         run: |
-          python scripts/review_habibi_pilot.py --root build/habibi-pilot \
+          python scripts/review_habibi_pilot.py --root build/habibi-pilot --include-controls \
             --report build/habibi-pilot/technical-review.json
           cp app/build/speech_catalog.json build/habibi-pilot/catalog.json
           git rev-parse HEAD > build/habibi-pilot/source-commit.txt
           git diff --exit-code -- app/src/main/assets/neural_tts app/schemas
       - uses: actions/upload-artifact@v4
         with:
-          name: Sawti-Habibi-Libyan-Six-Clip-Review-${{ github.run_id }}
+          name: Sawti-Habibi-Libyan-Pilot-${{ github.run_id }}
           path: build/habibi-pilot
           if-no-files-found: error
           retention-days: 30

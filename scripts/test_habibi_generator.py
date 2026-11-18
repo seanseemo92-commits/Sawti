@@ -20,6 +20,24 @@ class HabibiGeneratorTest(unittest.TestCase):
         self.assertEqual(2, result.returncode)
         self.assertIn('outside production assets', result.stderr)
 
+    def test_budgeted_batch_cannot_leave_a_partial_production_pack(self):
+        result = subprocess.run([sys.executable, str(Path(gen.__file__)),
+                                 '--dialect', 'LIBYAN', '--max-new', '1'],
+                                capture_output=True, text=True)
+        self.assertEqual(2, result.returncode)
+        self.assertIn('Budgeted batches require an output outside production assets', result.stderr)
+
+    def test_libyan_batch_rejects_msa_before_loading_the_model(self):
+        with patch.object(sys, 'argv', ['generate', '--dialect', 'LIBYAN', '--output', 'build/staged']), \
+             patch.object(gen, 'EXPECTED_CLIPS', 1), \
+             patch.object(gen, 'load_catalog', return_value={'LIBYAN': {'family.mother': 'أمي'}}), \
+             patch.object(gen, 'load_references', return_value=('msa.mp3', 'نص', 'official-MSA-fallback')), \
+             patch.object(gen, 'build_model') as build:
+            with self.assertRaises(SystemExit) as error:
+                gen.main()
+        self.assertEqual(2, error.exception.code)
+        build.assert_not_called()
+
     def test_strict_cleaning_without_changing_arabic_letters(self):
         self.assertEqual('نبي الحمام', gen.clean_for_habibi('  نِبِّيْ\n الحَمَّامـ  '))
         self.assertEqual('أمي بقرة نقعمز', gen.clean_for_habibi('أمي بقرة نقعمز'))

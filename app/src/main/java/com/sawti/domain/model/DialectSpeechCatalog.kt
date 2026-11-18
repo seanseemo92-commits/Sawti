@@ -84,17 +84,11 @@ object DialectSpeechCatalog {
 
     fun resolveForHabibi(value: WordItem, dialect: ArabicDialect): SpeechForm = resolve(value, dialect)
 
-    fun habibiTextFor(item: WordItem, dialect: ArabicDialect): String? =
-        neuralTextFor(item, dialect)
-
-    /** Kept as an API alias for callers which export the voice catalog; no second pipeline. */
-    fun resolveForNeural(value: WordItem, dialect: ArabicDialect): SpeechForm = resolve(value, dialect)
-
     /**
      * Eligibility lives next to the single projection, not in a competing playback policy.
      * Users' personal labels and speech are not rewritten.
      */
-    fun neuralTextFor(item: WordItem, dialect: ArabicDialect): String? {
+    fun habibiTextFor(item: WordItem, dialect: ArabicDialect): String? {
         if (item.semanticKey.isNullOrBlank() || item.categoryId.startsWith("custom_") ||
             item.semanticKey.substringBefore('.') !in builtinNamespaces)
             return null
@@ -104,8 +98,4 @@ object DialectSpeechCatalog {
         val form = resolve(item.forEditing(), dialect)
         return form.speechText.takeIf { form.source != SpeechSource.USER && it.isNotBlank() }
     }
-
-    /** Compatibility name: no old vowel/sukun manipulation survives. */
-    internal fun cleanSpeech(display: String, spoken: String, dialect: ArabicDialect): String =
-        HabibiSpeechText.prepare(spoken)
 }

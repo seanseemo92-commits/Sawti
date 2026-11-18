@@ -1,7 +1,7 @@
 name: Sawti Android build and validation
 on:
   push:
-    branches: [main, feature/quran-full-recitation-cache-20261111]
+    branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -17,17 +17,12 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   android:
-    # The delivery workflow runs the complete checks and signs the same commit.
-    if: >-
-      !(github.event_name == 'push' &&
-        github.ref == 'refs/heads/feature/quran-full-recitation-cache-20261111' &&
-        contains(github.event.head_commit.message, '[deliver-rc]'))
     runs-on: ubuntu-latest
     timeout-minutes: 55
     env:
       # Fast path (PRs): validation + unit tests + schema check only.
       # Full path (push to main, or manual dispatch with full_build): also APKs and lint.
-      FULL_BUILD: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && (github.head_ref == 'integration/android26-36-adaptive-20261113' || github.head_ref == 'fix/dialect-display-speech-86-20261114' || github.head_ref == 'fix/sawti-153-audio-ui-polish-20261115' || github.head_ref == 'fix/dialect-speech-245-20261115' || github.head_ref == 'fix/sawti-154-quran-background-ducking-20261115' || github.head_ref == 'fix/libyan-dialect-polish-five-20261115' || github.head_ref == 'fix/other-dialects-polish-20261115' || github.head_ref == 'feature/neural-voices-hybrid-v160-20261115' || github.head_ref == 'fix/sawti-v161-neural-lexicon-20261115')) || (github.event_name == 'workflow_dispatch' && inputs.full_build) }}
+      FULL_BUILD: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.full_build) }}
     steps:
       - name: Checkout Sawti source
         uses: actions/checkout@v4

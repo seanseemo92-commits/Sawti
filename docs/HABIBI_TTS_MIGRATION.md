@@ -35,51 +35,40 @@ Install Python 3.11 or 3.12 and ffmpeg. For a CPU machine:
 python -m pip install torch==2.8.0 torchaudio==2.8.0 --index-url https://download.pytorch.org/whl/cpu
 python -m pip install -r scripts/requirements-habibi.txt
 ./gradlew :app:testDebugUnitTest --tests 'com.sawti.domain.model.ExportSpeechCatalogTest'
-python scripts/generate_habibi_tts.py --dialect LIBYAN --skip-existing --device cpu --max-new 16
+python scripts/generate_habibi_tts.py --dialect LIBYAN --skip-existing --device cpu --max-new 16 --output build/habibi-batch
 ```
 
 For CUDA, install the matching PyTorch/torchaudio CUDA wheels first and use `--device cuda`. `--dialect ALL` covers all nine dialects. `--max-new 0` is unlimited. `--max-seconds` is an optional soft deadline checked between clips.
 
 The official `SWivid/Habibi-TTS` Unified checkpoint and vocabulary are pinned to revision `3ad11a152851245c002156526c5e1d0b12f2b9d5`. The official `dialect_id_map` supplies native model tokens: LBY, TUN, ALG, MAR, EGY, LEV, IRQ, SAU and MSA.
 
-Generation settings: seed 0 per clip, 32 steps, CFG 2.0, sway -1.0. A single word under ten letters uses speed .75; sentences and longer words use .88. For upstream's <10-byte speed override, an exact frame-based `fix_duration` preserves the requested speed without adding punctuation or modifying the text. Identical seed/settings provide repeatable runs on a matching runtime; different hardware or package versions need not produce byte-identical audio.
+Generation uses seed 0 per clip, 32 steps, CFG 2.0 and sway -1.0. Short single words use speed .75; other phrases use .88. Pipeline 4 reserves at least 1.2 seconds for words and 1.4 seconds for phrases, scaled by text length and reference pace. A rejected clip is retried at most twice with additional generation time. Matching software and hardware are needed for byte-identical output.
 
 Output uses mono 24kHz MP3 at 96kbps. Floating-point peaks are normalized before integer WAV conversion to prevent clipping. Only outer silence is removed, retaining short onset/tail margins; pauses within speech remain intact. Temporary files share the destination filesystem for atomic replacement. NaN, empty and silent outputs are rejected.
 
-`scripts/ref_voices/ref_config.json` lists an optional reference pair for every dialect. Paths are relative to that JSON file. A custom recording must be 4–8 seconds with its matching plain transcript. A missing recording or an absent pair uses the package's `assets/MSA.mp3` and its official transcript. This is a real bundled reference, but does not guarantee a female voice or matching regional accent; supply a calm female recording for that requirement. An incomplete configuration pair fails explicitly.
+`scripts/ref_voices/ref_config.json` accepts a licensed 4–8 second recording and its matching plain transcript. For Libyan speech, the bundled MSA recording is available only for explicit diagnostic keys. A Libyan batch requires a native Libyan reference and a successful listening pilot using that reference. Keep personal recordings outside version control. A separate, permitted production reference is needed for distribution.
 
 Cache reuse requires the same model revision, runtime versions, reference hashes, parameters, text and MP3 hash. All already validated entries remain in each atomic manifest checkpoint, even when synthesis of an earlier key fails. Interrupted batches can be resumed with `--skip-existing`.
 
-## GitHub Actions
+## Libyan pilot and batch
 
-`generate-neural-voices.yml` now runs Habibi exclusively and supports manual dialect selection, batch size and verified cache reuse on the branch selected by workflow dispatch. It uses CPU wheels, caches the model, budgets synthesis time and saves verified completed clips to that branch, including after synthesis failure. An artifact preserves output if a push fails. It has no hard-coded branch name. The existing workflow filename is retained so the default branch can discover the workflow while the Habibi implementation is still on the migration branch; no legacy engine code remains in that workflow. Dispatch with the migration ref.
+The pilot uses a seeded draw from actions, food, transport and greetings. It runs against the exact exported Kotlin catalog. The tool checks the text, MP3 encoding, duration and checksum and screens for duplicated waveforms. The report keeps listening pending because these checks cannot verify vowels, consonant length or the regional accent.
 
 ```sh
+python scripts/review_habibi_pilot.py --list-keys
 python -m unittest discover -s scripts -p 'test_habibi*.py'
 python scripts/verify_habibi_packs.py --verify-codec
 ```
 
-Release verification requires all 2,399 real MP3s, exact text/key coverage, matching hashes and MP3 encoding. `--allow-partial` is only for generation checkpoints and is never used by a release workflow.
+Review the reference and each sample with a listener from the intended Libyan variety. Include the previously rejected requests `request.water` and `request.toilet` in pronunciation review before approving the batch. Check the spoken distinction between `body.leg` and “man”, and between `body.tooth` and “year”. The visible text and the semantic keys remain stable.
 
-## Delivery scope
+## GitHub Actions
 
-The requested deliverables are full source files, reference configuration, workflow and tests. The branch is not a complete audio release until all 2,399 clips have been generated and reviewed. The earlier migration branch removed old engine recordings; they are not relabelled as Habibi recordings. Do not build a distributable silent app from an incomplete corpus.
+- `habibi-audio-pilot.yml` generates samples on manual dispatch and stores them as artifacts outside Android assets.
+- `generate-neural-voices.yml` stages completed clips as an artifact. For Libyan, it requires confirmation that the reference passed listening. It has read-only repository permissions.
+- `complete-habibi-project.yml` runs on manual dispatch. It validates the configured reference before scheduling jobs, uses six checkpoint shards per dialect, verifies the assembled corpus and delivers an isolated preview APK as a workflow artifact.
+- Release verification requires all 2,399 clips with exact text and key coverage, matching hashes and codec checks. A complete Libyan pack cannot use the MSA diagnostic reference. Signed builds verify packs before packaging.
 
-Upstream code is MIT; Unified model weights are CC-BY-NC-SA-4.0. Reference audio has its own provenance. See the [official repository](https://github.com/SWivid/Habibi-TTS#license).
+## Model and audio provenance
 
-## Completing the entire audio corpus automatically
-
-`.github/workflows/complete-habibi-project.yml` runs on its own workflow-file push to the migration branch, or by manual dispatch. It validates the Kotlin source and Room schema, pins the actual exported corpus in a temporary checkpoint branch, then divides each dialect into six disjoint semantic-key partitions. The 54 CPU jobs run with a maximum concurrency of 18; each partition contains at most 46 clips and retains all requested inference settings. Completed clips are checksum/codec verified and pushed to a run-specific checkpoint branch every eight new clips and at worker exit, including after inference errors. Rerunning failed jobs resumes their saved files.
-
-The assembly job requires every partition, compatible model/reference/runtime metadata and exact key coverage. It verifies all 2,399 MP3s before committing the full corpus to the migration branch. It then reruns Android tests, builds Debug and R8 Release, runs Release lint, and verifies that the installable test APK contains exactly 2,399 neural assets. The test APK uses `com.sawti.habibipreview`, so the existing installed application and its data remain separate. It is uploaded as an Actions artifact and attached to a **draft** prerelease. No public release or merge into main is performed.
-
-Temporary checkpoints are removed only after complete successful delivery. Failed or interrupted runs keep their checkpoints for recovery. Generation takes hours on CPU; workflow progress is distinct from completed delivery. Native-speaker listening and a real-device usability check remain necessary before a public application release.
-
-
-## Recovery of short-word failures
-
-A few short words (including أنام and أجلس) produced almost silent ~0.38-second model output with the duration estimate. The quality gate correctly rejected them; its thresholds remain unchanged. The generator now keeps the identical first attempt and only resynthesizes rejected short words with extra generation time (at least .9 seconds, then .5 seconds more), capped at three attempts. Seed=0, native dialect, plain text, 32 steps, CFG, sway and the speed argument remain unchanged. No silence is appended and no existing waveform is stretched. The accepted entry records the attempt count and fixed duration. Already verified first-attempt clips retain their original hashes and timing provenance.
-
-The replacement completion run can import verified audio-only checkpoints from run `44029527505`, keeping the repaired source. It cancels superseded generation runs, leaves their saved checkpoints available, and resumes compatible clips rather than discarding them. `recover_run_id` selects this source when manually dispatching recovery.
-
-Real CPU validation reproduced the original nearly silent outputs for SAU/أنام and MSA/أجلس. Resynthesis with a .9-second generation budget passed the unchanged quality gate for SAU/أنام (626 ms after trimming), MSA/أجلس (664 ms), and SAU/شنطة (666 ms). All three retained seed 0, 32 steps, CFG 2, sway -1 and speed .75. Sixteen Python tests pass, including bounded retry behavior and propagation of disk failures.
+Habibi Unified is used with its pinned vocabulary and dialect token. Reference conditioning guides the synthesis; it does not fine-tune model weights. Upstream code is MIT and the model weights are CC BY-NC-SA 4.0. Check the separate terms and permissions of any reference audio before distribution. See the [official model repository](https://github.com/SWivid/Habibi-TTS#license).

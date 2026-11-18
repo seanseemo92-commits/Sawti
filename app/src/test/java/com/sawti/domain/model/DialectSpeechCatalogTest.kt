@@ -90,7 +90,7 @@ class DialectSpeechCatalogTest {
             assertEquals(original.audioPath, projected.audioPath)
             assertEquals(original.photoPath, projected.photoPath)
             assertEquals(DialectSpeechCatalog.resolve(original, dialect),
-                DialectSpeechCatalog.resolveForNeural(original, dialect))
+                DialectSpeechCatalog.resolveForHabibi(original, dialect))
         }
         for (flag in listOf(CardDetails.LABEL, CardDetails.SPEECH)) {
             val custom = original.copy(ttsPrompt = "صوتي الشخصي", customTextFields = flag)
@@ -190,7 +190,7 @@ class DialectSpeechCatalogTest {
             val result = DialectSpeechCatalog.resolve(custom, dialect)
             assertEquals("تسمية خاصة", result.displayText)
             assertEquals("نطقي الخاص", result.speechText)
-            assertNull(DialectSpeechCatalog.neuralTextFor(custom, dialect))
+            assertNull(DialectSpeechCatalog.habibiTextFor(custom, dialect))
             assertEquals(seed, DialectCatalog.localize(seed, dialect).forEditing())
         }
     }
@@ -201,8 +201,7 @@ class DialectSpeechCatalogTest {
             val legacy = seed.copy(ttsPrompt = "أرز باللحم")
             val form = DialectSpeechCatalog.resolve(legacy, ArabicDialect.STANDARD)
             assertEquals(dish.semanticKey,
-                DialectSpeechCatalog.cleanSpeech(dish.displayText, dish.ttsPrompt,
-                    ArabicDialect.STANDARD), form.speechText)
+                HabibiSpeechText.prepare(dish.ttsPrompt), form.speechText)
             assertEquals(dish.semanticKey, legacy, DialectCatalog.localize(legacy,
                 ArabicDialect.STANDARD).forEditing())
             val caregiver = legacy.copy(ttsPrompt = "صوتي الشخصي",
