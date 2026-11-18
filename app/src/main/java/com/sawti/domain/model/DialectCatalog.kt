@@ -56,7 +56,7 @@ object DialectCatalog {
             ArabicDialect.ALGERIAN to DialectForm("نحب نروح للتواليت", "نحب نروح للتواليت"),
         ),
         "request.adjust_pillow" to mapOf(
-            ArabicDialect.LIBYAN to DialectForm("عدل لي المخدة", "عدل لي المخدة"),
+            ArabicDialect.LIBYAN to DialectForm("عدل المخدة", "عدل المخدة"),
             ArabicDialect.SAUDI to DialectForm("عدل لي المخدة", "عدل لي المخدة"),
             ArabicDialect.EGYPTIAN to DialectForm("ظبطلي المخدة", "ظبطلي المخدة"),
             ArabicDialect.SYRIAN to DialectForm("زبطلي المخدة", "زبطلي المخدة"),

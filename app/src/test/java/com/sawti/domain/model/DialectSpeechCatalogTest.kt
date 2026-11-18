@@ -16,6 +16,7 @@ class DialectSpeechCatalogTest {
             "request.rest" to ("نبي نرتاح" to "نبي نرتاح"),
             "request.medicine" to ("نبي دوايا" to "نبي دوايا"),
             "request.toilet" to ("نبي الحمام" to "نبي الحمام"),
+            "request.adjust_pillow" to ("عدل المخدة" to "عدل المخدة"),
             "request.cold" to ("نحس بالبرد" to "نحس بالبرد"),
             "food.water" to ("مية" to "مية"),
         )

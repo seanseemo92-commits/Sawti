@@ -89,7 +89,7 @@ internal object DialectSpeechRevisions {
         "request.rest" to Patch(sentence = Field("عندما أتعب أريد ال...", "عند الطلب أقول: نبي نرتاح")),
         "request.medicine" to Patch(sentence = Field("في الموعد آخذ ال...", "عند الطلب أقول: نبي دوايا")),
         "request.toilet" to Patch(sentence = Field("أذهب إلى ال...", "عند الطلب أقول: نبي الحمام")),
-        "request.adjust_pillow" to Patch(sentence = Field("أريد تعديل ال...", "عند الطلب أقول: عدل لي المخدة")),
+        "request.adjust_pillow" to Patch(sentence = Field("أريد تعديل ال...", "عند الطلب أقول: عدل المخدة")),
         "request.headache" to Patch(sentence = Field("", "عندما أتألم أقول: ...")),
         "request.cold" to Patch(sentence = Field("", "في الشتاء أقول: ...")),
 
