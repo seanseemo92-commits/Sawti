@@ -13,6 +13,8 @@ env:
   SHARDS: '40'
   ORIGINAL_RUN: '44263964914'
   REPAIR_SHARD: '24'
+  REPAIR_RUN: '44483831465'
+  RECOVERY_KEY: animal.rabbit
   HF_HUB_DISABLE_XET: '1'
   OMP_NUM_THREADS: '4'
   MKL_NUM_THREADS: '4'
@@ -51,7 +53,9 @@ jobs:
           from habibi_contract import load_catalog
           libyan = load_catalog(Path("app/build/speech_catalog.json"))["LIBYAN"]
           keys = shard_items(libyan, int(os.environ["REPAIR_SHARD"]), int(os.environ["SHARDS"]))
-          print("shards=" + json.dumps(list(keys)))
+          key = os.environ["RECOVERY_KEY"]
+          assert key in keys
+          print("shards=" + json.dumps([key]))
           PY
 
   synthesize:
@@ -80,9 +84,11 @@ jobs:
         with:
           path: ~/.cache/huggingface
           key: habibi-unified-cpu-${{ runner.os }}-${{ hashFiles('scripts/requirements-habibi.txt') }}
-      - name: Install inference and encoding dependencies
+      - uses: FedericoCarboni/setup-ffmpeg@36c6454b5a2348e7794ba2d82a21506605921e3d
+        with:
+          github-token: ''
+      - name: Install inference dependencies
         run: |
-          command -v ffmpeg || { sudo apt-get update && sudo apt-get install -y ffmpeg; }
           python -m pip install torch==2.8.0 torchaudio==2.8.0 --index-url https://download.pytorch.org/whl/cpu
           python -m pip install -r scripts/requirements-habibi.txt
       - name: Regenerate one missing preview clip
@@ -112,6 +118,12 @@ jobs:
         with:
           pattern: libyan-repair-*
           path: build/preview-shards
+          github-token: ${{ github.token }}
+          run-id: ${{ env.REPAIR_RUN }}
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: libyan-repair-*
+          path: build/preview-shards
       - uses: actions/download-artifact@v4
         with:
           name: libyan-preview-catalog
@@ -121,9 +133,11 @@ jobs:
           distribution: temurin
           java-version: '21'
       - uses: gradle/actions/setup-gradle@v4
+      - uses: FedericoCarboni/setup-ffmpeg@36c6454b5a2348e7794ba2d82a21506605921e3d
+        with:
+          github-token: ''
       - name: Verify all 271 clips and overlay the Libyan assets in this build
         run: |
-          command -v ffprobe || { sudo apt-get update && sudo apt-get install -y ffmpeg; }
           python3 scripts/assemble_libyan_preview.py \
             --catalog build/preview-catalog/speech_catalog.json --shards build/preview-shards \
             --output build/verified-preview --count "$SHARDS" --repair-shard "$REPAIR_SHARD"
