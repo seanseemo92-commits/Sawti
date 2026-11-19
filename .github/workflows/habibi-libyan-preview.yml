@@ -7,9 +7,12 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 env:
   SHARDS: '40'
+  ORIGINAL_RUN: '44263964914'
+  REPAIR_SHARD: '24'
   HF_HUB_DISABLE_XET: '1'
   OMP_NUM_THREADS: '4'
   MKL_NUM_THREADS: '4'
@@ -39,7 +42,17 @@ jobs:
           if-no-files-found: error
       - name: Set the shard matrix
         id: matrix
-        run: python3 -c 'import json,os; print("shards=" + json.dumps(list(range(int(os.environ["SHARDS"])))))' >> "$GITHUB_OUTPUT"
+        run: |
+          PYTHONPATH=scripts python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          import os
+          from pathlib import Path
+          from generate_habibi_tts import shard_items
+          from habibi_contract import load_catalog
+          libyan = load_catalog(Path("app/build/speech_catalog.json"))["LIBYAN"]
+          keys = shard_items(libyan, int(os.environ["REPAIR_SHARD"]), int(os.environ["SHARDS"]))
+          print("shards=" + json.dumps(list(keys)))
+          PY
 
   synthesize:
     needs: prepare
@@ -49,9 +62,9 @@ jobs:
       fail-fast: false
       max-parallel: 20
       matrix:
-        shard: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+        key: ${{ fromJSON(needs.prepare.outputs.matrix) }}
     env:
-      SHARD: ${{ matrix.shard }}
+      WORD_KEY: ${{ matrix.key }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -72,14 +85,14 @@ jobs:
           command -v ffmpeg || { sudo apt-get update && sudo apt-get install -y ffmpeg; }
           python -m pip install torch==2.8.0 torchaudio==2.8.0 --index-url https://download.pytorch.org/whl/cpu
           python -m pip install -r scripts/requirements-habibi.txt
-      - name: Generate this preview shard
+      - name: Regenerate one missing preview clip
         run: |
           python -u scripts/generate_habibi_tts.py --dialect LIBYAN --libyan-preview \
             --catalog build/preview-catalog/speech_catalog.json --output build/preview-shard \
-            --shard-count "$SHARDS" --shard-index "$SHARD" --skip-existing
+            --semantic-key "$WORD_KEY" --skip-existing
       - uses: actions/upload-artifact@v4
         with:
-          name: libyan-shard-${{ matrix.shard }}
+          name: libyan-repair-${{ matrix.key }}
           path: build/preview-shard/
           if-no-files-found: error
 
@@ -92,6 +105,12 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           pattern: libyan-shard-*
+          path: build/preview-shards
+          github-token: ${{ github.token }}
+          run-id: ${{ env.ORIGINAL_RUN }}
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: libyan-repair-*
           path: build/preview-shards
       - uses: actions/download-artifact@v4
         with:
@@ -107,7 +126,7 @@ jobs:
           command -v ffprobe || { sudo apt-get update && sudo apt-get install -y ffmpeg; }
           python3 scripts/assemble_libyan_preview.py \
             --catalog build/preview-catalog/speech_catalog.json --shards build/preview-shards \
-            --output build/verified-preview --count "$SHARDS"
+            --output build/verified-preview --count "$SHARDS" --repair-shard "$REPAIR_SHARD"
           cp -a build/verified-preview/libyan/. app/src/main/assets/neural_tts/libyan/
       - name: Build the isolated preview and verify APK contents
         run: |

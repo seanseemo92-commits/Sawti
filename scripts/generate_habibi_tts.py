@@ -118,15 +118,15 @@ def load_references(config_path: Path, dialect: str):
     return str(candidate), words, "custom"
 
 
-def set_seed():
+def set_seed(seed: int = SEED):
     os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
     import numpy as np
     import torch
-    random.seed(SEED)
-    np.random.seed(SEED)
-    torch.manual_seed(SEED)
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
     if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(SEED)
+        torch.cuda.manual_seed_all(seed)
     if hasattr(torch.backends, "cudnn"):
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
@@ -236,12 +236,13 @@ def mp3_output(wave, rate: int, destination: Path, minimum_seconds: float = .15)
                 "minimumDurationSeconds": minimum_seconds}
 
 
-def synthesize_clip(infer, target: Path, text: str, first_duration: float) -> dict:
+def synthesize_clip(infer, target: Path, text: str, first_duration: float, *, seed_start: int = SEED) -> dict:
     """Retry rejected words AND requests with extra model time, without padding."""
     for attempt in range(MAX_SYNTHESIS_ATTEMPTS):
         extra_frames = math.ceil(attempt * RECOVERY_STEP_SECONDS * SAMPLE_RATE / 256)
         duration = first_duration + extra_frames * 256 / SAMPLE_RATE
-        set_seed()
+        seed = seed_start + attempt if seed_start != SEED else SEED
+        set_seed(seed)
         wave, rate, _ = infer(duration)
         try:
             quality = mp3_output(wave, rate, target, minimum_seconds=minimum_speech_seconds(text))
@@ -250,7 +251,8 @@ def synthesize_clip(infer, target: Path, text: str, first_duration: float) -> di
                 raise
             print(f"Rejected incomplete/invalid audio for {text!r}; retrying with more synthesis time", flush=True)
             continue
-        return {"synthesisAttempts": attempt + 1, "fixedDurationSeconds": duration, **(quality or {})}
+        return {"synthesisAttempts": attempt + 1, "fixedDurationSeconds": duration,
+                **({"synthesisSeed": seed} if seed != SEED else {}), **(quality or {})}
     raise RuntimeError("Inference ended without validated audio")
 
 
@@ -333,7 +335,9 @@ def generate_one_dialect(args, dialect, grouped, model, vocoder, mel_type):
                     device=args.device, dialect_id=dialect_id_map[tag],
                     fix_duration=fixed_duration,
                 )
-            timing = synthesize_clip(infer_at, target, text, duration)
+            # The default seed produced truncated "هلا بيك" on every timing retry.
+            recovery_seed = 19 if preview and key == "greeting.hello" else SEED
+            timing = synthesize_clip(infer_at, target, text, duration, seed_start=recovery_seed)
             generated += 1
         if not reusable:
             result[key] = {
